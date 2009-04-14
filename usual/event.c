@@ -53,22 +53,28 @@
 #define EV_ACTIVE 0x80
 
 struct event_base {
+	/* pending timeouts */
 	struct AATree timeout_tree;
 
+	/* fd events */
 	struct StatList fd_list;
+
+	/* pollfd <-> event mapping */
 	struct event **pfd_event;
 	struct pollfd *pfd_list;
 	int pfd_size;
 
-	bool loop_break;
-	bool loop_exit;
-
 	/* signal handling */
 	struct List sig_node;
+	unsigned int sig_seen[MAX_SIGNAL];
 	struct List sig_waiters[MAX_SIGNAL];
 	int sig_send, sig_recv;
 	struct event sig_ev;
-	unsigned int sig_seen[MAX_SIGNAL];
+
+	/* exit loop ASAP */
+	bool loop_break;
+	/* finish current loop and exit */
+	bool loop_exit;
 };
 
 /* default event base */
@@ -80,7 +86,7 @@ static bool signal_set_up[MAX_SIGNAL];
 static struct sigaction old_handler[MAX_SIGNAL];
 static LIST(sig_base_list);
 
-
+/* internal signal functions */
 static bool sig_init(struct event_base *base, int sig);
 static void sig_close(struct event_base *base);
 
@@ -245,7 +251,7 @@ struct event_base *event_init(void)
 	struct event_base *base;
 	int i;
 
-	base = calloc(1, sizeof(*base));
+	base = zmalloc(sizeof(*base));
 
 	/* initialize timeout and fd areas */
 	aatree_init(&base->timeout_tree, cmp_timeout, NULL);
@@ -283,6 +289,7 @@ void event_base_free(struct event_base *base)
 	free(base);
 }
 
+/* set flag to exit loop ASAP */
 int event_base_loopbreak(struct event_base *base)
 {
 	base->loop_break = true;
@@ -293,6 +300,7 @@ int event_base_loopbreak(struct event_base *base)
  * Multi-base functions.
  */
 
+/* fill event structure */
 void event_assign(struct event *ev, struct event_base *base, int fd, short flags, uevent_cb_f cb, void *arg)
 {
 	Assert(base);
@@ -308,6 +316,24 @@ void event_assign(struct event *ev, struct event_base *base, int fd, short flags
 	ev_dbg(ev, "event_set");
 }
 
+/* Change base for a event */
+int event_base_set(struct event_base *base, struct event *ev)
+{
+	if (ev->flags & EV_ACTIVE) {
+		errno = EINVAL;
+		return -1;
+	}
+	ev->base = base;
+	return 0;
+}
+
+/* Check if activated */
+int is_event_active(struct event *ev)
+{
+	return (ev->flags & EV_ACTIVE) ? 1 : 0;
+}
+
+/* de-activate event */
 int event_del(struct event *ev)
 {
 	struct event_base *base = ev->base;
@@ -344,7 +370,7 @@ int event_del(struct event *ev)
 }
 
 
-/* handles only relarive timeouts */
+/* activate event */
 int event_add(struct event *ev, struct timeval *timeout)
 {
 	struct event_base *base = ev->base;
@@ -352,22 +378,21 @@ int event_add(struct event *ev, struct timeval *timeout)
 	Assert((ev->flags & EV_ACTIVE) == 0);
 	Assert(base);
 
-	/* timeout sanity check, but dont use it yet */
+	/* sanity check, but dont do anything yet */
 	if (timeout) {
-		if (ev->flags & EV_PERSIST) {
-			errno = EINVAL;
-			return -1;
-		}
-	} else if (ev->flags & EV_TIMEOUT) {
-		ev->flags &= ~EV_TIMEOUT;
+		if (ev->flags & EV_PERSIST)
+			goto err_inval;
+	} else {
+		if (ev->flags & EV_TIMEOUT)
+			ev->flags &= ~EV_TIMEOUT;
+		if (!(ev->flags & (EV_SIGNAL | EV_READ | EV_WRITE)))
+			goto err_inval;
 	}
 
 	/* setup signal/fd */
 	if (ev->flags & EV_SIGNAL) {
-		if (ev->flags & (EV_READ|EV_WRITE)) {
-			errno = EINVAL;
-			return -1;
-		}
+		if (ev->flags & (EV_READ|EV_WRITE))
+			goto err_inval;
 		if (!sig_init(base, ev->fd))
 			return -1;
 		list_append(&base->sig_waiters[ev->fd], &ev->node);
@@ -385,8 +410,11 @@ int event_add(struct event *ev, struct timeval *timeout)
 	ev->flags |= EV_ACTIVE;
 
 	ev_dbg(ev, "event_add");
-
 	return 0;
+
+err_inval:
+	errno = EINVAL;
+	return -1;
 }
 
 /*
@@ -422,6 +450,7 @@ static inline struct event *get_smallest_timeout(struct event_base *base)
 	return NULL;
 }
 
+/* decide how long poll() should sleep */
 static int calc_timeout(struct event_base *base)
 {
 	struct event *ev;
@@ -451,6 +480,7 @@ static int calc_timeout(struct event_base *base)
 	return res;
 }
 
+/* deliver fd events */
 static void process_fds(struct event_base *base, int pf_cnt)
 {
 	int i;
@@ -461,7 +491,7 @@ static void process_fds(struct event_base *base, int pf_cnt)
 		if (!ev)
 			continue;
 		base->pfd_event[i] = NULL;
-		ev->ev_idx = -1; // is it needed?
+		ev->ev_idx = -1;
 		if (pf->revents & (POLLIN | POLLOUT | POLLERR | POLLHUP)) {
 			int flags = ev->flags & (EV_READ | EV_WRITE);
 			deliver_event(ev, flags);
@@ -471,6 +501,7 @@ static void process_fds(struct event_base *base, int pf_cnt)
 	}
 }
 
+/* handle passed timeouts */
 static void process_timeouts(struct event_base *base)
 {
 	struct timeval now;
@@ -492,6 +523,7 @@ static void process_timeouts(struct event_base *base)
 	}
 }
 
+/* main event loop */
 int event_base_loop(struct event_base *base, int loop_flags)
 {
 	int pf_cnt, res, timeout_ms;
@@ -537,23 +569,19 @@ loop:
 	if (res == -1 && errno != EINTR)
 		return -1;
 
+	/* process events */
 	if (res > 0) {
 		process_fds(base, pf_cnt);
 		if (base->loop_break)
 			return 0;
 	}
-
 	process_timeouts(base);
 
-	if (base->loop_break)
-		return 0;
-
+	/* decide whether to continue looping */
 	if (loop_flags & EVLOOP_ONCE)
 		return 0;
-
-	if (base->loop_exit)
+	if (base->loop_break || base->loop_exit)
 		return 0;
-
 	goto loop;
 }
 
@@ -619,10 +647,8 @@ loop:
 	if (res < 0) {
 		if (errno == EINTR)
 			goto loop;
-		if (errno != EAGAIN)
-			goto some_error;
-	} else if (res == 0)
-		goto some_error;
+	} else if ((res == sizeof(buf)) && (res > 1))
+		goto loop;
 
 	/* now check for new signals */
 	for (sig = 0; sig < MAX_SIGNAL; sig++) {
@@ -636,13 +662,9 @@ loop:
 			deliver_signal(base, sig);
 		}
 	}
-	return;
-
-some_error:
-	//log_warning("signal reading got error: res=%d err=%s", res, strerror(errno));
-	sig_close(base);
 }
 
+/* setup signal handling for particular signal */
 static bool sig_init(struct event_base *base, int sig)
 {
 	int spair[2];
@@ -709,6 +731,7 @@ static void once_handler(int fd, short flags, void *arg)
 	cb_func(fd, flags, cb_arg);
 }
 
+/* wait for one-time event, provide event struct internally */
 int event_base_once(struct event_base *base, int fd, short flags,
 		    uevent_cb_f cb_func, void *cb_arg,
 		    struct timeval *timeout)
@@ -732,6 +755,10 @@ int event_base_once(struct event_base *base, int fd, short flags,
 	return 0;
 }
 
+/*
+ * Stop loop at particular time.
+ */
+
 static void loopexit_handler(int fd, short flags, void *arg)
 {
 	struct event_base *base = arg;
@@ -740,25 +767,10 @@ static void loopexit_handler(int fd, short flags, void *arg)
 
 int event_base_loopexit(struct event_base *base, struct timeval *timeout)
 {
-	return event_base_once(base, -1, 0, loopexit_handler, base, timeout);
-}
-
-int event_base_set(struct event_base *base, struct event *ev)
-{
-	if (ev->flags & EV_ACTIVE) {
+	if (!timeout) {
 		errno = EINVAL;
 		return -1;
 	}
-	ev->base = base;
-	return 0;
-}
-
-/*
- * Is activated.
- */
-
-int is_event_initialized(struct event *ev)
-{
-	return (ev->flags & EV_ACTIVE) ? 1 : 0;
+	return event_base_once(base, -1, 0, loopexit_handler, base, timeout);
 }
 

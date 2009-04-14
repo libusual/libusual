@@ -24,6 +24,13 @@
 #include <usual/aatree.h>
 #include <usual/list.h>
 
+/*
+ * Flags for event_set() / event_assign():
+ *   EV_READ, EV_WRITE, EV_SIGNAL, EV_PERSIST
+ *
+ * Flags given to user callback:
+ *   EV_READ, EV_WRITE, EV_SIGNAL, EV_TIMEOUT.
+ */
 enum EventFlags {
 	EV_TIMEOUT = 1,
 	EV_READ = 2,
@@ -32,28 +39,50 @@ enum EventFlags {
 	EV_PERSIST = 16,
 };
 
+/* Flags for event_loop() */
 enum EventLoopType {
 	EVLOOP_ONCE = 1,
 	EVLOOP_NONBLOCK = 2,
 };
 
+/* event_base contents are not open */
 struct event_base;
 
+/* user callback signature */
 typedef void (*uevent_cb_f)(int fd, short flags, void *arg);
 
+/* macros to read fd and signal values */
+#define EVENT_FD(ev) ((ev)->fd)
+#define EVENT_SIGNAL(ev) ((ev)->fd)
+
+/*
+ * Our event structure.
+ *
+ * Although the struct is open, no direct accesses should be done.
+ * Thus also the fields are incompat with libevent.
+ */
 struct event {
+	/* node for fd or signal lists */
 	struct List node;
 
+	/* timeout info */
 	struct timeval timeout;
 	struct AANode timeout_node;
 
+	/* back-pointer into pollfd list */
 	int ev_idx;
+
+	/* event base it is attached to */
 	struct event_base *base;
 
+	/* user callback */
 	uevent_cb_f cb_func;
 	void *cb_arg;
 
+	/* fd or signal */
 	int fd;
+
+	/* both user and internal flags */
 	short flags;
 };
 
@@ -87,12 +116,12 @@ int event_base_loopexit(struct event_base *base, struct timeval *timeout);
 int event_base_set(struct event_base *base, struct event *ev);
 
 /* pointless compat */
-#define event_initialized(ev) is_event_initialized(ev)
-#define signal_initialized(ev) is_event_initialized(ev)
-#define evtimer_initialized(ev) is_event_initialized(ev)
 #define event_dispatch() event_loop(0)
 #define event_base_dispatch(base) event_base_loop(base, 0)
-int is_event_initialized(struct event *ev);
+#define event_initialized(ev) is_event_active(ev)
+#define signal_initialized(ev) is_event_active(ev)
+#define evtimer_initialized(ev) is_event_active(ev)
+int is_event_active(struct event *ev);
 
 #endif
 
