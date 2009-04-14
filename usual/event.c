@@ -46,8 +46,8 @@
 /* if tv_sec is larger, it's absolute timeout */
 #define MAX_REL_TIMEOUT (30*24*60*60)
 
-/* if no nearby timeouts, how many seconds to sleep */
-#define MAX_SLEEP 5
+/* if no nearby timeouts, max time to sleep (usecs) */
+#define MAX_SLEEP (5*USEC)
 
 /* extra event flag to track if event is added */
 #define EV_ACTIVE 0x80
@@ -75,6 +75,9 @@ struct event_base {
 	bool loop_break;
 	/* finish current loop and exit */
 	bool loop_exit;
+
+	/* cache if refreshed after each poll() */
+	usec_t cached_time;
 };
 
 /* default event base */
@@ -119,10 +122,14 @@ static void ev_dbg(struct event *ev, const char *s, ...)
 	va_list ap;
 	char buf[1024], tval[128];
 	const char *typ = (ev->flags & EV_SIGNAL) ? "sig" : "fd";
+	struct timeval tv;
 
 	va_start(ap, s);
 	vsnprintf(buf, sizeof(buf), s, ap);
 	va_end(ap);
+
+	tv.tv_sec = ev->timeout_val / USEC;
+	tv.tv_usec = ev->timeout_val % USEC;
 
 	log_noise("event %s %d (flags=%s%s%s%s%s) [%s]: %s", typ, ev->fd,
 	       (ev->flags & EV_ACTIVE) ? "A" : "",
@@ -131,7 +138,7 @@ static void ev_dbg(struct event *ev, const char *s, ...)
 	       (ev->flags & EV_READ) ? "R" : "",
 	       (ev->flags & EV_WRITE) ? "W" : "",
 	       (ev->flags & EV_TIMEOUT)
-	       ? format_time_ms(&ev->timeout, tval, sizeof(tval))
+	       ? format_time_ms(&tv, tval, sizeof(tval))
 	       : "-",
 	       buf);
 }
@@ -144,29 +151,27 @@ static void ev_dbg(struct event *ev, const char *s, ...)
  * Helper functions.
  */
 
-/* convert user tv to absolute tv */
-static void fill_timeout(struct timeval *dst, struct timeval *tv)
+/* per-base time cache */
+static usec_t get_base_time(struct event_base *base)
 {
-	if (tv->tv_sec < MAX_REL_TIMEOUT) {
-		struct timeval now;
-		gettimeofday(&now, NULL);
-		timeradd(&now, tv, dst);
-	} else {
-		*dst = *tv;
-	}
+	if (!base->cached_time)
+		base->cached_time = get_time_usec();
+	return base->cached_time;
 }
 
-/* compare timevals */
-static int cmp_tv(struct timeval *tv1, struct timeval *tv2)
+/* reset cached time */
+static void reset_base_time(struct event_base *base)
 {
-	if (tv1->tv_sec == tv2->tv_sec) {
-		if (tv1->tv_usec == tv2->tv_usec)
-			return 0;
-		return (tv1->tv_usec < tv2->tv_usec) ? -1 : 1;
-	} else {
-		return (tv1->tv_sec < tv2->tv_sec) ? -1 : 1;
-	}
+	base->cached_time = 0;
+}
 
+/* convert user tv to absolute tv */
+static usec_t convert_timeout(struct event_base *base, struct timeval *tv)
+{
+	usec_t val = tv->tv_sec * USEC + tv->tv_usec;
+	if (tv->tv_sec < MAX_REL_TIMEOUT)
+		val += get_base_time(base);
+	return val;
 }
 
 /* compare events by their timeouts */
@@ -175,9 +180,9 @@ static int cmp_timeout(long item, struct AANode *n1)
 	struct AANode *n0 = (void *)item;
 	struct event *ev0 = container_of(n0, struct event, timeout_node);
 	struct event *ev1 = container_of(n1, struct event, timeout_node);
-	int res = cmp_tv(&ev0->timeout, &ev1->timeout);
-	if (res != 0)
-		return res;
+	/* compare timeouts first */
+	if (ev0->timeout_val != ev1->timeout_val)
+		return (ev0->timeout_val < ev1->timeout_val) ? -1 : 1;
 	/* compare pointers, to make same timeouts inequal */
 	if (ev0 == ev1)
 		return 0;
@@ -402,7 +407,7 @@ int event_add(struct event *ev, struct timeval *timeout)
 
 	/* now act on timeout */
 	if (timeout) {
-		fill_timeout(&ev->timeout, timeout);
+		ev->timeout_val = convert_timeout(base, timeout);
 		ev->flags |= EV_TIMEOUT;
 		aatree_insert(&base->timeout_tree, (long)&ev->timeout_node, &ev->timeout_node);
 	}
@@ -451,33 +456,26 @@ static inline struct event *get_smallest_timeout(struct event_base *base)
 }
 
 /* decide how long poll() should sleep */
-static int calc_timeout(struct event_base *base)
+static int calc_timeout_ms(struct event_base *base)
 {
 	struct event *ev;
-	int res, secs, usecs;
-	struct timeval now;
+	usec_t now;
+	usec_t res;
 
 	ev = get_smallest_timeout(base);
 	if (!ev)
-		return MAX_SLEEP * 1000;
+		return MAX_SLEEP / 1000;
 
-	gettimeofday(&now, NULL);
+	now = get_base_time(base);
+	if (now + MAX_SLEEP < ev->timeout_val)
+		res = MAX_SLEEP;
+	else if (ev->timeout_val < now)
+		res = 0;
+	else
+		res = ev->timeout_val - now;
 
-	if (now.tv_sec + MAX_SLEEP < ev->timeout.tv_sec)
-		return MAX_SLEEP * 1000;
-	if (ev->timeout.tv_sec < now.tv_sec)
-		return 0;
-
-	secs = ev->timeout.tv_sec - now.tv_sec;
-	usecs = ev->timeout.tv_usec - now.tv_usec;
-	if (usecs < 0) {
-		secs--;
-		usecs += 1000000;
-	}
-	res = (secs * 1000) + ((usecs + 999) / 1000);
-	if (res < 0)
-		return 0;
-	return res;
+	/* round up */
+	return (res + 999) / 1000;
 }
 
 /* deliver fd events */
@@ -504,17 +502,17 @@ static void process_fds(struct event_base *base, int pf_cnt)
 /* handle passed timeouts */
 static void process_timeouts(struct event_base *base)
 {
-	struct timeval now;
+	usec_t now;
 	struct event *ev;
 
 	ev = get_smallest_timeout(base);
 	if (!ev)
 		return;
 
-	gettimeofday(&now, NULL);
+	now = get_base_time(base);
 
 	while (ev) {
-		if (timercmp(&now, &ev->timeout, <))
+		if (now < ev->timeout_val)
 			break;
 		deliver_event(ev, EV_TIMEOUT);
 		if (base->loop_break)
@@ -539,6 +537,7 @@ loop:
 	if (!make_room(base, statlist_count(&base->fd_list)))
 		return -1;
 
+	/* fill pollfds */
 	pf_cnt = 0;
 	statlist_for_each(node, &base->fd_list) {
 		struct event *ev = container_of(node, struct event, node);
@@ -557,15 +556,19 @@ loop:
 			pf->events |= POLLOUT;
 	}
 
+	/* decide sleep time */
 	if (loop_flags & EVLOOP_NONBLOCK)
 		timeout_ms = 0;
 	else
-		timeout_ms = calc_timeout(base);
+		timeout_ms = calc_timeout_ms(base);
 
+	/* forget cached time */
+	reset_base_time(base);
+
+	/* poll for events */
 	res = poll(base->pfd_list, pf_cnt, timeout_ms);
 	base_dbg(base, "poll(%d, timeout=%d) = res=%d errno=%d",
 		 pf_cnt, timeout_ms, res, res < 0 ? errno : 0);
-
 	if (res == -1 && errno != EINTR)
 		return -1;
 

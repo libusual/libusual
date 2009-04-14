@@ -23,6 +23,7 @@
 
 #include <usual/aatree.h>
 #include <usual/list.h>
+#include <usual/time.h>
 
 /*
  * Flags for event_set() / event_assign():
@@ -66,7 +67,7 @@ struct event {
 	struct List node;
 
 	/* timeout info */
-	struct timeval timeout;
+	usec_t timeout_val;
 	struct AANode timeout_node;
 
 	/* back-pointer into pollfd list */
