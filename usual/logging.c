@@ -70,14 +70,6 @@ static void start_syslog(void)
 	syslog_started = 1;
 }
 
-static void open_logfile(void)
-{
-	FILE *f = fopen(cf_logfile, "a");
-	if (f)
-		log_file = f;
-	setvbuf(f, NULL, _IONBF, 0);
-}
-
 
 void log_generic(enum LogLevel level, const char *fmt, ...)
 {
@@ -93,17 +85,25 @@ void log_generic(enum LogLevel level, const char *fmt, ...)
 
 	format_time_ms(NULL, timebuf, sizeof(timebuf));
 
+	if (!log_file && cf_logfile) {
+		static int error_reported = 0;
+
+		if ((log_file = fopen(cf_logfile, "a")) != NULL) {
+			/* Got the file, disable buffering */
+			setvbuf(log_file, NULL, _IONBF, 0);
+		} else if (!cf_quiet && !error_reported) {
+			/* Unable to open, complain once */
+			fprintf(stderr, "%s %u %s %s: %s\n", timebuf, pid,
+				log_level_list[2].tag, cf_logfile, strerror(errno));
+			error_reported = 1;
+		}
+	}
+
 	if (!cf_quiet)
 		fprintf(stderr, "%s %u %s %s\n", timebuf, pid, lev->tag, buf);
-	if (cf_logfile) {
-		if (!log_file) {
-			open_logfile();
-			if (!log_file)
-				goto no_logfile;
-		}
+
+	if (log_file)
 		fprintf(log_file, "%s %u %s %s\n", timebuf, pid, lev->tag, buf);
-	}
-no_logfile:
 
 	if (cf_syslog_ident) {
 		if (!syslog_started)
