@@ -68,7 +68,7 @@ struct event {
 
 	/* timeout info */
 	usec_t timeout_val;
-	struct AANode timeout_node;
+	int timeout_idx;
 
 	/* back-pointer into pollfd list */
 	int ev_idx;

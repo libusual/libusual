@@ -52,9 +52,17 @@
 /* extra event flag to track if event is added */
 #define EV_ACTIVE 0x80
 
+/* load heap code */
+static inline bool ev_smaller_timeout(struct event *ev1, struct event *ev2);
+static inline void ev_save_pos(struct event *ev, int pos);
+#define IS_BETTER(ev1, ev2) ev_smaller_timeout(ev1, ev2)
+#define SAVE_POS(ev, pos) ev_save_pos(ev, pos)
+#include <usual/heap-impl.h>
+
+
 struct event_base {
 	/* pending timeouts */
-	struct AATree timeout_tree;
+	struct Heap timeout_heap;
 
 	/* fd events */
 	struct StatList fd_list;
@@ -113,7 +121,7 @@ static void base_dbg(struct event_base *base, const char *s, ...)
 
 	log_noise("event base=%p: fdlist=%u timeouts=%d pfds=%d: %s",
 	       base, statlist_count(&base->fd_list),
-	       base->timeout_tree.count,
+	       base->timeout_heap.used,
 	       base->pfd_size, buf);
 }
 
@@ -174,19 +182,14 @@ static usec_t convert_timeout(struct event_base *base, struct timeval *tv)
 	return val;
 }
 
-/* compare events by their timeouts */
-static int cmp_timeout(long item, struct AANode *n1)
+static inline bool ev_smaller_timeout(struct event *ev1, struct event *ev2)
 {
-	struct AANode *n0 = (void *)item;
-	struct event *ev0 = container_of(n0, struct event, timeout_node);
-	struct event *ev1 = container_of(n1, struct event, timeout_node);
-	/* compare timeouts first */
-	if (ev0->timeout_val != ev1->timeout_val)
-		return (ev0->timeout_val < ev1->timeout_val) ? -1 : 1;
-	/* compare pointers, to make same timeouts inequal */
-	if (ev0 == ev1)
-		return 0;
-	return (ev0 < ev1) ? -1 : 1;
+	return ev1->timeout_val < ev2->timeout_val;
+}
+
+static inline void ev_save_pos(struct event *ev, int pos)
+{
+	ev->timeout_idx = pos;
 }
 
 /* enlarge pollfd array if needed */
@@ -259,7 +262,7 @@ struct event_base *event_init(void)
 	base = zmalloc(sizeof(*base));
 
 	/* initialize timeout and fd areas */
-	aatree_init(&base->timeout_tree, cmp_timeout, NULL);
+	heap_init(&base->timeout_heap);
 	statlist_init(&base->fd_list, "fd_list");
 
 	/* initialize signal areas */
@@ -288,6 +291,7 @@ void event_base_free(struct event_base *base)
 	}
 	if (base == current_base)
 		current_base = NULL;
+	heap_destroy(&base->timeout_heap);
 	free(base->pfd_event);
 	free(base->pfd_list);
 	sig_close(base);
@@ -358,7 +362,7 @@ int event_del(struct event *ev)
 
 	/* remove from timeout tree */
 	if (ev->flags & EV_TIMEOUT) {
-		aatree_remove(&ev->base->timeout_tree, (long)&ev->timeout_node);
+		heap_delete_pos(&ev->base->timeout_heap, ev->timeout_idx);
 		ev->flags &= ~EV_TIMEOUT;
 	}
 
@@ -387,6 +391,8 @@ int event_add(struct event *ev, struct timeval *timeout)
 	if (timeout) {
 		if (ev->flags & EV_PERSIST)
 			goto err_inval;
+		if (!heap_reserve(&base->timeout_heap, 1))
+			return false;
 	} else {
 		if (ev->flags & EV_TIMEOUT)
 			ev->flags &= ~EV_TIMEOUT;
@@ -409,7 +415,7 @@ int event_add(struct event *ev, struct timeval *timeout)
 	if (timeout) {
 		ev->timeout_val = convert_timeout(base, timeout);
 		ev->flags |= EV_TIMEOUT;
-		aatree_insert(&base->timeout_tree, (long)&ev->timeout_node, &ev->timeout_node);
+		heap_insert(&base->timeout_heap, ev);
 	}
 	ev->ev_idx = -1;
 	ev->flags |= EV_ACTIVE;
@@ -440,19 +446,7 @@ static void deliver_event(struct event *ev, short flags)
 
 static inline struct event *get_smallest_timeout(struct event_base *base)
 {
-	struct AANode *node = base->timeout_tree.root;
-	struct AANode *first = NULL;
-	struct event *ev;
-
-	while (!aatree_is_nil_node(node)) {
-		first = node;
-		node = node->left;
-	}
-	if (first) {
-		ev = container_of(first, struct event, timeout_node);
-		return ev;
-	}
-	return NULL;
+	return heap_get_top(&base->timeout_heap);
 }
 
 /* decide how long poll() should sleep */
