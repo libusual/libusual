@@ -19,10 +19,12 @@
 #ifndef _USUAL_SAFEIO_H_
 #define _USUAL_SAFEIO_H_
 
-#include <usual/base.h>
+#include <usual/compat.h>
 
-#include <sys/types.h>
+
+#ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
+#endif
 
 int safe_read(int fd, void *buf, int len)                       _MUSTCHECK;
 int safe_write(int fd, const void *buf, int len)                _MUSTCHECK;

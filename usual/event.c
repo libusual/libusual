@@ -22,23 +22,32 @@
  * For sitations where full libevent is not necessary.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include <usual/event.h>
 
+#include <usual/base.h>
+#include <usual/compat.h>
+
+#ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
+#endif
+#ifdef HAVE_POLL_H
+#include <poll.h>
+#endif
+
+
 #include <errno.h>
 #include <signal.h>
 #include <string.h>
 #include <unistd.h>
-#include <poll.h>
 #include <stdlib.h>
 
 #include <usual/statlist.h>
 #include <usual/socket.h>
 #include <usual/alloc.h>
+
+#ifndef MSG_NOSIGNAL
+#define MSG_NOSIGNAL 0
+#endif
 
 /* max number of signals we care about */
 #define MAX_SIGNAL 32
@@ -130,14 +139,10 @@ static void ev_dbg(struct event *ev, const char *s, ...)
 	va_list ap;
 	char buf[1024], tval[128];
 	const char *typ = (ev->flags & EV_SIGNAL) ? "sig" : "fd";
-	struct timeval tv;
 
 	va_start(ap, s);
 	vsnprintf(buf, sizeof(buf), s, ap);
 	va_end(ap);
-
-	tv.tv_sec = ev->timeout_val / USEC;
-	tv.tv_usec = ev->timeout_val % USEC;
 
 	log_noise("event %s %d (flags=%s%s%s%s%s) [%s]: %s", typ, ev->fd,
 	       (ev->flags & EV_ACTIVE) ? "A" : "",
@@ -146,7 +151,7 @@ static void ev_dbg(struct event *ev, const char *s, ...)
 	       (ev->flags & EV_READ) ? "R" : "",
 	       (ev->flags & EV_WRITE) ? "W" : "",
 	       (ev->flags & EV_TIMEOUT)
-	       ? format_time_ms(&tv, tval, sizeof(tval))
+	       ? format_time_ms(ev->timeout_val, tval, sizeof(tval))
 	       : "-",
 	       buf);
 }

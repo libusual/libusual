@@ -19,7 +19,7 @@
 #ifndef _USUAL_MD5_H_
 #define _USUAL_MD5_H_
 
-#include <stdint.h>
+#include <usual/base.h>
 
 #define MD5_BLOCK_LENGTH	64
 #define MD5_DIGEST_LENGTH	16

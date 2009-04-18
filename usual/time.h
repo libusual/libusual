@@ -24,10 +24,10 @@
 typedef uint64_t usec_t;
 #define USEC 1000000ULL
 
-char *format_time_ms(const struct timeval *tv, char *dst, unsigned dstlen);
+char *format_time_ms(usec_t time, char *dst, unsigned dstlen);
+char *format_time_s(usec_t time, char *dst, unsigned dstlen);
 
 usec_t get_time_usec(void);
-
 usec_t get_cached_time(void);
 void reset_time_cache(void);
 

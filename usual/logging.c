@@ -24,9 +24,13 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
-#include <syslog.h>
 #include <unistd.h>
 
+#ifdef HAVE_SYSLOG_H
+#include <syslog.h>
+#endif
+
+#include <usual/compat.h>
 #include <usual/time.h>
 
 int cf_quiet = 0;
@@ -83,7 +87,7 @@ void log_generic(enum LogLevel level, const char *fmt, ...)
 	vsnprintf(buf, sizeof(buf), fmt, ap);
 	va_end(ap);
 
-	format_time_ms(NULL, timebuf, sizeof(timebuf));
+	format_time_ms(0, timebuf, sizeof(timebuf));
 
 	if (!log_file && cf_logfile) {
 		static int error_reported = 0;

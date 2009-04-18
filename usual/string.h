@@ -19,6 +19,8 @@
 #ifndef _USUAL_STRING_H_
 #define _USUAL_STRING_H_
 
+#include <usual/base.h>
+
 #include <string.h>
 
 /*

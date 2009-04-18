@@ -43,7 +43,7 @@
  */
 
 
-#include "aatree.h"
+#include <usual/aatree.h>
 
 #include <stddef.h>   /* for NULL */
 

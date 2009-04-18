@@ -28,10 +28,18 @@
 #include <errno.h>
 #include <string.h>
 #include <stdio.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <sys/un.h>
 
+#ifdef HAVE_NETINET_IN_H
+#include <netinet/in.h>
+#endif
+#ifdef HAVE_ARPA_INET_H
+#include <arpa/inet.h>
+#endif
+#ifdef HAVE_SYS_UN_H
+#include <sys/un.h>
+#endif
+
+#include <usual/compat.h>
 #include <usual/logging.h>
 
 int safe_read(int fd, void *buf, int len)

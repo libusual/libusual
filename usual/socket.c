@@ -16,10 +16,6 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */ 
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include <usual/socket.h>
 
 #include <string.h>
@@ -27,11 +23,21 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <sys/un.h>
-#include <netinet/in.h>
-#include <netinet/tcp.h>
-#include <arpa/inet.h>
 
+#ifdef HAVE_SYS_UN_H
+#include <sys/un.h>
+#endif
+#ifdef HAVE_NETINET_IN_H
+#include <netinet/in.h>
+#endif
+#ifdef HAVE_NETINET_TCP_H
+#include <netinet/tcp.h>
+#endif
+#ifdef HAVE_ARPA_INET_H
+#include <arpa/inet.h>
+#endif
+
+#include <usual/compat.h>
 #include <usual/logging.h>
 
 /* toggle non-blocking flag */

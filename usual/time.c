@@ -22,25 +22,46 @@
 #include <time.h>
 #include <stdio.h>
 
-char *format_time_ms(const struct timeval *tv, char *dst, unsigned dstlen)
+#include <usual/compat.h>
+
+char *format_time_ms(usec_t time, char *dst, unsigned dstlen)
 {
 	struct tm *tm, tmbuf;
-	struct timeval tvbuf;
+	struct timeval tv;
 	time_t sec;
 
-	if (tv == NULL) {
-		gettimeofday(&tvbuf, NULL);
-		tv = &tvbuf;
+	if (!time) {
+		gettimeofday(&tv, NULL);
+	} else {
+		tv.tv_sec = time / USEC;
+		tv.tv_usec = time % USEC;
 	}
 
-	sec = tv->tv_sec;
+	sec = tv.tv_sec;
 	tm = localtime_r(&sec, &tmbuf);
 	snprintf(dst, dstlen, "%04d-%02d-%02d %02d:%02d:%02d.%03d",
 		 tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday,
 		 tm->tm_hour, tm->tm_min, tm->tm_sec,
-		 (int)(tv->tv_usec / 1000));
+		 (int)(tv.tv_usec / 1000));
 	return dst;
 }
+
+char *format_time_s(usec_t time, char *dst, unsigned dstlen)
+{
+	time_t s;
+	struct tm tbuf, *tm;
+	if (!time) {
+		struct timeval tv;
+		gettimeofday(&tv, NULL);
+		s = tv.tv_sec;
+	} else {
+		s = time / USEC;
+	}
+	tm = localtime_r(&s, &tbuf);
+	strftime(dst, dstlen, "%Y-%m-%d %H:%M:%S", tm);
+	return dst;
+}
+
 
 /* read current time */
 usec_t get_time_usec(void)

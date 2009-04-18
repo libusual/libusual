@@ -19,7 +19,7 @@
 #ifndef _USUAL_DAEMON_H_
 #define _USUAL_DAEMON_H_
 
-#include <stdbool.h>
+#include <usual/base.h>
 
 void daemonize(const char *pidfile, bool go_background);
 

@@ -22,12 +22,17 @@
 
 #include <usual/fileutil.h>
 
+#ifdef HAVE_SYS_MMAN_H
 #include <sys/mman.h>
+#endif
+
 #include <sys/stat.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
+
+#include <usual/compat.h>
 
 /*
  * Load text file into C string.
@@ -102,6 +107,8 @@ ssize_t file_size(const char *fn)
  * Map a file into mem.
  */
 
+#ifdef HAVE_MMAP
+
 int map_file(struct MappedFile *m, const char *fname, int rw)
 {
 	struct stat st;
@@ -130,3 +137,4 @@ void unmap_file(struct MappedFile *m)
 	m->fd = 0;
 }
 
+#endif

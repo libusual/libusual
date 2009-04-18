@@ -19,6 +19,8 @@
 #ifndef _USUAL_AATREE_H_
 #define _USUAL_AATREE_H_
 
+#include <usual/base.h>
+
 struct AATree;
 struct AANode;
 

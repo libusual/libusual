@@ -19,6 +19,7 @@
 #ifndef _USUAL_BASE_H_
 #define _USUAL_BASE_H_
 
+#include <usual/config.h>
 
 #include <sys/types.h>
 #include <stddef.h>

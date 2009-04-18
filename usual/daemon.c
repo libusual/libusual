@@ -30,6 +30,7 @@
 #include <stdio.h>
 
 #include <usual/logging.h>
+#include <usual/compat.h>
 
 /*
  * pidfile management.

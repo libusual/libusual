@@ -21,7 +21,6 @@
 
 #include <sys/time.h>
 
-#include <usual/aatree.h>
 #include <usual/list.h>
 #include <usual/time.h>
 

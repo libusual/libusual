@@ -21,17 +21,9 @@
 #endif
 
 #include <usual/md5.h>
+#include <usual/base.h>
 
 #include <string.h>
-#include <endian.h>
-
-/* check endianess */
-#if !defined(BYTE_ORDER) || !defined(LITTLE_ENDIAN) || !defined(BIG_ENDIAN)
-#error "md5.c need sane endian.h"
-#endif
-#if BYTE_ORDER == BIG_ENDIAN
-#define WORDS_BIGENDIAN
-#endif
 
 /*
  * Support functions.

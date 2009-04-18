@@ -20,7 +20,10 @@
 #define _USUAL_SOCKET_H_
 
 #include <usual/base.h>
+
+#ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
+#endif
 
 bool socket_setup(int sock, bool non_block);
 bool socket_set_nonblocking(int sock, bool non_block);

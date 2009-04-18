@@ -1,8 +1,9 @@
+
+-include config.mak
+
 # config
-DEFS = -DCASSERT
-CC = gcc
-MKAR = ar rcs
-CFLAGS = -O2 -g -Wall $(WFLAGS)
+MKAR = $(AR) rcs
+CFLAGS += $(WFLAGS)
 CPPFLAGS = $(USUAL_CPPFLAGS)
 
 # sources
@@ -40,15 +41,34 @@ libusual.a: $(objs)
 	$(E) "	AR" $@
 	$(Q) $(MKAR) $@ $(objs)
 
-obj/%.o: usual/%.c $(hdrs)
+obj/%.o: usual/%.c config.mak $(hdrs)
 	@mkdir -p obj
 	$(E) "	CC" $<
 	$(Q) $(CC) -c -o $@ $(DEFS) $(CPPFLAGS) $(CFLAGS) $<
 
-obj/testcompile: test/compile.c libusual.a $(hdrs)
+obj/testcompile: test/compile.c libusual.a config.mak $(hdrs)
 	$(E) "	CHECK" $<
-	$(Q) $(CC) -o $@ $(DEFS) $(CPPFLAGS) $(CFLAGS) $< $(USUAL_LDFLAGS) $(USUAL_LIBS)
+	$(Q) $(CC) -o $@ $(DEFS) $(CPPFLAGS) $(CFLAGS) $< $(USUAL_LDFLAGS) $(USUAL_LIBS) $(LIBS)
 
 clean:
-	rm -f libusual.a obj/*.o obj/test*
+	rm -f libusual.a obj/*.o obj/test* aclocal* config.log
+	rm -rf autom4te*
+
+distclean: clean
+	rm -f config.mak usual/config.h
+
+boot:
+	rm -rf usual/config.*
+	aclocal -I ./m4
+	autoheader
+	autoconf
+	rm -rf aclocal* autom4te.*
+
+config.mak: usual/config.h
+	@echo "Config out-of-date, please run ./configure again"
+	@exit 1
+
+usual/config.h:
+	@echo "Please run ./configure first"
+	@exit 1
 
