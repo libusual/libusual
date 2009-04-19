@@ -143,6 +143,18 @@ struct LoaderCtx {
 	void *top_arg;
 };
 
+static void *get_dest(struct LoaderCtx *ctx, const struct CfKey *k)
+{
+	char *dst;
+	if (k->flags & CF_VAL_REL) {
+		if (!ctx->target)
+			return NULL;
+		dst = (char *)ctx->target + k->key_ofs;
+	} else
+		dst = (char *)k->key_ofs;
+	return dst;
+}
+
 static bool fill_defaults(struct LoaderCtx *ctx)
 {
 	const struct CfKey *k;
@@ -150,7 +162,9 @@ static bool fill_defaults(struct LoaderCtx *ctx)
 	for (k = ctx->cur_sect->key_list; k->key_name; k++) {
 		if (!k->def_value)
 			continue;
-		dst = (char *)ctx->target + k->key_ofs;
+		dst = get_dest(ctx, k);
+		if (!dst)
+			return false;
 		if (!k->set_fn(dst, k->def_value))
 			return false;
 	}
@@ -170,8 +184,6 @@ static bool load_handler(void *arg, enum CfKeyType ktype, const char *key, const
 				continue;
 			ctx->cur_sect = s;
 			ctx->target = s->create_target_fn(ctx->top_arg);
-			if (!ctx->target)
-				return false;
 			return fill_defaults(ctx);
 		}
 		log_error("load_init_file: unknown section: %s", key);
@@ -183,7 +195,9 @@ static bool load_handler(void *arg, enum CfKeyType ktype, const char *key, const
 		for (k = ctx->cur_sect->key_list; k->key_name; k++) {
 			if (strcmp(k->key_name, key) != 0)
 				continue;
-			dst = (char *)ctx->target + k->key_ofs;
+			dst = get_dest(ctx, k);
+			if (!dst)
+				return false;
 			return k->set_fn(dst, val);
 		}
 		log_error("load_init_file: unknown key: %s", key);

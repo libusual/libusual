@@ -44,9 +44,14 @@ typedef bool (*cf_setter_f)(void *dst_p, const char *value);
 struct CfKey {
 	const char *key_name;
 	cf_setter_f set_fn;
-	unsigned key_ofs;
+	int flags;
+	uintptr_t key_ofs;
 	const char *def_value;
 };
+
+/* abs or relative pointer */
+#define CF_VAL_REL 1
+#define CF_VAL_ABS 2
 
 struct CfSect {
 	const char *sect_name;
@@ -60,5 +65,19 @@ bool cf_set_str(void *dst, const char *value);
 bool cf_set_int(void *dst, const char *value);
 bool cf_set_time_usec(void *dst, const char *value);
 bool cf_set_time_double(void *dst, const char *value);
+
+/* before using them do: #define CF_REL_BASE struct Foo */
+#define CF_REL_INT(x) cf_set_int, CF_VAL_REL, offsetof(CF_REL_BASE, x)
+#define CF_REL_STR(x) cf_set_str, CF_VAL_REL, offsetof(CF_REL_BASE, x)
+#define CF_REL_BOOL(x) cf_set_int, CF_VAL_REL, offsetof(CF_REL_BASE, x)
+#define CF_REL_TIME_USEC(x) cf_set_time_usec, CF_VAL_REL, offsetof(CF_REL_BASE, x)
+#define CF_REL_TIME_DOUBLE(x) cf_set_time_double, CF_VAL_REL, offsetof(CF_REL_BASE, x)
+/* later: #undef CF_REL_BASE */
+
+#define CF_ABS_INT(x) cf_set_int, CF_VAL_ABS, (uintptr_t)&(x)
+#define CF_ABS_STR(x) cf_set_str, CF_VAL_ABS, (uintptr_t)&(x)
+#define CF_ABS_BOOL(x) cf_set_int, CF_VAL_ABS, (uintptr_t)&(x)
+#define CF_ABS_TIME_USEC(x) cf_set_time_usec, CF_VAL_ABS, (uintptr_t)&(x)
+#define CF_ABS_TIME_DOUBLE(x) cf_set_time_double, CF_VAL_ABS, (uintptr_t)&(x)
 
 #endif
