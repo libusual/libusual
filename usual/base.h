@@ -59,6 +59,8 @@
 #define _DEPRECATED             __attribute__((deprecated))
 #define _PRINTF(fmtpos, argpos) __attribute__((format(printf, fmtpos, argpos)))
 #define _MALLOC                 __attribute__((malloc))
+#define _UNUSED                 __attribute__((unused))
+#define _NOINLINE               __attribute__((noinline))
 
 /* compiler hints - those do not seem to work well */
 #define unlikely(x) __builtin_expect(!!(x), 0)
@@ -70,6 +72,8 @@
 #define _DEPRECATED
 #define _PRINTF(x,y)
 #define _MALLOC
+#define _UNUSED
+#define _NOINLINE
 #define unlikely(x) x
 #define likely(x) x
 
