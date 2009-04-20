@@ -682,6 +682,7 @@ static bool sig_init(struct event_base *base, int sig)
 		memset(&sa, 0, sizeof(sa));
 		sa.sa_sigaction = uevent_sig_handler;
 		sa.sa_flags = SA_SIGINFO | SA_RESTART;
+		sigfillset(&sa.sa_mask);
 		if (sigaction(sig, &sa, &old_handler[sig]) != 0)
 			return false;
 	}
