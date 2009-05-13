@@ -57,5 +57,18 @@ static inline size_t strlcat(char *dst, const char *src, size_t n)
 
 #endif /* !HAVE_STRLCAT */
 
+typedef bool (*str_cb)(void *arg, const char *s);
+
+struct StrList;
+struct StrList *strlist_new(void);
+void strlist_free(struct StrList *slist);
+bool strlist_empty(struct StrList *slist);
+bool strlist_append(struct StrList *slist, const char *str);
+bool strlist_foreach(struct StrList *slist, str_cb cb_func, void *cb_arg);
+const char *strlist_pop(struct StrList *slist);
+
+bool parse_word_list(const char *s, str_cb cb_func, void *cb_arg);
+
+
 #endif
 
