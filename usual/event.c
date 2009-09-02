@@ -24,26 +24,13 @@
 
 #include <usual/event.h>
 
-#include <usual/base.h>
-#include <usual/compat.h>
+#ifndef HAVE_LIBEVENT
 
-#ifdef HAVE_SYS_SOCKET_H
-#include <sys/socket.h>
-#endif
-#ifdef HAVE_POLL_H
-#include <poll.h>
-#endif
-
-
-#include <errno.h>
-#include <signal.h>
 #include <string.h>
-#include <unistd.h>
-#include <stdlib.h>
 
 #include <usual/statlist.h>
 #include <usual/socket.h>
-#include <usual/alloc.h>
+#include <usual/signal.h>
 
 #ifndef MSG_NOSIGNAL
 #define MSG_NOSIGNAL 0
@@ -62,9 +49,7 @@
 #define EV_ACTIVE 0x80
 
 /* load heap code */
-static inline bool ev_smaller_timeout(struct event *ev1, struct event *ev2);
 static inline void ev_save_pos(struct event *ev, int pos);
-#define IS_BETTER(ev1, ev2) ev_smaller_timeout(ev1, ev2)
 #define SAVE_POS(ev, pos) ev_save_pos(ev, pos)
 #include <usual/heap-impl.h>
 
@@ -98,7 +83,7 @@ struct event_base {
 };
 
 /* default event base */
-static struct event_base *current_base = NULL;
+static struct event_base *current_base;
 
 /* global signal data */
 static volatile unsigned int sig_count[MAX_SIGNAL];
@@ -187,8 +172,9 @@ static usec_t convert_timeout(struct event_base *base, struct timeval *tv)
 	return val;
 }
 
-static inline bool ev_smaller_timeout(struct event *ev1, struct event *ev2)
+static inline bool heap_is_better(const void *a, const void *b)
 {
+	const struct event *ev1 = a, *ev2 = b;
 	return ev1->timeout_val < ev2->timeout_val;
 }
 
@@ -230,6 +216,14 @@ static bool make_room(struct event_base *base, int need)
  * Single base functions.
  */
 
+struct event_base *event_init(void)
+{
+	struct event_base *base = event_base_new();
+	if (!current_base)
+		current_base = base;
+	return base;
+}
+
 int event_loop(int loop_flags)
 {
 	return event_base_loop(current_base, loop_flags);
@@ -259,12 +253,14 @@ int event_loopexit(struct timeval *timeout)
  * Event base initialization.
  */
 
-struct event_base *event_init(void)
+struct event_base *event_base_new(void)
 {
 	struct event_base *base;
 	int i;
 
 	base = zmalloc(sizeof(*base));
+	if (!base)
+		return NULL;
 
 	/* initialize timeout and fd areas */
 	heap_init(&base->timeout_heap);
@@ -281,9 +277,6 @@ struct event_base *event_init(void)
 		event_base_free(base);
 		return NULL;
 	}
-
-	if (!current_base)
-		current_base = base;
 	return base;
 }
 
@@ -319,6 +312,9 @@ void event_assign(struct event *ev, struct event_base *base, int fd, short flags
 {
 	Assert(base);
 	Assert((ev->flags & EV_ACTIVE) == 0);
+
+	if (base == NULL)
+		base = current_base;
 
 	ev->fd = fd;
 	ev->base = base;
@@ -777,3 +773,4 @@ int event_base_loopexit(struct event_base *base, struct timeval *timeout)
 	return event_base_once(base, -1, 0, loopexit_handler, base, timeout);
 }
 
+#endif /* !HAVE_LIBEVENT */

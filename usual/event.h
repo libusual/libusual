@@ -19,7 +19,31 @@
 #ifndef _USUAL_EVENT_H_
 #define _USUAL_EVENT_H_
 
+#include <usual/base.h>
+
 #include <sys/time.h>
+
+#ifdef HAVE_LIBEVENT
+
+/*
+ * Real libevent
+ */
+
+#include <event.h>
+
+/* make event_base_new() always available */
+#ifndef HAVE_EVENT_BASE_NEW
+static inline struct event_base *event_base_new(void)
+{
+	return event_init();
+}
+#endif
+
+#else
+
+/*
+ * internal libevent
+ */
 
 #include <usual/list.h>
 #include <usual/time.h>
@@ -87,6 +111,7 @@ struct event {
 };
 
 struct event_base *event_init(void) _MUSTCHECK;
+struct event_base *event_base_new(void) _MUSTCHECK;
 void event_base_free(struct event_base *base);
 
 void event_set(struct event *ev, int fd, short flags, uevent_cb_f cb, void *arg);
@@ -123,5 +148,7 @@ int event_base_set(struct event_base *base, struct event *ev);
 #define evtimer_initialized(ev) is_event_active(ev)
 int is_event_active(struct event *ev);
 
-#endif
+#endif /* internal libevent */
+
+#endif /* _USUAL_EVENT_H_ */
 
