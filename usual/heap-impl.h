@@ -24,15 +24,10 @@
  *   except the last one are fully filled.
  *
  * Instead of "min"- or "max"-heap, this is "best"-heap,
- * as it operates with user-defined IS_BETTER macro,
+ * as it operates with user-defined heap_is_better() functions,
  * which is used to bubble elements on top.  Main reason
  * for such design is to make the comparisions inline.
  */
-
-/* #define IS_BETTER(p1, p2) */
-#ifndef IS_BETTER
-#error <usual/heap.h> requires IS_BETTER(p1, p2) macro to be defined.
-#endif
 
 /*
  * If user wants to delete elements from the middle of heap,
@@ -43,14 +38,21 @@
 #define SAVE_POS(ptr, pos)
 #endif
 
-#include <stdbool.h>
-#include <stdlib.h>
+#include <usual/base.h>
 
 struct Heap {
 	void **data;
 	unsigned allocated;
 	unsigned used;
 };
+
+/*
+ * For user to be defined.
+ *
+ * Should return true if a needs to reach top before b,
+ * false if not or equal.
+ */
+static inline bool heap_is_better(const void *a, const void *b);
 
 
 /*
@@ -69,7 +71,7 @@ static inline unsigned _heap_get_child(unsigned i, unsigned child_nr)
 
 static inline bool _heap_is_better(struct Heap *h, unsigned i1, unsigned i2)
 {
-	return IS_BETTER(h->data[i1], h->data[i2]);
+	return heap_is_better(h->data[i1], h->data[i2]);
 }
 
 static inline void _heap_set(struct Heap *h, unsigned i, void *ptr)
@@ -202,8 +204,20 @@ static void heap_delete_pos(struct Heap *h, unsigned pos)
 		_heap_bubble_down(h, pos);
 }
 
-static inline void heap_delete_top(struct Heap *h)
+static void heap_delete_top(struct Heap *h)
 {
 	heap_delete_pos(h, 0);
+}
+
+/* example and avoid 'unused' warnings */
+static inline void _heap_example(void *el)
+{
+	struct Heap h;
+	void *top;
+	heap_init(&h);
+	heap_insert(&h, el);
+	top = heap_get_top(&h);
+	heap_delete_top(&h);
+	heap_destroy(&h);
 }
 
