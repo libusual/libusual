@@ -124,7 +124,7 @@ AC_CHECK_FUNCS(basename strlcpy strlcat getpeereid sigaction)
 AC_CHECK_FUNCS(inet_ntop poll getline)
 AC_CHECK_FUNCS(err errx warn warnx)
 ### Functions provided only on win32
-AC_CHECK_FUNCS(locatime_r recvmsg sendmsg)
+AC_CHECK_FUNCS(localtime_r recvmsg sendmsg)
 ### Functions used by libusual itself
 AC_CHECK_FUNCS(syslog mmap recvmsg sendmsg getpeerucred)
 ### win32: link with ws2_32
