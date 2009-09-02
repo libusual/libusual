@@ -19,7 +19,6 @@
 #include <usual/cfparser.h>
 
 #include <ctype.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include <usual/fileutil.h>
@@ -180,10 +179,14 @@ static bool load_handler(void *arg, enum CfKeyType ktype, const char *key, const
 
 	if (ktype == CF_SECT) {
 		for (s = ctx->sect_list; s->sect_name; s++) {
-			if (strcmp(s->sect_name, key) != 0)
+			if (strcmp(s->sect_name, key) != 0
+			    && strcmp(s->sect_name, "*") != 0)
 				continue;
 			ctx->cur_sect = s;
-			ctx->target = s->create_target_fn(ctx->top_arg);
+			if (s->create_target_fn)
+				ctx->target = s->create_target_fn(ctx->top_arg, key);
+			else
+				ctx->target = ctx->top_arg;
 			return fill_defaults(ctx);
 		}
 		log_error("load_init_file: unknown section: %s", key);

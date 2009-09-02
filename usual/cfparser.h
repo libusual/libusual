@@ -38,7 +38,7 @@ bool parse_ini_file(const char *fn, cf_handler_f user_handler, void *arg) _MUSTC
  * Fancier one.
  */
 
-typedef void *(*cf_create_target_f)(void *top_arg);
+typedef void *(*cf_create_target_f)(void *top_arg, const char *sect_name);
 typedef bool (*cf_setter_f)(void *dst_p, const char *value);
 
 struct CfKey {
