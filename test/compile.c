@@ -2,21 +2,35 @@
 #include <usual/base.h>
 #include <usual/cbtree.h>
 #include <usual/cfparser.h>
+#include <usual/crc32.h>
 #include <usual/daemon.h>
+#include <usual/endian.h>
 #include <usual/err.h>
 #include <usual/event.h>
 #include <usual/fileutil.h>
+#include <usual/hashtab-impl.h>
+#include <usual/heap-impl.h>
 #include <usual/list.h>
 #include <usual/logging.h>
 #include <usual/lookup3.h>
+#include <usual/mbuf.h>
 #include <usual/md5.h>
+#include <usual/misc.h>
+//#include <usual/pgsocket.h>
 #include <usual/safeio.h>
-#include <usual/slab.h>
+#include <usual/shlist.h>
 #include <usual/signal.h>
+#include <usual/slab.h>
 #include <usual/socket.h>
 #include <usual/statlist.h>
 #include <usual/string.h>
 #include <usual/time.h>
+#include <usual/utf8.h>
+
+static inline bool heap_is_better(const void *a, const void *b)
+{
+	return 1;
+}
 
 int main(void)
 {

@@ -1,0 +1,45 @@
+/*
+ * SHA1 implementation based on RFC3174.
+ *
+ * Copyright (c) 2009  Marko Kreen
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
+#ifndef _USUAL_SHA1_H_
+#define _USUAL_SHA1_H_
+
+#include <usual/base.h>
+
+#define SHA1_BLOCK_SIZE		64
+#define SHA1_DIGEST_LENGTH	20
+
+struct sha1_ctx {
+	uint64_t nbytes;
+	uint32_t a, b, c, d, e;
+	uint32_t buf[SHA1_BLOCK_SIZE / 4];
+};
+
+void sha1_reset(struct sha1_ctx *ctx);
+void sha1_update(struct sha1_ctx *ctx, const void *data, unsigned int len);
+void sha1_final(uint8_t *dst, struct sha1_ctx *ctx);
+
+#ifndef AVOID_SHA1_COMPAT
+typedef struct sha1_ctx SHA1_CTX;
+#define SHA1Init(ctx) sha1_reset(ctx)
+#define SHA1Update(ctx, data, len) sha1_update(ctx, data, len)
+#define SHA1Final(dst, ctx) sha1_final(dst, ctx)
+#endif
+
+#endif
+
