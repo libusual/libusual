@@ -3,6 +3,7 @@
 #include <usual/cbtree.h>
 #include <usual/cfparser.h>
 #include <usual/daemon.h>
+#include <usual/err.h>
 #include <usual/event.h>
 #include <usual/fileutil.h>
 #include <usual/list.h>
@@ -35,6 +36,7 @@ int main(void)
 	file_size("foo");
 	md5_reset(&md5);
 	strlcpy(buf, "foo", sizeof(buf));
+	printf("xmalloc: %p\n", xmalloc(128));
 	return 0;
 }
 
