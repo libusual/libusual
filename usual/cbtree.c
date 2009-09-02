@@ -25,11 +25,7 @@
 
 #include <usual/cbtree.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include <unistd.h>
+#include <usual/string.h>
 
 /*
  * - Childs are either other nodes or user pointers.
@@ -110,12 +106,9 @@ static unsigned find_crit_bit(const char *a, const char *b)
 	c = a[i] ^ b[i];
 
 	/* find the first one */
-	pos = i * 8;
-	while ((c & 0x80) == 0) {
-		c <<= 1;
-		pos++;
-	}
-	return pos;
+	pos = 8 - fls(c);
+
+	return i * 8 + pos;
 }
 
 

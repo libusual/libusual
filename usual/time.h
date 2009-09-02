@@ -1,5 +1,5 @@
 /*
- * Common time functions.
+ * Theme include for time.
  *
  * Copyright (c) 2007-2009 Marko Kreen, Skype Technologies OÜ
  *
@@ -21,6 +21,9 @@
 
 #include <usual/base.h>
 
+#include <sys/time.h>
+#include <time.h>
+
 typedef uint64_t usec_t;
 #define USEC 1000000ULL
 
@@ -30,5 +33,21 @@ char *format_time_s(usec_t time, char *dst, unsigned dstlen);
 usec_t get_time_usec(void);
 usec_t get_cached_time(void);
 void reset_time_cache(void);
+
+#ifdef WIN32
+int gettimeofday(struct timeval * tp, void * tzp);
+struct tm *localtime_r(const time_t *tp, struct tm *buf);
+
+static inline void usleep(long usec) { Sleep(usec / 1000); }
+
+struct rusage {
+	struct timeval ru_utime;
+	struct timeval ru_stime;
+};
+
+#define RUSAGE_SELF 0
+int getrusage(int who, struct rusage *dst);
+
+#endif
 
 #endif

@@ -35,6 +35,7 @@ dnl
 AC_DEFUN([AC_USUAL_PROGRAM_CHECK], [
 AC_PROG_CC
 AC_PROG_CPP
+AC_GNU_SOURCE
 dnl Check if compiler supports __func__
 AC_CACHE_CHECK([whether compiler supports __func__], pgac_cv_funcname_func,
   [AC_TRY_COMPILE([#include <stdio.h>], [printf("%s\n", __func__);],
@@ -121,11 +122,12 @@ AC_DEFUN([AC_USUAL_FUNCTION_CHECK], [
 AC_CHECK_FUNCS(basename strlcpy strlcat getpeereid sigaction)
 AC_CHECK_FUNCS(inet_ntop poll getline)
 ### Functions provided only on win32
-AC_CHECK_FUNCS(locatime_r recvmsg sendmsg strerror_r)
+AC_CHECK_FUNCS(locatime_r recvmsg sendmsg)
 ### Functions used by libusual itself
 AC_CHECK_FUNCS(syslog mmap recvmsg sendmsg getpeerucred)
 ### win32: link with ws2_32
 AC_SEARCH_LIBS(WSAGetLastError, ws2_32)
+AC_FUNC_STRERROR_R
 ])
 
 dnl

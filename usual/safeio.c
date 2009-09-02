@@ -39,7 +39,7 @@
 #include <sys/un.h>
 #endif
 
-#include <usual/compat.h>
+#include <usual/socket.h>
 #include <usual/logging.h>
 
 int safe_read(int fd, void *buf, int len)
@@ -151,39 +151,25 @@ loop:
 	return res;
 }
 
-static const char *sa2str(const struct sockaddr *sa)
-{
-	static char buf[256];
-
-	if (sa->sa_family == AF_INET) {
-		struct sockaddr_in *in = (struct sockaddr_in *)sa;
-		snprintf(buf, sizeof(buf), "%s:%d", inet_ntoa(in->sin_addr), ntohs(in->sin_port));
-	} if (sa->sa_family == AF_UNIX) {
-		struct sockaddr_un *un = (struct sockaddr_un *)sa;
-		snprintf(buf, sizeof(buf), "unix:%s", un->sun_path);
-	} else {
-		snprintf(buf, sizeof(buf), "sa2str: unknown proto");
-	}
-	return buf;
-}
-
 int safe_connect(int fd, const struct sockaddr *sa, socklen_t sa_len)
 {
 	int res;
+	char buf[128];
 loop:
 	res = connect(fd, sa, sa_len);
 	if (res < 0 && errno == EINTR)
 		goto loop;
 	if (res < 0 && (errno != EINPROGRESS || cf_verbose > 2))
-		log_noise("connect(%d, %s) = %s", fd, sa2str(sa), strerror(errno));
+		log_noise("connect(%d, %s) = %s", fd, sa2str(sa, buf, sizeof(buf)), strerror(errno));
 	else if (cf_verbose > 2)
-		log_noise("connect(%d, %s) = %d", fd, sa2str(sa), res);
+		log_noise("connect(%d, %s) = %d", fd, sa2str(sa, buf, sizeof(buf)), res);
 	return res;
 }
 
 int safe_accept(int fd, struct sockaddr *sa, socklen_t *sa_len_p)
 {
 	int res;
+	char buf[128];
 loop:
 	res = accept(fd, sa, sa_len_p);
 	if (res < 0 && errno == EINTR)
@@ -191,7 +177,7 @@ loop:
 	if (res < 0)
 		log_noise("safe_accept(%d) = %s", fd, strerror(errno));
 	else if (cf_verbose > 2)
-		log_noise("safe_accept(%d) = %d (%s)", fd, res, sa2str(sa));
+		log_noise("safe_accept(%d) = %d (%s)", fd, res, sa2str(sa, buf, sizeof(buf)));
 	return res;
 }
 

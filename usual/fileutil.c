@@ -16,10 +16,6 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */ 
 
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-
 #include <usual/fileutil.h>
 
 #ifdef HAVE_SYS_MMAN_H
@@ -27,12 +23,7 @@
 #endif
 
 #include <sys/stat.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
 #include <fcntl.h>
-
-#include <usual/compat.h>
 
 /*
  * Load text file into C string.
@@ -138,3 +129,38 @@ void unmap_file(struct MappedFile *m)
 }
 
 #endif
+
+
+#ifndef HAVE_GETLINE
+/*
+ * Read line from FILE with dynamic allocation.
+ */
+int getline(char **line_p, size_t *size_p, void *_f)
+{
+	FILE *f = _f;
+	char *p;
+	int len = 0;
+
+	if (!*line_p || *size_p < 128) {
+		p = realloc(*line_p, 512);
+		if (!p) return -1;
+		*line_p = p;
+		*size_p = 512;
+	}
+
+	while (1) {
+		p = fgets(*line_p + len, *size_p - len, f);
+		if (!p)
+			return len ? len : -1;
+		len += strlen(p);
+		if ((*line_p)[len - 1] == '\n')
+			return len;
+		p = realloc(*line_p, *size_p * 2);
+		if (!p)
+			return -1;
+		*line_p = p;
+		*size_p *= 2;
+	}
+}
+#endif
+

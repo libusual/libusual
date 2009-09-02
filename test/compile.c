@@ -1,5 +1,4 @@
 #include <usual/aatree.h>
-#include <usual/alloc.h>
 #include <usual/base.h>
 #include <usual/cbtree.h>
 #include <usual/cfparser.h>
@@ -12,6 +11,7 @@
 #include <usual/md5.h>
 #include <usual/safeio.h>
 #include <usual/slab.h>
+#include <usual/signal.h>
 #include <usual/socket.h>
 #include <usual/statlist.h>
 #include <usual/string.h>

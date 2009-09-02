@@ -18,11 +18,7 @@
 
 #include <usual/time.h>
 
-#include <sys/time.h>
-#include <time.h>
 #include <stdio.h>
-
-#include <usual/compat.h>
 
 char *format_time_ms(usec_t time, char *dst, unsigned dstlen)
 {
@@ -58,7 +54,9 @@ char *format_time_s(usec_t time, char *dst, unsigned dstlen)
 		s = time / USEC;
 	}
 	tm = localtime_r(&s, &tbuf);
-	strftime(dst, dstlen, "%Y-%m-%d %H:%M:%S", tm);
+	snprintf(dst, dstlen, "%04d-%02d-%02d %02d:%02d:%02d",
+		 tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday,
+		 tm->tm_hour, tm->tm_min, tm->tm_sec);
 	return dst;
 }
 
@@ -87,3 +85,84 @@ void reset_time_cache(void)
 	_time_cache = 0;
 }
 
+/*
+ * win32 compat
+ */
+
+#ifdef WIN32
+
+/* unix epoch (1970) in seconds from windows epoch (1601) */
+#define UNIX_EPOCH 11644473600LL
+
+/* 1 sec in 100 nsec units */
+#define FT_SEC 10000000LL
+
+static void ft2tv(FILETIME *src, struct timeval *dst, bool use_epoch)
+{
+	ULARGE_INTEGER tmp;
+	tmp.LowPart = src->dwLowDateTime;
+	tmp.HighPart = src->dwHighDateTime;
+	dst->tv_sec = (tmp.QuadPart / FT_SEC) - (use_epoch ? UNIX_EPOCH : 0);
+	dst->tv_usec = (tmp.QuadPart % FT_SEC) / 10;
+}
+
+int gettimeofday(struct timeval * tp, void * tzp)
+{
+	FILETIME file_time;
+	SYSTEMTIME system_time;
+
+	/* read UTC timestamp */
+	GetSystemTime(&system_time);
+	SystemTimeToFileTime(&system_time, &file_time);
+
+	/* convert to timeval */
+	ft2tv(&file_time, tp, true);
+
+	return 0;
+}
+
+struct tm *localtime_r(const time_t *tp, struct tm *dst)
+{
+	ULARGE_INTEGER utc;
+	FILETIME ft_utc;
+	SYSTEMTIME st_utc, st_local;
+
+	/* convert time_t to FILETIME */
+	utc.QuadPart = (*tp + UNIX_EPOCH) * FT_SEC;
+	ft_utc.dwLowDateTime = utc.LowPart;
+	ft_utc.dwHighDateTime = utc.HighPart;
+
+	/* split to parts and get local time */
+	if (!FileTimeToSystemTime(&ft_utc, &st_utc))
+		return NULL;
+	if (!SystemTimeToTzSpecificLocalTime(NULL, &st_utc, &st_local))
+		return NULL;
+
+	/* fill struct tm */
+	dst->tm_sec = st_local.wSecond;
+	dst->tm_min = st_local.wMinute;
+	dst->tm_hour = st_local.wHour;
+	dst->tm_mday = st_local.wDay;
+	dst->tm_mon = st_local.wMonth - 1;
+	dst->tm_year = st_local.wYear - 1900;
+	dst->tm_wday = st_local.wDayOfWeek;
+	dst->tm_yday = 0;
+	dst->tm_isdst = -1;
+	return dst;
+}
+
+int getrusage(int who, struct rusage *dst)
+{
+	FILETIME tcreate, texit, tkern, tuser;
+	if (who != RUSAGE_SELF) {
+		errno = EINVAL;
+		return -1;
+	}
+	if (!GetProcessTimes(GetCurrentProcess(), &tcreate, &texit, &tkern, &tuser))
+		return -1;
+	ft2tv(&tuser, &dst->ru_utime, false);
+	ft2tv(&tkern, &dst->ru_stime, false);
+	return 0;
+}
+
+#endif

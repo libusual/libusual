@@ -21,8 +21,6 @@
 
 #include <usual/base.h>
 
-#include <stdlib.h>
-
 /*
  * 0 - show only info level msgs (default)
  * 1 - show debug msgs (log_debug)

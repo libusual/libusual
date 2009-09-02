@@ -1,5 +1,5 @@
 /*
- * Basic C strings.
+ * Theme include for strings.
  * 
  * Copyright (c) 2007-2009  Marko Kreen, Skype Technologies OÜ
  * 
@@ -23,39 +23,15 @@
 
 #include <string.h>
 
-/*
- * Minimal spec-conforming implementations of strlcpy(), strlcat().
- */
-
 #ifndef HAVE_STRLCPY
 #define strlcpy(a,b,c) usual_strlcpy(a,b,c)
-
-static inline size_t strlcpy(char *dst, const char *src, size_t n)
-{
-	size_t len = strlen(src);
-	if (len < n) {
-		memcpy(dst, src, len + 1);
-	} else if (n > 0) {
-		memcpy(dst, src, n - 1);
-		dst[n - 1] = 0;
-	}
-	return len;
-}
-
-#endif /* !HAVE_STRLCPY */
+size_t strlcpy(char *dst, const char *src, size_t n);
+#endif
 
 #ifndef HAVE_STRLCAT
 #define strlcat(a,b,c) usual_strlcat(a,b,c)
-
-static inline size_t strlcat(char *dst, const char *src, size_t n)
-{
-	size_t pos = 0;
-	while (pos < n && dst[pos])
-		pos++;
-	return pos + strlcpy(dst + pos, src, n - pos);
-}
-
-#endif /* !HAVE_STRLCAT */
+size_t strlcat(char *dst, const char *src, size_t n);
+#endif
 
 typedef bool (*str_cb)(void *arg, const char *s);
 
@@ -69,6 +45,57 @@ const char *strlist_pop(struct StrList *slist);
 
 bool parse_word_list(const char *s, str_cb cb_func, void *cb_arg);
 
+/*
+ * fls(int)
+ * flsl(long)
+ * flsll(long long)
+ *
+ *   find MSB bit set, 1-based ofs, 0 if arg == 0
+ */
+
+#if defined(__GNUC__) && (__GNUC__ >= 4)
+#define _FLS(sfx, type) \
+	return (8*sizeof(type)) - __builtin_clz ## sfx(x)
+#else
+#define _FLS(sfx, type) \
+	unsigned type z = x; \
+	unsigned int bit; \
+	if (!z) return 0; \
+	/* count from smallest bit, assuming small values */ \
+	for (bit = 1; z > 1; bit++) z >>= 1; \
+	return bit
+#endif
+
+#ifndef HAVE_FLS
+static inline int fls(int x) { _FLS(, int); }
+#endif
+#ifndef HAVE_FLSL
+static inline int flsl(long x) { _FLS(l, long); }
+#endif
+#ifndef HAVE_FLS
+static inline long long flsll(long long x) { _FLS(ll, long long); }
+#endif
+#undef _FLS
+
+
+#ifndef HAVE_BASENAME
+#define basename(a) compat_basename(a)
+const char *basename(const char *path);
+#endif
+
+/*
+ * strerror, strerror_r
+ */
+#ifdef WIN32
+const char *win32_strerror(int e);
+#define strerror(x) win32_strerror(x)
+const char *win32_strerror_r(int e, char *dst, size_t dstlen);
+#define strerror_r(x) win32_strerror_r(x)
+#else
+/* otherwise convert native strerror_r() to GNU signature */
+const char *wrap_strerror_r(int e, char *dst, size_t dstlen);
+#define strerror_r(a,b,c) wrap_strerror_r(a,b,c)
+#endif
 
 #endif
 

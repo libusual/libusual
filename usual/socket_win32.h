@@ -1,34 +1,25 @@
-#ifndef _USUAL_WIN32_
-#define _USUAL_WIN32_
+/*
+ * Socket compat code for win32.
+ *
+ * Copyright (c) 2007-2009  Marko Kreen, Skype Technologies OÜ
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */ 
 
-#define WIN32_LEAN_AND_MEAN
+#ifndef _USUAL_SOCKET_WIN32_H_
+#define _USUAL_SOCKET_WIN32_H_
 
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <time.h>
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-#define ECONNABORTED WSAECONNABORTED
-#define EMSGSIZE WSAEMSGSIZE
-#define EINPROGRESS WSAEWOULDBLOCK // WSAEINPROGRESS
-
-#undef EAGAIN
-#define EAGAIN WSAEWOULDBLOCK // WSAEAGAIN
-
-/* dummy types / functions */
-#define hstrerror strerror
-#define getuid() (6667)
-#define setsid() getpid()
-#define setgid(x) (-1)
-#define setuid(x) (-1)
-#define fork() (-1)
-#define geteuid() getuid()
-#define setgroups(s, p) (-1)
-
-#define srandom(s) srand(s)
-#define random() rand()
+typedef int socklen_t;
 
 #define in_addr_t   uint32_t
 
@@ -43,16 +34,16 @@ struct iovec {
 
 struct msghdr {
 	void         *msg_name;
-	socklen_t     msg_namelen;
+	int	     msg_namelen;
 	struct iovec *msg_iov;
 	int           msg_iovlen;
 	void         *msg_control;
-	socklen_t     msg_controllen;
+	int           msg_controllen;
 	int           msg_flags;
 };
 
 struct cmsghdr {
-	socklen_t	cmsg_len;
+	int		cmsg_len;
 	int		cmsg_level;
 	int		cmsg_type;
 };
@@ -88,7 +79,7 @@ static inline int ewrap(int res) {
 }
 
 /* proper signature for setsockopt */
-static inline int w_setsockopt(int fd, int level, int optname, const void *optval, socklen_t optlen)
+static inline int w_setsockopt(int fd, int level, int optname, const void *optval, int optlen)
 {
 	return ewrap(setsockopt(fd, level, optname, optval, optlen));
 }
@@ -124,77 +115,11 @@ static inline struct hostent *w_gethostbyname(const char *n) {
 #define gethostbyname(a) w_gethostbyname(a)
 
 
-/* gettimeoutday() */
-static inline int win32_gettimeofday(struct timeval * tp, void * tzp)
-{
-	FILETIME file_time;
-	SYSTEMTIME system_time;
-	ULARGE_INTEGER ularge;
-	__int64 epoch = 116444736000000000LL;
-
-	GetSystemTime(&system_time);
-	SystemTimeToFileTime(&system_time, &file_time);
-	ularge.LowPart = file_time.dwLowDateTime;
-	ularge.HighPart = file_time.dwHighDateTime;
-
-	tp->tv_sec = (long) ((ularge.QuadPart - epoch) / 10000000L);
-	tp->tv_usec = (long) (system_time.wMilliseconds * 1000);
-
-	return 0;
-}
-#define gettimeofday(a,b) win32_gettimeofday(a,b)
-
 /* make unix socket related code compile */
 struct sockaddr_un {
 	int sun_family;
 	char sun_path[128];
 };
-
-/* getrlimit() */
-#define RLIMIT_NOFILE -1
-struct rlimit {
-	int rlim_cur;
-	int rlim_max;
-};
-static inline int getrlimit(int res, struct rlimit *dst)
-{
-	dst->rlim_cur = dst->rlim_max = -1;
-	return 0;
-}
-
-/* kill is only used to detect if process is running (ESRCH->not) */
-static inline int kill(int pid, int sig)
-{
-	HANDLE hProcess;
-	DWORD exitCode;
-	int ret = 0;
-
-	if (sig != 0) {
-		errno = EINVAL;
-		return -1;
-	}
-
-	hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, pid);
-	if (hProcess == NULL) {
-		if (GetLastError() == ERROR_INVALID_PARAMETER)
-			ret = ESRCH;
-		else
-			ret = EPERM;
-	} else {
-		/* OpenProcess may succed for exited processes */
-		if (GetExitCodeProcess(hProcess, &exitCode)) {
-			if (exitCode != STILL_ACTIVE)
-				ret = ESRCH;
-		}
-		CloseHandle(hProcess);
-	}
-
-	if (ret) {
-		errno = ret;
-		return -1;
-	} else
-		return  0;
-}
 
 /* sendmsg is not used */
 static inline int sendmsg(int s, const struct msghdr *m, int flags)
@@ -219,15 +144,6 @@ static inline int recvmsg(int s, struct msghdr *m, int flags)
 	return recv(s, m->msg_iov[0].iov_base,
 		    m->msg_iov[0].iov_len, flags);
 }
-
-/* dummy getpwnam() */
-struct passwd {
-	char *pw_name;
-	char *pw_passwd;
-	int pw_uid;
-	int pw_gid;
-};
-static inline const struct passwd * getpwnam(const char *u) { return NULL; }
 
 /*
  * fcntl
@@ -272,61 +188,5 @@ static inline int fcntl(int fd, int cmd, long arg)
 		return -1;
 	}
 }
-
-/*
- * syslog
- */
-
-#define LOG_EMERG	0
-#define LOG_ALERT	1
-#define LOG_CRIT	2
-#define LOG_ERR		3
-#define LOG_WARNING	4
-#define LOG_NOTICE	5
-#define LOG_INFO	6
-#define LOG_DEBUG	7
-
-#define LOG_PID 0
-
-#define LOG_KERN 0
-#define LOG_USER 0
-#define LOG_MAIL 0
-#define LOG_DAEMON 0
-#define LOG_AUTH 0
-#define LOG_SYSLOG 0
-#define LOG_LPR 0
-#define LOG_NEWS 0
-#define LOG_UUCP 0
-#define LOG_CRON 0
-#define LOG_AUTHPRIV 0
-#define LOG_FTP 0
-#define LOG_LOCAL0 0
-#define LOG_LOCAL1 0
-#define LOG_LOCAL2 0
-#define LOG_LOCAL3 0
-#define LOG_LOCAL4 0
-#define LOG_LOCAL5 0
-#define LOG_LOCAL6 0
-#define LOG_LOCAL7 0
-
-static inline void openlog(const char *ident, int option, int facility) {}
-static inline void closelog(void) {}
-void win32_eventlog(int priority, const char *format, ...);
-#define syslog win32_eventlog
-
-static inline struct tm *localtime_r(const time_t *tp, struct tm *buf)
-{
-	struct tm *r = localtime(tp);
-	*buf = *r;
-	return buf;
-}
-
-const char *win32_strerror(int e);
-static inline const char *w_strerror(int e) {
-	if (e > 900)
-		return win32_strerror(e);
-	return strerror(e);
-}
-#define strerror(x) w_strerror(x)
 
 #endif

@@ -19,18 +19,13 @@
 
 #include <usual/daemon.h>
 
-#include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <errno.h>
 #include <fcntl.h>
-#include <signal.h>
 #include <string.h>
 #include <stdio.h>
 
 #include <usual/logging.h>
-#include <usual/compat.h>
+#include <usual/signal.h>
 
 /*
  * pidfile management.

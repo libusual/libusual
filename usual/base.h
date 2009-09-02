@@ -19,12 +19,25 @@
 #ifndef _USUAL_BASE_H_
 #define _USUAL_BASE_H_
 
+#ifdef WIN32
+#define WIN32_LEAN_AND_MEAN
+#define _WIN32_WINNT 0x0400
+#include <windows.h>
+#endif
+
 #include <usual/config.h>
 
 #include <sys/types.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <unistd.h>
+
+#ifdef WIN32
+#include <usual/base_win32.h>
+#endif
 
 /* give offset of a field inside struct */
 #ifndef offsetof
@@ -46,6 +59,7 @@
 #define ALIGN(x)  CUSTOM_ALIGN(x, sizeof(long))
 #endif
 
+#define _PACKED			__attribute__((packed))
 
 /*
  * make compiler do something useful
@@ -83,7 +97,6 @@
 /* assert() that uses our logging */
 #ifndef Assert
 #ifdef CASSERT
-#include <stdlib.h>
 void log_fatal(const char *file, int line, const char *func, bool show_perror, const char *s, ...) _PRINTF(5, 6);
 #define Assert(e) \
 	do { \
@@ -97,6 +110,20 @@ void log_fatal(const char *file, int line, const char *func, bool show_perror, c
 #define Assert(e)
 #endif
 #endif
+
+/* Fix posix bug by accepting const pointer.  */
+static inline void _const_free(const void *p)
+{
+	free((void *)p);
+}
+#define free(x) _const_free(x)
+
+/* Zeroing malloc */
+_MUSTCHECK
+static inline void *zmalloc(size_t len)
+{
+	return calloc(1, len);
+}
 
 #endif
 

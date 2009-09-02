@@ -21,6 +21,8 @@
 
 #include <usual/base.h>
 
+#include <stdio.h>
+
 struct MappedFile {
 	int fd;
 	unsigned len;
@@ -37,6 +39,12 @@ ssize_t file_size(const char *fn);
 
 int map_file(struct MappedFile *m, const char *fname, int rw) _MUSTCHECK;
 void unmap_file(struct MappedFile *m);
+
+#if !defined(HAVE_GETLINE)
+#define getline(a,b,c) compat_getline(a,b,c)
+int getline(char **line_p, size_t *size_p, void *f);
+#endif
+
 
 #endif
 

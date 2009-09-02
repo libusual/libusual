@@ -8,7 +8,6 @@
 
 #include <usual/base.h>
 
-#include <stdlib.h>
 #include <string.h>
 
 struct MBuf {
@@ -19,6 +18,10 @@ struct MBuf {
 	bool reader;
 	bool fixed;
 };
+
+/* helpers for *printf() */
+#define MBUF_FMT	".*s"
+#define MBUF_ARG(m)	(m) ? mbuf_written(m) : 6, (m) ? (const char *)mbuf_data(m) : "(null)"
 
 /*
  * Init functions.
@@ -101,6 +104,11 @@ static inline unsigned mbuf_written(const struct MBuf *buf)
 	return buf->write_pos;
 }
 
+static inline const void *mbuf_data(const struct MBuf *buf)
+{
+	return buf->data;
+}
+
 /*
  * Read functions.
  */
@@ -111,6 +119,32 @@ static inline bool mbuf_get_byte(struct MBuf *buf, uint8_t *dst_p)
 	if (buf->read_pos + 1 > buf->write_pos)
 		return false;
 	*dst_p = buf->data[buf->read_pos++];
+	return true;
+}
+
+_MUSTCHECK
+static inline bool mbuf_get_uint16be(struct MBuf *buf, uint16_t *dst_p)
+{
+	unsigned a, b;
+	if (buf->read_pos + 2 > buf->write_pos)
+		return false;
+	a = buf->data[buf->read_pos++];
+	b = buf->data[buf->read_pos++];
+	*dst_p = (a << 8) | b;
+	return true;
+}
+
+_MUSTCHECK
+static inline bool mbuf_get_uint32be(struct MBuf *buf, uint32_t *dst_p)
+{
+	unsigned a, b, c, d;
+	if (buf->read_pos + 4 > buf->write_pos)
+		return false;
+	a = buf->data[buf->read_pos++];
+	b = buf->data[buf->read_pos++];
+	c = buf->data[buf->read_pos++];
+	d = buf->data[buf->read_pos++];
+	*dst_p = (a << 24) | (b << 16) | (c << 8) | d;
 	return true;
 }
 
@@ -169,6 +203,20 @@ _MUSTCHECK
 static inline bool mbuf_write_raw_mbuf(struct MBuf *dst, struct MBuf *src)
 {
 	return mbuf_write(dst, src->data, src->write_pos);
+}
+
+/* writes partial contents of another mbuf, with touching it */
+_MUSTCHECK
+static inline bool mbuf_write_mbuf(struct MBuf *dst, struct MBuf *src, unsigned len)
+{
+	const uint8_t *data;
+	if (!mbuf_get_bytes(src, len, &data))
+		return false;
+	if (!mbuf_write(dst, data, len)) {
+		src->read_pos -= len;
+		return false;
+	}
+	return true;
 }
 
 _MUSTCHECK

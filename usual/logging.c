@@ -18,20 +18,34 @@
 
 #include <usual/logging.h>
 
-#include <sys/types.h>
-#include <errno.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
-#include <unistd.h>
+
+#include <usual/time.h>
 
 #ifdef HAVE_SYSLOG_H
 #include <syslog.h>
 #endif
 
-#include <usual/compat.h>
-#include <usual/time.h>
+#ifdef WIN32
+#define LOG_EMERG       0
+#define LOG_ALERT       1
+#define LOG_CRIT        2
+#define LOG_ERR         3
+#define LOG_WARNING     4
+#define LOG_NOTICE      5
+#define LOG_INFO        6
+#define LOG_DEBUG       7
+
+#define LOG_PID 0
+#define LOG_DAEMON 0
+
+#define openlog(a,b,c)
+#define syslog win32_eventlog
+#define closelog()
+static void win32_eventlog(int level, const char *fmt, ...);
+#endif
 
 int cf_quiet = 0;
 int cf_verbose = 0;
@@ -141,4 +155,42 @@ void log_fatal(const char *file, int line, const char *func, bool show_perror, c
 			     file, line, func, buf);
 	}
 }
+
+#ifdef WIN32
+
+static void win32_eventlog(int level, const char *fmt, ...)
+{
+	static HANDLE evtHandle = INVALID_HANDLE_VALUE;
+	int elevel;
+	char buf[1024];
+	const char *strlist[1] = { buf };
+	va_list ap;
+
+	va_start(ap, fmt);
+	vsnprintf(buf, sizeof(buf), fmt, ap);
+	va_end(ap);
+
+	switch (level) {
+	case LOG_CRIT:
+	case LOG_ERR:
+		elevel = EVENTLOG_ERROR_TYPE;
+		break;
+	case LOG_WARNING:
+		elevel = EVENTLOG_WARNING_TYPE;
+		break;
+	default:
+		elevel = EVENTLOG_INFORMATION_TYPE;
+	}
+
+	if (evtHandle == INVALID_HANDLE_VALUE) {
+		evtHandle = RegisterEventSource(NULL, cf_syslog_ident);
+		if (evtHandle == NULL || evtHandle == INVALID_HANDLE_VALUE) {
+			evtHandle = INVALID_HANDLE_VALUE;
+			return;
+		}
+	}
+	ReportEvent(evtHandle, elevel, 0, 0, NULL, 1, 0, strlist, NULL);
+}
+
+#endif
 
