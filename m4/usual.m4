@@ -117,11 +117,11 @@ dnl
 dnl  AC_USUAL_FUNCTION_CHECK:  Basic functions
 dnl
 AC_DEFUN([AC_USUAL_FUNCTION_CHECK], [
-### Functions provided by usual/compat if missing
+### Functions provided if missing
 AC_CHECK_FUNCS(basename strlcpy strlcat getpeereid sigaction)
 AC_CHECK_FUNCS(inet_ntop poll getline)
 ### Functions provided only on win32
-AC_CHECK_FUNCS(locatime_r recvmsg sendmsg)
+AC_CHECK_FUNCS(locatime_r recvmsg sendmsg strerror_r)
 ### Functions used by libusual itself
 AC_CHECK_FUNCS(syslog mmap recvmsg sendmsg getpeerucred)
 ### win32: link with ws2_32
@@ -177,4 +177,63 @@ fi
 AC_SUBST(enable_debug)
 ])
 
+
+dnl
+dnl  AC_USUAL_LIBEVENT:  --with-libevent
+dnl
+AC_DEFUN([AC_USUAL_LIBEVENT], [
+ifelse([$#], [0], [levent=yes], [levent=no])
+AC_MSG_CHECKING([for libevent])
+AC_ARG_WITH(libevent,
+  AC_HELP_STRING([--with-libevent=prefix],[Specify where libevent is installed]),
+  [ if test "$withval" = "no"; then
+      levent=no
+    elif test "$withval" = "yes"; then
+      levent=yes
+    else
+      levent=yes
+      CPPFLAGS="$CPPFLAGS -I$withval/include"
+      LDFLAGS="$LDFLAGS -L$withval/lib"
+    fi
+  ], [])
+
+if test "$levent" = "no"; then
+  AC_MSG_RESULT([using usual/event])
+  AC_DEFINE(HAVE_EVENT_LOOPBREAK, 1, [usual/event.h has it.])
+  AC_DEFINE(HAVE_EVENT_BASE_NEW, 1, [usual/event.h has it.])
+  have_libevent=no
+else # libevent
+AC_DEFINE(HAVE_LIBEVENT, 1, [Use real libevent.])
+LIBS="-levent $LIBS"
+AC_LINK_IFELSE([
+  #include <sys/types.h>
+  #include <sys/time.h>
+  #include <stdio.h>
+  #include <event.h>
+  int main(void) {
+    struct event ev;
+    event_init();
+    event_set(&ev, 1, EV_READ, NULL, NULL);
+    /* this checks for 1.2+ but next we check for 1.3b+ anyway */
+    /* event_base_free(NULL); */
+  } ],
+[AC_MSG_RESULT([found])],
+[AC_MSG_ERROR([not found, cannot proceed])])
+
+dnl libevent < 1.3b crashes on event_base_free()
+dnl no good way to check libevent version.  use hack:
+dnl evhttp.h defines HTTP_SERVUNAVAIL only since 1.3b
+AC_MSG_CHECKING([whether libevent version >= 1.3b])
+AC_EGREP_CPP([HTTP_SERVUNAVAIL],
+[#include <evhttp.h>
+  HTTP_SERVUNAVAIL ],
+[AC_MSG_ERROR([no, cannot proceed])],
+[AC_MSG_RESULT([yes])])
+
+AC_CHECK_FUNCS(event_loopbreak event_base_new)
+have_libevent=yes
+fi # libevent
+AC_SUBST(have_libevent)
+
+]) dnl  AC_USUAL_LIBEVENT
 
