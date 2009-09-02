@@ -18,6 +18,8 @@
 
 #include <usual/md5.h>
 
+#include <usual/endian.h>
+#include <usual/misc.h>
 #include <string.h>
 
 /*
@@ -26,30 +28,11 @@
 
 #define bufpos(ctx) ((ctx)->nbytes & (MD5_BLOCK_LENGTH - 1))
 
-static inline uint32_t rol(uint32_t v, int s)
-{
-	return (v << s) | (v >> (32 - s));
-}
-
 static inline void swap_words(uint32_t *w, int n)
 {
 #ifdef WORDS_BIGENDIAN
-	for (; n > 0; w++, n--) {
-		uint32_t v = rol(*w, 16);
-		*w = ((v >> 8) & 0x00FF00FF) | ((v << 8) & 0xFF00FF00);
-	}
-#endif
-}
-
-static inline void put_word(uint8_t *dst, uint32_t val)
-{
-#ifdef WORDS_BIGENDIAN
-	dst[0] = val;
-	dst[1] = val >> 8;
-	dst[2] = val >> 16;
-	dst[3] = val >> 24;
-#else
-	memcpy(dst, &val, 4);
+	for (; n > 0; w++, n--)
+		*w = le32toh(*w);
 #endif
 }
 
@@ -63,7 +46,7 @@ static inline void put_word(uint8_t *dst, uint32_t val)
 #define I(X,Y,Z) (Y ^ (X | (~Z)))
 
 #define OP(fn, a, b, c, d, k, s, T_i) \
-	a = b + rol(a + fn(b, c, d) + X[k] + T_i, s)
+	a = b + rol32(a + fn(b, c, d) + X[k] + T_i, s)
 
 static void md5_mix(struct md5_ctx *ctx, const uint32_t *X)
 {
@@ -205,9 +188,9 @@ void md5_final(uint8_t *dst, struct md5_ctx *ctx)
 
 	/* final result */
 	md5_mix(ctx, ctx->buf);
-	put_word(dst, ctx->a);
-	put_word(dst + 4, ctx->b);
-	put_word(dst + 8, ctx->c);
-	put_word(dst + 12, ctx->d);
+	le32enc(dst + 0, ctx->a);
+	le32enc(dst + 4, ctx->b);
+	le32enc(dst + 8, ctx->c);
+	le32enc(dst + 12, ctx->d);
 }
 

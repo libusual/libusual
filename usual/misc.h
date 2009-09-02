@@ -46,5 +46,25 @@ static inline int is_power_of_2(int n)
 #define wmb() asm volatile("sfence":::"memory")
 #endif
 
+/*
+ * Single-eval and type-safe rol/ror
+ */
+
+static inline uint16_t rol16(uint16_t v, int s)
+{
+	return (v << s) | (v >> (16 - s));
+}
+static inline uint32_t rol32(uint32_t v, int s)
+{
+	return (v << s) | (v >> (32 - s));
+}
+static inline uint64_t rol64(uint64_t v, int s)
+{
+	return (v << s) | (v >> (64 - s));
+}
+#define ror16(v, s) rol16(v, (16 - (s)))
+#define ror32(v, s) rol32(v, (32 - (s)))
+#define ror64(v, s) rol64(v, (64 - (s)))
+
 #endif
 

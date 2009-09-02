@@ -19,13 +19,9 @@
 #include <usual/sha1.h>
 
 #include <usual/endian.h>
-
-/*
- * Support functions.
- */
+#include <usual/misc.h>
 
 #define bufpos(ctx) ((ctx)->nbytes & (SHA1_BLOCK_SIZE - 1))
-#define rol32(v, s) (((v) << (s)) | ((v) >> (32 - (s))))
 
 /*
  * SHA1 core.
