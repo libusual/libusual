@@ -46,12 +46,18 @@ obj/%.o: usual/%.c config.mak $(hdrs)
 	$(E) "	CC" $<
 	$(Q) $(CC) -c -o $@ $(DEFS) $(CPPFLAGS) $(CFLAGS) $<
 
+obj/%.s: usual/%.c config.mak $(hdrs)
+	@mkdir -p obj
+	$(E) "	CC -S" $<
+	$(Q) $(CC) -S -fverbose-asm -o - $(DEFS) $(CPPFLAGS) $(CFLAGS) $< \
+	| cleanasm > $@
+
 obj/testcompile: test/compile.c libusual.a config.mak $(hdrs)
 	$(E) "	CHECK" $<
 	$(Q) $(CC) -o $@ $(DEFS) $(CPPFLAGS) $(CFLAGS) $< $(USUAL_LDFLAGS) $(USUAL_LIBS) $(LIBS)
 
 clean:
-	rm -f libusual.a obj/*.o obj/test* aclocal* config.log
+	rm -f libusual.a obj/*.[os] obj/test* aclocal* config.log
 	rm -rf autom4te*
 
 distclean: clean
@@ -71,4 +77,7 @@ config.mak: usual/config.h
 usual/config.h:
 	@echo "Please run ./configure first"
 	@exit 1
+
+asms = $(objs:.o=.s)
+asm: $(asms)
 
