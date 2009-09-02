@@ -92,6 +92,7 @@ static void start_syslog(void)
 void log_generic(enum LogLevel level, const char *fmt, ...)
 {
 	char buf[2048];
+	char ebuf[256];
 	char timebuf[64];
 	const struct LevelInfo *lev = &log_level_list[level];
 	unsigned pid = getpid();
@@ -112,7 +113,8 @@ void log_generic(enum LogLevel level, const char *fmt, ...)
 		} else if (!cf_quiet && !error_reported) {
 			/* Unable to open, complain once */
 			fprintf(stderr, "%s %u %s %s: %s\n", timebuf, pid,
-				log_level_list[2].tag, cf_logfile, strerror(errno));
+				log_level_list[2].tag, cf_logfile,
+				strerror_r(errno, ebuf, sizeof(ebuf)));
 			error_reported = 1;
 		}
 	}
@@ -133,14 +135,14 @@ void log_generic(enum LogLevel level, const char *fmt, ...)
 
 void log_fatal(const char *file, int line, const char *func, bool show_perror, const char *fmt, ...)
 {
-	char buf[2048];
+	char buf[2048], ebuf[256];
 	const char *estr = NULL;
 	int old_errno = 0;
 	va_list ap;
 
 	if (show_perror) {
 		old_errno = errno;
-		estr = strerror(errno);
+		estr = strerror_r(errno, ebuf, sizeof(ebuf));
 	}
 
 	va_start(ap, fmt);

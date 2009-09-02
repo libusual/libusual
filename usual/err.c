@@ -27,13 +27,12 @@
 #ifndef HAVE_ERR
 void err(int e, const char *fmt, ...)
 {
-	const char *serr = strerror(errno);
-	char buf[1024];
+	char buf[1024], ebuf[256];
 	va_list ap;
 	va_start(ap, fmt);
 	vsnprintf(buf, sizeof(buf), fmt, ap);
 	va_end(ap);
-	errx(e, "%s: %s", buf, serr);
+	errx(e, "%s: %s", buf, strerror_r(e, ebuf, sizeof(ebuf)));
 }
 #endif
 
@@ -51,13 +50,12 @@ void errx(int e, const char *fmt, ...)
 #ifndef HAVE_WARN
 void warn(const char *fmt, ...)
 {
-	const char *serr = strerror(errno);
-	char buf[1024];
+	char buf[1024], ebuf[256];
 	va_list ap;
 	va_start(ap, fmt);
 	vsnprintf(buf, sizeof(buf), fmt, ap);
 	va_end(ap);
-	warnx("%s: %s", buf, serr);
+	warnx("%s: %s", buf, strerror_r(e, ebuf, sizeof(ebuf)));
 }
 #endif
 
