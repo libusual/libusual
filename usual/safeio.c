@@ -23,22 +23,6 @@
 
 #include <usual/safeio.h>
 
-#include <fcntl.h>
-#include <unistd.h>
-#include <errno.h>
-#include <string.h>
-#include <stdio.h>
-
-#ifdef HAVE_NETINET_IN_H
-#include <netinet/in.h>
-#endif
-#ifdef HAVE_ARPA_INET_H
-#include <arpa/inet.h>
-#endif
-#ifdef HAVE_SYS_UN_H
-#include <sys/un.h>
-#endif
-
 #include <usual/socket.h>
 #include <usual/logging.h>
 
