@@ -25,6 +25,7 @@
 
 #include <usual/socket.h>
 #include <usual/logging.h>
+#include <usual/string.h>
 
 int safe_read(int fd, void *buf, int len)
 {

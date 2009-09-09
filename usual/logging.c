@@ -20,8 +20,8 @@
 
 #include <stdio.h>
 #include <stdarg.h>
-#include <string.h>
 
+#include <usual/string.h>
 #include <usual/time.h>
 
 #ifdef HAVE_SYSLOG_H

@@ -90,7 +90,7 @@ const char *basename(const char *path);
 const char *win32_strerror(int e);
 #define strerror(x) win32_strerror(x)
 const char *win32_strerror_r(int e, char *dst, size_t dstlen);
-#define strerror_r(x) win32_strerror_r(x)
+#define strerror_r(a,b,c) win32_strerror_r(a,b,c)
 #else
 /* otherwise convert native strerror_r() to GNU signature */
 const char *wrap_strerror_r(int e, char *dst, size_t dstlen);
