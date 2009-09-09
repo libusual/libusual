@@ -63,4 +63,36 @@ struct passwd {
 };
 static inline const struct passwd * getpwnam(const char *u) { return NULL; }
 
+
+/*
+ * Minimal dlopen, dlsym, dlclose, dlerror compat.
+ */
+
+#define RTLD_LAZY 1
+#define RTLD_NOW  2
+
+static inline void *dlopen(const char *fn, int flag)
+{
+	HMODULE h = LoadLibraryEx(fn, NULL, 0);
+	return h;
+}
+
+static inline void *dlsym(void *hptr, const char *fname)
+{
+	HMODULE h = hptr;
+	FARPROC f = GetProcAddress(h, fname);
+	return f;
+}
+
+static inline int dlclose(void *hptr)
+{
+	HMODULE h = hptr;
+	return FreeLibrary(h) ? 0 : -1;
+}
+
+static inline const char *dlerror(void)
+{
+	return strerror(errno);
+}
+
 #endif
