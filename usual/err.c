@@ -24,15 +24,22 @@
 
 #include <usual/string.h>
 
+static const char *progname;
+
 #ifndef HAVE_ERR
 void err(int e, const char *fmt, ...)
 {
 	char buf[1024], ebuf[256];
 	va_list ap;
-	va_start(ap, fmt);
-	vsnprintf(buf, sizeof(buf), fmt, ap);
-	va_end(ap);
-	errx(e, "%s: %s", buf, strerror_r(e, ebuf, sizeof(ebuf)));
+	int olderrno = errno;
+	if (fmt) {
+		va_start(ap, fmt);
+		vsnprintf(buf, sizeof(buf), fmt, ap);
+		va_end(ap);
+		errx(e, "%s: %s", buf, strerror_r(olderrno, ebuf, sizeof(ebuf)));
+	} else {
+		errx(e, "%s", strerror_r(olderrno, ebuf, sizeof(ebuf)));
+	}
 }
 #endif
 
@@ -40,9 +47,14 @@ void err(int e, const char *fmt, ...)
 void errx(int e, const char *fmt, ...)
 {
 	va_list ap;
-	va_start(ap, fmt);
-	vfprintf(stderr, fmt, ap);
-	va_end(ap);
+	if (progname)
+		fprintf(stderr, "%s: ", progname);
+	if (fmt) {
+		va_start(ap, fmt);
+		vfprintf(stderr, fmt, ap);
+		va_end(ap);
+	}
+	fprintf(stderr, "\n");
 	exit(e);
 }
 #endif
@@ -52,10 +64,15 @@ void warn(const char *fmt, ...)
 {
 	char buf[1024], ebuf[256];
 	va_list ap;
-	va_start(ap, fmt);
-	vsnprintf(buf, sizeof(buf), fmt, ap);
-	va_end(ap);
-	warnx("%s: %s", buf, strerror_r(e, ebuf, sizeof(ebuf)));
+	int olderrno = errno;
+	if (fmt) {
+		va_start(ap, fmt);
+		vsnprintf(buf, sizeof(buf), fmt, ap);
+		va_end(ap);
+		warnx("%s: %s", buf, strerror_r(olderrno, ebuf, sizeof(ebuf)));
+	} else {
+		warnx("%s", strerror_r(olderrno, ebuf, sizeof(ebuf)));
+	}
 }
 #endif
 
@@ -63,9 +80,28 @@ void warn(const char *fmt, ...)
 void warnx(const char *fmt, ...)
 {
 	va_list ap;
-	va_start(ap, fmt);
-	vfprintf(stderr, fmt, ap);
-	va_end(ap);
+	if (progname)
+		fprintf(stderr, "%s: ", progname);
+	if (fmt) {
+		va_start(ap, fmt);
+		vfprintf(stderr, fmt, ap);
+		va_end(ap);
+	}
+}
+#endif
+
+#ifndef HAVE_SETPROGNAME
+void setprogname(const char *s)
+{
+	const char *ss = strrchr(s, '/');
+	progname = ss ? (ss + 1) : s;
+}
+#endif
+
+#ifndef HAVE_GETPROGNAME
+const char *getprogname(void)
+{
+	return progname;
 }
 #endif
 

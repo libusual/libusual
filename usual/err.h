@@ -37,6 +37,12 @@ void warn(const char *fmt, ...);
 #ifndef HAVE_WARNX
 void warnx(const char *fmt, ...);
 #endif
+#ifndef HAVE_SETPROGNAME
+void setprogname(const char *s);
+#endif
+#ifndef HAVE_GETPROGNAME
+const char *getprogname(void);
+#endif
 
 void *xmalloc(size_t len);
 void *xrealloc(void *p, size_t len);
