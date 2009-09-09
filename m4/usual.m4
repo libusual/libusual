@@ -35,7 +35,7 @@ dnl
 AC_DEFUN([AC_USUAL_PROGRAM_CHECK], [
 AC_PROG_CC
 AC_PROG_CPP
-AC_GNU_SOURCE
+AC_DEFINE([_GNU_SOURCE], [1], [Glibc requires it.])
 dnl Check if compiler supports __func__
 AC_CACHE_CHECK([whether compiler supports __func__], pgac_cv_funcname_func,
   [AC_TRY_COMPILE([#include <stdio.h>], [printf("%s\n", __func__);],
