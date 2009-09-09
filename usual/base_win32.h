@@ -92,7 +92,7 @@ static inline int dlclose(void *hptr)
 
 static inline const char *dlerror(void)
 {
-	return strerror(errno);
+	return strerror(GetLastError());
 }
 
 #endif
