@@ -21,6 +21,8 @@ AC_USUAL_WERROR
 
 AC_USUAL_DEBUG
 
+AC_USUAL_LIBEVENT(opt)
+
 dnl Output findings
 AC_OUTPUT([config.mak])
 
