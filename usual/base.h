@@ -19,12 +19,6 @@
 #ifndef _USUAL_BASE_H_
 #define _USUAL_BASE_H_
 
-#ifdef WIN32
-#define WIN32_LEAN_AND_MEAN
-#define _WIN32_WINNT 0x0400
-#include <windows.h>
-#endif
-
 #include <usual/config.h>
 
 #include <sys/types.h>

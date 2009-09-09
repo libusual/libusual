@@ -1,5 +1,6 @@
 
 dnl Those depend on correct order:
+dnl  AC_USUAL_PORT_CHECK
 dnl  AC_USUAL_PROGRAM_CHECK
 dnl  AC_USUAL_HEADER_CHECK
 dnl  AC_USUAL_TYPE_CHECK
@@ -10,7 +11,10 @@ dnl  AC_USUAL_WERROR
 dnl  AC_USUAL_DEBUG
 
 dnl
-dnl  AC_USUAL_PORT_CHECK:  PORTNAME=win32/unix
+dnl  AC_USUAL_PORT_CHECK: Sets PORTNAME=win32/unix
+dnl
+dnl  Also defines port-specific flags:
+dnl   _GNU_SOURCE, _WIN32_WINNT, WIN32_LEAN_AND_MEAN
 dnl
 AC_DEFUN([AC_USUAL_PORT_CHECK], [
 AC_MSG_CHECKING([target host type])
@@ -26,6 +30,13 @@ case "$xhost" in
 esac
 AC_SUBST(PORTNAME)
 AC_MSG_RESULT([$PORTNAME])
+dnl Set the flags before any feature tests.
+if test "$PORTNAME" = "win32"; then
+  AC_DEFINE([WIN32_LEAN_AND_MEAN], [1], [Define to request cleaner win32 headers.])
+  AC_DEFINE([_WIN32_WINNT], [0x0501], [Define to max win32 API version (0x0400, 0x0501).])
+else
+  AC_DEFINE([_GNU_SOURCE], [1], [Define to get working glibc.])
+fi
 ])
 
 
@@ -35,7 +46,6 @@ dnl
 AC_DEFUN([AC_USUAL_PROGRAM_CHECK], [
 AC_PROG_CC
 AC_PROG_CPP
-AC_DEFINE([_GNU_SOURCE], [1], [Glibc requires it.])
 dnl Check if compiler supports __func__
 AC_CACHE_CHECK([whether compiler supports __func__], pgac_cv_funcname_func,
   [AC_TRY_COMPILE([#include <stdio.h>], [printf("%s\n", __func__);],
