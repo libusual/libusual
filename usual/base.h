@@ -31,6 +31,11 @@
 
 #ifdef WIN32
 #include <usual/base_win32.h>
+#define DLLEXPORT __declspec(dllexport)
+#define DLLIMPORT __declspec(dllimport)
+#else
+#define DLLEXPORT
+#define DLLIMPORT
 #endif
 
 /* give offset of a field inside struct */
@@ -118,6 +123,10 @@ static inline void *zmalloc(size_t len)
 {
 	return calloc(1, len);
 }
+
+/* cpp expr -> string */
+#define _STR_(identifier) #identifier
+#define STR(x) _STR_(x)
 
 #endif
 
