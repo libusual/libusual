@@ -78,12 +78,20 @@ static inline struct List *list_pop(struct List *list)
 	return list_del(list->next);
 }
 
-/* remove first from list and return */
+/* get first elem from list */
 static inline struct List *list_first(const struct List *list)
 {
 	if (list_empty(list))
 		return NULL;
 	return list->next;
+}
+
+/* get last elem from list */
+static inline struct List *list_last(const struct List *list)
+{
+	if (list_empty(list))
+		return NULL;
+	return list->prev;
 }
 
 /* remove first elem from list and return with casting */
