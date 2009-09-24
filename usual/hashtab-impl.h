@@ -55,7 +55,7 @@ struct HashItem {
 };
 #endif
 
-typedef bool (*hash_cmp_fn)(htab_val_t curval, void *arg);
+typedef bool (*hash_cmp_fn)(const htab_val_t curval, const void *arg);
 
 #define MASK(h) ((h)->size - 1)
 #define CALC_POS(h, key) (key & MASK(h))
@@ -90,7 +90,7 @@ static void hashtab_destroy(struct HashTab *h)
 	}
 }
 
-static htab_val_t *hashtab_lookup(struct HashTab *h, htab_key_t key, bool do_insert, void *arg)
+static htab_val_t *hashtab_lookup(struct HashTab *h, htab_key_t key, bool do_insert, const void *arg)
 {
 	unsigned pos;
 	struct HashItem *i;
