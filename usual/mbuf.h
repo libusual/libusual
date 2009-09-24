@@ -230,5 +230,21 @@ static inline bool mbuf_fill(struct MBuf *buf, uint8_t byte, unsigned len)
 	return true;
 }
 
+/* remove some data from buf */
+_MUSTCHECK
+static inline bool mbuf_cut(struct MBuf *buf, unsigned ofs, unsigned len)
+{
+	if (buf->reader)
+		return false;
+	if (ofs + len < buf->write_pos) {
+		unsigned endofs = ofs + len;
+		memmove(buf->data + ofs, buf->data + endofs, buf->write_pos - endofs);
+		buf->write_pos -= len;
+	} else if (ofs < buf->write_pos) {
+		buf->write_pos = ofs;
+	}
+	return true;
+}
+
 #endif
 
