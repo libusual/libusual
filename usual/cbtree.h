@@ -21,7 +21,8 @@
 
 #include <usual/base.h>
 
-typedef const char *(*cbtree_getkey_func)(void *obj);
+/* returns length of the key */
+typedef unsigned int (*cbtree_getkey_func)(void *obj, const void **dst_p);
 
 struct CBTree;
 
@@ -29,9 +30,9 @@ struct CBTree *cbtree_create(cbtree_getkey_func get_key_fn);
 void cbtree_destroy(struct CBTree *tree);
 
 bool cbtree_insert(struct CBTree *tree, void *obj) _MUSTCHECK;
-bool cbtree_delete(struct CBTree *tree, const char *key);
+bool cbtree_delete(struct CBTree *tree, const void *key, unsigned klen);
 
-void *cbtree_lookup(struct CBTree *tree, const char *key);
+void *cbtree_lookup(struct CBTree *tree, const void *key, unsigned klen);
 
 #endif
 
