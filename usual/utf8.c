@@ -24,13 +24,14 @@
 /*
  * conservative utf8 decoder
  *
- * if invalid char, advance src pointer by one and return 0.
- * this can be ignored or replaced.
+ * if invalid char, advance src pointer by one and return
+ * negative byte value.  this can be ignored or replaced.
  */
-uint32_t utf8_get_char(const uint8_t **src_p, const uint8_t *srcend)
+int utf8_get_char(const char **src_p, const char *_srcend)
 {
 	uint32_t c;
-	const uint8_t *p = *src_p;
+	const uint8_t *srcend = (uint8_t *)srcend;
+	const uint8_t *p = (uint8_t *)(*src_p);
 	/*
 	 * 0xxx xxxx -> len=1
 	 * 10xx xxxx -> tail byte
@@ -74,20 +75,19 @@ uint32_t utf8_get_char(const uint8_t **src_p, const uint8_t *srcend)
 	} else {
 		goto bad_enc;
 	}
-	*src_p = p;
+	*src_p = (char *)p;
 	return c;
 bad_enc:
-	*src_p = p + 1;
-	return 0;
 eos:
-	*src_p = srcend;
-	return 0;
+	c = p[0];
+	*src_p = (char *)p + 1;
+	return -(int)c;
 }
 
 /* encode one char - skip invalid ones */
-bool utf8_put_char(uint32_t c, uint8_t **dst_p, const uint8_t *dstend)
+bool utf8_put_char(int c, char **dst_p, const char *dstend)
 {
-	uint8_t *dst = *dst_p;
+	char *dst = *dst_p;
 	if (c < 0x80) {
 		if (dst + 1 > dstend)
 			goto no_room;
@@ -97,7 +97,7 @@ bool utf8_put_char(uint32_t c, uint8_t **dst_p, const uint8_t *dstend)
 			goto no_room;
 		*dst++ = 0xC0 | (c >> 6);
 		*dst++ = 0x80 | (c & 0x3F);
-	} else if (c < 0x00010000) {
+	} else if (c < 0x10000) {
 		if (dst + 3 > dstend)
 			goto no_room;
 		if (c < 0xD800 || c > 0xDFFF) {
@@ -120,7 +120,7 @@ no_room:
 	return false;
 }
 
-unsigned utf8_char_size(uint32_t c)
+int utf8_char_size(int c)
 {
 	if (c < 0x80) return 1;
 	if (c < 0x800) return 2;
@@ -128,13 +128,13 @@ unsigned utf8_char_size(uint32_t c)
 	return 4;
 }
 
-unsigned utf8_seq_size(uint8_t b)
+int utf8_seq_size(unsigned char b)
 {
 	if (b < 0x80) return 1;
-	if (b < 0xC0) return 0;
+	if (b < 0xC2) return 0;
 	if (b < 0xE0) return 2;
 	if (b < 0xF0) return 3;
-	if (b < 0xF8) return 4;
+	if (b < 0xF5) return 4;
 	return 0;
 }
 

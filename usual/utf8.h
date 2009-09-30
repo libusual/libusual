@@ -21,12 +21,12 @@
 
 #include <usual/base.h>
 
-uint32_t  utf8_get_char(const uint8_t **src_p, const uint8_t *srcend);
+int  utf8_get_char(const char **src_p, const char *srcend);
 
-bool utf8_put_char(uint32_t c, uint8_t **dst_p, const uint8_t *dstend);
+bool utf8_put_char(int c, char **dst_p, const char *dstend);
 
-unsigned utf8_char_size(uint32_t c);
-unsigned utf8_seq_size(uint8_t c);
+int utf8_char_size(int c);
+int utf8_seq_size(unsigned char c);
 
 #endif
 
