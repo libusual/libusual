@@ -20,6 +20,8 @@
  * Basic behaviour:
  * - On each alloc initializer is called.
  * - if init func is not given, memset() is done
+ * - init func gets either zeroed obj or old obj from _free().
+ *   'struct List' on obj start is non-zero.
  *
  * ATM custom 'align' larger than malloc() alignment does not work.
  */
@@ -109,6 +111,9 @@ void slab_destroy(struct Slab *slab)
 	struct List *item, *tmp;
 	struct SlabFrag *frag;
 
+	if (!slab)
+		return;
+
 	statlist_for_each_safe(item, &slab->fraglist, tmp) {
 		frag = container_of(item, struct SlabFrag, head);
 		free(frag);
@@ -134,12 +139,11 @@ static void grow(struct Slab *slab)
 	size = count * slab->final_size;
 
 	/* allocate & init */
-	frag = malloc(size + sizeof(struct SlabFrag));
+	frag = calloc(1, size + sizeof(struct SlabFrag));
 	if (!frag)
 		return;
 	list_init(&frag->head);
 	area = (char *)frag + sizeof(struct SlabFrag);
-	memset(area, 0, size);
 
 	/* init objects */
 	for (i = 0; i < count; i++) {
