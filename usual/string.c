@@ -44,15 +44,26 @@ bool strlist_empty(struct StrList *slist)
 
 bool strlist_append(struct StrList *slist, const char *str)
 {
+	const char *nstr = NULL;
+	bool ok;
+	if (str) {
+		nstr = strdup(str);
+		if (!nstr)
+			return false;
+	}
+	ok = strlist_append_ref(slist, nstr);
+	if (!ok)
+		free(nstr);
+	return ok;
+}
+
+bool strlist_append_ref(struct StrList *slist, const char *str)
+{
 	struct StrItem *item = calloc(1, sizeof(*item));
 	if (!item)
 		return false;
 	list_init(&item->node);
-	item->str = strdup(str);
-	if (!item->str) {
-		free(item);
-		return false;
-	}
+	item->str = str;
 	statlist_append(&slist->list, &item->node);
 	return true;
 }
@@ -96,7 +107,7 @@ void strlist_free(struct StrList *slist)
 	free(slist);
 }
 
-bool strlist_foreach(struct StrList *slist, str_cb func, void *arg)
+bool strlist_foreach(const struct StrList *slist, str_cb func, void *arg)
 {
 	struct List *el;
 	struct StrItem *item;
