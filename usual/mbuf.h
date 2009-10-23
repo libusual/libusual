@@ -59,10 +59,10 @@ static inline void mbuf_init_dynamic(struct MBuf *buf)
 
 static inline void mbuf_free(struct MBuf *buf)
 {
-	if (!buf->fixed && buf->data) {
-		free(buf->data);
-		buf->data = NULL;
-		buf->read_pos = buf->write_pos = buf->alloc_len = 0;
+	if (buf->data) {
+		if (!buf->fixed)
+			free(buf->data);
+		memset(buf, 0, sizeof(*buf));
 	}
 }
 
@@ -107,6 +107,21 @@ static inline unsigned mbuf_written(const struct MBuf *buf)
 static inline const void *mbuf_data(const struct MBuf *buf)
 {
 	return buf->data;
+}
+
+static inline bool mbuf_eq(const struct MBuf *buf1, const struct MBuf *buf2)
+{
+	if (buf1 == buf2) return true;
+	if (!buf1 || !buf2 || (mbuf_written(buf1) != mbuf_written(buf2)))
+		return false;
+	return memcmp(mbuf_data(buf1), mbuf_data(buf2), mbuf_written(buf1)) == 0;
+}
+
+static inline bool mbuf_eq_str(const struct MBuf *buf1, const char *s)
+{
+	struct MBuf tmp;
+	mbuf_init_fixed_reader(&tmp, s, strlen(s));
+	return mbuf_eq(buf1, &tmp);
 }
 
 /*
