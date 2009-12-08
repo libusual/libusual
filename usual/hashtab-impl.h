@@ -57,10 +57,14 @@ struct HashItem {
 
 typedef bool (*hash_cmp_fn)(const htab_val_t curval, const void *arg);
 
+#ifndef HTAB_MAX_FILL
+#define HTAB_MAX_FILL 75
+#endif
+
 #define MASK(h) ((h)->size - 1)
 #define CALC_POS(h, key) (key & MASK(h))
 #define NEXT_POS(h, pos) (((pos) * 5 + 1) & MASK(h))
-#define MAX_USED(h) ((h)->size * 75 / 100)
+#define MAX_USED(h) ((h)->size * HTAB_MAX_FILL / 100)
 
 struct HashTab {
 	struct HashTab *next;
