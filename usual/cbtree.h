@@ -22,11 +22,18 @@
 #include <usual/base.h>
 
 /* returns length of the key */
-typedef unsigned int (*cbtree_getkey_func)(void *obj, const void **dst_p);
+typedef unsigned int	(*cbtree_getkey_func)(void *obj, const void **dst_p);
+/* custom alloc */
+typedef void *		(*cbtree_alloc_func)(void *arg, unsigned len);
+typedef void		(*cbtree_free_func)(void *arg, void *ptr);
 
 struct CBTree;
 
 struct CBTree *cbtree_create(cbtree_getkey_func get_key_fn);
+struct CBTree *cbtree_create_custom(cbtree_getkey_func get_key_fn,
+				    void *arg,
+				    cbtree_alloc_func f_alloc,
+				    cbtree_free_func f_free);
 void cbtree_destroy(struct CBTree *tree);
 
 bool cbtree_insert(struct CBTree *tree, void *obj) _MUSTCHECK;

@@ -45,10 +45,13 @@ struct Node {
 struct CBTree {
 	struct Node *root;
 	cbtree_getkey_func get_key;
+
+	cbtree_alloc_func cb_alloc;
+	cbtree_free_func cb_free;
+	void *alloc_arg;
 };
 
 #define SAME_KEY 0xFFFFFFFF
-
 
 /*
  * Low-level operations.
@@ -170,9 +173,9 @@ void *cbtree_lookup(struct CBTree *tree, const void *key, unsigned klen)
  */
 
 /* node allocation */
-static struct Node *new_node(void)
+static struct Node *new_node(struct CBTree *tree)
 {
-	struct Node *node = malloc(sizeof(*node));
+	struct Node *node = tree->cb_alloc(tree->alloc_arg, sizeof(*node));
 	memset(node, 0, sizeof(*node));
 	return node;
 }
@@ -198,7 +201,7 @@ static bool insert_at(struct CBTree *tree, unsigned newbit, const void *key, uns
 	}
 
 	bit = get_bit(newbit, key, klen);
-	node = new_node();
+	node = new_node(tree);
 	if (!node)
 		return false;
 	node->bitpos = newbit;
@@ -223,7 +226,7 @@ bool cbtree_insert(struct CBTree *tree, void *obj)
 
 	/* nearest key in tree */
 	old_obj = raw_lookup(tree, key, klen);
-	old_klen = get_key(tree, obj, &old_key);
+	old_klen = get_key(tree, old_obj, &old_key);
 
 	/* first differing bit is the target position */
 	newbit = find_crit_bit(key, klen, old_key, old_klen);
@@ -266,7 +269,8 @@ bool cbtree_delete(struct CBTree *tree, const void *key, unsigned klen)
 	if (prev_pos) {
 		tmp = *prev_pos;
 		*prev_pos = (*prev_pos)->child[bit ^ 1];
-		free(tmp);
+		if (tree->cb_free)
+			tree->cb_free(tree->alloc_arg, tmp);
 	} else {
 		tree->root = NULL;
 	}
@@ -277,31 +281,56 @@ bool cbtree_delete(struct CBTree *tree, const void *key, unsigned klen)
  * Management.
  */
 
-/* create takes user function to query object for it's key */
-struct CBTree *cbtree_create(cbtree_getkey_func get_key_fn)
+struct CBTree *cbtree_create_custom(cbtree_getkey_func get_key_fn,
+				    void *arg,
+				    cbtree_alloc_func f_alloc,
+				    cbtree_free_func f_free)
 {
-	struct CBTree *tree = malloc(sizeof(*tree));
+	struct CBTree *tree = f_alloc(arg, sizeof(*tree));
+	if (!tree)
+		return NULL;
 	tree->root = NULL;
 	tree->get_key = get_key_fn;
+	tree->alloc_arg = arg;
+	tree->cb_alloc = f_alloc;
+	tree->cb_free = f_free;
 	return tree;
 }
 
+static void *std_alloc(void *arg, unsigned len)
+{
+	return malloc(len);
+}
+
+static void std_free(void *arg, void *ptr)
+{
+	free(ptr);
+}
+
+/* create takes user function to query object for it's key */
+struct CBTree *cbtree_create(cbtree_getkey_func get_key_fn)
+{
+	return cbtree_create_custom(get_key_fn, NULL, std_alloc, std_free);
+}
+
 /* recursive freeing */
-static void destroy_node(struct Node *node)
+static void destroy_node(struct CBTree *tree, struct Node *node)
 {
 	if (is_node(node->child[0]))
-		destroy_node(node->child[0]);
+		destroy_node(tree, node->child[0]);
 	if (is_node(node->child[1]))
-		destroy_node(node->child[1]);
-	free(node);
+		destroy_node(tree, node->child[1]);
+	tree->cb_free(tree->alloc_arg, node);
 }
 
 /* Free tree and all it's internal nodes. */
 void cbtree_destroy(struct CBTree *tree)
 {
+	if (!tree->cb_free)
+		return;
 	if (tree->root && is_node(tree->root))
-		destroy_node(tree->root);
+		destroy_node(tree, tree->root);
 	tree->root = NULL;
-	free(tree);
+	tree->cb_free(tree->alloc_arg, tree);
 }
 
