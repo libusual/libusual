@@ -60,6 +60,9 @@
 #define ALIGN(x)  CUSTOM_ALIGN(x, sizeof(long))
 #endif
 
+/* number of elements in array */
+#define ARRAY_NELEM(a)	(sizeof(a) / sizeof((a)[0]))
+
 #define _PACKED			__attribute__((packed))
 
 /*
