@@ -334,3 +334,22 @@ void cbtree_destroy(struct CBTree *tree)
 	tree->cb_free(tree->alloc_arg, tree);
 }
 
+/*
+ * walk over tree
+ */
+
+static bool walk(struct Node *node, cbtree_walker_func cb_func, void *cb_arg)
+{
+	if (!is_node(node))
+		return cb_func(cb_arg, get_external(node));
+	return walk(node->child[0], cb_func, cb_arg)
+	    && walk(node->child[1], cb_func, cb_arg);
+}
+
+bool cbtree_walk(struct CBTree *tree, cbtree_walker_func cb_func, void *cb_arg)
+{
+	if (!tree->root)
+		return true;
+	return walk(tree->root, cb_func, cb_arg);
+}
+

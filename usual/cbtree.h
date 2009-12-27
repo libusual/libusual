@@ -26,6 +26,8 @@ typedef unsigned int	(*cbtree_getkey_func)(void *obj, const void **dst_p);
 /* custom alloc */
 typedef void *		(*cbtree_alloc_func)(void *arg, unsigned len);
 typedef void		(*cbtree_free_func)(void *arg, void *ptr);
+/* walk */
+typedef bool		(*cbtree_walker_func)(void *arg, void *obj);
 
 struct CBTree;
 
@@ -40,6 +42,8 @@ bool cbtree_insert(struct CBTree *tree, void *obj) _MUSTCHECK;
 bool cbtree_delete(struct CBTree *tree, const void *key, unsigned klen);
 
 void *cbtree_lookup(struct CBTree *tree, const void *key, unsigned klen);
+
+bool cbtree_walk(struct CBTree *tree, cbtree_walker_func cb_func, void *cb_arg);
 
 #endif
 
