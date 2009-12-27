@@ -25,35 +25,51 @@
 #include <usual/time.h>
 #include <usual/string.h>
 
+#define MAX_QRY_ARGS 32
+
 /* PgSocket.wait_type */
-#define W_NONE 0
-#define W_SOCK 1
-#define W_TIME 2
+enum WType {
+	W_NONE = 0,
+	W_SOCK,
+	W_TIME
+};
 
 typedef void (*libev_cb)(int sock, short flags, void *arg);
 
 struct PgSocket {
+	/* libevent state */
 	struct event ev;
 
-	unsigned wait_type:4;
+	/* track wait state */
+	enum WType wait_type;
 
+	/* should connect after sleep */
+	bool reconnect;
+
+	/* current connection */
 	PGconn *con;
 
+	/* user handler */
 	pgs_handler_f handler_func;
 	void *handler_arg;
 
+	/* saved connect string */
 	const char *connstr;
 
+	/* custom base or NULL */
 	struct event_base *base;
 
+	/* temp place for resultset */
 	PGresult *last_result;
 };
 
+/* report event to user callback */
 static void send_event(struct PgSocket *db, enum PgEvent ev)
 {
 	db->handler_func(db, db->handler_arg, ev, NULL);
 }
 
+/* wait socket event from libevent */
 static void wait_event(struct PgSocket *db, short ev, libev_cb fn)
 {
 	Assert(!db->wait_type);
@@ -67,13 +83,19 @@ static void wait_event(struct PgSocket *db, short ev, libev_cb fn)
 	db->wait_type = W_SOCK;
 }
 
+/* wait timeout from libevent */
 static void timeout_cb(int sock, short flags, void *arg)
 {
 	struct PgSocket *db = arg;
 
-	db->wait_type = 0;
+	db->wait_type = W_NONE;
 
-	send_event(db, PGS_TIMEOUT);
+	if (db->reconnect) {
+		db->reconnect = false;
+		pgs_connect(db);
+	} else {
+		send_event(db, PGS_TIMEOUT);
+	}
 }
 
 /* some error happened */
@@ -84,17 +106,31 @@ static void conn_error(struct PgSocket *db, enum PgEvent ev, const char *desc)
 	send_event(db, ev);
 }
 
+/* report previously stored result */
+static void report_last_result(struct PgSocket *db)
+{
+	PGresult *res = db->last_result;
+	if (res) {
+		db->last_result = NULL;
+		db->handler_func(db, db->handler_arg, PGS_RESULT_OK, res);
+		PQclear(res);
+	}
+}
+
 /*
- * Called when select() told that conn is avail for reading/writing.
+ * Called when select() told that conn is avail for reading.
  *
  * It should call postgres handlers and then change state if needed.
+ *
+ * Because the callback may want to close the connection when processing
+ * last resultset, the PGresult handover is delayed one step.
  */
 static void result_cb(int sock, short flags, void *arg)
 {
 	struct PgSocket *db = arg;
 	PGresult *res;
 
-	db->wait_type = 0;
+	db->wait_type = W_NONE;
 
 	if (!PQconsumeInput(db->con)) {
 		conn_error(db, PGS_RESULT_BAD, "PQconsumeInput");
@@ -102,7 +138,7 @@ static void result_cb(int sock, short flags, void *arg)
 	}
 
 	/* loop until PQgetResult returns NULL */
-	while (1) {
+	while (db->con) {
 		/* incomplete result? */
 		if (PQisBusy(db->con)) {
 			wait_event(db, EV_READ, result_cb);
@@ -114,41 +150,31 @@ static void result_cb(int sock, short flags, void *arg)
 		if (!res)
 			break;
 
-		if (db->last_result)
-			PQclear(db->last_result);
+		report_last_result(db);
 		db->last_result = res;
 	}
 
-	res = db->last_result;
-	db->last_result = NULL;
-
-	db->handler_func(db, db->handler_arg, PGS_RESULT_OK, res);
-	PQclear(res);
+	report_last_result(db);
 }
+
+static void flush(struct PgSocket *db);
 
 static void send_cb(int sock, short flags, void *arg)
 {
-	int res;
 	struct PgSocket *db = arg;
 
-	db->wait_type = 0;
+	db->wait_type = W_NONE;
 
-	res = PQflush(db->con);
-	if (res > 0) {
-		wait_event(db, EV_WRITE, send_cb);
-	} else if (res == 0) {
-		wait_event(db, EV_READ, result_cb);
-	} else
-		conn_error(db, PGS_RESULT_BAD, "PQflush");
+	flush(db);
 }
 
-
+/* handle connect states */
 static void connect_cb(int sock, short flags, void *arg)
 {
 	struct PgSocket *db = arg;
 	PostgresPollingStatusType poll_res;
 
-	db->wait_type = 0;
+	db->wait_type = W_NONE;
 
 	poll_res = PQconnectPoll(db->con);
 	switch (poll_res) {
@@ -166,6 +192,18 @@ static void connect_cb(int sock, short flags, void *arg)
 	}
 }
 
+/* send query to server */
+static void flush(struct PgSocket *db)
+{
+	int res = PQflush(db->con);
+	if (res > 0) {
+		wait_event(db, EV_WRITE, send_cb);
+	} else if (res == 0) {
+		wait_event(db, EV_READ, result_cb);
+	} else
+		conn_error(db, PGS_RESULT_BAD, "PQflush");
+}
+
 /*
  * Public API
  */
@@ -174,7 +212,7 @@ struct PgSocket *pgs_create(const char *connstr, pgs_handler_f fn, void *handler
 {
 	struct PgSocket *db;
 
-	db = zmalloc(sizeof(*db));
+	db = calloc(1, sizeof(*db));
 	if (!db)
 		return NULL;
 
@@ -196,6 +234,9 @@ void pgs_set_event_base(struct PgSocket *pgs, struct event_base *base)
 
 void pgs_connect(struct PgSocket *db)
 {
+	if (db->con)
+		pgs_disconnect(db);
+
 	db->con = PQconnectStart(db->connstr);
 	if (db->con == NULL) {
 		conn_error(db, PGS_CONNECT_FAILED, "PQconnectStart");
@@ -213,6 +254,11 @@ void pgs_connect(struct PgSocket *db)
 
 void pgs_disconnect(struct PgSocket *db)
 {
+	if (db->wait_type) {
+		event_del(&db->ev);
+		db->wait_type = W_NONE;
+		db->reconnect = false;
+	}
 	if (db->con) {
 		PQfinish(db->con);
 		db->con = NULL;
@@ -244,17 +290,17 @@ void pgs_sleep(struct PgSocket *db, double timeout)
 	evtimer_set(&db->ev, timeout_cb, db);
 	if (db->base)
 		event_base_set(db->base, &db->ev);
-	//event_assign(&db->ev, db->base, -1, 0, timeout_cb, db);
 	if (evtimer_add(&db->ev, &tv) < 0)
 		fatal_perror("event_add");
 
 	db->wait_type = W_TIME;
 }
 
-void pgs_reconnect(struct PgSocket *db)
+void pgs_reconnect(struct PgSocket *db, double timeout)
 {
 	pgs_disconnect(db);
-	pgs_sleep(db, 60);
+	pgs_sleep(db, timeout);
+	db->reconnect = true;
 }
 
 void pgs_send_query_simple(struct PgSocket *db, const char *q)
@@ -268,22 +314,20 @@ void pgs_send_query_simple(struct PgSocket *db, const char *q)
 		return;
 	}
 
-	res = PQflush(db->con);
-	if (res > 0) {
-		wait_event(db, EV_WRITE, send_cb);
-	} else if (res == 0) {
-		wait_event(db, EV_READ, result_cb);
-	} else
-		conn_error(db, PGS_RESULT_BAD, "PQflush");
+	flush(db);
 }
 
 void pgs_send_query_params(struct PgSocket *db, const char *q, int cnt, ...)
 {
 	int i;
 	va_list ap;
-	const char * args[10];
+	const char * args[MAX_QRY_ARGS];
 
-	if (cnt > 10) cnt = 10;
+	if (cnt < 0 || cnt > MAX_QRY_ARGS) {
+		log_warning("bad query arg cnt");
+		send_event(db, PGS_RESULT_BAD);
+		return;
+	}
 
 	va_start(ap, cnt);
 	for (i = 0; i < cnt; i++)
@@ -297,19 +341,14 @@ void pgs_send_query_params_list(struct PgSocket *db, const char *q, int cnt, con
 {
 	int res;
 
+	log_debug("%s", q);
 	res = PQsendQueryParams(db->con, q, cnt, NULL, args, NULL, NULL, 0);
 	if (!res) {
 		conn_error(db, PGS_RESULT_BAD, "PQsendQueryParams");
 		return;
 	}
 
-	res = PQflush(db->con);
-	if (res > 0) {
-		wait_event(db, EV_WRITE, send_cb);
-	} else if (res == 0) {
-		wait_event(db, EV_READ, result_cb);
-	} else
-		conn_error(db, PGS_RESULT_BAD, "PQflush");
+	flush(db);
 }
 
 int pgs_connection_valid(struct PgSocket *db)

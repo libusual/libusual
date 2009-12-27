@@ -43,13 +43,13 @@ void pgs_set_event_base(struct PgSocket *pgs, struct event_base *base);
 
 void pgs_connect(struct PgSocket *db);
 void pgs_disconnect(struct PgSocket *db);
-void pgs_reconnect(struct PgSocket *db);
 
 void pgs_send_query_simple(struct PgSocket *db, const char *query);
 void pgs_send_query_params(struct PgSocket *db, const char *query, int nargs, ...);
 void pgs_send_query_params_list(struct PgSocket *db, const char *query, int nargs, const char *argv[]);
 
 void pgs_sleep(struct PgSocket *db, double timeout);
+void pgs_reconnect(struct PgSocket *db, double timeout);
 
 int pgs_connection_valid(struct PgSocket *db);
 
