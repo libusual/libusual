@@ -60,18 +60,18 @@ bool socket_setup(int sock, bool non_block)
 {
 	int res;
 
-	/* close fd on exec */
-	res = fcntl(sock, F_SETFD, FD_CLOEXEC);
-	if (res < 0)
-		return false;
-
 #ifdef SO_NOSIGPIPE
 	/* disallow SIGPIPE, if possible */
-	val = 1;
+	int val = 1;
 	res = setsockopt(sock, SOL_SOCKET, SO_NOSIGPIPE, &val, sizeof(val));
 	if (res < 0)
 		return false;
 #endif
+
+	/* close fd on exec */
+	res = fcntl(sock, F_SETFD, FD_CLOEXEC);
+	if (res < 0)
+		return false;
 
 	/* when no data available, return EAGAIN instead blocking */
 	if (!socket_set_nonblocking(sock, non_block))
