@@ -24,7 +24,9 @@
 
 #include <usual/string.h>
 
+#ifndef HAVE_SETPROGNAME
 static const char *progname;
+#endif
 
 #ifndef HAVE_ERR
 void err(int e, const char *fmt, ...)
