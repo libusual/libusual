@@ -95,5 +95,17 @@ static inline bool statlist_empty(const struct StatList *list)
 #define statlist_for_each(item, list) list_for_each(item, &((list)->head))
 #define statlist_for_each_safe(item, list, tmp) list_for_each_safe(item, &((list)->head), tmp)
 
+static inline void statlist_put_before(struct StatList *list, struct List *item, struct List *pos)
+{
+	list_append(pos, item);
+	list->cur_count++;
+}
+
+static inline void statlist_put_after(struct StatList *list, struct List *item, struct List *pos)
+{
+	list_prepend(pos, item);
+	list->cur_count++;
+}
+
 #endif /* __LIST_H_ */
 
