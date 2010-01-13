@@ -24,6 +24,7 @@
 
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <string.h>
 
 /*
  * Load text file into C string.
