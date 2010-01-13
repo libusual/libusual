@@ -1,6 +1,4 @@
 /*
- * Simple customizable hashtable implementation.
- *
  * Copyright (c) 2009  Marko Kreen
  *
  * Permission to use, copy, modify, and/or distribute this software for any
@@ -16,8 +14,9 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-
-/*
+/** @file
+ * Simple customizable hashtable implementation.
+ *
  * - Fixed-size hash table, open-addressed
  * - Extended by linking several together
  * - Resizable by copying.
@@ -31,9 +30,11 @@
 #include <string.h>
 
 #ifndef HTAB_KEY_T
+/** Overridable type for key */
 #define HTAB_KEY_T unsigned long
 #endif
 #ifndef HTAB_VAL_T
+/** Overridable type for value */
 #define HTAB_VAL_T void *
 #endif
 
@@ -44,20 +45,25 @@
 #define HTAB_WMB
 #endif
 
+/** Typedef for key */
 typedef HTAB_KEY_T htab_key_t;
+/** Typedef for value */
 typedef HTAB_VAL_T htab_val_t;
 
 #ifndef HTAB_ITEM
 #define HTAB_ITEM
+/** HashTab slot */
 struct HashItem {
 	htab_key_t key;
 	htab_val_t value;
 };
 #endif
 
+/** Signature for comparision function */
 typedef bool (*hash_cmp_fn)(const htab_val_t curval, const void *arg);
 
 #ifndef HTAB_MAX_FILL
+/** Max fill percentage */
 #define HTAB_MAX_FILL 75
 #endif
 
@@ -66,6 +72,7 @@ typedef bool (*hash_cmp_fn)(const htab_val_t curval, const void *arg);
 #define NEXT_POS(h, pos) (((pos) * 5 + 1) & MASK(h))
 #define MAX_USED(h) ((h)->size * HTAB_MAX_FILL / 100)
 
+/** Single HashTab segment */
 struct HashTab {
 	struct HashTab *next;
 	hash_cmp_fn cmp_fn;
@@ -75,6 +82,7 @@ struct HashTab {
 	struct HashItem tab[];
 };
 
+/** Initialize HashTab */
 static struct HashTab *hashtab_create(unsigned size, hash_cmp_fn cmp_fn, CxMem *ca)
 {
 	struct HashTab *h;
@@ -88,6 +96,7 @@ static struct HashTab *hashtab_create(unsigned size, hash_cmp_fn cmp_fn, CxMem *
 	return h;
 }
 
+/** Free HashTab */
 static void hashtab_destroy(struct HashTab *h)
 {
 	struct HashTab *tmp;
@@ -98,6 +107,7 @@ static void hashtab_destroy(struct HashTab *h)
 	}
 }
 
+/** Element lookup, optionally inserting new slot */
 static htab_val_t *hashtab_lookup(struct HashTab *h, htab_key_t key, bool do_insert, const void *arg)
 {
 	unsigned pos;
@@ -157,6 +167,7 @@ static bool _hashtab_slot_can_move(struct HashTab *h, unsigned dstpos, unsigned 
 	return true;
 }
 
+/** Delete an element */
 static void hashtab_delete(struct HashTab *h, htab_key_t key, void *arg)
 {
 	htab_val_t *vptr;
@@ -192,6 +203,7 @@ loop:
 	h->used--;
 }
 
+/** Count elements and fragments */
 static void hashtab_stats(struct HashTab *h, unsigned *nitem_p, unsigned *ntab_p)
 {
 	unsigned n = 0, l = 0;
@@ -204,6 +216,7 @@ static void hashtab_stats(struct HashTab *h, unsigned *nitem_p, unsigned *ntab_p
 	*ntab_p = l;
 }
 
+/** Copy elements to new hashtab, perhaps with different size */
 static struct HashTab *hashtab_copy(struct HashTab *h_old, unsigned newsize)
 {
 	struct HashTab *h_new;

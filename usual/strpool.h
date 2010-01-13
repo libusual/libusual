@@ -16,30 +16,51 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+/**
+ * @file
+ *
+ * Storage for shared strings.
+ *
+ * This provides refcounted searchable string pool for cases
+ * where lot of objects reference same strings.
+ */
+
 #ifndef _USUAL_STRPOOL_H_
 #define _USUAL_STRPOOL_H_
 
 #include <usual/cxalloc.h>
 
+/** Handle for the pool */
 struct StrPool;
 
-/* Pooled String */
+/** Pooled String */
 struct PStr {
+	/** Parent pool */
 	struct StrPool *pool;
+	/** Reference count */
 	int refcnt;
+	/** String length */
 	int len;
+	/** Zero-terminated value */
 	char str[];
 };
 
-
+/** Create new pool */
 struct StrPool *strpool_create(CxMem *ca);
+
+/** Release pool */
 void strpool_free(struct StrPool *sp);
 
+/** Return either existing or new PStr for given value */
 struct PStr *strpool_get(struct StrPool *sp, const char *str, int len);
 
+/** Increase reference count for existing PStr */
 void strpool_incref(struct PStr *str);
+
+/** Decrease reference count for existing PStr */
 void strpool_decref(struct PStr *str);
 
+/** Return count of strings in the pool */
 int strpool_total(struct StrPool *sp);
 
 #endif

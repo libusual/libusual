@@ -16,22 +16,37 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+/**
+ * @file
+ *
+ * MD5 cryptographic hash.
+ */
+
 #ifndef _USUAL_MD5_H_
 #define _USUAL_MD5_H_
 
 #include <usual/base.h>
 
+/** Block length for MD5 */
 #define MD5_BLOCK_LENGTH	64
+
+/** Result length for MD5 */
 #define MD5_DIGEST_LENGTH	16
 
+/** MD5 state */
 struct md5_ctx {
 	uint64_t nbytes;
 	uint32_t a, b, c, d;
 	uint32_t buf[16];
 };
 
+/** Clean state */
 void md5_reset(struct md5_ctx *ctx);
+
+/** Update state with more data */
 void md5_update(struct md5_ctx *ctx, const void *data, unsigned int len);
+
+/** Get final result */
 void md5_final(uint8_t *dst, struct md5_ctx *ctx);
 
 #ifdef MD5_COMPAT

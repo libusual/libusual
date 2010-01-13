@@ -16,22 +16,38 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+/**
+ * @file
+ *
+ * SHA1 implementation.
+ */
+
 #ifndef _USUAL_SHA1_H_
 #define _USUAL_SHA1_H_
 
 #include <usual/base.h>
 
+/** Block length for SHA1 */
 #define SHA1_BLOCK_SIZE		64
+
+/** Result length for SHA1 */
 #define SHA1_DIGEST_LENGTH	20
 
+
+/** SHA1 state */
 struct sha1_ctx {
 	uint64_t nbytes;
 	uint32_t a, b, c, d, e;
 	uint32_t buf[SHA1_BLOCK_SIZE / 4];
 };
 
+/** Clean state */
 void sha1_reset(struct sha1_ctx *ctx);
+
+/** Update state with more data */
 void sha1_update(struct sha1_ctx *ctx, const void *data, unsigned int len);
+
+/** Get final result */
 void sha1_final(uint8_t *dst, struct sha1_ctx *ctx);
 
 #ifndef AVOID_SHA1_COMPAT

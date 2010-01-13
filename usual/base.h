@@ -1,6 +1,8 @@
-/*
+/** @file
  * Basic C environment.
- *
+ */
+
+/*
  * Copyright (c) 2007-2009 Marko Kreen
  *
  * Permission to use, copy, modify, and/or distribute this software for any
@@ -45,27 +47,27 @@
 #define DLLIMPORT
 #endif
 
-/* give offset of a field inside struct */
+/** give offset of a field inside struct */
 #ifndef offsetof
 #define offsetof(type, field) ((unsigned long)&(((type *)0)->field))
 #endif
 
-/* given pointer to field inside struct, return pointer to struct */
+/** given pointer to field inside struct, return pointer to struct */
 #ifndef container_of
 #define container_of(ptr, type, field) ((type *)((char *)(ptr) - offsetof(type, field)))
 #endif
 
-/* power-of-2 alignment */
+/** power-of-2 alignment */
 #ifndef CUSTOM_ALIGN
 #define CUSTOM_ALIGN(x, a) (((unsigned long)(x) + (a) - 1) & ~((a) - 1))
 #endif
 
-/* preferred alignment */
+/** preferred alignment */
 #ifndef ALIGN
 #define ALIGN(x)  CUSTOM_ALIGN(x, sizeof(long))
 #endif
 
-/* number of elements in array */
+/** number of elements in array */
 #define ARRAY_NELEM(a)	(sizeof(a) / sizeof((a)[0]))
 
 /* how to specify array with unknown length */
@@ -77,7 +79,11 @@
 #define FLEX_ARRAY 1
 #endif
 
-/* tag for packed structure */
+/**
+ * @name Compiler attributes.
+ */
+
+/** Disable padding for structure */
 #define _PACKED			__attribute__((packed))
 
 /*
@@ -94,12 +100,17 @@
 #ifndef _MUSTCHECK
 #if defined(__GNUC__) && (__GNUC__ >= 4)
 
-/* additional error checking */
+/** Show warning if function result is not used */
 #define _MUSTCHECK              __attribute__((warn_unused_result))
+/** Show warning if used */
 #define _DEPRECATED             __attribute__((deprecated))
+/** Check printf-style format and arg sanity */
 #define _PRINTF(fmtpos, argpos) __attribute__((format(printf, fmtpos, argpos)))
+/** Function returns new pointer */
 #define _MALLOC                 __attribute__((malloc))
+/** Disable 'unused' warning for function/argument. */
 #define _UNUSED                 __attribute__((unused))
+/** Do not inline function. */
 #define _NOINLINE               __attribute__((noinline))
 
 /* compiler hints - those do not seem to work well */
@@ -120,7 +131,9 @@
 #endif
 #endif
 
-/* assert() that uses our logging */
+/* @} */
+
+/** assert() that uses <usual/logging> module  */
 #ifndef Assert
 #ifdef CASSERT
 void log_fatal(const char *file, int line, const char *func, bool show_perror, void *ctx, const char *s, ...) _PRINTF(6, 7);
@@ -142,9 +155,10 @@ static inline void _const_free(const void *p)
 {
 	free((void *)p);
 }
+/** Compat: make free() accept const pointer */
 #define free(x) _const_free(x)
 
-/* Zeroing malloc */
+/** Zeroing malloc */
 _MUSTCHECK
 static inline void *zmalloc(size_t len)
 {
@@ -153,12 +167,13 @@ static inline void *zmalloc(size_t len)
 
 #ifndef HAVE_POSIX_MEMALIGN
 #define posix_memalign(a,b,c) usual_memalign(a,b,c)
+/** Compat: posix_memalign() */
 int posix_memalign(void **ptr_p, size_t align, size_t len);
 #endif
 
-/* cpp expr -> string */
-#define _STR_(identifier) #identifier
+/** cpp expr -> string */
 #define STR(x) _STR_(x)
+#define _STR_(x) #x
 
 #endif
 

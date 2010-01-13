@@ -16,6 +16,11 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+/**
+ * @file
+ *
+ * Error printing for command-line utilities.
+ */
 #ifndef _USUAL_ERR_H_
 #define _USUAL_ERR_H_
 
@@ -26,26 +31,37 @@
 #endif
 
 #ifndef HAVE_ERR
+/** Print formatted message and strerror(errno) to stderr and exit with given error code */
 void err(int e, const char *fmt, ...);
 #endif
 #ifndef HAVE_ERRX
+/** Print formatted message to stderr and exit with given error code */
 void errx(int e, const char *fmt, ...);
 #endif
 #ifndef HAVE_WARN
+/** Print formatted message and strerror(errno) to stderr */
 void warn(const char *fmt, ...);
 #endif
 #ifndef HAVE_WARNX
+/** Print formatted message to stderr */
 void warnx(const char *fmt, ...);
 #endif
 #ifndef HAVE_SETPROGNAME
+/** Set program name to that will printed as prefix to error messages */
 void setprogname(const char *s);
 #endif
 #ifndef HAVE_GETPROGNAME
+/** Return program name set with @ref setprogname */
 const char *getprogname(void);
 #endif
 
+/** Malloc that exits on failure */
 void *xmalloc(size_t len);
+
+/** Realloc that exits on failure */
 void *xrealloc(void *p, size_t len);
+
+/** strdup that exits on failure */
 char *xstrdup(const char *s);
 
 #endif

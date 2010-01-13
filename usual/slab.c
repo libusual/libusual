@@ -16,16 +16,6 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Basic behaviour:
- * - On each alloc initializer is called.
- * - if init func is not given, memset() is done
- * - init func gets either zeroed obj or old obj from _free().
- *   'struct List' on obj start is non-zero.
- *
- * ATM custom 'align' larger than malloc() alignment does not work.
- */
-
 #include <usual/slab.h>
 
 #include <string.h>

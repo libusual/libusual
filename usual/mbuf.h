@@ -1,5 +1,5 @@
 
-/*
+/** \file
  * Safe and easy access to memory buffer.
  */
 
@@ -10,6 +10,7 @@
 
 #include <string.h>
 
+/** MBuf structure.  Allocated by user, can be in stack. */
 struct MBuf {
 	uint8_t *data;
 	unsigned read_pos;
@@ -19,14 +20,16 @@ struct MBuf {
 	bool fixed;
 };
 
-/* helpers for *printf() */
+/** Format fragment for *printf() */
 #define MBUF_FMT	".*s"
-#define MBUF_ARG(m)	(m) ? mbuf_written(m) : 6, (m) ? (const char *)mbuf_data(m) : "(null)"
+/** Argument layout for *printf() */
+#define MBUF_ARG(m)	((m) ? mbuf_written(m) : 6), ((m) ? (const char *)mbuf_data(m) : "(null)")
 
 /*
- * Init functions.
+ * Init functions
  */
 
+/** Initialize R/O buffer to fixed memory area. */
 static inline void mbuf_init_fixed_reader(struct MBuf *buf, const void *ptr, unsigned len)
 {
 	buf->data = (uint8_t *)ptr;
@@ -37,6 +40,7 @@ static inline void mbuf_init_fixed_reader(struct MBuf *buf, const void *ptr, uns
 	buf->fixed = true;
 }
 
+/** Initialize R/W buffer to fixed memory area. */
 static inline void mbuf_init_fixed_writer(struct MBuf *buf, void *ptr, unsigned len)
 {
 	buf->data = (uint8_t *)ptr;
@@ -47,6 +51,7 @@ static inline void mbuf_init_fixed_writer(struct MBuf *buf, void *ptr, unsigned 
 	buf->fixed = true;
 }
 
+/** Initialize R/W buffer to dynamically allocated memory area.  */
 static inline void mbuf_init_dynamic(struct MBuf *buf)
 {
 	buf->data = NULL;
@@ -57,6 +62,7 @@ static inline void mbuf_init_dynamic(struct MBuf *buf)
 	buf->fixed = false;
 }
 
+/** Free dynamically allocated area, if exists. */
 static inline void mbuf_free(struct MBuf *buf)
 {
 	if (buf->data) {
@@ -70,11 +76,13 @@ static inline void mbuf_free(struct MBuf *buf)
  * Reset functions.
  */
 
+/** Move read cursor to start of buffer. */
 static inline void mbuf_rewind_reader(struct MBuf *buf)
 {
 	buf->read_pos = 0;
 }
 
+/** Move both read and write cursor to start of buffer. */
 static inline void mbuf_rewind_writer(struct MBuf *buf)
 {
 	if (!buf->reader) {
@@ -87,11 +95,13 @@ static inline void mbuf_rewind_writer(struct MBuf *buf)
  * Info functions.
  */
 
+/** How many bytes can be read with read cursor. */
 static inline unsigned mbuf_avail_for_read(const struct MBuf *buf)
 {
 	return buf->write_pos - buf->read_pos;
 }
 
+/** How many bytes can be written with write cursor, without realloc. */
 static inline unsigned mbuf_avail_for_write(const struct MBuf *buf)
 {
 	if (!buf->reader && buf->alloc_len > buf->write_pos)
@@ -99,16 +109,19 @@ static inline unsigned mbuf_avail_for_write(const struct MBuf *buf)
 	return 0;
 }
 
+/** How many data bytes are in buffer. */
 static inline unsigned mbuf_written(const struct MBuf *buf)
 {
 	return buf->write_pos;
 }
 
+/** Return pointer to data area. */
 static inline const void *mbuf_data(const struct MBuf *buf)
 {
 	return buf->data;
 }
 
+/** Do the mbufs contain same data. */
 static inline bool mbuf_eq(const struct MBuf *buf1, const struct MBuf *buf2)
 {
 	if (buf1 == buf2) return true;
@@ -117,6 +130,7 @@ static inline bool mbuf_eq(const struct MBuf *buf1, const struct MBuf *buf2)
 	return memcmp(mbuf_data(buf1), mbuf_data(buf2), mbuf_written(buf1)) == 0;
 }
 
+/** Complare mbuf to asciiz string */
 static inline bool mbuf_eq_str(const struct MBuf *buf1, const char *s)
 {
 	struct MBuf tmp;
@@ -128,6 +142,7 @@ static inline bool mbuf_eq_str(const struct MBuf *buf1, const char *s)
  * Read functions.
  */
 
+/** Read a byte from read cursor. */
 _MUSTCHECK
 static inline bool mbuf_get_byte(struct MBuf *buf, uint8_t *dst_p)
 {
@@ -137,6 +152,7 @@ static inline bool mbuf_get_byte(struct MBuf *buf, uint8_t *dst_p)
 	return true;
 }
 
+/** Read big-endian uint16 from read cursor. */
 _MUSTCHECK
 static inline bool mbuf_get_char(struct MBuf *buf, char *dst_p)
 {
@@ -158,6 +174,7 @@ static inline bool mbuf_get_uint16be(struct MBuf *buf, uint16_t *dst_p)
 	return true;
 }
 
+/** Read big-endian uint32 from read cursor. */
 _MUSTCHECK
 static inline bool mbuf_get_uint32be(struct MBuf *buf, uint32_t *dst_p)
 {
@@ -172,6 +189,7 @@ static inline bool mbuf_get_uint32be(struct MBuf *buf, uint32_t *dst_p)
 	return true;
 }
 
+/** Get reference to len bytes from read cursor. */
 _MUSTCHECK
 static inline bool mbuf_get_uint64be(struct MBuf *buf, uint64_t *dst_p)
 {
@@ -193,6 +211,7 @@ static inline bool mbuf_get_bytes(struct MBuf *buf, unsigned len, const uint8_t 
 	return true;
 }
 
+/** Get reference to asciiz string from read cursor. */
 _MUSTCHECK
 static inline bool mbuf_get_chars(struct MBuf *buf, unsigned len, const char **dst_p)
 {
@@ -219,9 +238,11 @@ static inline bool mbuf_get_string(struct MBuf *buf, const char **dst_p)
  * Write functions.
  */
 
+/** Allocate more room if needed and the mbuf allows. */
 _MUSTCHECK
 bool mbuf_make_room(struct MBuf *buf, unsigned len);
 
+/** Write a byte to write cursor. */
 _MUSTCHECK
 static inline bool mbuf_write_byte(struct MBuf *buf, uint8_t val)
 {
@@ -232,6 +253,7 @@ static inline bool mbuf_write_byte(struct MBuf *buf, uint8_t val)
 	return true;
 }
 
+/** Write len bytes to write cursor. */
 _MUSTCHECK
 static inline bool mbuf_write(struct MBuf *buf, const void *ptr, unsigned len)
 {
@@ -243,14 +265,14 @@ static inline bool mbuf_write(struct MBuf *buf, const void *ptr, unsigned len)
 	return true;
 }
 
-/* writes full contents of another mbuf, without touching it */
+/** writes full contents of another mbuf, without touching it */
 _MUSTCHECK
 static inline bool mbuf_write_raw_mbuf(struct MBuf *dst, struct MBuf *src)
 {
 	return mbuf_write(dst, src->data, src->write_pos);
 }
 
-/* writes partial contents of another mbuf, with touching it */
+/** writes partial contents of another mbuf, with touching it */
 _MUSTCHECK
 static inline bool mbuf_write_mbuf(struct MBuf *dst, struct MBuf *src, unsigned len)
 {
@@ -264,6 +286,7 @@ static inline bool mbuf_write_mbuf(struct MBuf *dst, struct MBuf *src, unsigned 
 	return true;
 }
 
+/** Fiil mbuf with byte value */
 _MUSTCHECK
 static inline bool mbuf_fill(struct MBuf *buf, uint8_t byte, unsigned len)
 {
@@ -275,7 +298,7 @@ static inline bool mbuf_fill(struct MBuf *buf, uint8_t byte, unsigned len)
 	return true;
 }
 
-/* remove some data from buf */
+/** remove some data from mbuf */
 _MUSTCHECK
 static inline bool mbuf_cut(struct MBuf *buf, unsigned ofs, unsigned len)
 {

@@ -1,6 +1,4 @@
 /*
- * Simple memory pool for variable-length allocations.
- *
  * Copyright (c) 2009 Marko Kreen
  *
  * Permission to use, copy, modify, and/or distribute this software for any
@@ -16,14 +14,22 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+/**
+ * @file
+ * Simple memory pool for variable-length allocations.
+ */
 #ifndef _USUAL_MEMPOOL_H_
 #define _USUAL_MEMPOOL_H_
 
 #include <usual/base.h>
 
+/** Pool Reference */
 struct MemPool;
 
+/** Allocate from pool */
 void *mempool_alloc(struct MemPool **pool, unsigned size) _MALLOC;
+
+/** Release all memory in pool */
 void mempool_destroy(struct MemPool **pool);
 
 #endif

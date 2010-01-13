@@ -23,7 +23,8 @@
 
 #ifdef HAVE_PTHREAD_H
 #include <pthread.h>
-#endif
+
+#else
 
 #ifdef WIN32
 
@@ -46,5 +47,7 @@ int pthread_mutex_unlock(pthread_mutex_t *lock);
 int pthread_join(pthread_t *t, void **ret);
 
 #endif /* WIN32 */
+
+#endif /* HAVE_PTHREAD_H */
 
 #endif

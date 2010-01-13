@@ -139,3 +139,6 @@ tgz: config.mak $(DISTFILES)
 	tar czf $(FULL).tgz $(FULL)
 	rm -rf $(FULL)
 
+dox:
+	doxygen doc/Doxyfile
+

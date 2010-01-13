@@ -16,7 +16,9 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
+/** @file
+ * Binary heap.
+ *
  * Summary - binary heap is sort of binary tree held inside array,
  * with following 2 properties:
  * - heap property: each node is "better" than it's childs.

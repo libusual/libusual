@@ -1,6 +1,7 @@
-/*
+/** @file
  * Daemonization & pidfile handling.
- *
+ */
+/*
  * Copyright (c) 2007-2009 Marko Kreen, Skype Technologies OÜ
  *
  * Permission to use, copy, modify, and/or distribute this software for any
@@ -23,6 +24,9 @@
 
 bool signal_pidfile(const char *pidfile, int sig);
 
+/**
+ * Daemonize process and write pidfile.
+ */
 void daemonize(const char *pidfile, bool go_background);
 
 #endif
