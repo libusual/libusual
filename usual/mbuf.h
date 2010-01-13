@@ -138,6 +138,15 @@ static inline bool mbuf_get_byte(struct MBuf *buf, uint8_t *dst_p)
 }
 
 _MUSTCHECK
+static inline bool mbuf_get_char(struct MBuf *buf, char *dst_p)
+{
+	if (buf->read_pos + 1 > buf->write_pos)
+		return false;
+	*dst_p = buf->data[buf->read_pos++];
+	return true;
+}
+
+_MUSTCHECK
 static inline bool mbuf_get_uint16be(struct MBuf *buf, uint16_t *dst_p)
 {
 	unsigned a, b;
@@ -164,11 +173,32 @@ static inline bool mbuf_get_uint32be(struct MBuf *buf, uint32_t *dst_p)
 }
 
 _MUSTCHECK
+static inline bool mbuf_get_uint64be(struct MBuf *buf, uint64_t *dst_p)
+{
+	uint32_t a, b;
+	if (!mbuf_get_uint32be(buf, &a)
+	    || !mbuf_get_uint32be(buf, &b))
+		return false;
+	*dst_p = ((uint64_t)a << 32) | b;
+	return true;
+}
+
+_MUSTCHECK
 static inline bool mbuf_get_bytes(struct MBuf *buf, unsigned len, const uint8_t **dst_p)
 {
 	if (buf->read_pos + len > buf->write_pos)
 		return false;
 	*dst_p = buf->data + buf->read_pos;
+	buf->read_pos += len;
+	return true;
+}
+
+_MUSTCHECK
+static inline bool mbuf_get_chars(struct MBuf *buf, unsigned len, const char **dst_p)
+{
+	if (buf->read_pos + len > buf->write_pos)
+		return false;
+	*dst_p = (char *)buf->data + buf->read_pos;
 	buf->read_pos += len;
 	return true;
 }
@@ -258,6 +288,21 @@ static inline bool mbuf_cut(struct MBuf *buf, unsigned ofs, unsigned len)
 	} else if (ofs < buf->write_pos) {
 		buf->write_pos = ofs;
 	}
+	return true;
+}
+
+static inline void mbuf_copy(const struct MBuf *src, struct MBuf *dst)
+{
+	*dst = *src;
+}
+
+_MUSTCHECK
+static inline bool mbuf_slice(struct MBuf *src, unsigned len, struct MBuf *dst)
+{
+	if (len > mbuf_avail_for_read(src))
+		return false;
+	mbuf_init_fixed_reader(dst, src->data + src->read_pos, len);
+	src->read_pos += len;
 	return true;
 }
 
