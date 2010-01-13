@@ -211,14 +211,25 @@ size_t strlcat(char *dst, const char *src, size_t n)
 #endif
 
 #ifndef HAVE_BASENAME
-const char *basename(const char *path)
+char *basename(char *path)
 {
-	const char *p;
+	char *p, *p2;
 	if (path == NULL || path[0] == 0)
 		return ".";
-	if ((p = strrchr(path, '/')) != NULL)
-		return p[1] ? p + 1 : p;
-	return path;
+	if ((p = strrchr(path, '/')) == NULL)
+		return path;
+	if (p[1])
+		return p + 1;
+
+	/* last char is '/' */
+	for (p2 = p; p2 > path; p2--) {
+		if (p2[-1] != '/') {
+			*p2 = 0;
+			return basename(path);
+		}
+	}
+	/* path contains only '/' chars */
+	return p;
 }
 #endif
 

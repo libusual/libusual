@@ -23,6 +23,10 @@
 
 #include <string.h>
 
+#ifdef HAVE_LIBGEN_H
+#include <libgen.h>
+#endif
+
 #ifndef HAVE_STRLCPY
 #define strlcpy(a,b,c) usual_strlcpy(a,b,c)
 size_t strlcpy(char *dst, const char *src, size_t n);
@@ -81,7 +85,7 @@ static inline long long flsll(long long x) { _FLS(ll, long long); }
 
 #ifndef HAVE_BASENAME
 #define basename(a) compat_basename(a)
-const char *basename(const char *path);
+char *basename(char *path);
 #endif
 
 /*
