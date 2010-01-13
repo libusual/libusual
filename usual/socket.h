@@ -52,6 +52,13 @@
 #include <arpa/inet.h>
 #endif
 
+/*
+ * Some systems (Solaris) does not define INADDR_NONE
+ */
+#ifndef INADDR_NONE
+#define INADDR_NONE ((unsigned long) -1)
+#endif
+
 bool socket_setup(int sock, bool non_block);
 bool socket_set_nonblocking(int sock, bool non_block);
 
