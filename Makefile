@@ -13,10 +13,7 @@ USUAL_MODULES = $(filter-out pgsocket, $(subst .h,, $(notdir $(wildcard usual/*.
 include $(USUAL_DIR)/Setup.mk
 
 # extra warning flags
-WFLAGS = -Wextra -Wno-unused-parameter -Wno-missing-field-initializers \
-	 -Wmissing-prototypes -Wpointer-arith -Wdeclaration-after-statement \
-	 -Wold-style-definition -Wstrict-prototypes -Wundef -Wformat -Wnonnull \
-	 -Wstrict-overflow
+WFLAGS =
 
 # full path for files
 srcs = $(USUAL_SRCS)
