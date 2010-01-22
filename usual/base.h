@@ -19,7 +19,11 @@
 #ifndef _USUAL_BASE_H_
 #define _USUAL_BASE_H_
 
+#ifdef USUAL_TEST_CONFIG
+#include "test_config.h"
+#else
 #include <usual/config.h>
+#endif
 
 #include <sys/types.h>
 #include <sys/param.h>
