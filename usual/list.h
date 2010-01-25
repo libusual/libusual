@@ -111,5 +111,9 @@ static inline struct List *list_last(const struct List *list)
 	     (item) != (list); \
 	     (item) = (tmp), (tmp) = (tmp)->next)
 
+/* sort list */
+typedef int (*list_cmp_f)(const struct List *a, const struct List *b);
+void list_sort(struct List *list, list_cmp_f cmp_func);
+
 #endif
 
