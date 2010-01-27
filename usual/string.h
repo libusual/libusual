@@ -60,14 +60,13 @@ bool parse_word_list(const char *s, str_cb cb_func, void *cb_arg);
 
 #if defined(__GNUC__) && (__GNUC__ >= 4)
 #define _FLS(sfx, type) \
-	return (8*sizeof(type)) - __builtin_clz ## sfx(x)
+	return (x == 0) ? 0 : ((8*sizeof(type)) - __builtin_clz ## sfx(x))
 #else
 #define _FLS(sfx, type) \
-	unsigned type z = x; \
 	unsigned int bit; \
-	if (!z) return 0; \
+	if (x == 0) return 0; \
 	/* count from smallest bit, assuming small values */ \
-	for (bit = 1; z > 1; bit++) z >>= 1; \
+	for (bit = 1; x > 1; bit++) x >>= 1; \
 	return bit
 #endif
 
@@ -77,8 +76,8 @@ static inline int fls(int x) { _FLS(, int); }
 #ifndef HAVE_FLSL
 static inline int flsl(long x) { _FLS(l, long); }
 #endif
-#ifndef HAVE_FLS
-static inline long long flsll(long long x) { _FLS(ll, long long); }
+#ifndef HAVE_FLSLL
+static inline int flsll(long long x) { _FLS(ll, long long); }
 #endif
 #undef _FLS
 
