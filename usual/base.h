@@ -126,6 +126,11 @@ static inline void *zmalloc(size_t len)
 	return calloc(1, len);
 }
 
+#ifndef HAVE_POSIX_MEMALIGN
+#define posix_memalign(a,b,c) usual_memalign(a,b,c)
+int posix_memalign(void **ptr_p, size_t align, size_t len);
+#endif
+
 /* cpp expr -> string */
 #define _STR_(identifier) #identifier
 #define STR(x) _STR_(x)

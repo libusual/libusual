@@ -114,6 +114,7 @@ AC_CHECK_HEADERS([arpa/inet.h netinet/in.h netinet/tcp.h])
 AC_CHECK_HEADERS([sys/param.h sys/uio.h libgen.h pwd.h grp.h])
 AC_CHECK_HEADERS([sys/wait.h sys/mman.h syslog.h netdb.h dlfcn.h])
 AC_CHECK_HEADERS([err.h pthread.h endian.h sys/endian.h byteswap.h])
+AC_CHECK_HEADERS([malloc.h])
 dnl ucred.h may have prereqs
 AC_CHECK_HEADERS([ucred.h sys/ucred.h], [], [], [
 #ifdef HAVE_SYS_TYPES_H
@@ -133,6 +134,7 @@ AC_DEFUN([AC_USUAL_FUNCTION_CHECK], [
 AC_CHECK_FUNCS(basename strlcpy strlcat getpeereid sigaction)
 AC_CHECK_FUNCS(inet_ntop poll getline)
 AC_CHECK_FUNCS(err errx warn warnx getprogname setprogname)
+AC_CHECK_FUNCS(posix_memalign memalign valloc)
 ### Functions provided only on win32
 AC_CHECK_FUNCS(localtime_r recvmsg sendmsg)
 ### Functions used by libusual itself
