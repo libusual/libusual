@@ -40,7 +40,7 @@ void *mempool_alloc(struct MemPool **pool, unsigned size)
 	void *ptr;
 	unsigned nsize;
 
-	size = (size + sizeof(long) - 1) & ~(sizeof(long) - 1);
+	size = ALIGN(size);
 	if (cur && cur->used + size <= cur->size) {
 		ptr = (char *)(cur + 1) + cur->used;
 		cur->used += size;
@@ -62,10 +62,13 @@ void *mempool_alloc(struct MemPool **pool, unsigned size)
 
 void mempool_destroy(struct MemPool **pool)
 {
-	struct MemPool *cur;
-	while ((cur = *pool) != NULL) {
-		*pool = cur->prev;
+	struct MemPool *cur, *tmp;
+	if (!pool)
+		return;
+	for (cur = *pool, *pool = NULL; cur; ) {
+		tmp = cur->prev;
 		free(cur);
+		cur = tmp;
 	}
 }
 
