@@ -33,6 +33,8 @@
 
 #include <usual/statlist.h>
 
+#ifndef USUAL_FAKE_SLAB
+
 /*
  * Store for pre-initialized objects of one type.
  */
@@ -45,6 +47,7 @@ struct Slab {
 	unsigned total_count;
 	slab_init_fn  init_func;
 };
+
 
 /*
  * Header for each slab.
@@ -219,3 +222,65 @@ void slab_stats(slab_stat_fn cb_func, void *cb_arg)
 	}
 }
 
+#else
+
+struct Slab {
+	int size;
+	struct StatList obj_list;
+	slab_init_fn init_func;
+};
+
+
+struct Slab *slab_create(const char *name, unsigned obj_size, unsigned align,
+			     slab_init_fn init_func)
+{
+	struct Slab *s = malloc(sizeof(*s));
+	if (s) {
+		s->size = obj_size;
+		s->init_func = init_func;
+		statlist_init(&s->obj_list, "obj_list");
+	}
+	return s;
+}
+
+void slab_destroy(struct Slab *slab)
+{
+	struct List *el, *tmp;
+	statlist_for_each_safe(el, &slab->obj_list, tmp) {
+		statlist_remove(&slab->obj_list, el);
+		free(el);
+	}
+	free(slab);
+}
+
+void *slab_alloc(struct Slab *slab)
+{
+	struct List *o;
+	void *res;
+	o = calloc(1, sizeof(struct List) + slab->size);
+	if (!o)
+		return NULL;
+	list_init(o);
+	statlist_append(&slab->obj_list, o);
+	res = (void *)(o + 1);
+	if (slab->init_func)
+		slab->init_func(res);
+	return res;
+}
+
+void slab_free(struct Slab *slab, void *obj)
+{
+	if (obj) {
+		struct List *el = obj;
+		statlist_remove(&slab->obj_list, el - 1);
+		free(el - 1);
+	}
+}
+
+int slab_total_count(const struct Slab *slab) { return 0; }
+int slab_free_count(const struct Slab *slab) { return 0; }
+int slab_active_count(const struct Slab *slab) { return 0; }
+void slab_stats(slab_stat_fn cb_func, void *cb_arg) {}
+
+
+#endif
