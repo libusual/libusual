@@ -80,6 +80,77 @@ bool socket_setup(int sock, bool non_block)
 	return true;
 }
 
+bool socket_set_keepalive(int fd, int onoff, int keepidle, int keepintvl, int keepcnt)
+{
+	int val, res;
+
+	if (!onoff) {
+		/* turn keepalive off */
+		val = 0;
+		res = setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &val, sizeof(val));
+		return (res == 0);
+	}
+
+	/* turn keepalive on */
+	val = 1;
+	res = setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &val, sizeof(val));
+	if (res < 0)
+		return false;
+
+	/* Darwin */
+#ifdef TCP_KEEPALIVE
+	if (keepidle) {
+		val = keepidle;
+		res = setsockopt(fd, IPPROTO_TCP, TCP_KEEPALIVE, &val, sizeof(val));
+		if (res < 0 && errno != ENOPROTOOPT)
+			return false;
+	}
+#endif
+
+	/* Linux, NetBSD */
+#ifdef TCP_KEEPIDLE
+	if (keepidle) {
+		val = keepidle;
+		res = setsockopt(fd, IPPROTO_TCP, TCP_KEEPIDLE, &val, sizeof(val));
+		if (res < 0 && errno != ENOPROTOOPT)
+			return false;
+	}
+#endif
+#ifdef TCP_KEEPINTVL
+	if (keepintvl) {
+		val = keepintvl;
+		res = setsockopt(fd, IPPROTO_TCP, TCP_KEEPINTVL, &val, sizeof(val));
+		if (res < 0 && errno != ENOPROTOOPT)
+			return false;
+	}
+#endif
+#ifdef TCP_KEEPCNT
+	if (keepcnt > 0) {
+		val = keepcnt;
+		res = setsockopt(fd, IPPROTO_TCP, TCP_KEEPCNT, &val, sizeof(val));
+		if (res < 0 && errno != ENOPROTOOPT)
+			return false;
+	}
+#endif
+
+	/* Windows */
+#ifdef SIO_KEEPALIVE_VALS
+	if (keepidle || keepintvl) {
+		struct tcp_keepalive vals;
+		DWORD outlen = 0;
+		if (!keepidle) keepidle = 5 * 60;
+		if (!keepintvl) keepintvl = 15;
+		vals.onoff = 1;
+		vals.keepalivetime = keepidle * 1000;
+		vals.keepaliveinterval = keepintvl * 1000;
+		res = WSAIoctl(fd, SIO_KEEPALIVE_VALS, &vals, sizeof(vals), NULL, 0, &outlen, NULL, NULL, NULL, NULL);
+		if (res != 0)
+			return false;
+	}
+#endif
+	return true;
+}
+
 /*
  * Convert sockaddr to string.  Supports ipv4, ipv6 and unix sockets.
  */

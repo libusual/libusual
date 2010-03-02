@@ -61,6 +61,7 @@
 
 bool socket_setup(int sock, bool non_block);
 bool socket_set_nonblocking(int sock, bool non_block);
+bool socket_set_keepalive(int fd, int onoff, int keepidle, int keepintvl, int keepcnt);
 
 const char *sa2str(const struct sockaddr *sa, char *buf, int buflen);
 
