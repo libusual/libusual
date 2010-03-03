@@ -37,6 +37,11 @@ size_t strlcpy(char *dst, const char *src, size_t n);
 size_t strlcat(char *dst, const char *src, size_t n);
 #endif
 
+#ifndef HAVE_MEMRCHR
+#define memrchr(a,b,c) usual_memrchr(a,b,c)
+void *memrchr(const void *s, int c, size_t n);
+#endif
+
 typedef bool (*str_cb)(void *arg, const char *s);
 
 struct StrList;
@@ -83,23 +88,27 @@ static inline int flsll(long long x) { _FLS(ll, long long); }
 
 
 #ifndef HAVE_BASENAME
-#define basename(a) compat_basename(a)
-char *basename(char *path);
+#define basename(a) usual_basename(a)
+const char *basename(const char *path);
+#endif
+
+#ifndef HAVE_DIRNAME
+#define dirname(a) usual_dirname(a)
+const char *dirname(const char *path);
 #endif
 
 /*
  * strerror, strerror_r
  */
+
 #ifdef WIN32
 const char *win32_strerror(int e);
 #define strerror(x) win32_strerror(x)
-const char *win32_strerror_r(int e, char *dst, size_t dstlen);
-#define strerror_r(a,b,c) win32_strerror_r(a,b,c)
-#else
-/* otherwise convert native strerror_r() to GNU signature */
-const char *wrap_strerror_r(int e, char *dst, size_t dstlen);
-#define strerror_r(a,b,c) wrap_strerror_r(a,b,c)
 #endif
+
+/* convert native strerror_r() to GNU signature */
+const char *usual_strerror_r(int e, char *dst, size_t dstlen);
+#define strerror_r(a,b,c) usual_strerror_r(a,b,c)
 
 #endif
 

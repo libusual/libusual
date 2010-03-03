@@ -131,8 +131,8 @@ dnl  AC_USUAL_FUNCTION_CHECK:  Basic functions
 dnl
 AC_DEFUN([AC_USUAL_FUNCTION_CHECK], [
 ### Functions provided if missing
-AC_CHECK_FUNCS(basename strlcpy strlcat getpeereid sigaction)
-AC_CHECK_FUNCS(inet_ntop poll getline)
+AC_CHECK_FUNCS(basename dirname strlcpy strlcat getpeereid sigaction)
+AC_CHECK_FUNCS(inet_ntop poll getline memrchr)
 AC_CHECK_FUNCS(err errx warn warnx getprogname setprogname)
 AC_CHECK_FUNCS(posix_memalign memalign valloc)
 ### Functions provided only on win32

@@ -210,12 +210,27 @@ size_t strlcat(char *dst, const char *src, size_t n)
 }
 #endif
 
-#ifndef HAVE_BASENAME
-char *basename(char *path)
+#ifndef HAVE_MEMRCHR
+void *memrchr(const void *s, int c, size_t n)
 {
-	char *p, *p2;
+	const uint8_t *p = s;
+	while (n--) {
+		if (p[n] == c)
+			return (void *)(p + n);
+	}
+	return NULL;
+}
+#endif
+
+#ifndef HAVE_BASENAME
+const char *basename(const char *path)
+{
+	const char *p, *p2;
+	static char buf[256];
+	unsigned len;
+
 	if (path == NULL || path[0] == 0)
-		return ".";
+		return memcpy(buf, ".", 2);
 	if ((p = strrchr(path, '/')) == NULL)
 		return path;
 	if (p[1])
@@ -224,12 +239,53 @@ char *basename(char *path)
 	/* last char is '/' */
 	for (p2 = p; p2 > path; p2--) {
 		if (p2[-1] != '/') {
-			*p2 = 0;
-			return basename(path);
+			len = p2 - path;
+			if (len > sizeof(buf) - 1)
+				len = sizeof(buf) - 1;
+			memcpy(buf, p2 - len, len);
+			buf[len] = 0;
+			return basename(buf);
 		}
 	}
 	/* path contains only '/' chars */
 	return p;
+}
+#endif
+
+#ifndef HAVE_DIRNAME
+const char *dirname(const char *path)
+{
+	const char *p;
+	size_t len;
+	static char buf[1024];
+
+	if (path == NULL || path[0] == 0)
+		return memcpy(buf, ".", 2);
+
+	/* ignore tailing '/' */
+	len = strlen(path);
+	while (len && path[len - 1] == '/')
+		len--;
+	if (!len)
+		return memcpy(buf, "/", 2);
+
+	/* find end of dirname, strip '/' */
+	if ((p = memrchr(path, '/', len)) == NULL)
+		return memcpy(buf, ".", 2);
+	len = p - path;
+	while (len && path[len - 1] == '/')
+		len--;
+	if (!len)
+		return memcpy(buf, "/", 2);
+
+	/* return it */
+	if (len > sizeof(buf) - 1) {
+		errno = ENAMETOOLONG;
+		return NULL;
+	}
+	memcpy(buf, path, len);
+	buf[len] = 0;
+	return buf;
 }
 #endif
 
@@ -239,25 +295,29 @@ const char *win32_strerror(int e)
 	static char buf[1024];
 	return strerror_r(e, buf, sizeof(buf));
 }
-const char *win32_strerror_r(int e, char *dst, size_t dstlen)
+#endif
+
+/* restore original strerror_r() */
+#undef strerror_r
+
+const char *usual_strerror_r(int e, char *dst, size_t dstlen)
 {
+#ifdef WIN32
 	FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, e,
 		      MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 		      dst, dstlen, NULL);
-	return dst;
-}
-#else
-const char *wrap_strerror_r(int e, char *dst, size_t dstlen)
-{
-#undef strerror_r
+#else /* !WIN32 */
+
 #ifdef STRERROR_R_CHAR_P
-	return strerror_r(e, dst, dstlen);
+	dst = strerror_r(e, dst, dstlen);
 #else
 	if (strerror_r(e, dst, dstlen) != 0)
 		strlcpy(dst, "ERR", dstlen);
+#endif
+
+#endif /* !WIN32 */
+
 	return dst;
-#endif
 }
-#endif
 
 
