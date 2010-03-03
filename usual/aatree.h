@@ -63,7 +63,7 @@ void aatree_walk(struct AATree *tree, enum AATreeWalkType wtype, aatree_walker_f
 void aatree_destroy(struct AATree *tree);
 
 /* aatree does not use NULL pointers */
-static inline int aatree_is_nil_node(struct AANode *node)
+static inline int aatree_is_nil_node(const struct AANode *node)
 {
 	return (node->left == node);
 }
