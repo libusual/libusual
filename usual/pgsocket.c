@@ -43,6 +43,8 @@ struct PgSocket {
 	/* track wait state */
 	enum WType wait_type;
 
+	uint8_t wait_event; // EV_READ / EV_WRITE
+
 	/* should connect after sleep */
 	bool reconnect;
 
@@ -81,6 +83,7 @@ static void wait_event(struct PgSocket *db, short ev, libev_cb fn)
 		fatal_perror("event_add");
 
 	db->wait_type = W_SOCK;
+	db->wait_event = ev;
 }
 
 /* wait timeout from libevent */
@@ -359,5 +362,14 @@ int pgs_connection_valid(struct PgSocket *db)
 PGconn *pgs_get_connection(struct PgSocket *db)
 {
 	return db->con;
+}
+
+bool pgs_waiting_for_reply(struct PgSocket *db)
+{
+	if (!db->con)
+		return false;
+	if (PQstatus(db->con) != CONNECTION_OK)
+		return false;
+	return (db->wait_type == W_SOCK) && (db->wait_event == EV_READ);
 }
 

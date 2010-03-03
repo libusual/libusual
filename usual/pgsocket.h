@@ -55,5 +55,7 @@ int pgs_connection_valid(struct PgSocket *db);
 
 PGconn *pgs_get_connection(struct PgSocket *db);
 
+bool pgs_waiting_for_reply(struct PgSocket *db);
+
 #endif
 
