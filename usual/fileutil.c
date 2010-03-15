@@ -30,7 +30,7 @@
  * Load text file into C string.
  */
 
-char *load_file(const char *fn)
+void *load_file(const char *fn, size_t *len_p)
 {
 	struct stat st;
 	char *buf = NULL;
@@ -55,8 +55,10 @@ char *load_file(const char *fn)
 	}
 
 	fclose(f);
-	buf[st.st_size] = 0;
 
+	buf[st.st_size] = 0;
+	if (len_p)
+		*len_p = st.st_size;
 	return buf;
 }
 

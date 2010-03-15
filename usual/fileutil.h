@@ -31,7 +31,7 @@ struct MappedFile {
 
 typedef void (*procline_cb)(void *arg, const char *line, ssize_t len);
 
-char *load_file(const char *fn);
+void *load_file(const char *fn, size_t *len_p);
 
 bool foreach_line(const char *fn, procline_cb proc_line, void *arg);
 
