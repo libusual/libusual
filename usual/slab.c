@@ -59,8 +59,19 @@ struct SlabFrag {
 /* keep track of all active slabs */
 static STATLIST(slab_list);
 
-/* cache for slab headers */
-static struct Slab *slab_headers = NULL;
+static void slab_list_append(struct Slab *slab)
+{
+#ifndef _REENTRANT
+	statlist_append(&slab_list, &slab->head);
+#endif
+}
+
+static void slab_list_remove(struct Slab *slab)
+{
+#ifndef _REENTRANT
+	statlist_remove(&slab_list, &slab->head);
+#endif
+}
 
 /* fill struct contents */
 static void init_slab(struct Slab *slab, const char *name, unsigned obj_size,
@@ -73,7 +84,6 @@ static void init_slab(struct Slab *slab, const char *name, unsigned obj_size,
 	statlist_init(&slab->fraglist, name);
 	slab->total_count = 0;
 	slab->init_func = init_func;
-	statlist_append(&slab_list, &slab->head);
 
 	if (slen >= sizeof(slab->name))
 		slen = sizeof(slab->name) - 1;
@@ -84,6 +94,8 @@ static void init_slab(struct Slab *slab, const char *name, unsigned obj_size,
 		slab->final_size = ALIGN(obj_size);
 	else
 		slab->final_size = CUSTOM_ALIGN(obj_size, align);
+
+	slab_list_append(slab);
 }
 
 /* make new slab */
@@ -92,17 +104,8 @@ struct Slab *slab_create(const char *name, unsigned obj_size, unsigned align,
 {
 	struct Slab *slab;
 
-	/* header cache */
-	if (!slab_headers) {
-		slab_headers = malloc(sizeof(struct Slab));
-		if (!slab_headers)
-			return NULL;
-		init_slab(slab_headers, "slab_header",
-			  sizeof(struct Slab), 0, NULL);
-	}
-
 	/* new slab object */
-	slab = slab_alloc(slab_headers);
+	slab = calloc(1, sizeof(*slab));
 	if (slab)
 		init_slab(slab, name, obj_size, align, init_func);
 	return slab;
@@ -117,13 +120,12 @@ void slab_destroy(struct Slab *slab)
 	if (!slab)
 		return;
 
+	slab_list_remove(slab);
 	statlist_for_each_safe(item, &slab->fraglist, tmp) {
 		frag = container_of(item, struct SlabFrag, head);
 		free(frag);
 	}
-	statlist_remove(&slab_list, &slab->head);
-	memset(slab, 0, sizeof(*slab));
-	slab_free(slab_headers, slab);
+	free(slab);
 }
 
 /* add new block of objects to slab */
