@@ -47,7 +47,7 @@ bool parse_ini_file(const char *fn, cf_handler_f user_handler, void *arg)
 	char o1, o2;
 	bool ok;
 
-	buf = load_file(fn);
+	buf = load_file(fn, NULL);
 	if (buf == NULL)
 		return false;
 
