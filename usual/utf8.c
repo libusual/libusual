@@ -30,7 +30,7 @@
 int utf8_get_char(const char **src_p, const char *_srcend)
 {
 	uint32_t c;
-	const uint8_t *srcend = (uint8_t *)srcend;
+	const uint8_t *srcend = (uint8_t *)_srcend;
 	const uint8_t *p = (uint8_t *)(*src_p);
 	/*
 	 * 0xxx xxxx -> len=1
@@ -67,7 +67,7 @@ int utf8_get_char(const char **src_p, const char *_srcend)
 		if (!u8tail(p[1]) || !u8tail(p[2]) || !u8tail(p[3]))
 			goto bad_enc;
 
-		c = ((p[0] & 0x1F) << 18) | ((p[1] & 0x3F) << 12)
+		c = ((p[0] & 0x07) << 18) | ((p[1] & 0x3F) << 12)
 		  | ((p[2] & 0x3F) << 6) | (p[3] & 0x3F);
 		if (c < 0x10000 || c > 0x10FFFF)
 			goto bad_enc;
@@ -124,7 +124,7 @@ int utf8_char_size(int c)
 {
 	if (c < 0x80) return 1;
 	if (c < 0x800) return 2;
-	if (c < 0x1000) return 3;
+	if (c < 0x10000) return 3;
 	return 4;
 }
 
