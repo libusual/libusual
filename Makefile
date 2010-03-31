@@ -12,9 +12,6 @@ USUAL_OBJDIR = obj
 USUAL_MODULES = $(filter-out pgsocket, $(subst .h,, $(notdir $(wildcard usual/*.h))))
 include $(USUAL_DIR)/Setup.mk
 
-# extra warning flags
-WFLAGS =
-
 # full path for files
 srcs = $(USUAL_SRCS)
 hdrs = $(USUAL_HDRS)

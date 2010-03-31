@@ -65,10 +65,10 @@ if test "$GCC" = "yes"; then
      LDFLAGS="$old_LDFLAGS"])
 fi
 dnl Pick good warning flags for gcc
+WFLAGS=""
 if test x"$GCC" = xyes; then
   AC_MSG_CHECKING([for working warning switches])
   good_CFLAGS="$CFLAGS"
-  warnings=""
   flags="-Wall -Wextra"
   # turn off noise from Wextra
   flags="$flags -Wno-unused-parameter -Wno-missing-field-initializers"
@@ -77,16 +77,17 @@ if test x"$GCC" = xyes; then
   flags="$flags -Wdeclaration-after-statement -Wold-style-definition"
   flags="$flags -Wstrict-prototypes -Wundef -Wformat -Wnonnull -Wstrict-overflow"
   for f in $flags; do
-    CFLAGS="$good_CFLAGS $warnings $f"
-    AC_COMPILE_IFELSE([void foo(void){}], [warnings="$warnings $f"])
+    CFLAGS="$good_CFLAGS $WFLAGS $f"
+    AC_COMPILE_IFELSE([void foo(void){}], [WFLAGS="$WFLAGS $f"])
   done
-  CFLAGS="$good_CFLAGS $warnings"
+  CFLAGS="$good_CFLAGS"
   AC_MSG_RESULT([done])
 fi
 # autoconf does not want to find 'install', if not using automake...
 INSTALL=install
 BININSTALL="$INSTALL"
 AC_SUBST(INSTALL)
+AC_SUBST(WFLAGS)
 AC_SUBST(BININSTALL)
 AC_CHECK_TOOL([STRIP], [strip])
 AC_CHECK_TOOL([AR], [ar])
