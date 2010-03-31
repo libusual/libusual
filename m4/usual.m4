@@ -44,7 +44,7 @@ dnl
 dnl AC_USUAL_PROGRAM_CHECK:  Simple C environment: CC, CPP, INSTALL
 dnl
 AC_DEFUN([AC_USUAL_PROGRAM_CHECK], [
-AC_PROG_CC
+AC_PROG_CC_STDC
 AC_PROG_CPP
 dnl Check if compiler supports __func__
 AC_CACHE_CHECK([whether compiler supports __func__], pgac_cv_funcname_func,
