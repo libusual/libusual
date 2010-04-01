@@ -52,6 +52,9 @@ int cf_verbose = 0;
 const char *cf_logfile = NULL;
 const char *cf_syslog_ident = NULL;
 
+/* optional function to fill prefix */
+logging_prefix_fn_t logging_prefix_cb;
+
 static FILE *log_file = NULL;
 static bool syslog_started = false;
 
@@ -89,17 +92,23 @@ static void start_syslog(void)
 }
 
 
-void log_generic(enum LogLevel level, const char *fmt, ...)
+void log_generic(enum LogLevel level, void *ctx, const char *fmt, ...)
 {
 	char buf[2048];
 	char ebuf[256];
 	char timebuf[64];
 	const struct LevelInfo *lev = &log_level_list[level];
 	unsigned pid = getpid();
-
 	va_list ap;
+	int pfxlen = 0;
+
+	if (logging_prefix_cb) {
+		pfxlen = logging_prefix_cb(level, ctx, buf, sizeof(buf));
+		if (pfxlen < 0)
+			return;
+	}
 	va_start(ap, fmt);
-	vsnprintf(buf, sizeof(buf), fmt, ap);
+	vsnprintf(buf + pfxlen, sizeof(buf) - pfxlen, fmt, ap);
 	va_end(ap);
 
 	format_time_ms(0, timebuf, sizeof(timebuf));
@@ -133,7 +142,7 @@ void log_generic(enum LogLevel level, const char *fmt, ...)
 }
 
 
-void log_fatal(const char *file, int line, const char *func, bool show_perror, const char *fmt, ...)
+void log_fatal(const char *file, int line, const char *func, bool show_perror, void *ctx, const char *fmt, ...)
 {
 	char buf[2048], ebuf[256];
 	const char *estr = NULL;
@@ -150,10 +159,10 @@ void log_fatal(const char *file, int line, const char *func, bool show_perror, c
 	va_end(ap);
 
 	if (show_perror) {
-		log_generic(LG_FATAL, "@%s:%d in function %s(): %s: %s [%d]",
+		log_generic(LG_FATAL, ctx, "@%s:%d in function %s(): %s: %s [%d]",
 			     file, line, func, buf, estr, old_errno);
 	} else {
-		log_generic(LG_FATAL, "@%s:%d in function %s(): %s",
+		log_generic(LG_FATAL, ctx, "@%s:%d in function %s(): %s",
 			     file, line, func, buf);
 	}
 }

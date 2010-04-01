@@ -21,6 +21,10 @@
 
 #include <usual/base.h>
 
+/* way to pass context info for prefix function */
+#define LOG_CONTEXT_DEF	void *_log_ctx = NULL
+#define LOG_CONTEXT	_log_ctx
+
 /*
  * 0 - show only info level msgs (default)
  * 1 - show debug msgs (log_debug)
@@ -64,40 +68,51 @@ enum LogLevel {
 	LG_DEBUG = 4,
 	LG_NOISE = 5,
 };
-void log_generic(enum LogLevel level, const char *s, ...) _PRINTF(2, 3);
+void log_generic(enum LogLevel level, void *ctx, const char *s, ...) _PRINTF(3, 4);
 
 /* macros for plain logging */
-#define log_error(args...) log_generic(LG_ERROR, ## args)
-#define log_warning(args...) log_generic(LG_WARNING, ## args)
-#define log_info(args...) log_generic(LG_INFO, ## args)
+#define log_error(args...) do { LOG_CONTEXT_DEF; \
+		log_generic(LG_ERROR, LOG_CONTEXT, ## args); \
+	} while (0)
+#define log_warning(args...) do { LOG_CONTEXT_DEF; \
+		log_generic(LG_WARNING, LOG_CONTEXT, ## args); \
+	} while (0)
+#define log_info(args...) do { LOG_CONTEXT_DEF; \
+		log_generic(LG_INFO, LOG_CONTEXT, ## args); \
+	} while (0)
 
 /* move printf arg setup out-of-line for debug macros */
-#define log_debug(args...) do { \
+#define log_debug(args...) do { LOG_CONTEXT_DEF; \
 		if (unlikely(cf_verbose > 0)) \
-			log_generic(LG_DEBUG, ## args); \
+			log_generic(LG_DEBUG, LOG_CONTEXT, ## args); \
 	} while (0)
-#define log_noise(args...) do { \
+#define log_noise(args...) do { LOG_CONTEXT_DEF; \
 		if (unlikely(cf_verbose > 1)) \
-			log_generic(LG_NOISE, ## args); \
+			log_generic(LG_NOISE, LOG_CONTEXT, ## args); \
 	} while (0)
 
 /* this is also defined in base.h for Assert() */
-void log_fatal(const char *file, int line, const char *func, bool show_perror, const char *s, ...) _PRINTF(5, 6);
+void log_fatal(const char *file, int line, const char *func, bool show_perror,
+	       void *ctx, const char *s, ...) _PRINTF(6, 7);
 
 /* fatal loggers should also log location */
-#define fatal(args...) do { \
-	log_fatal(__FILE__, __LINE__, __func__, false, ## args); \
+#define fatal(args...) do { LOG_CONTEXT_DEF; \
+	log_fatal(__FILE__, __LINE__, __func__, false, LOG_CONTEXT, ## args); \
 	exit(1); } while (0)
-#define fatal_perror(args...) do { \
-	log_fatal(__FILE__, __LINE__, __func__, true, ## args); \
+#define fatal_perror(args...) do { LOG_CONTEXT_DEF; \
+	log_fatal(__FILE__, __LINE__, __func__, true, LOG_CONTEXT, ## args); \
 	exit(1); } while (0)
 
 /* less verbose fatal() */
-#define die(msg, args...) do { \
-	log_generic(LG_FATAL, msg, ## args); \
+#define die(msg, args...) do { LOG_CONTEXT_DEF; \
+	log_generic(LG_FATAL, msg, LOG_CONTEXT, ## args); \
 	exit(1); } while (0)
 
 void reset_logging(void);
+
+/* optional function to fill prefix. returns prefix len or < 0 to skip logging */
+typedef int (*logging_prefix_fn_t)(enum LogLevel lev, void *ctx, char *dst, unsigned int dstlen);
+extern logging_prefix_fn_t logging_prefix_cb;
 
 #endif
 
