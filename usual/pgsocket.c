@@ -207,6 +207,12 @@ static void flush(struct PgSocket *db)
 		conn_error(db, PGS_RESULT_BAD, "PQflush");
 }
 
+/* override default notice receiver */
+static void custom_notice_receiver(void *arg, const PGresult *res)
+{
+	/* do nothing */
+}
+
 /*
  * Public API
  */
@@ -250,6 +256,8 @@ void pgs_connect(struct PgSocket *db)
 		conn_error(db, PGS_CONNECT_FAILED, "PQconnectStart");
 		return;
 	}
+
+	PQsetNoticeReceiver(db->con, custom_notice_receiver, db);
 
 	wait_event(db, EV_WRITE, connect_cb);
 }
