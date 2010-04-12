@@ -72,6 +72,11 @@ usual/config.h:
 	@echo "Please run ./configure first"
 	@exit 1
 
+# run sparse over code
+check: config.mak
+	REAL_CC="$(CC)" \
+	$(MAKE) clean libusual.a CC="cgcc -Wsparse-all"
+
 asms = $(objs:.o=.s)
 asm: $(asms)
 
