@@ -106,6 +106,8 @@ void log_generic(enum LogLevel level, void *ctx, const char *fmt, ...)
 		pfxlen = logging_prefix_cb(level, ctx, buf, sizeof(buf));
 		if (pfxlen < 0)
 			return;
+		if (pfxlen >= (int)sizeof(buf))
+			pfxlen = sizeof(buf) - 1;
 	}
 	va_start(ap, fmt);
 	vsnprintf(buf + pfxlen, sizeof(buf) - pfxlen, fmt, ap);
