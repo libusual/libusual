@@ -21,9 +21,6 @@
 #include <string.h>
 #include <stdio.h>
 
-#ifdef HAVE_SYS_PARAM_H
-#include <sys/param.h>
-#endif
 #ifdef HAVE_UCRED_H
 #include <ucred.h>
 #endif

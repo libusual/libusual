@@ -28,7 +28,6 @@
 
 #include <usual/slab.h>
 
-#include <sys/param.h>
 #include <string.h>
 
 #include <usual/statlist.h>

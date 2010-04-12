@@ -22,6 +22,7 @@
 #include <usual/config.h>
 
 #include <sys/types.h>
+#include <sys/param.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <inttypes.h>
