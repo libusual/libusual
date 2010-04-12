@@ -31,8 +31,6 @@
 #include <sys/ucred.h>
 #endif
 
-#include <usual/logging.h>
-
 /* toggle non-blocking flag */
 bool socket_set_nonblocking(int fd, bool non_block)
 {
