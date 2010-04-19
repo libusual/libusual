@@ -101,11 +101,12 @@ void log_generic(enum LogLevel level, void *ctx, const char *fmt, ...)
 	unsigned pid = getpid();
 	va_list ap;
 	int pfxlen = 0;
+	int old_errno = errno;
 
 	if (logging_prefix_cb) {
 		pfxlen = logging_prefix_cb(level, ctx, buf, sizeof(buf));
 		if (pfxlen < 0)
-			return;
+			goto done;
 		if (pfxlen >= (int)sizeof(buf))
 			pfxlen = sizeof(buf) - 1;
 	}
@@ -141,6 +142,9 @@ void log_generic(enum LogLevel level, void *ctx, const char *fmt, ...)
 			start_syslog();
 		syslog(lev->syslog_prio, "%s", buf);
 	}
+done:
+	if (old_errno != errno)
+		errno = old_errno;
 }
 
 
