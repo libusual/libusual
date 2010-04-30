@@ -102,11 +102,11 @@
 /* assert() that uses our logging */
 #ifndef Assert
 #ifdef CASSERT
-void log_fatal(const char *file, int line, const char *func, bool show_perror, const char *s, ...) _PRINTF(5, 6);
+void log_fatal(const char *file, int line, const char *func, bool show_perror, void *ctx, const char *s, ...) _PRINTF(6, 7);
 #define Assert(e) \
 	do { \
 		if (unlikely(!(e))) { \
-			log_fatal(__FILE__, __LINE__, __func__, false, \
+			log_fatal(__FILE__, __LINE__, __func__, false, NULL, \
 				  "Assert(%s) failed", #e); \
 			abort(); \
 		} \
