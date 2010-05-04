@@ -85,7 +85,7 @@ boot:
 #	@exit 1
 
 # run sparse over code
-check: config.mak
+sparse: config.mak
 	REAL_CC="$(CC)" \
 	$(MAKE) clean libusual.a CC="cgcc -Wsparse-all"
 
