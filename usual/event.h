@@ -39,6 +39,11 @@ static inline struct event_base *event_base_new(void)
 }
 #endif
 
+/* libevent 1.3 does not have event_loopbreak() */
+#ifndef HAVE_EVENT_LOOPBREAK
+static inline void event_loopbreak(void) { }
+#endif
+
 #else
 
 /*

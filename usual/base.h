@@ -68,7 +68,24 @@
 /* number of elements in array */
 #define ARRAY_NELEM(a)	(sizeof(a) / sizeof((a)[0]))
 
+/* how to specify array with unknown length */
+#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L)
+#define FLEX_ARRAY
+#elif defined(__GNUC__)
+#define FLEX_ARRAY
+#else
+#define FLEX_ARRAY 1
+#endif
+
+/* tag for packed structure */
 #define _PACKED			__attribute__((packed))
+
+/*
+ * Make sure __func__ works.
+ */
+#ifndef HAVE_FUNCNAME__FUNC
+#define __func__ __FUNCTION__
+#endif
 
 /*
  * make compiler do something useful
