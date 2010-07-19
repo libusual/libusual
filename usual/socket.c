@@ -271,11 +271,18 @@ static void fdbuf_zero(struct fd_buf *buf)
 
 static bool fdbuf_resize(struct fd_buf *buf, int fd)
 {
-	/* get some extra room for quaranteed alignment */
-	int need_bytes = fd/8 + 32;
-	/* default - 2048 fds */
-	int alloc = 256;
+	int need_bytes;
 	unsigned char *ptr;
+	/* default allocation */
+	int alloc = sizeof(fd_set);
+
+#ifdef WIN32
+	/* win32 fd_set is array of handles, +8 for count&padding */
+	need_bytes = (buf->set->fd_count + 1) * sizeof(buf->set->fd_array[0]) + 8;
+#else
+	/* otherwise, fd_set is bitmap, +8 for int/long alignment */
+	need_bytes = fd / 8 + 8;
+#endif
 
 	if (buf->alloc_bytes < need_bytes)
 	{
@@ -298,6 +305,10 @@ static bool fdbuf_resize(struct fd_buf *buf, int fd)
 	}
 	return true;
 }
+
+/* win32: make macros ignore FD_SETSIZE */
+#undef FD_SETSIZE
+#define FD_SETSIZE (1 << 30)
 
 int poll(struct pollfd *fds, nfds_t nfds, int timeout_ms)
 {
