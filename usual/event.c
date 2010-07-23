@@ -258,7 +258,7 @@ struct event_base *event_base_new(void)
 	struct event_base *base;
 	int i;
 
-	base = zmalloc(sizeof(*base));
+	base = calloc(1, sizeof(*base));
 	if (!base)
 		return NULL;
 
@@ -742,7 +742,7 @@ int event_base_once(struct event_base *base, int fd, short flags,
 		return -1;
 	}
 
-	once = zmalloc(sizeof(*once));
+	once = calloc(1, sizeof(*once));
 	if (!once)
 		return -1;
 
