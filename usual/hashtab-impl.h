@@ -26,7 +26,7 @@
  *   HashItem must not be split across cachelines.
  */
 
-#include <usual/base.h>
+#include <usual/cxalloc.h>
 
 #include <string.h>
 
@@ -69,18 +69,22 @@ typedef bool (*hash_cmp_fn)(const htab_val_t curval, const void *arg);
 struct HashTab {
 	struct HashTab *next;
 	hash_cmp_fn cmp_fn;
+	CxMem *ca;
 	unsigned size;
 	unsigned used;
 	struct HashItem tab[];
 };
 
-static struct HashTab *hashtab_create(unsigned size, hash_cmp_fn cmp_fn)
+static struct HashTab *hashtab_create(unsigned size, hash_cmp_fn cmp_fn, CxMem *ca)
 {
 	struct HashTab *h;
 	unsigned len = size * sizeof(struct HashItem) + offsetof(struct HashTab, tab);
-	h = zmalloc(len);
-	h->size = size;
-	h->cmp_fn = cmp_fn;
+	h = cx_alloc(ca, len);
+	if (h) {
+		h->size = size;
+		h->cmp_fn = cmp_fn;
+		h->ca = ca;
+	}
 	return h;
 }
 
@@ -89,7 +93,7 @@ static void hashtab_destroy(struct HashTab *h)
 	struct HashTab *tmp;
 	while (h) {
 		tmp = h->next;
-		free(h);
+		cx_free(h->ca, h);
 		h = tmp;
 	}
 }
@@ -124,7 +128,7 @@ loop:
 	/* insert */
 	if (h->used >= MAX_USED(h)) {
 		struct HashTab *tmp;
-		tmp = hashtab_create(h->size, h->cmp_fn);
+		tmp = hashtab_create(h->size, h->cmp_fn, h->ca);
 		if (!tmp)
 			return NULL;
 		h->next = tmp;
@@ -205,7 +209,7 @@ static struct HashTab *hashtab_copy(struct HashTab *h_old, unsigned newsize)
 	struct HashTab *h_new;
 	unsigned i;
 
-	h_new = hashtab_create(newsize, h_old->cmp_fn);
+	h_new = hashtab_create(newsize, h_old->cmp_fn, h_old->ca);
 	for (; h_old; h_old = h_old->next) {
 		for (i = 0; i < h_old->size; i++) {
 			struct HashItem *s = &h_old->tab[i];
@@ -230,7 +234,7 @@ static inline void _hashtab_example(void)
 	unsigned nitem, nlink;
 	struct HashTab *h, *h2;
 	
-	h = hashtab_create(1024, NULL);
+	h = hashtab_create(1024, NULL, USUAL_ALLOC);
 	hashtab_lookup(h, 123, true, NULL);
 	hashtab_stats(h, &nitem, &nlink);
 	h2 = hashtab_copy(h, 2048);

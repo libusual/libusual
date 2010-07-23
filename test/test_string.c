@@ -1,4 +1,11 @@
 
+#include <usual/base.h>
+#include <string.h>
+#include <libgen.h>
+
+#undef basename
+#undef dirname
+
 #include <usual/string.h>
 
 #include "test_common.h"

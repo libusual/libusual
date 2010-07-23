@@ -25,12 +25,13 @@
  * Put all strings into cbtree.
  */
 struct StrPool {
+	CxMem *ca;
 	struct CBTree *tree;
 	int count;
 };
 
 /* pass key info to cbtree */
-static unsigned get_key(void *obj, const void **dst_p)
+static unsigned get_key(void *ctx, void *obj, const void **dst_p)
 {
 	struct PStr *s = obj;
 	*dst_p = s->str;
@@ -41,21 +42,26 @@ static unsigned get_key(void *obj, const void **dst_p)
 static bool free_str(void *arg, void *obj)
 {
 	struct PStr *p = obj;
+	struct StrPool *sp = p->pool;
+
 	memset(p, 0, offsetof(struct PStr, str) + 1);
-	free(obj);
+	cx_free(sp->ca, obj);
 	return true;
 }
 
 /* create main structure */
-struct StrPool *strpool_create(void)
+struct StrPool *strpool_create(CxMem *ca)
 {
 	struct StrPool *sp;
 
-	sp = malloc(sizeof(*sp));
+	sp = cx_alloc(ca, sizeof(*sp));
+	if (!sp)
+		return NULL;
 	sp->count = 0;
-	sp->tree = cbtree_create(get_key);
+	sp->ca = ca;
+	sp->tree = cbtree_create(get_key, NULL, NULL, ca);
 	if (!sp->tree) {
-		free(sp);
+		cx_free(ca, sp);
 		return NULL;
 	}
 	return sp;
@@ -67,7 +73,7 @@ void strpool_free(struct StrPool *sp)
 	if (sp) {
 		cbtree_walk(sp->tree, free_str, sp);
 		cbtree_destroy(sp->tree);
-		free(sp);
+		cx_free(sp->ca, sp);
 	}
 }
 
@@ -94,7 +100,7 @@ struct PStr *strpool_get(struct StrPool *sp, const char *str, int len)
 	}
 
 	/* create */
-	cstr = malloc(sizeof(*cstr) + len + 1);
+	cstr = cx_alloc(sp->ca, sizeof(*cstr) + len + 1);
 	if (!cstr)
 		return NULL;
 	cstr->pool = sp;
@@ -105,7 +111,7 @@ struct PStr *strpool_get(struct StrPool *sp, const char *str, int len)
 	/* insert */
 	ok = cbtree_insert(sp->tree, cstr);
 	if (!ok) {
-		free(cstr);
+		cx_free(sp->ca, cstr);
 		return NULL;
 	}
 	sp->count++;

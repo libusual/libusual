@@ -4,6 +4,7 @@
 
 struct testgroup_t groups[] = {
 	{ "aatree/", aatree_tests },
+	{ "cxalloc/", cxalloc_tests },
 	{ "cbtree/", cbtree_tests },
 	{ "crypto/", crypto_tests },
 	{ "string/", string_tests },

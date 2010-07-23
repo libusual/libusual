@@ -19,7 +19,7 @@
 #ifndef _USUAL_STRING_H_
 #define _USUAL_STRING_H_
 
-#include <usual/base.h>
+#include <usual/cxalloc.h>
 
 #include <string.h>
 
@@ -45,7 +45,7 @@ void *memrchr(const void *s, int c, size_t n);
 typedef bool (*str_cb)(void *arg, const char *s);
 
 struct StrList;
-struct StrList *strlist_new(void);
+struct StrList *strlist_new(CxMem *ca);
 void strlist_free(struct StrList *slist);
 bool strlist_empty(struct StrList *slist);
 bool strlist_append(struct StrList *slist, const char *str);

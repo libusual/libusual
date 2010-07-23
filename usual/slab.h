@@ -19,14 +19,15 @@
 #ifndef _USUAL_SLAB_H_
 #define _USUAL_SLAB_H_
 
-#include <usual/base.h>
+#include <usual/cxalloc.h>
 
 struct Slab;
 
 typedef void (*slab_init_fn)(void *obj);
 
 struct Slab *slab_create(const char *name, unsigned obj_size, unsigned align,
-			     slab_init_fn init_func);
+			     slab_init_fn init_func,
+			     CxMem *cx);
 void slab_destroy(struct Slab *slab);
 
 void * slab_alloc(struct Slab *slab) _MALLOC _MUSTCHECK;

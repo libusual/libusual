@@ -19,7 +19,7 @@
 #ifndef _USUAL_STRPOOL_H_
 #define _USUAL_STRPOOL_H_
 
-#include <usual/base.h>
+#include <usual/cxalloc.h>
 
 struct StrPool;
 
@@ -32,7 +32,7 @@ struct PStr {
 };
 
 
-struct StrPool *strpool_create(void);
+struct StrPool *strpool_create(CxMem *ca);
 void strpool_free(struct StrPool *sp);
 
 struct PStr *strpool_get(struct StrPool *sp, const char *str, int len);

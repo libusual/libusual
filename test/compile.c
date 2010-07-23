@@ -40,7 +40,7 @@ int main(void)
 	char buf[128];
 
 	aatree_init(&aatree, NULL, NULL);
-	cbtree = cbtree_create(NULL);
+	cbtree = cbtree_create(NULL, NULL, NULL, USUAL_ALLOC);
 	daemonize(NULL, NULL);
 	hash_lookup3("foo", 3);
 	if (!event_init())

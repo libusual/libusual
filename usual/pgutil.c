@@ -143,7 +143,8 @@ bool pg_quote_fqident(char *_dst, const char *_src, int dstlen)
  * pgarray parsing
  */
 
-static bool parse_value(struct StrList *arr, const char *val, const char *vend)
+static bool parse_value(struct StrList *arr, const char *val, const char *vend,
+			CxMem *cx)
 {
 	int len;
 	const char *s;
@@ -161,7 +162,7 @@ static bool parse_value(struct StrList *arr, const char *val, const char *vend)
 	if (len == 4 && !strncasecmp(val, "null", len)) {
 		return strlist_append_ref(arr, NULL);
 	}
-	p = str = malloc(len + 1);
+	p = str = cx_alloc(cx, len + 1);
 	if (!str)
 		return false;
 
@@ -185,13 +186,13 @@ static bool parse_value(struct StrList *arr, const char *val, const char *vend)
 	}
 	*p++ = 0;
 	if (!strlist_append_ref(arr, str)) {
-		free(str);
+		cx_free(cx, str);
 		return false;
 	}
 	return true;
 }
 
-struct StrList *pg_parse_array(const char *pgarr)
+struct StrList *pg_parse_array(const char *pgarr, CxMem *cx)
 {
 	const char *s = pgarr;
 	struct StrList *lst;
@@ -208,7 +209,7 @@ struct StrList *pg_parse_array(const char *pgarr)
 	if (*s++ != '{')
 		return NULL;
 
-	lst = strlist_new();
+	lst = strlist_new(cx);
 	if (!lst)
 		return NULL;
 
@@ -219,7 +220,7 @@ struct StrList *pg_parse_array(const char *pgarr)
 				goto failed;
 			}
 			if (val) {
-				if (!parse_value(lst, val, s))
+				if (!parse_value(lst, val, s, cx))
 					goto failed;
 			}
 			return lst;
@@ -231,7 +232,7 @@ struct StrList *pg_parse_array(const char *pgarr)
 
 		/* val done? */
 		if (*s == ',') {
-			if (!parse_value(lst, val, s))
+			if (!parse_value(lst, val, s, cx))
 				goto failed;
 			val = ++s;
 			continue;

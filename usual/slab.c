@@ -45,6 +45,7 @@ struct Slab {
 	unsigned final_size;
 	unsigned total_count;
 	slab_init_fn  init_func;
+	CxMem *cx;
 };
 
 
@@ -74,7 +75,8 @@ static void slab_list_remove(struct Slab *slab)
 
 /* fill struct contents */
 static void init_slab(struct Slab *slab, const char *name, unsigned obj_size,
-		      unsigned align, slab_init_fn init_func)
+		      unsigned align, slab_init_fn init_func,
+		      CxMem *cx)
 {
 	unsigned slen = strlen(name);
 
@@ -83,6 +85,7 @@ static void init_slab(struct Slab *slab, const char *name, unsigned obj_size,
 	statlist_init(&slab->fraglist, name);
 	slab->total_count = 0;
 	slab->init_func = init_func;
+	slab->cx = cx;
 
 	if (slen >= sizeof(slab->name))
 		slen = sizeof(slab->name) - 1;
@@ -99,14 +102,15 @@ static void init_slab(struct Slab *slab, const char *name, unsigned obj_size,
 
 /* make new slab */
 struct Slab *slab_create(const char *name, unsigned obj_size, unsigned align,
-			 slab_init_fn init_func)
+			 slab_init_fn init_func,
+			 CxMem *cx)
 {
 	struct Slab *slab;
 
 	/* new slab object */
-	slab = calloc(1, sizeof(*slab));
+	slab = cx_alloc(cx, sizeof(*slab));
 	if (slab)
-		init_slab(slab, name, obj_size, align, init_func);
+		init_slab(slab, name, obj_size, align, init_func, cx);
 	return slab;
 }
 
@@ -122,9 +126,9 @@ void slab_destroy(struct Slab *slab)
 	slab_list_remove(slab);
 	statlist_for_each_safe(item, &slab->fraglist, tmp) {
 		frag = container_of(item, struct SlabFrag, head);
-		free(frag);
+		cx_free(slab->cx, frag);
 	}
-	free(slab);
+	cx_free(slab->cx, slab);
 }
 
 /* add new block of objects to slab */
@@ -143,7 +147,7 @@ static void grow(struct Slab *slab)
 	size = count * slab->final_size;
 
 	/* allocate & init */
-	frag = calloc(1, size + sizeof(struct SlabFrag));
+	frag = cx_alloc(slab->cx, size + sizeof(struct SlabFrag));
 	if (!frag)
 		return;
 	list_init(&frag->head);
@@ -229,16 +233,19 @@ struct Slab {
 	int size;
 	struct StatList obj_list;
 	slab_init_fn init_func;
+	CxMem *cx;
 };
 
 
 struct Slab *slab_create(const char *name, unsigned obj_size, unsigned align,
-			     slab_init_fn init_func)
+			     slab_init_fn init_func,
+			     CxMem *cx)
 {
-	struct Slab *s = malloc(sizeof(*s));
+	struct Slab *s = cx_alloc(cx, sizeof(*s));
 	if (s) {
 		s->size = obj_size;
 		s->init_func = init_func;
+		s->cx = cx;
 		statlist_init(&s->obj_list, "obj_list");
 	}
 	return s;
@@ -249,16 +256,16 @@ void slab_destroy(struct Slab *slab)
 	struct List *el, *tmp;
 	statlist_for_each_safe(el, &slab->obj_list, tmp) {
 		statlist_remove(&slab->obj_list, el);
-		free(el);
+		cx_free(slab->cx, el);
 	}
-	free(slab);
+	cx_free(slab->cx, slab);
 }
 
 void *slab_alloc(struct Slab *slab)
 {
 	struct List *o;
 	void *res;
-	o = calloc(1, sizeof(struct List) + slab->size);
+	o = cx_alloc(slab->cx, sizeof(struct List) + slab->size);
 	if (!o)
 		return NULL;
 	list_init(o);
@@ -274,7 +281,7 @@ void slab_free(struct Slab *slab, void *obj)
 	if (obj) {
 		struct List *el = obj;
 		statlist_remove(&slab->obj_list, el - 1);
-		free(el - 1);
+		cx_free(slab->cx, el - 1);
 	}
 }
 

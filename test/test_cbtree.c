@@ -10,7 +10,7 @@ struct MyNode {
 	int len;
 };
 
-static unsigned int my_getkey(void *obj, const void **dst_p)
+static unsigned int my_getkey(void *ctx, void *obj, const void **dst_p)
 {
 	struct MyNode *node = obj;
 	*dst_p = node->str;
@@ -81,7 +81,7 @@ static void test_cbtree_basic(void *p)
 	struct CBTree *tree;
 	int i;
 
-	tree = cbtree_create(my_getkey);
+	tree = cbtree_create(my_getkey, NULL, NULL, USUAL_ALLOC);
 
 	str_check(my_search(tree, 1), "not found");
 
@@ -138,7 +138,7 @@ static void test_cbtree_random(void *p)
 	srandom(123123);
 	memset(is_added, 0, sizeof(is_added));
 
-	tree = cbtree_create(my_getkey);
+	tree = cbtree_create(my_getkey, NULL, NULL, USUAL_ALLOC);
 
 	while (total < 100000) {
 		int r = random() & 15;

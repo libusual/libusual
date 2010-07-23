@@ -19,23 +19,19 @@
 #ifndef _USUAL_CBTREE_H_
 #define _USUAL_CBTREE_H_
 
-#include <usual/base.h>
+#include <usual/cxalloc.h>
 
 /* returns length of the key */
-typedef unsigned int	(*cbtree_getkey_func)(void *obj, const void **dst_p);
-/* custom alloc */
-typedef void *		(*cbtree_alloc_func)(void *arg, unsigned len);
-typedef void		(*cbtree_free_func)(void *arg, void *ptr);
+typedef unsigned int	(*cbtree_getkey_func)(void *ctx, void *obj, const void **dst_p);
 /* walk */
-typedef bool		(*cbtree_walker_func)(void *arg, void *obj);
+typedef bool		(*cbtree_walker_func)(void *ctx, void *obj);
 
 struct CBTree;
 
-struct CBTree *cbtree_create(cbtree_getkey_func get_key_fn);
-struct CBTree *cbtree_create_custom(cbtree_getkey_func get_key_fn,
-				    void *arg,
-				    cbtree_alloc_func f_alloc,
-				    cbtree_free_func f_free);
+struct CBTree *cbtree_create(cbtree_getkey_func obj_key_cb,
+			     cbtree_walker_func obj_free_cb,
+			     void *cb_ctx,
+			     CxMem *cx);
 void cbtree_destroy(struct CBTree *tree);
 
 bool cbtree_insert(struct CBTree *tree, void *obj) _MUSTCHECK;

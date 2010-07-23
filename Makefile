@@ -114,6 +114,8 @@ dbg:
 	@echo srcs=$(srcs)
 	@echo objs=$(objs)
 	@echo hdrs=$(hdrs)
+	@echo DEFS=$(DEFS)
+	@echo CFLAGS=$(CFLAGS)
 	@echo CPPFLAGS=$(CPPFLAGS)
 
 # requires 8.4+

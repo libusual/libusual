@@ -30,6 +30,7 @@
 
 struct StrList {
 	struct StatList list;
+	CxMem *ca;
 };
 
 struct StrItem {
@@ -47,19 +48,19 @@ bool strlist_append(struct StrList *slist, const char *str)
 	const char *nstr = NULL;
 	bool ok;
 	if (str) {
-		nstr = strdup(str);
+		nstr = cx_strdup(slist->ca, str);
 		if (!nstr)
 			return false;
 	}
 	ok = strlist_append_ref(slist, nstr);
 	if (!ok)
-		free(nstr);
+		cx_free(slist->ca, nstr);
 	return ok;
 }
 
 bool strlist_append_ref(struct StrList *slist, const char *str)
 {
-	struct StrItem *item = calloc(1, sizeof(*item));
+	struct StrItem *item = cx_alloc(slist->ca, sizeof(*item));
 	if (!item)
 		return false;
 	list_init(&item->node);
@@ -80,16 +81,17 @@ const char *strlist_pop(struct StrList *slist)
 
 	item = container_of(el, struct StrItem, node);
 	str = item->str;
-	free(item);
+	cx_free(slist->ca, item);
 	return str;
 }
 
-struct StrList *strlist_new(void)
+struct StrList *strlist_new(CxMem *ca)
 {
-	struct StrList *slist = calloc(1, sizeof(*slist));
+	struct StrList *slist = cx_alloc0(ca, sizeof(*slist));
 	if (!slist)
 		return NULL;
 	statlist_init(&slist->list, "strlist");
+	slist->ca = ca;
 	return slist;
 }
 
@@ -101,9 +103,9 @@ void strlist_free(struct StrList *slist)
 	while (!strlist_empty(slist)) {
 		s = strlist_pop(slist);
 		if (s)
-			free(s);
+			cx_free(slist->ca, s);
 	}
-	free(slist);
+	cx_free(slist->ca, slist);
 }
 
 bool strlist_foreach(const struct StrList *slist, str_cb func, void *arg)
