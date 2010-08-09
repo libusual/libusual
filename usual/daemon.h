@@ -21,6 +21,8 @@
 
 #include <usual/base.h>
 
+bool signal_pidfile(const char *pidfile, int sig);
+
 void daemonize(const char *pidfile, bool go_background);
 
 #endif

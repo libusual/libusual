@@ -42,7 +42,15 @@ static void remove_pidfile(void)
 	g_pidfile = NULL;
 }
 
-static void check_pidfile(const char *pidfile)
+/*
+ * Reads pid from pidfile and sends a signal to it.
+ *
+ * true - signaling was successful.
+ * false - ENOENT / ESRCH
+ *
+ * fatal() otherwise.
+ */
+bool signal_pidfile(const char *pidfile, int sig)
 {
 	char buf[128 + 1];
 	struct stat st;
@@ -50,43 +58,54 @@ static void check_pidfile(const char *pidfile)
 	int fd, res;
 
 	if (!pidfile || !pidfile[0])
-		return;
+		return false;
 
+intr_loop:
 	/* check if pidfile exists */
-	if (stat(pidfile, &st) < 0) {
-		if (errno != ENOENT)
-			fatal_perror("stat");
-		return;
-	}
+	if (stat(pidfile, &st) < 0)
+		goto fail;
 
 	/* read old pid */
 	fd = open(pidfile, O_RDONLY);
 	if (fd < 0)
-		goto locked_pidfile;
+		goto fail;
 	res = read(fd, buf, sizeof(buf) - 1);
 	close(fd);
 	if (res <= 0)
-		goto locked_pidfile;
+		goto fail;
 
 	/* parse pid */
 	buf[res] = 0;
-	pid = atol(buf);
-	if (pid <= 0)
-		goto locked_pidfile;
+	errno = 0;
+	pid = strtoul(buf, NULL, 10);
+	if (errno) {
+		/* should we panic, or say no such process exists? */
+		if (0)
+			errno = ESRCH;
+		goto fail;
+	}
 
-	/* check if running */
-	if (kill(pid, 0) >= 0)
-		goto locked_pidfile;
-	if (errno != ESRCH)
-		goto locked_pidfile;
+	/* send the signal */
+	res = kill(pid, sig);
+	if (res == 0)
+		return true;
+fail:
+	/* decide error seriousness */
+	if (errno == EINTR)
+		goto intr_loop;
+	if (errno == ENOENT || errno == ESRCH)
+		return false;
+	fatal_perror("signal_pidfile: Unexpected error");
+}
 
-	/* seems the pidfile is not in use */
-	log_info("Stale pidfile, removing");
-	unlink(pidfile);
-	return;
-
-locked_pidfile:
-	fatal("pidfile exists, another instance running?");
+static void check_pidfile(const char *pidfile)
+{
+	if (signal_pidfile(pidfile, 0))
+		fatal("pidfile exists, another instance running?");
+	if (errno == ESRCH) {
+		log_info("Stale pidfile, removing");
+		unlink(pidfile);
+	}
 }
 
 static void write_pidfile(const char *pidfile)
