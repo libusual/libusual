@@ -108,11 +108,13 @@ static void check_pidfile(const char *pidfile)
 	}
 }
 
-static void write_pidfile(const char *pidfile)
+static void write_pidfile(const char *pidfile, bool first_write)
 {
 	char buf[64];
 	pid_t pid;
 	int res, fd, len;
+	static int atexit_hook = 0;
+	int flags = O_WRONLY | O_CREAT;
 
 	if (!pidfile || !pidfile[0])
 		return;
@@ -126,24 +128,31 @@ static void write_pidfile(const char *pidfile)
 	pid = getpid();
 	snprintf(buf, sizeof(buf), "%u\n", (unsigned)pid);
 
-	fd = open(pidfile, O_WRONLY | O_CREAT | O_EXCL, 0644);
+	/* don't allow overwrite on first write */
+	if (first_write)
+		flags |= O_EXCL;
+
+	fd = open(pidfile, flags, 0644);
 	if (fd < 0)
-		fatal_perror("%s", pidfile);
+		fatal_perror("Cannot write pidfile: '%s'", pidfile);
 	len = strlen(buf);
 loop:
 	res = write(fd, buf, len);
 	if (res < 0) {
 		if (errno == EINTR)
 			goto loop;
-		fatal_perror("%s", pidfile);
+		fatal_perror("Write to pidfile failed: '%s'", pidfile);
 	} else if (res < len) {
 		len -= res;
 		goto loop;
 	}
 	close(fd);
 
-	/* only remove when we have it actually written */
-	atexit(remove_pidfile);
+	if (!atexit_hook) {
+		/* only remove when we have it actually written */
+		atexit(remove_pidfile);
+		atexit_hook = 1;
+	}
 }
 
 /*
@@ -162,8 +171,8 @@ void daemonize(const char *pidfile, bool go_background)
 
 	if (pidfile && pidfile[0]) {
 		check_pidfile(pidfile);
-		if (!go_background)
-			write_pidfile(pidfile);
+		/* write pidfile twice, to be able to show problems to user */
+		write_pidfile(pidfile, true);
 	} else if (go_background)
 		fatal("daemon needs pidfile configured");
 
@@ -202,6 +211,6 @@ void daemonize(const char *pidfile, bool go_background)
 	if (pid > 0)
 		_exit(0);
 
-	write_pidfile(pidfile);
+	write_pidfile(pidfile, false);
 }
 
