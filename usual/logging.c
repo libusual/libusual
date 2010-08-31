@@ -116,18 +116,18 @@ void log_generic(enum LogLevel level, void *ctx, const char *fmt, ...)
 
 	format_time_ms(0, timebuf, sizeof(timebuf));
 
-	if (!log_file && cf_logfile) {
-		static int error_reported = 0;
-
-		if ((log_file = fopen(cf_logfile, "a")) != NULL) {
+	if (!log_file && cf_logfile && cf_logfile[0]) {
+		log_file = fopen(cf_logfile, "a");
+		if (log_file) {
 			/* Got the file, disable buffering */
 			setvbuf(log_file, NULL, _IONBF, 0);
-		} else if (!cf_quiet && !error_reported) {
-			/* Unable to open, complain once */
-			fprintf(stderr, "%s %u %s %s: %s\n", timebuf, pid,
-				log_level_list[2].tag, cf_logfile,
+		} else {
+			/* Unable to open, complain and fail */
+			fprintf(stderr, "%s %u %s Cannot open logfile: '%s': %s\n",
+				timebuf, pid, log_level_list[0].tag,
+				cf_logfile,
 				strerror_r(errno, ebuf, sizeof(ebuf)));
-			error_reported = 1;
+			exit(1);
 		}
 	}
 
