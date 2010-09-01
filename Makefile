@@ -12,6 +12,11 @@ USUAL_OBJDIR = obj
 USUAL_MODULES = $(filter-out pgsocket, $(subst .h,, $(notdir $(wildcard $(USUAL_DIR)/usual/*.h))))
 include $(USUAL_DIR)/Setup.mk
 
+# pgutil_kwlookup generation
+PG_CONFIG ?= pg_config
+KWLIST = $(shell $(PG_CONFIG) --includedir-server)/parser/kwlist.h
+GPERF = gperf -m5
+
 # full path for files
 srcs = $(USUAL_SRCS)
 hdrs = $(USUAL_HDRS)
@@ -65,9 +70,13 @@ check: config.mak
 clean:
 	rm -f libusual.a obj/*.[os] obj/test* aclocal* config.log
 	rm -rf autom4te*
+	rm -f usual/pgutil_kwlookup.h.gp
 
 distclean: clean
 	rm -f config.mak usual/config.h
+
+realclean:
+	rm -f usual/pgutil_kwlookup.h
 
 boot:
 	rm -rf usual/config.*
@@ -97,4 +106,13 @@ dbg:
 	@echo objs=$(objs)
 	@echo hdrs=$(hdrs)
 	@echo CPPFLAGS=$(CPPFLAGS)
+
+kws:
+	@test -f "$(KWLIST)" || { echo "kwlist.h not found"; exit 1; }
+	cat usual/pgutil_kwlookup.g > usual/pgutil_kwlookup.gp
+	grep '^PG_KEYWORD' "$(KWLIST)" \
+	| sed 's/.*"\(.*\)",.*, *\(.*\)[)].*/\1, PG_\2/' \
+	>> usual/pgutil_kwlookup.gp
+	$(GPERF) usual/pgutil_kwlookup.gp > usual/pgutil_kwlookup.h
+	rm -f usual/pgutil_kwlookup.gp
 

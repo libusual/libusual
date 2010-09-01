@@ -11,6 +11,7 @@ struct testgroup_t groups[] = {
 	{ "list/", list_tests },
 	{ "utf8/", utf8_tests },
 	{ "strpool/", strpool_tests },
+	{ "pgutil/", pgutil_tests },
 	END_OF_GROUPS
 };
 
