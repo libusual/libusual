@@ -98,11 +98,10 @@ void strlist_free(struct StrList *slist)
 	const char *s;
 	if (!slist)
 		return;
-	while (1) {
+	while (!strlist_empty(slist)) {
 		s = strlist_pop(slist);
-		if (!s)
-			break;
-		free(s);
+		if (s)
+			free(s);
 	}
 	free(slist);
 }
