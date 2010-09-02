@@ -9,6 +9,10 @@
 
 #include <ctype.h>
 
+/*
+ * Postgres keyword lookup.
+ */
+
 struct PgKeyword;
 const struct PgKeyword *pg_keyword_lookup_hash(const char *str, unsigned int len);
 #include "usual/pgutil_kwlookup.h"
@@ -160,18 +164,25 @@ bool pg_quote_fqident(char *_dst, const char *_src, int dstlen)
  * pgarray parsing
  */
 
-static bool pgarr_add_value(struct StrList *arr, const char *val, const char *vend)
+static bool parse_value(struct StrList *arr, const char *val, const char *vend)
 {
-	int len = vend - val + 1;
-	const char *s = val;
+	int len;
+	const char *s;
 	char *str, *p;
 	unsigned c;
 
-	if ((vend - val) == 4 && !strncasecmp(val, "null", 4)) {
-		//log_warning("pgarr_add_value: ignoring NULL value");
-		return true;
+	while (val < vend && isspace(*val))
+		val++;
+	while (vend > val && isspace(vend[-1]))
+		vend--;
+	if (val == vend) return false;
+
+	s = val;
+	len = vend - val;
+	if (len == 4 && !strncasecmp(val, "null", len)) {
+		return strlist_append_ref(arr, NULL);
 	}
-	p = str = malloc(len);
+	p = str = malloc(len + 1);
 	if (!str)
 		return false;
 
@@ -201,18 +212,27 @@ static bool pgarr_add_value(struct StrList *arr, const char *val, const char *ve
 	return true;
 }
 
-struct StrList *parse_pgarray(const char *pgarr)
+struct StrList *pg_parse_array(const char *pgarr)
 {
 	const char *s = pgarr;
 	struct StrList *lst;
 	const char *val = NULL;
 	unsigned c;
 
+	/* skip dimension def "[x,y]={..}" */
+	if (*s == '[') {
+		s = strchr(s, ']');
+		if (!s || s[1] != '=')
+			return NULL;
+		s += 2;
+	}
 	if (*s++ != '{')
 		return NULL;
+
 	lst = strlist_new();
 	if (!lst)
 		return NULL;
+
 	while (*s) {
 		/* array end */
 		if (s[0] == '}') {
@@ -220,7 +240,7 @@ struct StrList *parse_pgarray(const char *pgarr)
 				goto failed;
 			}
 			if (val) {
-				if (!pgarr_add_value(lst, val, s))
+				if (!parse_value(lst, val, s))
 					goto failed;
 			}
 			return lst;
@@ -232,7 +252,7 @@ struct StrList *parse_pgarray(const char *pgarr)
 
 		/* val done? */
 		if (*s == ',') {
-			if (!pgarr_add_value(lst, val, s))
+			if (!parse_value(lst, val, s))
 				goto failed;
 			val = ++s;
 			continue;
@@ -256,10 +276,8 @@ struct StrList *parse_pgarray(const char *pgarr)
 			s++;
 		}
 	}
-	if (s[-1] != '}') {
-		//log_warning("parse_pgarray: missing }");
+	if (s[-1] != '}')
 		goto failed;
-	}
 	return lst;
 failed:
 	strlist_free(lst);

@@ -113,6 +113,73 @@ end:;
 }
 
 /*
+ * pg_parse_array
+ */
+
+static char *aparse(const char *src)
+{
+	struct StrList *sl = pg_parse_array(src);
+	static char buf[1024];
+	char *dst = buf;
+	const char *s;
+	int len;
+	bool first = true;
+
+	if (!sl)
+		return "FAIL";
+	while (!strlist_empty(sl)) {
+		if (first)
+			first = false;
+		else
+			*dst++ = ':';
+		s = strlist_pop(sl);
+		if (!s) {
+			strcpy(dst, "NULL");
+			dst += 4;
+		} else {
+			len = strlen(s);
+			memcpy(dst, s, len);
+			free(s);
+			dst += len;
+		}
+	}
+	*dst = 0;
+	strlist_free(sl);
+	return buf;
+}
+
+static void test_parse_array(void *ptr)
+{
+	str_check(aparse("{a,b,c}"), "a:b:c");
+	str_check(aparse("{a}"), "a");
+	str_check(aparse("{}"), "");
+	str_check(aparse("{ a }"), "a");
+
+	str_check(aparse("{null}"), "NULL");
+	str_check(aparse("{ Null , NULL , nUlL }"), "NULL:NULL:NULL");
+	str_check(aparse("{ \"Null\" , \"NULL\" , \"nUlL\" }"), "Null:NULL:nUlL");
+
+	str_check(aparse("{ \"\",\"\",\"\" }"), "::");
+	str_check(aparse("{,}"), "FAIL");
+	str_check(aparse("{ a b c , d,e ,f}"), "a b c:d:e:f");
+	str_check(aparse("{ \" a b c \" , \",d,\"}"), " a b c :,d,");
+
+	str_check(aparse("[1,2]={7,8,9}"), "7:8:9");
+	str_check(aparse("[1,2.={7}"), "FAIL");
+
+	str_check(aparse("{ \\\" , \"\\\"\" }"), "\":\"");
+	str_check(aparse("{ \\,,\\\\}"), ",:\\");
+	str_check(aparse("{\\}}"), "}");
+
+	str_check(aparse("{abc"), "FAIL");
+	str_check(aparse(""), "FAIL");
+	str_check(aparse("{\"abc}"), "FAIL");
+	str_check(aparse("{\\"), "FAIL");
+	str_check(aparse("{abc ,"), "FAIL");
+end:;
+}
+
+/*
  * Describe
  */
 
@@ -120,6 +187,7 @@ struct testcase_t pgutil_tests[] = {
 	{ "pg_quote_literal", test_quote_lit },
 	{ "pg_quote_ident", test_quote_ident },
 	{ "pg_quote_fqident", test_quote_fqident },
+	{ "pg_parse_array", test_parse_array },
 	END_OF_TESTCASES
 };
 

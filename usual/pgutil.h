@@ -12,13 +12,12 @@ enum PgKeywordType {
 	PG_COL_NAME_KEYWORD = 4
 };
 enum PgKeywordType pg_keyword_lookup(const char *str);
-
 bool pg_is_reserved_word(const char *str);
 
 bool pg_quote_literal(char *_dst, const char *_src, int dstlen);
 bool pg_quote_ident(char *_dst, const char *_src, int dstlen);
 bool pg_quote_fqident(char *_dst, const char *_src, int dstlen);
-struct StrList *parse_pgarray(const char *pgarr);
+struct StrList *pg_parse_array(const char *pgarr);
 
 #endif
 
