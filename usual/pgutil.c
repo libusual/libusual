@@ -37,6 +37,13 @@ bool pg_quote_literal(char *_dst, const char *_src, int dstlen)
 	if (dstlen < 3)
 		return false;
 
+	if (_src == NULL) {
+		if (dstlen < 5)
+			return false;
+		memcpy(_dst, "NULL", 5);
+		return true;
+	}
+
 retry:
 	*dst++ = '\'';
 	while (*src && dst < end) {
