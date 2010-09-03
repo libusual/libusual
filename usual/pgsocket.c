@@ -113,11 +113,20 @@ static void conn_error(struct PgSocket *db, enum PgEvent ev, const char *desc)
 static void report_last_result(struct PgSocket *db)
 {
 	PGresult *res = db->last_result;
-	if (res) {
-		db->last_result = NULL;
+	if (!res)
+		return;
+	db->last_result = NULL;
+
+	switch (PQresultStatus(res)) {
+	default:
+		log_error("%s: %s", PQdb(db->con), PQresultErrorMessage(res));
+	case PGRES_COMMAND_OK:
+	case PGRES_TUPLES_OK:
+	case PGRES_COPY_OUT:
+	case PGRES_COPY_IN:
 		db->handler_func(db, db->handler_arg, PGS_RESULT_OK, res);
-		PQclear(res);
 	}
+	PQclear(res);
 }
 
 /*
@@ -318,7 +327,7 @@ void pgs_send_query_simple(struct PgSocket *db, const char *q)
 {
 	int res;
 
-	log_debug("%s", q);
+	log_noise("%s", q);
 	res = PQsendQuery(db->con, q);
 	if (!res) {
 		conn_error(db, PGS_RESULT_BAD, "PQsendQuery");
@@ -352,7 +361,7 @@ void pgs_send_query_params_list(struct PgSocket *db, const char *q, int cnt, con
 {
 	int res;
 
-	log_debug("%s", q);
+	log_noise("%s", q);
 	res = PQsendQueryParams(db->con, q, cnt, NULL, args, NULL, NULL, 0);
 	if (!res) {
 		conn_error(db, PGS_RESULT_BAD, "PQsendQueryParams");
