@@ -20,6 +20,7 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <ctype.h>
 
 #include <usual/string.h>
 #include <usual/time.h>
@@ -94,7 +95,7 @@ static void start_syslog(void)
 
 void log_generic(enum LogLevel level, void *ctx, const char *fmt, ...)
 {
-	char buf[2048];
+	char buf[2048], buf2[2048];
 	char ebuf[256];
 	char timebuf[64];
 	const struct LevelInfo *lev = &log_level_list[level];
@@ -102,6 +103,7 @@ void log_generic(enum LogLevel level, void *ctx, const char *fmt, ...)
 	va_list ap;
 	int pfxlen = 0;
 	int old_errno = errno;
+	char *msg = buf;
 
 	if (logging_prefix_cb) {
 		pfxlen = logging_prefix_cb(level, ctx, buf, sizeof(buf));
@@ -113,6 +115,20 @@ void log_generic(enum LogLevel level, void *ctx, const char *fmt, ...)
 	va_start(ap, fmt);
 	vsnprintf(buf + pfxlen, sizeof(buf) - pfxlen, fmt, ap);
 	va_end(ap);
+
+	/* replace '\n' in message with '\n\t', strip trailing whitespace */
+	if (strchr(msg, '\n')) {
+		char *dst = buf2, *end = buf2 + sizeof(buf2) - 2;
+		for (; *msg && dst < end; msg++) {
+			*dst++ = *msg;
+			if (*msg == '\n')
+				*dst++ = '\t';
+		}
+		while (dst > buf2 && isspace(dst[-1]))
+			dst--;
+		*dst = 0;
+		msg = buf2;
+	}
 
 	format_time_ms(0, timebuf, sizeof(timebuf));
 
@@ -132,15 +148,15 @@ void log_generic(enum LogLevel level, void *ctx, const char *fmt, ...)
 	}
 
 	if (!cf_quiet)
-		fprintf(stderr, "%s %u %s %s\n", timebuf, pid, lev->tag, buf);
+		fprintf(stderr, "%s %u %s %s\n", timebuf, pid, lev->tag, msg);
 
 	if (log_file)
-		fprintf(log_file, "%s %u %s %s\n", timebuf, pid, lev->tag, buf);
+		fprintf(log_file, "%s %u %s %s\n", timebuf, pid, lev->tag, msg);
 
 	if (cf_syslog_ident) {
 		if (!syslog_started)
 			start_syslog();
-		syslog(lev->syslog_prio, "%s", buf);
+		syslog(lev->syslog_prio, "%s", msg);
 	}
 done:
 	if (old_errno != errno)
