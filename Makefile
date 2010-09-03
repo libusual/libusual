@@ -107,6 +107,7 @@ dbg:
 	@echo hdrs=$(hdrs)
 	@echo CPPFLAGS=$(CPPFLAGS)
 
+# requires 8.4+
 kws:
 	@test -f "$(KWLIST)" || { echo "kwlist.h not found"; exit 1; }
 	cat usual/pgutil_kwlookup.g > usual/pgutil_kwlookup.gp
