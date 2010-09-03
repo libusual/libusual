@@ -3,3 +3,4 @@
 /BASENAME/s,^,//,
 /DIRNAME/s,^,//,
 /POLL/s,^,//,
+/REGCOMP/s,^,//,

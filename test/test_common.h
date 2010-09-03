@@ -16,4 +16,5 @@ extern struct testcase_t list_tests[];
 extern struct testcase_t utf8_tests[];
 extern struct testcase_t strpool_tests[];
 extern struct testcase_t pgutil_tests[];
+extern struct testcase_t regex_tests[];
 
