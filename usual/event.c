@@ -393,7 +393,7 @@ int event_add(struct event *ev, struct timeval *timeout)
 		if (ev->flags & EV_PERSIST)
 			goto err_inval;
 		if (!heap_reserve(&base->timeout_heap, 1))
-			return false;
+			return -1;
 	} else {
 		if (ev->flags & EV_TIMEOUT)
 			ev->flags &= ~EV_TIMEOUT;
