@@ -1,4 +1,4 @@
-/* ANSI-C code produced by gperf version 3.0.1 */
+/* ANSI-C code produced by gperf version 3.0.3 */
 /* Command-line: gperf -m5 usual/pgutil_kwlookup.gp  */
 /* Computed positions: -k'1-3,6,9,$' */
 
@@ -29,7 +29,6 @@
 #error "gperf generated tables don't work with this execution character set. Please report a bug to <bug-gnu-gperf@gnu.org>."
 #endif
 
-#line 13 "usual/pgutil_kwlookup.gp"
 struct PgKeyword { short name; short type; };
 /* maximum key range = 1770, duplicates = 0 */
 
@@ -892,6 +891,9 @@ static const struct pgkw_t pgkw_contents =
 #define pgkw ((const char *) &pgkw_contents)
 #ifdef __GNUC__
 __inline
+#ifdef __GNUC_STDC_INLINE__
+__attribute__ ((__gnu_inline__))
+#endif
 #endif
 const struct PgKeyword *
 pg_keyword_lookup_real (register const char *str, register unsigned int len)
@@ -909,1013 +911,632 @@ pg_keyword_lookup_real (register const char *str, register unsigned int len)
     {
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 322 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str18, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 317 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str22, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1},
-#line 294 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str28, PG_UNRESERVED_KEYWORD},
-#line 357 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str29, PG_COL_NAME_KEYWORD},
-#line 298 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str30, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 302 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str34, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 38 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str36, PG_UNRESERVED_KEYWORD},
-#line 338 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str37, PG_UNRESERVED_KEYWORD},
-#line 33 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str38, PG_RESERVED_KEYWORD},
       {-1},
-#line 125 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str40, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 332 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str44, PG_UNRESERVED_KEYWORD},
-#line 330 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str45, PG_UNRESERVED_KEYWORD},
-#line 299 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str46, PG_UNRESERVED_KEYWORD},
       {-1}, {-1},
-#line 284 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str49, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 35 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str53, PG_UNRESERVED_KEYWORD},
-#line 36 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str54, PG_UNRESERVED_KEYWORD},
-#line 319 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str55, PG_UNRESERVED_KEYWORD},
-#line 130 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str56, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 82 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str65, PG_RESERVED_KEYWORD},
-#line 29 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str66, PG_RESERVED_KEYWORD},
       {-1},
-#line 28 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str68, PG_RESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1},
-#line 289 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str73, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 331 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str75, PG_UNRESERVED_KEYWORD},
-#line 54 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str76, PG_RESERVED_KEYWORD},
-#line 252 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str77, PG_RESERVED_KEYWORD},
-#line 55 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str78, PG_RESERVED_KEYWORD},
-#line 19 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str79, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 235 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str81, PG_COL_NAME_KEYWORD},
-#line 407 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str82, PG_UNRESERVED_KEYWORD},
-#line 85 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str83, PG_UNRESERVED_KEYWORD},
-#line 237 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str84, PG_RESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 320 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str92, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 334 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str94, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 257 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str101, PG_RESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 236 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str110, PG_UNRESERVED_KEYWORD},
-#line 50 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str111, PG_UNRESERVED_KEYWORD},
-#line 34 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str112, PG_RESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 18 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str120, PG_UNRESERVED_KEYWORD},
-#line 124 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str121, PG_RESERVED_KEYWORD},
       {-1},
-#line 81 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str123, PG_UNRESERVED_KEYWORD},
-#line 78 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str124, PG_UNRESERVED_KEYWORD},
-#line 77 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str125, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 316 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str129, PG_RESERVED_KEYWORD},
       {-1}, {-1},
-#line 288 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str132, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 86 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str134, PG_TYPE_FUNC_NAME_KEYWORD},
       {-1}, {-1}, {-1},
-#line 293 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str138, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 75 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str142, PG_RESERVED_KEYWORD},
       {-1},
-#line 76 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str144, PG_UNRESERVED_KEYWORD},
-#line 201 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str145, PG_COL_NAME_KEYWORD},
-#line 229 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str146, PG_UNRESERVED_KEYWORD},
-#line 197 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str147, PG_UNRESERVED_KEYWORD},
-#line 354 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str148, PG_RESERVED_KEYWORD},
       {-1},
-#line 224 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str150, PG_COL_NAME_KEYWORD},
-#line 66 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str151, PG_COL_NAME_KEYWORD},
       {-1}, {-1},
-#line 286 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str154, PG_COL_NAME_KEYWORD},
-#line 196 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str155, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 26 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str157, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1},
-#line 335 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str163, PG_UNRESERVED_KEYWORD},
       {-1}, {-1},
-#line 231 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str166, PG_UNRESERVED_KEYWORD},
       {-1}, {-1},
-#line 318 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str169, PG_UNRESERVED_KEYWORD},
-#line 336 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str170, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 195 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str172, PG_UNRESERVED_KEYWORD},
-#line 225 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str173, PG_TYPE_FUNC_NAME_KEYWORD},
       {-1}, {-1}, {-1},
-#line 84 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str177, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1},
-#line 63 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str183, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 285 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str193, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 113 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str197, PG_RESERVED_KEYWORD},
       {-1},
-#line 305 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str199, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 98 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str207, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 79 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str209, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 104 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str211, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 99 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str213, PG_UNRESERVED_KEYWORD},
-#line 25 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str214, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1},
-#line 64 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str225, PG_UNRESERVED_KEYWORD},
-#line 52 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str226, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 68 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str228, PG_RESERVED_KEYWORD},
       {-1},
-#line 102 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str230, PG_COL_NAME_KEYWORD},
-#line 67 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str231, PG_RESERVED_KEYWORD},
       {-1}, {-1},
-#line 74 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str234, PG_UNRESERVED_KEYWORD},
-#line 209 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str235, PG_RESERVED_KEYWORD},
       {-1},
-#line 169 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str237, PG_RESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1},
-#line 189 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str243, PG_TYPE_FUNC_NAME_KEYWORD},
-#line 183 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str244, PG_COL_NAME_KEYWORD},
-#line 360 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str245, PG_RESERVED_KEYWORD},
-#line 373 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str246, PG_RESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1},
-#line 258 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str251, PG_RESERVED_KEYWORD},
-#line 181 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str252, PG_UNRESERVED_KEYWORD},
-#line 212 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str253, PG_UNRESERVED_KEYWORD},
-#line 177 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str254, PG_TYPE_FUNC_NAME_KEYWORD},
       {-1}, {-1}, {-1},
-#line 306 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str258, PG_UNRESERVED_KEYWORD},
-#line 185 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str259, PG_RESERVED_KEYWORD},
-#line 184 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str260, PG_COL_NAME_KEYWORD},
       {-1},
-#line 101 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str262, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 300 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str264, PG_UNRESERVED_KEYWORD},
       {-1}, {-1},
-#line 110 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str267, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 119 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str271, PG_UNRESERVED_KEYWORD},
-#line 358 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str272, PG_UNRESERVED_KEYWORD},
-#line 198 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str273, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 361 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str275, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1},
-#line 312 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str280, PG_UNRESERVED_KEYWORD},
       {-1}, {-1},
-#line 287 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str283, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 88 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str287, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 118 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str291, PG_RESERVED_KEYWORD},
       {-1}, {-1},
-#line 93 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str294, PG_RESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1},
-#line 240 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str300, PG_TYPE_FUNC_NAME_KEYWORD},
-#line 128 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str301, PG_RESERVED_KEYWORD},
-#line 283 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str302, PG_UNRESERVED_KEYWORD},
-#line 259 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str303, PG_COL_NAME_KEYWORD},
-#line 91 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str304, PG_RESERVED_KEYWORD},
       {-1},
-#line 39 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str306, PG_TYPE_FUNC_NAME_KEYWORD},
       {-1},
-#line 96 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str308, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 192 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str310, PG_TYPE_FUNC_NAME_KEYWORD},
       {-1},
-#line 187 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str312, PG_RESERVED_KEYWORD},
-#line 178 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str313, PG_COL_NAME_KEYWORD},
-#line 356 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str314, PG_UNRESERVED_KEYWORD},
-#line 260 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str315, PG_TYPE_FUNC_NAME_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1},
-#line 92 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str321, PG_TYPE_FUNC_NAME_KEYWORD},
       {-1},
-#line 233 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str323, PG_UNRESERVED_KEYWORD},
-#line 191 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str324, PG_UNRESERVED_KEYWORD},
-#line 30 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str325, PG_RESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 103 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str329, PG_COL_NAME_KEYWORD},
-#line 321 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str330, PG_RESERVED_KEYWORD},
-#line 208 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str331, PG_UNRESERVED_KEYWORD},
-#line 339 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str332, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1},
-#line 274 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str338, PG_COL_NAME_KEYWORD},
       {-1},
-#line 371 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str340, PG_UNRESERVED_KEYWORD},
-#line 244 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str341, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 275 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str343, PG_UNRESERVED_KEYWORD},
-#line 277 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str344, PG_UNRESERVED_KEYWORD},
-#line 370 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str345, PG_UNRESERVED_KEYWORD},
-#line 314 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str346, PG_UNRESERVED_KEYWORD},
       {-1}, {-1},
-#line 309 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str349, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 24 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str353, PG_RESERVED_KEYWORD},
-#line 206 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str354, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 207 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str356, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 156 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str360, PG_COL_NAME_KEYWORD},
-#line 268 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str361, PG_UNRESERVED_KEYWORD},
-#line 222 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str362, PG_UNRESERVED_KEYWORD},
       {-1}, {-1},
-#line 292 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str365, PG_UNRESERVED_KEYWORD},
-#line 223 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str366, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 296 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str368, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 348 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str370, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 53 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str372, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 204 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str376, PG_TYPE_FUNC_NAME_KEYWORD},
       {-1},
-#line 266 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str378, PG_UNRESERVED_KEYWORD},
-#line 154 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str379, PG_RESERVED_KEYWORD},
-#line 333 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str380, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1},
-#line 232 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str385, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 255 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str389, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 65 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str391, PG_UNRESERVED_KEYWORD},
-#line 297 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str392, PG_UNRESERVED_KEYWORD},
-#line 256 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str393, PG_UNRESERVED_KEYWORD},
-#line 173 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str394, PG_UNRESERVED_KEYWORD},
-#line 362 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str395, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 117 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str397, PG_RESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 366 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str401, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 254 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str403, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 351 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str407, PG_RESERVED_KEYWORD},
       {-1}, {-1},
-#line 329 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str410, PG_RESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1},
-#line 238 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str416, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 182 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str418, PG_UNRESERVED_KEYWORD},
-#line 337 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str419, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 234 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str421, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1},
-#line 324 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str433, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 323 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str435, PG_COL_NAME_KEYWORD},
       {-1},
-#line 90 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str437, PG_RESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1},
-#line 242 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str443, PG_RESERVED_KEYWORD},
-#line 295 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str444, PG_UNRESERVED_KEYWORD},
-#line 149 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str445, PG_TYPE_FUNC_NAME_KEYWORD},
-#line 158 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str446, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 271 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str448, PG_UNRESERVED_KEYWORD},
-#line 121 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str449, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 69 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str451, PG_UNRESERVED_KEYWORD},
-#line 70 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str452, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 290 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str454, PG_RESERVED_KEYWORD},
-#line 226 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str455, PG_COL_NAME_KEYWORD},
       {-1},
-#line 160 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str457, PG_UNRESERVED_KEYWORD},
-#line 250 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str458, PG_UNRESERVED_KEYWORD},
-#line 211 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str459, PG_UNRESERVED_KEYWORD},
-#line 190 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str460, PG_TYPE_FUNC_NAME_KEYWORD},
-#line 367 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str461, PG_RESERVED_KEYWORD},
-#line 406 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str462, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 368 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str464, PG_RESERVED_KEYWORD},
       {-1},
-#line 123 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str466, PG_UNRESERVED_KEYWORD},
-#line 57 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str467, PG_UNRESERVED_KEYWORD},
-#line 22 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str468, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 20 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str470, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 61 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str472, PG_RESERVED_KEYWORD},
-#line 51 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str473, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 200 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str475, PG_RESERVED_KEYWORD},
-#line 251 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str476, PG_RESERVED_KEYWORD},
-#line 56 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str477, PG_UNRESERVED_KEYWORD},
-#line 58 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str478, PG_COL_NAME_KEYWORD},
       {-1},
-#line 303 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str480, PG_UNRESERVED_KEYWORD},
       {-1}, {-1},
-#line 73 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str483, PG_UNRESERVED_KEYWORD},
-#line 383 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str484, PG_TYPE_FUNC_NAME_KEYWORD},
-#line 267 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str485, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 180 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str487, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 276 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str489, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 405 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str493, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 311 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str497, PG_UNRESERVED_KEYWORD},
       {-1}, {-1},
-#line 115 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str500, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1},
-#line 32 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str506, PG_RESERVED_KEYWORD},
       {-1},
-#line 21 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str508, PG_UNRESERVED_KEYWORD},
       {-1}, {-1},
-#line 146 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str511, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1},
-#line 213 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str516, PG_UNRESERVED_KEYWORD},
-#line 112 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str517, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 145 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str521, PG_RESERVED_KEYWORD},
       {-1},
-#line 95 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str523, PG_RESERVED_KEYWORD},
       {-1},
-#line 111 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str525, PG_UNRESERVED_KEYWORD},
-#line 155 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str526, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1},
-#line 97 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str532, PG_UNRESERVED_KEYWORD},
-#line 60 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str533, PG_UNRESERVED_KEYWORD},
       {-1}, {-1},
-#line 59 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str536, PG_COL_NAME_KEYWORD},
-#line 202 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str537, PG_TYPE_FUNC_NAME_KEYWORD},
       {-1}, {-1},
-#line 122 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str540, PG_UNRESERVED_KEYWORD},
-#line 380 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str541, PG_COL_NAME_KEYWORD},
-#line 210 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str542, PG_RESERVED_KEYWORD},
       {-1}, {-1},
-#line 261 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str545, PG_TYPE_FUNC_NAME_KEYWORD},
-#line 179 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str546, PG_UNRESERVED_KEYWORD},
       {-1}, {-1},
-#line 282 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str549, PG_UNRESERVED_KEYWORD},
-#line 384 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str550, PG_UNRESERVED_KEYWORD},
-#line 116 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str551, PG_UNRESERVED_KEYWORD},
-#line 219 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str552, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 120 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str556, PG_UNRESERVED_KEYWORD},
-#line 129 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str557, PG_UNRESERVED_KEYWORD},
       {-1}, {-1},
-#line 139 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str560, PG_RESERVED_KEYWORD},
-#line 269 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str561, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1},
-#line 262 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str566, PG_TYPE_FUNC_NAME_KEYWORD},
       {-1},
-#line 279 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str568, PG_UNRESERVED_KEYWORD},
-#line 352 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str569, PG_COL_NAME_KEYWORD},
-#line 43 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str570, PG_TYPE_FUNC_NAME_KEYWORD},
-#line 217 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str571, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 310 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str573, PG_UNRESERVED_KEYWORD},
-#line 327 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str574, PG_UNRESERVED_KEYWORD},
       {-1}, {-1},
-#line 165 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str577, PG_TYPE_FUNC_NAME_KEYWORD},
       {-1},
-#line 394 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str579, PG_UNRESERVED_KEYWORD},
-#line 228 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str580, PG_UNRESERVED_KEYWORD},
-#line 359 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str581, PG_COL_NAME_KEYWORD},
-#line 350 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str582, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 304 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str584, PG_TYPE_FUNC_NAME_KEYWORD},
-#line 134 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str585, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 72 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str587, PG_UNRESERVED_KEYWORD},
       {-1}, {-1},
-#line 345 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str590, PG_RESERVED_KEYWORD},
-#line 109 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str591, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 378 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str595, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 194 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str597, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 94 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str601, PG_RESERVED_KEYWORD},
-#line 328 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str602, PG_COL_NAME_KEYWORD},
-#line 241 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str603, PG_UNRESERVED_KEYWORD},
-#line 379 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str604, PG_COL_NAME_KEYWORD},
       {-1},
-#line 199 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str606, PG_UNRESERVED_KEYWORD},
-#line 143 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str607, PG_COL_NAME_KEYWORD},
-#line 265 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str608, PG_UNRESERVED_KEYWORD},
-#line 343 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str609, PG_UNRESERVED_KEYWORD},
-#line 308 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str610, PG_UNRESERVED_KEYWORD},
-#line 326 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str611, PG_TYPE_FUNC_NAME_KEYWORD},
-#line 126 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str612, PG_UNRESERVED_KEYWORD},
-#line 355 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str613, PG_RESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 171 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str617, PG_UNRESERVED_KEYWORD},
-#line 83 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str618, PG_UNRESERVED_KEYWORD},
       {-1}, {-1},
-#line 272 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str621, PG_COL_NAME_KEYWORD},
       {-1},
-#line 131 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str623, PG_RESERVED_KEYWORD},
-#line 138 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str624, PG_COL_NAME_KEYWORD},
       {-1}, {-1},
-#line 133 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str627, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1},
-#line 253 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str632, PG_RESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 393 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str636, PG_UNRESERVED_KEYWORD},
       {-1}, {-1},
-#line 346 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str639, PG_UNRESERVED_KEYWORD},
-#line 246 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str640, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 347 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str642, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 127 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str650, PG_UNRESERVED_KEYWORD},
-#line 377 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str651, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 16 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str659, PG_UNRESERVED_KEYWORD},
-#line 89 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str660, PG_RESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1},
-#line 27 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str666, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1},
-#line 148 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str672, PG_UNRESERVED_KEYWORD},
-#line 142 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str673, PG_UNRESERVED_KEYWORD},
-#line 280 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str674, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 205 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str676, PG_RESERVED_KEYWORD},
-#line 203 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str677, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 218 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str679, PG_UNRESERVED_KEYWORD},
-#line 281 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str680, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 372 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str682, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1},
-#line 105 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str687, PG_RESERVED_KEYWORD},
-#line 381 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str688, PG_RESERVED_KEYWORD},
-#line 106 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str689, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 301 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str691, PG_RESERVED_KEYWORD},
-#line 137 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str692, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 107 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str702, PG_RESERVED_KEYWORD},
       {-1}, {-1},
-#line 162 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str705, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1},
-#line 188 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str710, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1},
-#line 157 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str724, PG_RESERVED_KEYWORD},
-#line 161 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str725, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1},
-#line 47 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str730, PG_COL_NAME_KEYWORD},
-#line 153 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str731, PG_UNRESERVED_KEYWORD},
-#line 315 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str732, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1},
-#line 108 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str737, PG_UNRESERVED_KEYWORD},
       {-1}, {-1},
-#line 376 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str740, PG_UNRESERVED_KEYWORD},
-#line 264 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str741, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 71 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str745, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 365 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str752, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 62 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str756, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 215 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str758, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 37 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str760, PG_RESERVED_KEYWORD},
-#line 363 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str761, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 395 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str768, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 270 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str777, PG_RESERVED_KEYWORD},
       {-1},
-#line 369 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str779, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 341 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str788, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 374 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str792, PG_RESERVED_KEYWORD},
       {-1}, {-1},
-#line 46 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str795, PG_COL_NAME_KEYWORD},
       {-1}, {-1}, {-1},
-#line 40 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str799, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 220 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str801, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1},
-#line 186 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str807, PG_COL_NAME_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 17 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str815, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 135 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str817, PG_COL_NAME_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 291 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str824, PG_UNRESERVED_KEYWORD},
-#line 141 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str825, PG_RESERVED_KEYWORD},
       {-1}, {-1},
-#line 245 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str828, PG_COL_NAME_KEYWORD},
-#line 313 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str829, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 382 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str833, PG_UNRESERVED_KEYWORD},
       {-1}, {-1},
-#line 150 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str836, PG_RESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 147 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str843, PG_RESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1},
-#line 230 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str848, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1},
-#line 221 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str859, PG_UNRESERVED_KEYWORD},
-#line 151 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str860, PG_TYPE_FUNC_NAME_KEYWORD},
       {-1}, {-1}, {-1}, {-1},
-#line 80 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str865, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1},
-#line 174 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str870, PG_UNRESERVED_KEYWORD},
-#line 342 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str871, PG_RESERVED_KEYWORD},
-#line 175 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str872, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 386 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str874, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 152 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str883, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 42 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str892, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 247 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str911, PG_UNRESERVED_KEYWORD},
       {-1}, {-1},
-#line 168 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str914, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1},
-#line 387 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str919, PG_RESERVED_KEYWORD},
-#line 388 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str920, PG_RESERVED_KEYWORD},
       {-1}, {-1},
-#line 249 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str923, PG_RESERVED_KEYWORD},
       {-1},
-#line 31 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str925, PG_RESERVED_KEYWORD},
-#line 167 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str926, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 193 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str930, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1},
-#line 172 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str953, PG_UNRESERVED_KEYWORD},
       {-1},
-#line 87 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str955, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 114 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str959, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 239 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str977, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1},
-#line 392 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str983, PG_UNRESERVED_KEYWORD},
-#line 41 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str984, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 325 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str991, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1},
-#line 214 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str997, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 263 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1007, PG_COL_NAME_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 278 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1017, PG_RESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1},
-#line 399 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1022, PG_COL_NAME_KEYWORD},
-#line 398 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1023, PG_COL_NAME_KEYWORD},
       {-1}, {-1}, {-1},
-#line 48 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1027, PG_RESERVED_KEYWORD},
-#line 401 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1028, PG_COL_NAME_KEYWORD},
-#line 23 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1029, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1},
-#line 400 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1035, PG_COL_NAME_KEYWORD},
       {-1}, {-1}, {-1},
-#line 227 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1039, PG_RESERVED_KEYWORD},
-#line 216 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1040, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 163 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1066, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 100 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1070, PG_UNRESERVED_KEYWORD},
-#line 164 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1071, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 364 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1081, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1},
-#line 403 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1086, PG_COL_NAME_KEYWORD},
       {-1},
-#line 170 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1088, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 136 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1114, PG_UNRESERVED_KEYWORD},
-#line 396 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1115, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 344 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1119, PG_UNRESERVED_KEYWORD},
-#line 307 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1120, PG_COL_NAME_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 44 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1128, PG_COL_NAME_KEYWORD},
       {-1}, {-1},
-#line 166 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1131, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1},
-#line 273 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1136, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 404 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1140, PG_COL_NAME_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 391 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1150, PG_RESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 243 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1175, PG_COL_NAME_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1},
-#line 375 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1181, PG_UNRESERVED_KEYWORD},
       {-1}, {-1},
-#line 353 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1184, PG_COL_NAME_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1},
-#line 389 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1198, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 385 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1207, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1},
-#line 402 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1240, PG_COL_NAME_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1},
-#line 349 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1251, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
@@ -1926,7 +1547,6 @@ pg_keyword_lookup_real (register const char *str, register unsigned int len)
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 248 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1331, PG_RESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
@@ -1935,22 +1555,18 @@ pg_keyword_lookup_real (register const char *str, register unsigned int len)
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 176 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1393, PG_RESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1},
-#line 132 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1425, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1},
-#line 49 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1449, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1},
-#line 340 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1462, PG_COL_NAME_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
@@ -1961,14 +1577,12 @@ pg_keyword_lookup_real (register const char *str, register unsigned int len)
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 159 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1541, PG_RESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1},
-#line 397 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1579, PG_COL_NAME_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
@@ -1981,11 +1595,9 @@ pg_keyword_lookup_real (register const char *str, register unsigned int len)
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1},
-#line 140 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1673, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1},
-#line 45 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1686, PG_TYPE_FUNC_NAME_KEYWORD},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
@@ -1998,10 +1610,8 @@ pg_keyword_lookup_real (register const char *str, register unsigned int len)
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
       {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-#line 144 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1783, PG_UNRESERVED_KEYWORD},
       {-1}, {-1}, {-1},
-#line 390 "usual/pgutil_kwlookup.gp"
       {(int)(long)&((struct pgkw_t *)0)->pgkw_str1787, PG_RESERVED_KEYWORD}
     };
 

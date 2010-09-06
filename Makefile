@@ -114,6 +114,8 @@ kws:
 	grep '^PG_KEYWORD' "$(KWLIST)" \
 	| sed 's/.*"\(.*\)",.*, *\(.*\)[)].*/\1, PG_\2/' \
 	>> usual/pgutil_kwlookup.gp
-	$(GPERF) usual/pgutil_kwlookup.gp > usual/pgutil_kwlookup.h
+	$(GPERF) usual/pgutil_kwlookup.gp \
+	| sed '/^#line/d' \
+	> usual/pgutil_kwlookup.h
 	rm -f usual/pgutil_kwlookup.gp
 

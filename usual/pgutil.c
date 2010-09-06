@@ -9,27 +9,6 @@
 
 #include <ctype.h>
 
-/*
- * Postgres keyword lookup.
- */
-
-struct PgKeyword;
-const struct PgKeyword *pg_keyword_lookup_real(const char *str, unsigned int len);
-#include <usual/pgutil_kwlookup.h>
-
-enum PgKeywordType pg_keyword_lookup(const char *str)
-{
-	const struct PgKeyword *kw;
-	kw = pg_keyword_lookup_real(str, strlen(str));
-	return kw ? kw->type : 0;
-}
-
-bool pg_is_reserved_word(const char *str)
-{
-	enum PgKeywordType t = pg_keyword_lookup(str);
-	return t && (t != PG_UNRESERVED_KEYWORD);
-}
-
 /* str -> E'str' */
 bool pg_quote_literal(char *_dst, const char *_src, int dstlen)
 {
@@ -282,5 +261,34 @@ struct StrList *pg_parse_array(const char *pgarr)
 failed:
 	strlist_free(lst);
 	return NULL;
+}
+
+/*
+ * Postgres keyword lookup.
+ */
+
+/* gperf tries ot inline a non-static function. */
+#undef inline
+#undef __inline
+#undef __attribute__
+#define inline
+#define __inline
+#define __attribute__(x)
+
+/* include gperf code */
+const struct PgKeyword *pg_keyword_lookup_real(const char *str, unsigned int len);
+#include <usual/pgutil_kwlookup.h>
+
+enum PgKeywordType pg_keyword_lookup(const char *str)
+{
+	const struct PgKeyword *kw;
+	kw = pg_keyword_lookup_real(str, strlen(str));
+	return kw ? kw->type : 0;
+}
+
+bool pg_is_reserved_word(const char *str)
+{
+	enum PgKeywordType t = pg_keyword_lookup(str);
+	return t && (t != PG_UNRESERVED_KEYWORD);
 }
 
