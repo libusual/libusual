@@ -46,6 +46,8 @@
 #include <string.h>
 #include <stdio.h>
 
+#undef STRICT
+
 /* either dynamic or static decision */
 #define STRICT (ctx->strict)
 
