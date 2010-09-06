@@ -138,7 +138,7 @@ bool socket_set_keepalive(int fd, int onoff, int keepidle, int keepintvl, int ke
 		vals.onoff = 1;
 		vals.keepalivetime = keepidle * 1000;
 		vals.keepaliveinterval = keepintvl * 1000;
-		res = WSAIoctl(fd, SIO_KEEPALIVE_VALS, &vals, sizeof(vals), NULL, 0, &outlen, NULL, NULL, NULL, NULL);
+		res = WSAIoctl(fd, SIO_KEEPALIVE_VALS, &vals, sizeof(vals), NULL, 0, &outlen, NULL, NULL);
 		if (res != 0)
 			return false;
 	}
