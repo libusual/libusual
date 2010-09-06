@@ -38,7 +38,9 @@ void reset_time_cache(void);
 int gettimeofday(struct timeval * tp, void * tzp);
 struct tm *localtime_r(const time_t *tp, struct tm *buf);
 
+#ifndef HAVE_USLEEP
 static inline void usleep(long usec) { Sleep(usec / 1000); }
+#endif
 
 struct rusage {
 	struct timeval ru_utime;

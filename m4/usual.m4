@@ -138,7 +138,7 @@ AC_CHECK_FUNCS(inet_ntop poll getline memrchr regcomp)
 AC_CHECK_FUNCS(err errx warn warnx getprogname setprogname)
 AC_CHECK_FUNCS(posix_memalign memalign valloc)
 ### Functions provided only on win32
-AC_CHECK_FUNCS(localtime_r recvmsg sendmsg)
+AC_CHECK_FUNCS(localtime_r recvmsg sendmsg usleep)
 ### Functions used by libusual itself
 AC_CHECK_FUNCS(syslog mmap recvmsg sendmsg getpeerucred)
 ### win32: link with ws2_32
