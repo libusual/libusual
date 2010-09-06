@@ -22,7 +22,10 @@
 #include <malloc.h>
 #endif
 
-#ifndef HAVE_POSIX_MEMALIGN
+/* define posix_memalign() only when possible to emulate */
+#if !defined(HAVE_POSIX_MEMALIGN) \
+    && (defined(HAVE_MEMALIGN) || defined(HAVE_VALLOC))
+
 int posix_memalign(void **ptr_p, size_t align, size_t len)
 {
 	void *p;
@@ -34,9 +37,6 @@ int posix_memalign(void **ptr_p, size_t align, size_t len)
 #ifdef HAVE_VALLOC
 	/* assuming less than pagesize alignment */
 	p = valloc(len);
-#else /* !VALLOC */
-	#warning "cannot emulate posix_memalign sanely"
-	p = malloc(len);
 #endif /* !VALLOC */
 #endif /* !MEMALIGN */
 
