@@ -112,7 +112,8 @@ kws:
 	@test -f "$(KWLIST)" || { echo "kwlist.h not found"; exit 1; }
 	cat usual/pgutil_kwlookup.g > usual/pgutil_kwlookup.gp
 	grep '^PG_KEYWORD' "$(KWLIST)" \
-	| sed 's/.*"\(.*\)",.*, *\(.*\)[)].*/\1, PG_\2/' \
+	| grep -v UNRESERVED \
+	| sed 's/.*"\(.*\)",.*, *\(.*\)[)].*/\1/' \
 	>> usual/pgutil_kwlookup.gp
 	$(GPERF) usual/pgutil_kwlookup.gp \
 	| sed '/^#line/d' \

@@ -276,19 +276,12 @@ failed:
 #define __attribute__(x)
 
 /* include gperf code */
-const struct PgKeyword *pg_keyword_lookup_real(const char *str, unsigned int len);
+const char *pg_keyword_lookup_real(const char *str, unsigned int len);
 #include <usual/pgutil_kwlookup.h>
-
-enum PgKeywordType pg_keyword_lookup(const char *str)
-{
-	const struct PgKeyword *kw;
-	kw = pg_keyword_lookup_real(str, strlen(str));
-	return kw ? kw->type : 0;
-}
 
 bool pg_is_reserved_word(const char *str)
 {
-	enum PgKeywordType t = pg_keyword_lookup(str);
-	return t && (t != PG_UNRESERVED_KEYWORD);
+	const char *kw = pg_keyword_lookup_real(str, strlen(str));
+	return kw != NULL;
 }
 

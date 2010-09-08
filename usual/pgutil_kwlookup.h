@@ -1,6 +1,6 @@
 /* ANSI-C code produced by gperf version 3.0.3 */
 /* Command-line: gperf -m5 usual/pgutil_kwlookup.gp  */
-/* Computed positions: -k'1-3,6,9,$' */
+/* Computed positions: -k'1-2,6,9,$' */
 
 #if !((' ' == 32) && ('!' == 33) && ('"' == 34) && ('#' == 35) \
       && ('%' == 37) && ('&' == 38) && ('\'' == 39) && ('(' == 40) \
@@ -29,8 +29,7 @@
 #error "gperf generated tables don't work with this execution character set. Please report a bug to <bug-gnu-gperf@gnu.org>."
 #endif
 
-struct PgKeyword { short name; short type; };
-/* maximum key range = 1770, duplicates = 0 */
+/* maximum key range = 324, duplicates = 0 */
 
 #ifdef __GNUC__
 __inline
@@ -44,32 +43,32 @@ pg_keyword_lookup_hash (register const char *str, register unsigned int len)
 {
   static const unsigned short asso_values[] =
     {
-      1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788,
-      1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788,
-      1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788,
-      1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788,
-      1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788,
-      1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788,
-      1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788,
-      1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788,
-      1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788,
-      1788, 1788, 1788, 1788, 1788,    2, 1788,   26,  553,   39,
-       147,    2,  419,  330,  395,  231,    2,   31,  108,  328,
-         2,   71,  304,    3,   14,    5,    4,  221,  454,  516,
-       568,  447,    3, 1788, 1788, 1788, 1788, 1788, 1788, 1788,
-      1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788,
-      1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788,
-      1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788,
-      1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788,
-      1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788,
-      1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788,
-      1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788,
-      1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788,
-      1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788,
-      1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788,
-      1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788,
-      1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788, 1788,
-      1788, 1788, 1788, 1788, 1788, 1788
+      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
+      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
+      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
+      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
+      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
+      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
+      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
+      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
+      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
+      329, 329, 329, 329, 329, 329, 329,  22,  32,  55,
+       85,   5,  84, 101,  84,  26,   2,   9,  16, 114,
+        9,   1,  71, 329,   3,  32,   1,  58, 105,  37,
+        2, 131,   4, 329, 329, 329, 329, 329, 329, 329,
+      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
+      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
+      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
+      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
+      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
+      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
+      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
+      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
+      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
+      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
+      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
+      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
+      329, 329, 329, 329, 329, 329
     };
   register int hval = len;
 
@@ -86,8 +85,6 @@ pg_keyword_lookup_hash (register const char *str, register unsigned int len)
       case 5:
       case 4:
       case 3:
-        hval += asso_values[(unsigned char)str[2]];
-      /*FALLTHROUGH*/
       case 2:
         hval += asso_values[(unsigned char)str[1]];
       /*FALLTHROUGH*/
@@ -98,1521 +95,529 @@ pg_keyword_lookup_hash (register const char *str, register unsigned int len)
   return hval + asso_values[(unsigned char)str[len - 1]];
 }
 
-struct pgkw_t
-  {
-    char pgkw_str18[sizeof("set")];
-    char pgkw_str22[sizeof("sequence")];
-    char pgkw_str28[sizeof("rename")];
-    char pgkw_str29[sizeof("treat")];
-    char pgkw_str30[sizeof("reset")];
-    char pgkw_str34[sizeof("returns")];
-    char pgkw_str36[sizeof("at")];
-    char pgkw_str37[sizeof("strict")];
-    char pgkw_str38[sizeof("as")];
-    char pgkw_str40[sizeof("enable")];
-    char pgkw_str44[sizeof("start")];
-    char pgkw_str45[sizeof("stable")];
-    char pgkw_str46[sizeof("restart")];
-    char pgkw_str49[sizeof("range")];
-    char pgkw_str53[sizeof("assertion")];
-    char pgkw_str54[sizeof("assignment")];
-    char pgkw_str55[sizeof("server")];
-    char pgkw_str56[sizeof("escape")];
-    char pgkw_str65[sizeof("create")];
-    char pgkw_str66[sizeof("analyze")];
-    char pgkw_str68[sizeof("analyse")];
-    char pgkw_str73[sizeof("recursive")];
-    char pgkw_str75[sizeof("standalone")];
-    char pgkw_str76[sizeof("case")];
-    char pgkw_str77[sizeof("on")];
-    char pgkw_str78[sizeof("cast")];
-    char pgkw_str79[sizeof("action")];
-    char pgkw_str81[sizeof("none")];
-    char pgkw_str82[sizeof("zone")];
-    char pgkw_str83[sizeof("createuser")];
-    char pgkw_str84[sizeof("not")];
-    char pgkw_str92[sizeof("session")];
-    char pgkw_str94[sizeof("statistics")];
-    char pgkw_str101[sizeof("or")];
-    char pgkw_str110[sizeof("nosuperuser")];
-    char pgkw_str111[sizeof("cache")];
-    char pgkw_str112[sizeof("asc")];
-    char pgkw_str120[sizeof("access")];
-    char pgkw_str121[sizeof("else")];
-    char pgkw_str123[sizeof("cost")];
-    char pgkw_str124[sizeof("continue")];
-    char pgkw_str125[sizeof("content")];
-    char pgkw_str129[sizeof("select")];
-    char pgkw_str132[sizeof("recheck")];
-    char pgkw_str134[sizeof("cross")];
-    char pgkw_str138[sizeof("release")];
-    char pgkw_str142[sizeof("constraint")];
-    char pgkw_str144[sizeof("constraints")];
-    char pgkw_str145[sizeof("least")];
-    char pgkw_str146[sizeof("no")];
-    char pgkw_str147[sizeof("last")];
-    char pgkw_str148[sizeof("to")];
-    char pgkw_str150[sizeof("national")];
-    char pgkw_str151[sizeof("coalesce")];
-    char pgkw_str154[sizeof("real")];
-    char pgkw_str155[sizeof("large")];
-    char pgkw_str157[sizeof("alter")];
-    char pgkw_str163[sizeof("stdin")];
-    char pgkw_str166[sizeof("nocreaterole")];
-    char pgkw_str169[sizeof("serializable")];
-    char pgkw_str170[sizeof("stdout")];
-    char pgkw_str172[sizeof("language")];
-    char pgkw_str173[sizeof("natural")];
-    char pgkw_str177[sizeof("createrole")];
-    char pgkw_str183[sizeof("class")];
-    char pgkw_str193[sizeof("read")];
-    char pgkw_str197[sizeof("desc")];
-    char pgkw_str199[sizeof("role")];
-    char pgkw_str207[sizeof("data")];
-    char pgkw_str209[sizeof("conversion")];
-    char pgkw_str211[sizeof("declare")];
-    char pgkw_str213[sizeof("database")];
-    char pgkw_str214[sizeof("also")];
-    char pgkw_str225[sizeof("close")];
-    char pgkw_str226[sizeof("cascade")];
-    char pgkw_str228[sizeof("column")];
-    char pgkw_str230[sizeof("dec")];
-    char pgkw_str231[sizeof("collate")];
-    char pgkw_str234[sizeof("connection")];
-    char pgkw_str235[sizeof("localtime")];
-    char pgkw_str237[sizeof("in")];
-    char pgkw_str243[sizeof("is")];
-    char pgkw_str244[sizeof("int")];
-    char pgkw_str245[sizeof("true")];
-    char pgkw_str246[sizeof("user")];
-    char pgkw_str251[sizeof("order")];
-    char pgkw_str252[sizeof("insert")];
-    char pgkw_str253[sizeof("lock")];
-    char pgkw_str254[sizeof("inner")];
-    char pgkw_str258[sizeof("rollback")];
-    char pgkw_str259[sizeof("intersect")];
-    char pgkw_str260[sizeof("integer")];
-    char pgkw_str262[sizeof("deallocate")];
-    char pgkw_str264[sizeof("restrict")];
-    char pgkw_str267[sizeof("delete")];
-    char pgkw_str271[sizeof("document")];
-    char pgkw_str272[sizeof("trigger")];
-    char pgkw_str273[sizeof("lc_collate")];
-    char pgkw_str275[sizeof("truncate")];
-    char pgkw_str280[sizeof("scroll")];
-    char pgkw_str283[sizeof("reassign")];
-    char pgkw_str287[sizeof("current")];
-    char pgkw_str291[sizeof("do")];
-    char pgkw_str294[sizeof("current_time")];
-    char pgkw_str300[sizeof("notnull")];
-    char pgkw_str301[sizeof("end")];
-    char pgkw_str302[sizeof("quote")];
-    char pgkw_str303[sizeof("out")];
-    char pgkw_str304[sizeof("current_role")];
-    char pgkw_str306[sizeof("authorization")];
-    char pgkw_str308[sizeof("cursor")];
-    char pgkw_str310[sizeof("join")];
-    char pgkw_str312[sizeof("into")];
-    char pgkw_str313[sizeof("inout")];
-    char pgkw_str314[sizeof("transaction")];
-    char pgkw_str315[sizeof("outer")];
-    char pgkw_str321[sizeof("current_schema")];
-    char pgkw_str323[sizeof("noinherit")];
-    char pgkw_str324[sizeof("isolation")];
-    char pgkw_str325[sizeof("and")];
-    char pgkw_str329[sizeof("decimal")];
-    char pgkw_str330[sizeof("session_user")];
-    char pgkw_str331[sizeof("local")];
-    char pgkw_str332[sizeof("strip")];
-    char pgkw_str338[sizeof("precision")];
-    char pgkw_str340[sizeof("until")];
-    char pgkw_str341[sizeof("nulls")];
-    char pgkw_str343[sizeof("prepare")];
-    char pgkw_str344[sizeof("preserve")];
-    char pgkw_str345[sizeof("unlisten")];
-    char pgkw_str346[sizeof("second")];
-    char pgkw_str349[sizeof("rule")];
-    char pgkw_str353[sizeof("all")];
-    char pgkw_str354[sizeof("listen")];
-    char pgkw_str356[sizeof("load")];
-    char pgkw_str360[sizeof("greatest")];
-    char pgkw_str361[sizeof("partition")];
-    char pgkw_str362[sizeof("name")];
-    char pgkw_str365[sizeof("relative")];
-    char pgkw_str366[sizeof("names")];
-    char pgkw_str368[sizeof("replace")];
-    char pgkw_str370[sizeof("template")];
-    char pgkw_str372[sizeof("cascaded")];
-    char pgkw_str376[sizeof("like")];
-    char pgkw_str378[sizeof("parser")];
-    char pgkw_str379[sizeof("grant")];
-    char pgkw_str380[sizeof("statement")];
-    char pgkw_str385[sizeof("nocreateuser")];
-    char pgkw_str389[sizeof("option")];
-    char pgkw_str391[sizeof("cluster")];
-    char pgkw_str392[sizeof("replica")];
-    char pgkw_str393[sizeof("options")];
-    char pgkw_str394[sizeof("indexes")];
-    char pgkw_str395[sizeof("trusted")];
-    char pgkw_str397[sizeof("distinct")];
-    char pgkw_str401[sizeof("unencrypted")];
-    char pgkw_str403[sizeof("operator")];
-    char pgkw_str407[sizeof("then")];
-    char pgkw_str410[sizeof("some")];
-    char pgkw_str416[sizeof("nothing")];
-    char pgkw_str418[sizeof("instead")];
-    char pgkw_str419[sizeof("storage")];
-    char pgkw_str421[sizeof("nologin")];
-    char pgkw_str433[sizeof("share")];
-    char pgkw_str435[sizeof("setof")];
-    char pgkw_str437[sizeof("current_date")];
-    char pgkw_str443[sizeof("null")];
-    char pgkw_str444[sizeof("repeatable")];
-    char pgkw_str445[sizeof("freeze")];
-    char pgkw_str446[sizeof("handler")];
-    char pgkw_str448[sizeof("plans")];
-    char pgkw_str449[sizeof("double")];
-    char pgkw_str451[sizeof("comment")];
-    char pgkw_str452[sizeof("commit")];
-    char pgkw_str454[sizeof("references")];
-    char pgkw_str455[sizeof("nchar")];
-    char pgkw_str457[sizeof("header")];
-    char pgkw_str458[sizeof("oids")];
-    char pgkw_str459[sizeof("location")];
-    char pgkw_str460[sizeof("isnull")];
-    char pgkw_str461[sizeof("union")];
-    char pgkw_str462[sizeof("yes")];
-    char pgkw_str464[sizeof("unique")];
-    char pgkw_str466[sizeof("each")];
-    char pgkw_str467[sizeof("chain")];
-    char pgkw_str468[sizeof("after")];
-    char pgkw_str470[sizeof("add")];
-    char pgkw_str472[sizeof("check")];
-    char pgkw_str473[sizeof("called")];
-    char pgkw_str475[sizeof("leading")];
-    char pgkw_str476[sizeof("old")];
-    char pgkw_str477[sizeof("catalog")];
-    char pgkw_str478[sizeof("char")];
-    char pgkw_str480[sizeof("revoke")];
-    char pgkw_str483[sizeof("configuration")];
-    char pgkw_str484[sizeof("verbose")];
-    char pgkw_str485[sizeof("partial")];
-    char pgkw_str487[sizeof("insensitive")];
-    char pgkw_str489[sizeof("prepared")];
-    char pgkw_str493[sizeof("year")];
-    char pgkw_str497[sizeof("schema")];
-    char pgkw_str500[sizeof("disable")];
-    char pgkw_str506[sizeof("array")];
-    char pgkw_str508[sizeof("admin")];
-    char pgkw_str511[sizeof("force")];
-    char pgkw_str516[sizeof("login")];
-    char pgkw_str517[sizeof("delimiters")];
-    char pgkw_str521[sizeof("for")];
-    char pgkw_str523[sizeof("current_user")];
-    char pgkw_str525[sizeof("delimiter")];
-    char pgkw_str526[sizeof("granted")];
-    char pgkw_str532[sizeof("cycle")];
-    char pgkw_str533[sizeof("characteristics")];
-    char pgkw_str536[sizeof("character")];
-    char pgkw_str537[sizeof("left")];
-    char pgkw_str540[sizeof("drop")];
-    char pgkw_str541[sizeof("varchar")];
-    char pgkw_str542[sizeof("localtimestamp")];
-    char pgkw_str545[sizeof("over")];
-    char pgkw_str546[sizeof("input")];
-    char pgkw_str549[sizeof("procedure")];
-    char pgkw_str550[sizeof("version")];
-    char pgkw_str551[sizeof("discard")];
-    char pgkw_str552[sizeof("mode")];
-    char pgkw_str556[sizeof("domain")];
-    char pgkw_str557[sizeof("enum")];
-    char pgkw_str560[sizeof("false")];
-    char pgkw_str561[sizeof("password")];
-    char pgkw_str566[sizeof("overlaps")];
-    char pgkw_str568[sizeof("prior")];
-    char pgkw_str569[sizeof("time")];
-    char pgkw_str570[sizeof("between")];
-    char pgkw_str571[sizeof("minute")];
-    char pgkw_str573[sizeof("savepoint")];
-    char pgkw_str574[sizeof("simple")];
-    char pgkw_str577[sizeof("ilike")];
-    char pgkw_str579[sizeof("wrapper")];
-    char pgkw_str580[sizeof("next")];
-    char pgkw_str581[sizeof("trim")];
-    char pgkw_str582[sizeof("text")];
-    char pgkw_str584[sizeof("right")];
-    char pgkw_str585[sizeof("execute")];
-    char pgkw_str587[sizeof("concurrently")];
-    char pgkw_str590[sizeof("table")];
-    char pgkw_str591[sizeof("definer")];
-    char pgkw_str595[sizeof("value")];
-    char pgkw_str597[sizeof("lancompiler")];
-    char pgkw_str601[sizeof("current_timestamp")];
-    char pgkw_str602[sizeof("smallint")];
-    char pgkw_str603[sizeof("nowait")];
-    char pgkw_str604[sizeof("values")];
-    char pgkw_str606[sizeof("lc_ctype")];
-    char pgkw_str607[sizeof("float")];
-    char pgkw_str608[sizeof("owner")];
-    char pgkw_str609[sizeof("sysid")];
-    char pgkw_str610[sizeof("rows")];
-    char pgkw_str611[sizeof("similar")];
-    char pgkw_str612[sizeof("encoding")];
-    char pgkw_str613[sizeof("trailing")];
-    char pgkw_str617[sizeof("increment")];
-    char pgkw_str618[sizeof("createdb")];
-    char pgkw_str621[sizeof("position")];
-    char pgkw_str623[sizeof("except")];
-    char pgkw_str624[sizeof("extract")];
-    char pgkw_str627[sizeof("exclusive")];
-    char pgkw_str632[sizeof("only")];
-    char pgkw_str636[sizeof("work")];
-    char pgkw_str639[sizeof("tablespace")];
-    char pgkw_str640[sizeof("object")];
-    char pgkw_str642[sizeof("temp")];
-    char pgkw_str650[sizeof("encrypted")];
-    char pgkw_str651[sizeof("validator")];
-    char pgkw_str659[sizeof("abort")];
-    char pgkw_str660[sizeof("current_catalog")];
-    char pgkw_str666[sizeof("always")];
-    char pgkw_str672[sizeof("forward")];
-    char pgkw_str673[sizeof("first")];
-    char pgkw_str674[sizeof("privileges")];
-    char pgkw_str676[sizeof("limit")];
-    char pgkw_str677[sizeof("level")];
-    char pgkw_str679[sizeof("minvalue")];
-    char pgkw_str680[sizeof("procedural")];
-    char pgkw_str682[sizeof("update")];
-    char pgkw_str687[sizeof("default")];
-    char pgkw_str688[sizeof("variadic")];
-    char pgkw_str689[sizeof("defaults")];
-    char pgkw_str691[sizeof("returning")];
-    char pgkw_str692[sizeof("external")];
-    char pgkw_str702[sizeof("deferrable")];
-    char pgkw_str705[sizeof("hour")];
-    char pgkw_str710[sizeof("invoker")];
-    char pgkw_str724[sizeof("group")];
-    char pgkw_str725[sizeof("hold")];
-    char pgkw_str730[sizeof("boolean")];
-    char pgkw_str731[sizeof("global")];
-    char pgkw_str732[sizeof("security")];
-    char pgkw_str737[sizeof("deferred")];
-    char pgkw_str740[sizeof("valid")];
-    char pgkw_str741[sizeof("owned")];
-    char pgkw_str745[sizeof("committed")];
-    char pgkw_str752[sizeof("uncommitted")];
-    char pgkw_str756[sizeof("checkpoint")];
-    char pgkw_str758[sizeof("match")];
-    char pgkw_str760[sizeof("asymmetric")];
-    char pgkw_str761[sizeof("type")];
-    char pgkw_str768[sizeof("write")];
-    char pgkw_str777[sizeof("placing")];
-    char pgkw_str779[sizeof("unknown")];
-    char pgkw_str788[sizeof("superuser")];
-    char pgkw_str792[sizeof("using")];
-    char pgkw_str795[sizeof("bit")];
-    char pgkw_str799[sizeof("backward")];
-    char pgkw_str801[sizeof("month")];
-    char pgkw_str807[sizeof("interval")];
-    char pgkw_str815[sizeof("absolute")];
-    char pgkw_str817[sizeof("exists")];
-    char pgkw_str824[sizeof("reindex")];
-    char pgkw_str825[sizeof("fetch")];
-    char pgkw_str828[sizeof("numeric")];
-    char pgkw_str829[sizeof("search")];
-    char pgkw_str833[sizeof("varying")];
-    char pgkw_str836[sizeof("from")];
-    char pgkw_str843[sizeof("foreign")];
-    char pgkw_str848[sizeof("nocreatedb")];
-    char pgkw_str859[sizeof("move")];
-    char pgkw_str860[sizeof("full")];
-    char pgkw_str865[sizeof("copy")];
-    char pgkw_str870[sizeof("inherit")];
-    char pgkw_str871[sizeof("symmetric")];
-    char pgkw_str872[sizeof("inherits")];
-    char pgkw_str874[sizeof("volatile")];
-    char pgkw_str883[sizeof("function")];
-    char pgkw_str892[sizeof("begin")];
-    char pgkw_str911[sizeof("of")];
-    char pgkw_str914[sizeof("implicit")];
-    char pgkw_str919[sizeof("when")];
-    char pgkw_str920[sizeof("where")];
-    char pgkw_str923[sizeof("offset")];
-    char pgkw_str925[sizeof("any")];
-    char pgkw_str926[sizeof("immutable")];
-    char pgkw_str930[sizeof("key")];
-    char pgkw_str953[sizeof("index")];
-    char pgkw_str955[sizeof("csv")];
-    char pgkw_str959[sizeof("dictionary")];
-    char pgkw_str977[sizeof("notify")];
-    char pgkw_str983[sizeof("without")];
-    char pgkw_str984[sizeof("before")];
-    char pgkw_str991[sizeof("show")];
-    char pgkw_str997[sizeof("mapping")];
-    char pgkw_str1007[sizeof("overlay")];
-    char pgkw_str1017[sizeof("primary")];
-    char pgkw_str1022[sizeof("xmlelement")];
-    char pgkw_str1023[sizeof("xmlconcat")];
-    char pgkw_str1027[sizeof("both")];
-    char pgkw_str1028[sizeof("xmlparse")];
-    char pgkw_str1029[sizeof("aggregate")];
-    char pgkw_str1035[sizeof("xmlforest")];
-    char pgkw_str1039[sizeof("new")];
-    char pgkw_str1040[sizeof("maxvalue")];
-    char pgkw_str1066[sizeof("identity")];
-    char pgkw_str1070[sizeof("day")];
-    char pgkw_str1071[sizeof("if")];
-    char pgkw_str1081[sizeof("unbounded")];
-    char pgkw_str1086[sizeof("xmlroot")];
-    char pgkw_str1088[sizeof("including")];
-    char pgkw_str1114[sizeof("explain")];
-    char pgkw_str1115[sizeof("xml")];
-    char pgkw_str1119[sizeof("system")];
-    char pgkw_str1120[sizeof("row")];
-    char pgkw_str1128[sizeof("bigint")];
-    char pgkw_str1131[sizeof("immediate")];
-    char pgkw_str1136[sizeof("preceding")];
-    char pgkw_str1140[sizeof("xmlserialize")];
-    char pgkw_str1150[sizeof("with")];
-    char pgkw_str1175[sizeof("nullif")];
-    char pgkw_str1181[sizeof("vacuum")];
-    char pgkw_str1184[sizeof("timestamp")];
-    char pgkw_str1198[sizeof("whitespace")];
-    char pgkw_str1207[sizeof("view")];
-    char pgkw_str1240[sizeof("xmlpi")];
-    char pgkw_str1251[sizeof("temporary")];
-    char pgkw_str1331[sizeof("off")];
-    char pgkw_str1393[sizeof("initially")];
-    char pgkw_str1425[sizeof("excluding")];
-    char pgkw_str1449[sizeof("by")];
-    char pgkw_str1462[sizeof("substring")];
-    char pgkw_str1541[sizeof("having")];
-    char pgkw_str1579[sizeof("xmlattributes")];
-    char pgkw_str1673[sizeof("family")];
-    char pgkw_str1686[sizeof("binary")];
-    char pgkw_str1783[sizeof("following")];
-    char pgkw_str1787[sizeof("window")];
-  };
-static const struct pgkw_t pgkw_contents =
-  {
-    "set",
-    "sequence",
-    "rename",
-    "treat",
-    "reset",
-    "returns",
-    "at",
-    "strict",
-    "as",
-    "enable",
-    "start",
-    "stable",
-    "restart",
-    "range",
-    "assertion",
-    "assignment",
-    "server",
-    "escape",
-    "create",
-    "analyze",
-    "analyse",
-    "recursive",
-    "standalone",
-    "case",
-    "on",
-    "cast",
-    "action",
-    "none",
-    "zone",
-    "createuser",
-    "not",
-    "session",
-    "statistics",
-    "or",
-    "nosuperuser",
-    "cache",
-    "asc",
-    "access",
-    "else",
-    "cost",
-    "continue",
-    "content",
-    "select",
-    "recheck",
-    "cross",
-    "release",
-    "constraint",
-    "constraints",
-    "least",
-    "no",
-    "last",
-    "to",
-    "national",
-    "coalesce",
-    "real",
-    "large",
-    "alter",
-    "stdin",
-    "nocreaterole",
-    "serializable",
-    "stdout",
-    "language",
-    "natural",
-    "createrole",
-    "class",
-    "read",
-    "desc",
-    "role",
-    "data",
-    "conversion",
-    "declare",
-    "database",
-    "also",
-    "close",
-    "cascade",
-    "column",
-    "dec",
-    "collate",
-    "connection",
-    "localtime",
-    "in",
-    "is",
-    "int",
-    "true",
-    "user",
-    "order",
-    "insert",
-    "lock",
-    "inner",
-    "rollback",
-    "intersect",
-    "integer",
-    "deallocate",
-    "restrict",
-    "delete",
-    "document",
-    "trigger",
-    "lc_collate",
-    "truncate",
-    "scroll",
-    "reassign",
-    "current",
-    "do",
-    "current_time",
-    "notnull",
-    "end",
-    "quote",
-    "out",
-    "current_role",
-    "authorization",
-    "cursor",
-    "join",
-    "into",
-    "inout",
-    "transaction",
-    "outer",
-    "current_schema",
-    "noinherit",
-    "isolation",
-    "and",
-    "decimal",
-    "session_user",
-    "local",
-    "strip",
-    "precision",
-    "until",
-    "nulls",
-    "prepare",
-    "preserve",
-    "unlisten",
-    "second",
-    "rule",
-    "all",
-    "listen",
-    "load",
-    "greatest",
-    "partition",
-    "name",
-    "relative",
-    "names",
-    "replace",
-    "template",
-    "cascaded",
-    "like",
-    "parser",
-    "grant",
-    "statement",
-    "nocreateuser",
-    "option",
-    "cluster",
-    "replica",
-    "options",
-    "indexes",
-    "trusted",
-    "distinct",
-    "unencrypted",
-    "operator",
-    "then",
-    "some",
-    "nothing",
-    "instead",
-    "storage",
-    "nologin",
-    "share",
-    "setof",
-    "current_date",
-    "null",
-    "repeatable",
-    "freeze",
-    "handler",
-    "plans",
-    "double",
-    "comment",
-    "commit",
-    "references",
-    "nchar",
-    "header",
-    "oids",
-    "location",
-    "isnull",
-    "union",
-    "yes",
-    "unique",
-    "each",
-    "chain",
-    "after",
-    "add",
-    "check",
-    "called",
-    "leading",
-    "old",
-    "catalog",
-    "char",
-    "revoke",
-    "configuration",
-    "verbose",
-    "partial",
-    "insensitive",
-    "prepared",
-    "year",
-    "schema",
-    "disable",
-    "array",
-    "admin",
-    "force",
-    "login",
-    "delimiters",
-    "for",
-    "current_user",
-    "delimiter",
-    "granted",
-    "cycle",
-    "characteristics",
-    "character",
-    "left",
-    "drop",
-    "varchar",
-    "localtimestamp",
-    "over",
-    "input",
-    "procedure",
-    "version",
-    "discard",
-    "mode",
-    "domain",
-    "enum",
-    "false",
-    "password",
-    "overlaps",
-    "prior",
-    "time",
-    "between",
-    "minute",
-    "savepoint",
-    "simple",
-    "ilike",
-    "wrapper",
-    "next",
-    "trim",
-    "text",
-    "right",
-    "execute",
-    "concurrently",
-    "table",
-    "definer",
-    "value",
-    "lancompiler",
-    "current_timestamp",
-    "smallint",
-    "nowait",
-    "values",
-    "lc_ctype",
-    "float",
-    "owner",
-    "sysid",
-    "rows",
-    "similar",
-    "encoding",
-    "trailing",
-    "increment",
-    "createdb",
-    "position",
-    "except",
-    "extract",
-    "exclusive",
-    "only",
-    "work",
-    "tablespace",
-    "object",
-    "temp",
-    "encrypted",
-    "validator",
-    "abort",
-    "current_catalog",
-    "always",
-    "forward",
-    "first",
-    "privileges",
-    "limit",
-    "level",
-    "minvalue",
-    "procedural",
-    "update",
-    "default",
-    "variadic",
-    "defaults",
-    "returning",
-    "external",
-    "deferrable",
-    "hour",
-    "invoker",
-    "group",
-    "hold",
-    "boolean",
-    "global",
-    "security",
-    "deferred",
-    "valid",
-    "owned",
-    "committed",
-    "uncommitted",
-    "checkpoint",
-    "match",
-    "asymmetric",
-    "type",
-    "write",
-    "placing",
-    "unknown",
-    "superuser",
-    "using",
-    "bit",
-    "backward",
-    "month",
-    "interval",
-    "absolute",
-    "exists",
-    "reindex",
-    "fetch",
-    "numeric",
-    "search",
-    "varying",
-    "from",
-    "foreign",
-    "nocreatedb",
-    "move",
-    "full",
-    "copy",
-    "inherit",
-    "symmetric",
-    "inherits",
-    "volatile",
-    "function",
-    "begin",
-    "of",
-    "implicit",
-    "when",
-    "where",
-    "offset",
-    "any",
-    "immutable",
-    "key",
-    "index",
-    "csv",
-    "dictionary",
-    "notify",
-    "without",
-    "before",
-    "show",
-    "mapping",
-    "overlay",
-    "primary",
-    "xmlelement",
-    "xmlconcat",
-    "both",
-    "xmlparse",
-    "aggregate",
-    "xmlforest",
-    "new",
-    "maxvalue",
-    "identity",
-    "day",
-    "if",
-    "unbounded",
-    "xmlroot",
-    "including",
-    "explain",
-    "xml",
-    "system",
-    "row",
-    "bigint",
-    "immediate",
-    "preceding",
-    "xmlserialize",
-    "with",
-    "nullif",
-    "vacuum",
-    "timestamp",
-    "whitespace",
-    "view",
-    "xmlpi",
-    "temporary",
-    "off",
-    "initially",
-    "excluding",
-    "by",
-    "substring",
-    "having",
-    "xmlattributes",
-    "family",
-    "binary",
-    "following",
-    "window"
-  };
-#define pgkw ((const char *) &pgkw_contents)
 #ifdef __GNUC__
 __inline
 #ifdef __GNUC_STDC_INLINE__
 __attribute__ ((__gnu_inline__))
 #endif
 #endif
-const struct PgKeyword *
+const char *
 pg_keyword_lookup_real (register const char *str, register unsigned int len)
 {
   enum
     {
-      TOTAL_KEYWORDS = 392,
+      TOTAL_KEYWORDS = 146,
       MIN_WORD_LENGTH = 2,
       MAX_WORD_LENGTH = 17,
-      MIN_HASH_VALUE = 18,
-      MAX_HASH_VALUE = 1787
+      MIN_HASH_VALUE = 5,
+      MAX_HASH_VALUE = 328
     };
 
-  static const struct PgKeyword wordlist[] =
+  struct pgkw_t
     {
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str18, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str22, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str28, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str29, PG_COL_NAME_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str30, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str34, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str36, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str37, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str38, PG_RESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str40, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str44, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str45, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str46, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str49, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str53, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str54, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str55, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str56, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str65, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str66, PG_RESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str68, PG_RESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str73, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str75, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str76, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str77, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str78, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str79, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str81, PG_COL_NAME_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str82, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str83, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str84, PG_RESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str92, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str94, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str101, PG_RESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str110, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str111, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str112, PG_RESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str120, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str121, PG_RESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str123, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str124, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str125, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str129, PG_RESERVED_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str132, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str134, PG_TYPE_FUNC_NAME_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str138, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str142, PG_RESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str144, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str145, PG_COL_NAME_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str146, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str147, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str148, PG_RESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str150, PG_COL_NAME_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str151, PG_COL_NAME_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str154, PG_COL_NAME_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str155, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str157, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str163, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str166, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str169, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str170, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str172, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str173, PG_TYPE_FUNC_NAME_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str177, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str183, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str193, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str197, PG_RESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str199, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str207, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str209, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str211, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str213, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str214, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str225, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str226, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str228, PG_RESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str230, PG_COL_NAME_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str231, PG_RESERVED_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str234, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str235, PG_RESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str237, PG_RESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str243, PG_TYPE_FUNC_NAME_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str244, PG_COL_NAME_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str245, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str246, PG_RESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str251, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str252, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str253, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str254, PG_TYPE_FUNC_NAME_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str258, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str259, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str260, PG_COL_NAME_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str262, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str264, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str267, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str271, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str272, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str273, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str275, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str280, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str283, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str287, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str291, PG_RESERVED_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str294, PG_RESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str300, PG_TYPE_FUNC_NAME_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str301, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str302, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str303, PG_COL_NAME_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str304, PG_RESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str306, PG_TYPE_FUNC_NAME_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str308, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str310, PG_TYPE_FUNC_NAME_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str312, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str313, PG_COL_NAME_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str314, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str315, PG_TYPE_FUNC_NAME_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str321, PG_TYPE_FUNC_NAME_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str323, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str324, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str325, PG_RESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str329, PG_COL_NAME_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str330, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str331, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str332, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str338, PG_COL_NAME_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str340, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str341, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str343, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str344, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str345, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str346, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str349, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str353, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str354, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str356, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str360, PG_COL_NAME_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str361, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str362, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str365, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str366, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str368, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str370, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str372, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str376, PG_TYPE_FUNC_NAME_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str378, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str379, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str380, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str385, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str389, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str391, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str392, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str393, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str394, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str395, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str397, PG_RESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str401, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str403, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str407, PG_RESERVED_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str410, PG_RESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str416, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str418, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str419, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str421, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str433, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str435, PG_COL_NAME_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str437, PG_RESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str443, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str444, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str445, PG_TYPE_FUNC_NAME_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str446, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str448, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str449, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str451, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str452, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str454, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str455, PG_COL_NAME_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str457, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str458, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str459, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str460, PG_TYPE_FUNC_NAME_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str461, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str462, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str464, PG_RESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str466, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str467, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str468, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str470, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str472, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str473, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str475, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str476, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str477, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str478, PG_COL_NAME_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str480, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str483, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str484, PG_TYPE_FUNC_NAME_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str485, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str487, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str489, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str493, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str497, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str500, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str506, PG_RESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str508, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str511, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str516, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str517, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str521, PG_RESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str523, PG_RESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str525, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str526, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str532, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str533, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str536, PG_COL_NAME_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str537, PG_TYPE_FUNC_NAME_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str540, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str541, PG_COL_NAME_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str542, PG_RESERVED_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str545, PG_TYPE_FUNC_NAME_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str546, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str549, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str550, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str551, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str552, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str556, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str557, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str560, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str561, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str566, PG_TYPE_FUNC_NAME_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str568, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str569, PG_COL_NAME_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str570, PG_TYPE_FUNC_NAME_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str571, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str573, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str574, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str577, PG_TYPE_FUNC_NAME_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str579, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str580, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str581, PG_COL_NAME_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str582, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str584, PG_TYPE_FUNC_NAME_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str585, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str587, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str590, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str591, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str595, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str597, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str601, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str602, PG_COL_NAME_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str603, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str604, PG_COL_NAME_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str606, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str607, PG_COL_NAME_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str608, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str609, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str610, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str611, PG_TYPE_FUNC_NAME_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str612, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str613, PG_RESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str617, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str618, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str621, PG_COL_NAME_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str623, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str624, PG_COL_NAME_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str627, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str632, PG_RESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str636, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str639, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str640, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str642, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str650, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str651, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str659, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str660, PG_RESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str666, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str672, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str673, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str674, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str676, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str677, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str679, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str680, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str682, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str687, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str688, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str689, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str691, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str692, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str702, PG_RESERVED_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str705, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str710, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str724, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str725, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str730, PG_COL_NAME_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str731, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str732, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str737, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str740, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str741, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str745, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str752, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str756, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str758, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str760, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str761, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str768, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str777, PG_RESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str779, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str788, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str792, PG_RESERVED_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str795, PG_COL_NAME_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str799, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str801, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str807, PG_COL_NAME_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str815, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str817, PG_COL_NAME_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str824, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str825, PG_RESERVED_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str828, PG_COL_NAME_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str829, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str833, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str836, PG_RESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str843, PG_RESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str848, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str859, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str860, PG_TYPE_FUNC_NAME_KEYWORD},
-      {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str865, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str870, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str871, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str872, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str874, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str883, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str892, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str911, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str914, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str919, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str920, PG_RESERVED_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str923, PG_RESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str925, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str926, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str930, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str953, PG_UNRESERVED_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str955, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str959, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str977, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str983, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str984, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str991, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str997, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1007, PG_COL_NAME_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1017, PG_RESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1022, PG_COL_NAME_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1023, PG_COL_NAME_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1027, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1028, PG_COL_NAME_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1029, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1035, PG_COL_NAME_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1039, PG_RESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1040, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1066, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1070, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1071, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1081, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1086, PG_COL_NAME_KEYWORD},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1088, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1114, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1115, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1119, PG_UNRESERVED_KEYWORD},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1120, PG_COL_NAME_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1128, PG_COL_NAME_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1131, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1136, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1140, PG_COL_NAME_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1150, PG_RESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1175, PG_COL_NAME_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1181, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1184, PG_COL_NAME_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1198, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1207, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1240, PG_COL_NAME_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1251, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1331, PG_RESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1393, PG_RESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1425, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1449, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1462, PG_COL_NAME_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1541, PG_RESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1579, PG_COL_NAME_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1673, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1686, PG_TYPE_FUNC_NAME_KEYWORD},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {-1}, {-1}, {-1}, {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1783, PG_UNRESERVED_KEYWORD},
-      {-1}, {-1}, {-1},
-      {(int)(long)&((struct pgkw_t *)0)->pgkw_str1787, PG_RESERVED_KEYWORD}
+      char pgkw_str5[sizeof("to")];
+      char pgkw_str9[sizeof("or")];
+      char pgkw_str10[sizeof("treat")];
+      char pgkw_str12[sizeof("order")];
+      char pgkw_str13[sizeof("true")];
+      char pgkw_str14[sizeof("not")];
+      char pgkw_str15[sizeof("except")];
+      char pgkw_str16[sizeof("join")];
+      char pgkw_str19[sizeof("none")];
+      char pgkw_str21[sizeof("on")];
+      char pgkw_str26[sizeof("left")];
+      char pgkw_str27[sizeof("least")];
+      char pgkw_str28[sizeof("real")];
+      char pgkw_str30[sizeof("else")];
+      char pgkw_str33[sizeof("table")];
+      char pgkw_str35[sizeof("right")];
+      char pgkw_str36[sizeof("time")];
+      char pgkw_str37[sizeof("localtime")];
+      char pgkw_str39[sizeof("int")];
+      char pgkw_str40[sizeof("into")];
+      char pgkw_str41[sizeof("inout")];
+      char pgkw_str42[sizeof("some")];
+      char pgkw_str43[sizeof("inner")];
+      char pgkw_str44[sizeof("row")];
+      char pgkw_str45[sizeof("select")];
+      char pgkw_str46[sizeof("in")];
+      char pgkw_str47[sizeof("analyze")];
+      char pgkw_str48[sizeof("limit")];
+      char pgkw_str49[sizeof("notnull")];
+      char pgkw_str50[sizeof("integer")];
+      char pgkw_str51[sizeof("like")];
+      char pgkw_str52[sizeof("ilike")];
+      char pgkw_str54[sizeof("new")];
+      char pgkw_str57[sizeof("all")];
+      char pgkw_str58[sizeof("between")];
+      char pgkw_str60[sizeof("references")];
+      char pgkw_str62[sizeof("bit")];
+      char pgkw_str63[sizeof("out")];
+      char pgkw_str64[sizeof("national")];
+      char pgkw_str66[sizeof("bigint")];
+      char pgkw_str67[sizeof("outer")];
+      char pgkw_str69[sizeof("collate")];
+      char pgkw_str70[sizeof("extract")];
+      char pgkw_str71[sizeof("boolean")];
+      char pgkw_str72[sizeof("nchar")];
+      char pgkw_str74[sizeof("create")];
+      char pgkw_str75[sizeof("analyse")];
+      char pgkw_str76[sizeof("natural")];
+      char pgkw_str77[sizeof("exists")];
+      char pgkw_str78[sizeof("intersect")];
+      char pgkw_str79[sizeof("constraint")];
+      char pgkw_str80[sizeof("column")];
+      char pgkw_str81[sizeof("union")];
+      char pgkw_str82[sizeof("cast")];
+      char pgkw_str83[sizeof("unique")];
+      char pgkw_str86[sizeof("case")];
+      char pgkw_str87[sizeof("null")];
+      char pgkw_str88[sizeof("as")];
+      char pgkw_str89[sizeof("do")];
+      char pgkw_str90[sizeof("similar")];
+      char pgkw_str91[sizeof("for")];
+      char pgkw_str92[sizeof("is")];
+      char pgkw_str93[sizeof("offset")];
+      char pgkw_str95[sizeof("cross")];
+      char pgkw_str96[sizeof("isnull")];
+      char pgkw_str97[sizeof("user")];
+      char pgkw_str98[sizeof("then")];
+      char pgkw_str101[sizeof("coalesce")];
+      char pgkw_str102[sizeof("end")];
+      char pgkw_str103[sizeof("freeze")];
+      char pgkw_str105[sizeof("old")];
+      char pgkw_str106[sizeof("float")];
+      char pgkw_str108[sizeof("localtimestamp")];
+      char pgkw_str110[sizeof("grant")];
+      char pgkw_str111[sizeof("session_user")];
+      char pgkw_str112[sizeof("asc")];
+      char pgkw_str113[sizeof("over")];
+      char pgkw_str114[sizeof("default")];
+      char pgkw_str115[sizeof("position")];
+      char pgkw_str116[sizeof("false")];
+      char pgkw_str118[sizeof("greatest")];
+      char pgkw_str119[sizeof("and")];
+      char pgkw_str121[sizeof("both")];
+      char pgkw_str122[sizeof("trim")];
+      char pgkw_str124[sizeof("deferrable")];
+      char pgkw_str125[sizeof("xmlroot")];
+      char pgkw_str126[sizeof("setof")];
+      char pgkw_str127[sizeof("authorization")];
+      char pgkw_str129[sizeof("distinct")];
+      char pgkw_str130[sizeof("xmlforest")];
+      char pgkw_str131[sizeof("where")];
+      char pgkw_str132[sizeof("xmlparse")];
+      char pgkw_str133[sizeof("precision")];
+      char pgkw_str134[sizeof("when")];
+      char pgkw_str135[sizeof("decimal")];
+      char pgkw_str136[sizeof("xmlconcat")];
+      char pgkw_str138[sizeof("leading")];
+      char pgkw_str139[sizeof("trailing")];
+      char pgkw_str140[sizeof("current_time")];
+      char pgkw_str141[sizeof("xmlelement")];
+      char pgkw_str142[sizeof("current_role")];
+      char pgkw_str143[sizeof("window")];
+      char pgkw_str145[sizeof("only")];
+      char pgkw_str146[sizeof("char")];
+      char pgkw_str147[sizeof("xmlpi")];
+      char pgkw_str148[sizeof("dec")];
+      char pgkw_str149[sizeof("desc")];
+      char pgkw_str150[sizeof("asymmetric")];
+      char pgkw_str151[sizeof("with")];
+      char pgkw_str152[sizeof("xmlserialize")];
+      char pgkw_str153[sizeof("check")];
+      char pgkw_str154[sizeof("verbose")];
+      char pgkw_str155[sizeof("numeric")];
+      char pgkw_str159[sizeof("varchar")];
+      char pgkw_str161[sizeof("array")];
+      char pgkw_str162[sizeof("full")];
+      char pgkw_str164[sizeof("interval")];
+      char pgkw_str165[sizeof("any")];
+      char pgkw_str168[sizeof("overlaps")];
+      char pgkw_str172[sizeof("off")];
+      char pgkw_str178[sizeof("fetch")];
+      char pgkw_str179[sizeof("timestamp")];
+      char pgkw_str180[sizeof("group")];
+      char pgkw_str181[sizeof("smallint")];
+      char pgkw_str190[sizeof("current_schema")];
+      char pgkw_str194[sizeof("xmlattributes")];
+      char pgkw_str195[sizeof("current_user")];
+      char pgkw_str196[sizeof("using")];
+      char pgkw_str197[sizeof("values")];
+      char pgkw_str202[sizeof("foreign")];
+      char pgkw_str204[sizeof("placing")];
+      char pgkw_str205[sizeof("from")];
+      char pgkw_str209[sizeof("character")];
+      char pgkw_str211[sizeof("current_timestamp")];
+      char pgkw_str215[sizeof("primary")];
+      char pgkw_str224[sizeof("current_date")];
+      char pgkw_str228[sizeof("returning")];
+      char pgkw_str241[sizeof("nullif")];
+      char pgkw_str266[sizeof("overlay")];
+      char pgkw_str275[sizeof("variadic")];
+      char pgkw_str283[sizeof("symmetric")];
+      char pgkw_str293[sizeof("current_catalog")];
+      char pgkw_str304[sizeof("substring")];
+      char pgkw_str314[sizeof("having")];
+      char pgkw_str326[sizeof("binary")];
+      char pgkw_str328[sizeof("initially")];
+    };
+  static const struct pgkw_t pgkw_contents =
+    {
+      "to",
+      "or",
+      "treat",
+      "order",
+      "true",
+      "not",
+      "except",
+      "join",
+      "none",
+      "on",
+      "left",
+      "least",
+      "real",
+      "else",
+      "table",
+      "right",
+      "time",
+      "localtime",
+      "int",
+      "into",
+      "inout",
+      "some",
+      "inner",
+      "row",
+      "select",
+      "in",
+      "analyze",
+      "limit",
+      "notnull",
+      "integer",
+      "like",
+      "ilike",
+      "new",
+      "all",
+      "between",
+      "references",
+      "bit",
+      "out",
+      "national",
+      "bigint",
+      "outer",
+      "collate",
+      "extract",
+      "boolean",
+      "nchar",
+      "create",
+      "analyse",
+      "natural",
+      "exists",
+      "intersect",
+      "constraint",
+      "column",
+      "union",
+      "cast",
+      "unique",
+      "case",
+      "null",
+      "as",
+      "do",
+      "similar",
+      "for",
+      "is",
+      "offset",
+      "cross",
+      "isnull",
+      "user",
+      "then",
+      "coalesce",
+      "end",
+      "freeze",
+      "old",
+      "float",
+      "localtimestamp",
+      "grant",
+      "session_user",
+      "asc",
+      "over",
+      "default",
+      "position",
+      "false",
+      "greatest",
+      "and",
+      "both",
+      "trim",
+      "deferrable",
+      "xmlroot",
+      "setof",
+      "authorization",
+      "distinct",
+      "xmlforest",
+      "where",
+      "xmlparse",
+      "precision",
+      "when",
+      "decimal",
+      "xmlconcat",
+      "leading",
+      "trailing",
+      "current_time",
+      "xmlelement",
+      "current_role",
+      "window",
+      "only",
+      "char",
+      "xmlpi",
+      "dec",
+      "desc",
+      "asymmetric",
+      "with",
+      "xmlserialize",
+      "check",
+      "verbose",
+      "numeric",
+      "varchar",
+      "array",
+      "full",
+      "interval",
+      "any",
+      "overlaps",
+      "off",
+      "fetch",
+      "timestamp",
+      "group",
+      "smallint",
+      "current_schema",
+      "xmlattributes",
+      "current_user",
+      "using",
+      "values",
+      "foreign",
+      "placing",
+      "from",
+      "character",
+      "current_timestamp",
+      "primary",
+      "current_date",
+      "returning",
+      "nullif",
+      "overlay",
+      "variadic",
+      "symmetric",
+      "current_catalog",
+      "substring",
+      "having",
+      "binary",
+      "initially"
+    };
+  #define pgkw ((const char *) &pgkw_contents)
+  static const int wordlist[] =
+    {
+      -1, -1, -1, -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str5,
+      -1, -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str9,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str10,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str12,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str13,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str14,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str15,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str16,
+      -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str19,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str21,
+      -1, -1, -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str26,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str27,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str28,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str30,
+      -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str33,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str35,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str36,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str37,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str39,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str40,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str41,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str42,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str43,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str44,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str45,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str46,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str47,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str48,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str49,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str50,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str51,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str52,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str54,
+      -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str57,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str58,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str60,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str62,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str63,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str64,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str66,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str67,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str69,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str70,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str71,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str72,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str74,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str75,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str76,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str77,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str78,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str79,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str80,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str81,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str82,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str83,
+      -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str86,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str87,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str88,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str89,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str90,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str91,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str92,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str93,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str95,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str96,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str97,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str98,
+      -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str101,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str102,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str103,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str105,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str106,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str108,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str110,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str111,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str112,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str113,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str114,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str115,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str116,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str118,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str119,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str121,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str122,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str124,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str125,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str126,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str127,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str129,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str130,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str131,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str132,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str133,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str134,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str135,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str136,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str138,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str139,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str140,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str141,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str142,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str143,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str145,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str146,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str147,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str148,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str149,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str150,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str151,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str152,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str153,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str154,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str155,
+      -1, -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str159,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str161,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str162,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str164,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str165,
+      -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str168,
+      -1, -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str172,
+      -1, -1, -1, -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str178,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str179,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str180,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str181,
+      -1, -1, -1, -1, -1, -1, -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str190,
+      -1, -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str194,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str195,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str196,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str197,
+      -1, -1, -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str202,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str204,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str205,
+      -1, -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str209,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str211,
+      -1, -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str215,
+      -1, -1, -1, -1, -1, -1, -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str224,
+      -1, -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str228,
+      -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      -1, -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str241,
+      -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      -1, -1, -1, -1, -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str266,
+      -1, -1, -1, -1, -1, -1, -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str275,
+      -1, -1, -1, -1, -1, -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str283,
+      -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str293,
+      -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str304,
+      -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str314,
+      -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str326,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str328
     };
 
   if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)
@@ -1621,13 +626,13 @@ pg_keyword_lookup_real (register const char *str, register unsigned int len)
 
       if (key <= MAX_HASH_VALUE && key >= 0)
         {
-          register int o = wordlist[key].name;
+          register int o = wordlist[key];
           if (o >= 0)
             {
               register const char *s = o + pgkw;
 
               if (*str == *s && !strcmp (str + 1, s + 1))
-                return &wordlist[key];
+                return s;
             }
         }
     }
