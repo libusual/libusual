@@ -12,6 +12,15 @@ USUAL_OBJDIR = obj
 USUAL_MODULES = $(filter-out pgsocket, $(subst .h,, $(notdir $(wildcard $(USUAL_DIR)/usual/*.h))))
 include $(USUAL_DIR)/Setup.mk
 
+# tgz generation
+FULL = libusual-$(shell date +%Y-%m-%d)
+DIRS = usual m4 test
+IGNORE = usual/config.h test/config.h test/test_config.h
+FILES = $(filter-out $(IGNORE), $(wildcard usual/*.[ch] test/*.[ch])) \
+	m4/usual.m4 configure configure.ac COPYRIGHT \
+	Makefile README config.mak.in Setup.mk \
+	find_modules.sh test/force_compat.sed test/Makefile
+
 # pgutil_kwlookup generation
 PG_CONFIG ?= pg_config
 KWLIST = $(shell $(PG_CONFIG) --includedir-server)/parser/kwlist.h
@@ -119,4 +128,12 @@ kws:
 	| sed '/^#line/d' \
 	> usual/pgutil_kwlookup.h
 	rm -f usual/pgutil_kwlookup.gp
+
+tgz: config.mak $(DISTFILES)
+	# create tarfile
+	rm -rf $(FULL) $(FULL).tgz usual/config.h
+	mkdir $(FULL)
+	(for f in $(DIRS) $(FILES); do echo $$f; done) | cpio -pm $(FULL)
+	tar czf $(FULL).tgz $(FULL)
+	rm -rf $(FULL)
 
