@@ -53,8 +53,8 @@ typedef struct AANode Node;
 /*
  * NIL node
  */
-#define NIL (&_nil)
-static struct AANode _nil = { &_nil, &_nil, 0 };
+#define NIL ((struct AANode *)&_nil)
+static const struct AANode _nil = { NIL, NIL, 0 };
 
 /*
  * Rebalancing.  AA-tree needs only 2 operations
