@@ -88,11 +88,13 @@ static inline int flsll(long long x) { _FLS(ll, long long); }
 
 
 #ifndef HAVE_BASENAME
+#undef basename
 #define basename(a) usual_basename(a)
 const char *basename(const char *path);
 #endif
 
 #ifndef HAVE_DIRNAME
+#undef dirname
 #define dirname(a) usual_dirname(a)
 const char *dirname(const char *path);
 #endif
