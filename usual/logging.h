@@ -104,8 +104,8 @@ void log_fatal(const char *file, int line, const char *func, bool show_perror,
 	exit(1); } while (0)
 
 /* less verbose fatal() */
-#define die(msg, args...) do { LOG_CONTEXT_DEF; \
-	log_generic(LG_FATAL, msg, LOG_CONTEXT, ## args); \
+#define die(args...) do { LOG_CONTEXT_DEF; \
+	log_generic(LG_FATAL, LOG_CONTEXT, ## args); \
 	exit(1); } while (0)
 
 void reset_logging(void);
