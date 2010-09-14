@@ -18,13 +18,20 @@ test-all: regtest
 
 include ../Makefile
 
+%.o: %.c $(hdrs)
+	@mkdir -p $(USUAL_OBJDIR)
+	$(E) "	CC" $<
+	$(Q) $(CC) -c -o $@ $(DEFS) $(CPPFLAGS) $(CFLAGS) $<
+
+
 test_config.h: ../usual/config.h force_compat.sed
 	sed -f force_compat.sed $< > $@
 
 #libusual.a: test_config.h
 
 regtest: test_config.h libusual.a $(OBJS)
-	$(CC) -o $@ $(OBJS) -L. -lusual
+	$(E) "	LD" $@
+	$(Q) $(CC) -o $@ $(OBJS) -L. -lusual
 
 clean: clean-test
 
@@ -32,3 +39,5 @@ clean-test:
 	rm -f libusual.a obj/* *.o regtest
 	rm -f config.test usual/config.h test_config.h
 
+config.mak: ../config.mak
+	cp ../config.mak .
