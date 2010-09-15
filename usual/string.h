@@ -105,6 +105,12 @@ static inline int flsll(long long x) { _FLS(ll, long long); }
 #undef _FLS
 
 
+#ifndef HAVE_MEMRCHR
+#define memrchr(a,b,c) usual_memrchr(a,b,c)
+/** Compat: find byte in reverse direction */
+void *memrchr(const void *s, int c, size_t n);
+#endif
+
 #ifndef HAVE_BASENAME
 #undef basename
 #define basename(a) usual_basename(a)
