@@ -43,7 +43,6 @@ static const char id[] = "\n@(#)$Id: testregex (AT&T Research) 2009-11-11 $\0\n"
 #endif
 
 #include <stdio.h>
-#include <regex.h>
 #include <ctype.h>
 #include <setjmp.h>
 #include <signal.h>
@@ -53,6 +52,13 @@ static const char id[] = "\n@(#)$Id: testregex (AT&T Research) 2009-11-11 $\0\n"
 #ifdef	__STDC__
 #include <stdlib.h>
 #include <locale.h>
+#endif
+
+#define getline(x) xgetline(x)
+#ifdef USUAL
+#include <usual/regex.h>
+#else
+#include <regex.h>
 #endif
 
 #if !_PACKAGE_ast
@@ -1950,7 +1956,7 @@ main(int argc, char** argv)
 								else
 								{
 									report("re_nsub incorrect", fun, re, NiL, -1, msg, flags, test);
-									printf("at least %d expected, %d returned\n", nsub, preg.re_nsub);
+									printf("at least %d expected, %d returned\n", nsub, (int)preg.re_nsub);
 									state.errors++;
 								}
 							}
