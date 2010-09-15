@@ -1271,13 +1271,11 @@ size_t regerror(int err, const regex_t *rx, char *dst, size_t dstlen)
 		"EBRACK",	/* 6 */
 		"ECOLLATE",	/* 7 */
 		"ECTYPE",	/* 8 */
-		"EEND",		/* 9 */
-		"EESCAPE",	/* 10 */
-		"EPAREN",	/* 11 */
-		"ERANGE",	/* 12 */
-		"ESIZE",	/* 13 */
-		"ESPACE",	/* 14 */
-		"ESUBREG",	/* 15 */
+		"EESCAPE",	/* 9 */
+		"EPAREN",	/* 10 */
+		"ERANGE",	/* 11 */
+		"ESPACE",	/* 12 */
+		"ESUBREG",	/* 13 */
 	};
 	const char *s = "EUNKNOWN";
 	if ((size_t)err <= ARRAY_NELEM(errlist))

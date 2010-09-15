@@ -93,6 +93,17 @@ static void test_regex(void *ptr)
 {
 	str_check(e_rx("foo*", "foobar", 0), "(0,3)");
 	str_check(e_rx("foo(x)?.*", "foobar", 0), "(0,6)(?,?)");
+	str_check(e_rx("foo", "bar", 0), "NOMATCH");
+	str_check(e_rx("foo{5,1}", "bar", 0), "BADBR");
+	str_check(e_rx("(|)", "bar", 0), "BADPAT");
+	str_check(e_rx("*", "bar", 0), "BADRPT");
+	str_check(e_rx("foo{", "bar", 0), "EBRACE");
+	str_check(e_rx("fo[o", "bar", 0), "EBRACK");
+	str_check(e_rx("[[:foo:]]", "bar", 0), "ECTYPE");
+	str_check(e_rx("foo\\", "foobar", 0), "EESCAPE");
+	str_check(e_rx("fo(o", "bar", 0), "EPAREN");
+	str_check(e_rx("[a-b-c]", "bar", 0), "ERANGE");
+	str_check(b_rx("(\\1)", "bar", 0), "ESUBREG");
 end:;
 }
 

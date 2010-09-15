@@ -138,20 +138,16 @@
 #define REG_ECOLLATE	7
 /** Bad character class reference  */
 #define REG_ECTYPE	8
-/** ------------- */
-#define REG_EEND	9
 /** Trailing backslack */
-#define REG_EESCAPE	10
+#define REG_EESCAPE	9
 /** Syntax error with () */
-#define REG_EPAREN	11
+#define REG_EPAREN	10
 /** Bad endpoint in range */
-#define REG_ERANGE	12
-/** ----------------- */
-#define REG_ESIZE	13
+#define REG_ERANGE	11
 /** No memory */
-#define REG_ESPACE	14
+#define REG_ESPACE	12
 /** Bad subgroup reference */
-#define REG_ESUBREG	15
+#define REG_ESUBREG	13
 
 /* @} */
 
