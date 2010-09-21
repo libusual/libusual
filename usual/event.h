@@ -1,6 +1,4 @@
 /*
- * event.h - libevent compatible event loop.
- *
  * Copyright (c) 2009 Marko Kreen
  *
  * Permission to use, copy, modify, and/or distribute this software for any
@@ -16,6 +14,15 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */ 
 
+/**
+ * @file
+ * libevent compat.
+ *
+ * This module adds few functions to older libevent versions,
+ * or provides it's own libevent-compatible event loop
+ * for cases where performance and features of full libevent
+ * are not needed.
+ */
 #ifndef _USUAL_EVENT_H_
 #define _USUAL_EVENT_H_
 
@@ -31,16 +38,16 @@
 
 #include <event.h>
 
-/* make event_base_new() always available */
 #ifndef HAVE_EVENT_BASE_NEW
+/** Compat: make sure event_base_new() always available */
 static inline struct event_base *event_base_new(void)
 {
 	return event_init();
 }
 #endif
 
-/* libevent 1.3 does not have event_loopbreak() */
 #ifndef HAVE_EVENT_LOOPBREAK
+/** Compat: dummy event_loopbreak for libevent 1.3 */
 static inline void event_loopbreak(void) { }
 #endif
 
@@ -53,7 +60,7 @@ static inline void event_loopbreak(void) { }
 #include <usual/list.h>
 #include <usual/time.h>
 
-/*
+/**
  * Flags for event_set() / event_assign():
  *   EV_READ, EV_WRITE, EV_SIGNAL, EV_PERSIST
  *
@@ -68,27 +75,28 @@ enum EventFlags {
 	EV_PERSIST = 16,
 };
 
-/* Flags for event_loop() */
+/** Flags for event_loop() */
 enum EventLoopType {
 	EVLOOP_ONCE = 1,
 	EVLOOP_NONBLOCK = 2,
 };
 
-/* event_base contents are not open */
+/** Event context.  event_base contents are not open */
 struct event_base;
 
-/* user callback signature */
+/** user callback signature */
 typedef void (*uevent_cb_f)(int fd, short flags, void *arg);
 
-/* macros to read fd and signal values */
+/** Read fd value from struct event */
 #define EVENT_FD(ev) ((ev)->fd)
+/** Read signal value from struct event */
 #define EVENT_SIGNAL(ev) ((ev)->fd)
 
-/*
- * Our event structure.
+/**
+ * Event structure for internal event loop.
  *
  * Although the struct is open, no direct accesses should be done.
- * Thus also the fields are incompat with libevent.
+ * Thus also the fields are incompatible with libevent.
  */
 struct event {
 	/* node for fd or signal lists */

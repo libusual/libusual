@@ -22,6 +22,9 @@
 
 #include <usual/base.h>
 
+/**
+ * Read a pid from pidfile and send a signal to it.
+ */
 bool signal_pidfile(const char *pidfile, int sig);
 
 /**

@@ -1,6 +1,4 @@
 /*
- * Logging for unix service.
- *
  * Copyright (c) 2007-2009 Marko Kreen, Skype Technologies OÜ
  *
  * Permission to use, copy, modify, and/or distribute this software for any
@@ -16,50 +14,36 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */ 
 
+/**
+ * @file
+ *
+ * Logging framework for unix services.
+ *
+ *
+ * Supported outputs:
+ * - syslog
+ * - log file
+ * - stderr
+ *
+ * @section logging_prefix Logging context
+ *
+ * It is possible to pass context info to all logging calls
+ * and later add details to log lines or to filter based on it.
+ *
+ * Each call references 2 macros:
+ * - LOG_CONTEXT_DEF - which can define/call any variables
+ * - LOG_CONTEXT - which should return a pointer variable.
+ *
+ * Later, global callback function \ref logging_prefix_cb
+ * will get this pointer with destination buffer and can either
+ * add more info for log line or tell to skip logging this message.
+ */
 #ifndef _USUAL_LOGGING_H_
 #define _USUAL_LOGGING_H_
 
 #include <usual/base.h>
 
-/* way to pass context info for prefix function */
-#define LOG_CONTEXT_DEF	void *_log_ctx = NULL
-#define LOG_CONTEXT	_log_ctx
-
-/*
- * 0 - show only info level msgs (default)
- * 1 - show debug msgs (log_debug)
- * 2 - show noise msgs (log_noise)
- */
-extern int cf_verbose;
-
-/* If logging to stdout is allowed (default: 1) */
-/* daemon.c turns this off if goes to background */
-extern int cf_quiet;
-
-/* logfile location, default NULL */
-extern const char *cf_logfile;
-
-/* ident for syslog, if NULL syslog is disabled (default) */
-extern const char *cf_syslog_ident;
-
-/*
- * Quick API overview:
- *
- * void log_error(const char *s, ...);
- * void log_warning(const char *s, ...);
- * void log_info(const char *s, ...);
- * void log_debug(const char *s, ...);
- * void log_noise(const char *s, ...);
- * void fatal(const char *s, ...);
- * void fatal_perror(const char *s, ...);
- * void die(const char *s, ...);
- *
- * close_logfile(void);
- */
-
-/*
- * Internal logging function.
- */
+/* internal log levels */
 enum LogLevel {
 	LG_FATAL = 0,
 	LG_ERROR = 1,
@@ -68,51 +52,116 @@ enum LogLevel {
 	LG_DEBUG = 4,
 	LG_NOISE = 5,
 };
+#ifndef LOG_CONTEXT_DEF
+/** Example: Prepare dummy context pointer */
+#define LOG_CONTEXT_DEF	void *_log_ctx = NULL
+#endif
+#ifndef LOG_CONTEXT
+/** Example: Reference dummy context pointer */
+#define LOG_CONTEXT	_log_ctx
+#endif
+
+/**
+ * Signature for logging_prefix_cb.  Return value is either added string length in dst
+ * or negative value to skip logging.
+ */
+typedef int (*logging_prefix_fn_t)(enum LogLevel lev, void *ctx, char *dst, unsigned int dstlen);
+
+/**
+ * Optional global callback for each log line.
+ *
+ * It can either add info to log message or skip logging it.
+ */
+extern logging_prefix_fn_t logging_prefix_cb;
+
+/**
+ * Global verbosity level.
+ *
+ * 0 - show only info level msgs (default)
+ * 1 - show debug msgs (log_debug)
+ * 2 - show noise msgs (log_noise)
+ */
+extern int cf_verbose;
+
+/**
+ * Toggle logging to stderr.  Default: 1.
+ * daemon.c turns this off if goes to background
+ */
+extern int cf_quiet;
+
+/**
+ * Logfile location, default NULL
+ */
+extern const char *cf_logfile;
+
+/**
+ * ident for syslog, if NULL syslog is disabled (default)
+ */
+extern const char *cf_syslog_ident;
+
+/*
+ * Internal API.
+ */
+
+/* non-fatal logging */
 void log_generic(enum LogLevel level, void *ctx, const char *s, ...) _PRINTF(3, 4);
-
-/* macros for plain logging */
-#define log_error(args...) do { LOG_CONTEXT_DEF; \
-		log_generic(LG_ERROR, LOG_CONTEXT, ## args); \
-	} while (0)
-#define log_warning(args...) do { LOG_CONTEXT_DEF; \
-		log_generic(LG_WARNING, LOG_CONTEXT, ## args); \
-	} while (0)
-#define log_info(args...) do { LOG_CONTEXT_DEF; \
-		log_generic(LG_INFO, LOG_CONTEXT, ## args); \
-	} while (0)
-
-/* move printf arg setup out-of-line for debug macros */
-#define log_debug(args...) do { LOG_CONTEXT_DEF; \
-		if (unlikely(cf_verbose > 0)) \
-			log_generic(LG_DEBUG, LOG_CONTEXT, ## args); \
-	} while (0)
-#define log_noise(args...) do { LOG_CONTEXT_DEF; \
-		if (unlikely(cf_verbose > 1)) \
-			log_generic(LG_NOISE, LOG_CONTEXT, ## args); \
-	} while (0)
 
 /* this is also defined in base.h for Assert() */
 void log_fatal(const char *file, int line, const char *func, bool show_perror,
 	       void *ctx, const char *s, ...) _PRINTF(6, 7);
 
-/* fatal loggers should also log location */
-#define fatal(args...) do { LOG_CONTEXT_DEF; \
-	log_fatal(__FILE__, __LINE__, __func__, false, LOG_CONTEXT, ## args); \
-	exit(1); } while (0)
-#define fatal_perror(args...) do { LOG_CONTEXT_DEF; \
-	log_fatal(__FILE__, __LINE__, __func__, true, LOG_CONTEXT, ## args); \
+/*
+ * Public API
+ */
+
+/** Log error message */
+#define log_error(fmt, args...) do { LOG_CONTEXT_DEF; \
+		log_generic(LG_ERROR, LOG_CONTEXT, fmt, ## args); \
+	} while (0)
+
+/** Log warning message */
+#define log_warning(fmt, args...) do { LOG_CONTEXT_DEF; \
+		log_generic(LG_WARNING, LOG_CONTEXT, fmt, ## args); \
+	} while (0)
+
+/** Log info message */
+#define log_info(fmt, args...) do { LOG_CONTEXT_DEF; \
+		log_generic(LG_INFO, LOG_CONTEXT, fmt, ## args); \
+	} while (0)
+
+/** Log debug message */
+#define log_debug(fmt, args...) do { LOG_CONTEXT_DEF; \
+		if (unlikely(cf_verbose > 0)) \
+			log_generic(LG_DEBUG, LOG_CONTEXT, fmt, ## args); \
+	} while (0)
+
+/** Log debug noise */
+#define log_noise(fmt, args...) do { LOG_CONTEXT_DEF; \
+		if (unlikely(cf_verbose > 1)) \
+			log_generic(LG_NOISE, LOG_CONTEXT, fmt, ## args); \
+	} while (0)
+
+/** Log and die.  It also logs source location */
+#define fatal(fmt, args...) do { LOG_CONTEXT_DEF; \
+	log_fatal(__FILE__, __LINE__, __func__, false, LOG_CONTEXT, fmt, ## args); \
 	exit(1); } while (0)
 
-/* less verbose fatal() */
-#define die(args...) do { LOG_CONTEXT_DEF; \
+/** Log strerror and die.  Error message also includes strerror(errno) */
+#define fatal_perror(fmt, args...) do { LOG_CONTEXT_DEF; \
+	log_fatal(__FILE__, __LINE__, __func__, true, LOG_CONTEXT, fmt, ## args); \
+	exit(1); } while (0)
+
+/** Less verbose fatal() */
+#define die(fmt, args...) do { LOG_CONTEXT_DEF; \
 	log_generic(LG_FATAL, LOG_CONTEXT, ## args); \
 	exit(1); } while (0)
 
+/**
+ * Close open logfiles and syslog.
+ *
+ * Useful when rotating log files.
+ */
 void reset_logging(void);
-
-/* optional function to fill prefix. returns prefix len or < 0 to skip logging */
-typedef int (*logging_prefix_fn_t)(enum LogLevel lev, void *ctx, char *dst, unsigned int dstlen);
-extern logging_prefix_fn_t logging_prefix_cb;
 
 #endif
 

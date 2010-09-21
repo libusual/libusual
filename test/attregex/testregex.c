@@ -55,6 +55,7 @@ static const char id[] = "\n@(#)$Id: testregex (AT&T Research) 2009-11-11 $\0\n"
 #endif
 
 #define getline(x) xgetline(x)
+#include <usual/signal.h>
 #ifdef USUAL
 #include <usual/regex.h>
 #else

@@ -1,6 +1,4 @@
 /*
- * Endianess comversion macros.
- *
  * Copyright (c) 2009  Marko Kreen
  *
  * Permission to use, copy, modify, and/or distribute this software for any
@@ -16,23 +14,42 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
+/**
+ * @file
+ *
+ * Endianess conversion macros.
+ *
+ * @section endian_swap  Swap value
+ *
+ * Signature:
+ * - uintX  fn(uintX)
+ *
  * Always swap:
- *	bswap16, bswap32, bswap64
+ * - bswap16, bswap32, bswap64
  *
  * Host <> LE/BE
- *	htobe16, htobe32, htobe64
- *	htole16, htole32, htole64
- *	be16toh, be32toh, be64toh
- *	le16toh, le32toh, le64toh
+ * - htobe16, htobe32, htobe64
+ * - htole16, htole32, htole64
+ * - be16toh, be32toh, be64toh
+ * - le16toh, le32toh, le64toh
  *
- * Read LE/BE -> Host:
- *	le16dec, le32dec, le64dec
- *	be16dec, be32dec, be64dec
+ * @section endian_dec  Read value from memory
  *
- * Write Host -> LE/BE:
- *	le16enc, le32enc, le64enc
- *	be16enc, be32enc, be64enc
+ * Signature:
+ * - uintX dec(const void *p)
+ *
+ * Variants:
+ * - le16dec, le32dec, le64dec
+ * - be16dec, be32dec, be64dec
+ *
+ * @section endian_enc  Write value to memory
+ *
+ * Signature:
+ * - void enc(void *p, uintX val)
+ *
+ * Variants:
+ * - le16enc, le32enc, le64enc
+ * - be16enc, be32enc, be64enc
  */
 
 #ifndef _USUAL_ENDIAN_H_

@@ -1,6 +1,4 @@
 /*
- * File access utils.
- *
  * Copyright (c) 2007-2009 Marko Kreen, Skype Technologies OÜ
  *
  * Permission to use, copy, modify, and/or distribute this software for any
@@ -16,6 +14,11 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */ 
 
+/**
+ * @file
+ *
+ * File access utils.
+ */
 #ifndef _USUAL_FILEUTIL_H_
 #define _USUAL_FILEUTIL_H_
 
@@ -23,26 +26,39 @@
 
 #include <stdio.h>
 
+/** Info about mapped file */
 struct MappedFile {
 	int fd;
 	unsigned len;
 	void *ptr;
 };
 
+/** Signature for per-line callback */
 typedef void (*procline_cb)(void *arg, const char *line, ssize_t len);
 
+/** Read file into memory */
 void *load_file(const char *fn, size_t *len_p);
 
+/** Loop over lines in file */
 bool foreach_line(const char *fn, procline_cb proc_line, void *arg);
 
+/** Get file size */
 ssize_t file_size(const char *fn);
 
+/** Map file into memory */
 int map_file(struct MappedFile *m, const char *fname, int rw) _MUSTCHECK;
+
+/** Unmap previously mapped file */
 void unmap_file(struct MappedFile *m);
 
 #if !defined(HAVE_GETLINE)
 #define getline(a,b,c) compat_getline(a,b,c)
+
+/**
+ * Compat: Read line from file
+ */
 int getline(char **line_p, size_t *size_p, void *f);
+
 #endif
 
 

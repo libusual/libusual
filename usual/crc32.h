@@ -1,6 +1,4 @@
 /*
- * CRC32.
- *
  * Copyright (c) 2009  Marko Kreen
  *
  * Permission to use, copy, modify, and/or distribute this software for any
@@ -16,11 +14,17 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+/**
+ * @file
+ *
+ * CRC32 checksum.
+ */
 #ifndef _USUAL_CRC32_H_
 #define _USUAL_CRC32_H_
 
 #include <usual/base.h>
 
+/** Calculate CRC32 checksum */
 uint32_t calc_crc32(const void *data, size_t len, uint32_t init);
 
 #endif

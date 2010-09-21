@@ -1,6 +1,4 @@
 /*
- * libusual - Utility library for C
- *
  * Copyright (c) 2007-2009 Marko Kreen, Skype Technologies OÜ
  *
  * Permission to use, copy, modify, and/or distribute this software for any
@@ -16,19 +14,32 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */ 
 
+/** @file
+ *
+ * EINTR-safe I/O functions.
+ */
 #ifndef _USUAL_SAFEIO_H_
 #define _USUAL_SAFEIO_H_
 
 #include <usual/socket.h>
 
+/** read */
 int safe_read(int fd, void *buf, int len)                       _MUSTCHECK;
+/** write */
 int safe_write(int fd, const void *buf, int len)                _MUSTCHECK;
+/** recv */
 int safe_recv(int fd, void *buf, int len, int flags)            _MUSTCHECK;
+/** send */
 int safe_send(int fd, const void *buf, int len, int flags)      _MUSTCHECK;
+/** close */
 int safe_close(int fd);
+/** recvmsg */
 int safe_recvmsg(int fd, struct msghdr *msg, int flags)         _MUSTCHECK;
+/** sendmsg */
 int safe_sendmsg(int fd, const struct msghdr *msg, int flags)   _MUSTCHECK;
+/** connect */
 int safe_connect(int fd, const struct sockaddr *sa, socklen_t sa_len)   _MUSTCHECK;
+/** accept */
 int safe_accept(int fd, struct sockaddr *sa, socklen_t *sa_len) _MUSTCHECK;
 
 #endif

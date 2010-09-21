@@ -1,6 +1,4 @@
 /*
- * Theme include for signals.
- *
  * Copyright (c) 2009 Marko Kreen
  *
  * Permission to use, copy, modify, and/or distribute this software for any
@@ -16,6 +14,16 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+/** @file
+ * Signals compat.
+ *
+ * general
+ * - sigaction() -> signal()
+ *
+ * win32:
+ * - SIGALRM, alarm(), signal(SIGALRM), sigaction(SIGALRM)
+ * - kill(pid, 0)
+ */
 #ifndef _USUAL_SIGNAL_H_
 #define _USUAL_SIGNAL_H_
 
@@ -55,6 +63,7 @@ int sigaction(int sig, const struct sigaction *sa, struct sigaction *old);
 #ifdef WIN32
 
 #define SIGALRM 1023
+#define SIGBUS 1022
 unsigned alarm(unsigned);
 
 int kill(int pid, int sig);
@@ -70,6 +79,8 @@ static inline _sighandler_t wrap_signal(int sig, _sighandler_t func)
 		sa.sa_flags = sa.sa_mask = 0;
 		sigaction(SIGALRM, &sa, &oldsa);
 		return oldsa.sa_handler;
+	} else if (sig == SIGBUS) {
+		return NULL;
 	}
 	return signal(sig, func);
 }

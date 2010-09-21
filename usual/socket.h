@@ -1,6 +1,4 @@
 /*
- * Theme include for sockets.
- *
  * Copyright (c) 2007-2009 Marko Kreen, Skype Technologies OÜ
  *
  * Permission to use, copy, modify, and/or distribute this software for any
@@ -16,6 +14,22 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */ 
 
+/** @file
+ *
+ * Socket compat, few utils.
+ *
+ * Socket headers included:
+ * - win32: <winsock2.h>
+ * - win32: <ws2tcpip.h>
+ * - <sys/socket.h>
+ * - <sys/poll.h>
+ * - <sys/un.h>
+ * - <netinet/in.h>
+ * - <netinet/tcp.h>
+ * - <arpa/inet.h>
+ * - <fcntl.h>
+ * - <poll.h>
+ */
 #ifndef _USUAL_SOCKET_H_
 #define _USUAL_SOCKET_H_
 
@@ -52,26 +66,52 @@
 #include <arpa/inet.h>
 #endif
 
-/*
- * Some systems (Solaris) does not define INADDR_NONE
- */
 #ifndef INADDR_NONE
+/** Compat: Some systems (Solaris) does not define INADDR_NONE */
 #define INADDR_NONE ((unsigned long) -1)
 #endif
 
+/**
+ * Usual socket setup.
+ *
+ * - Disallow SIGPIPE
+ * - Set close-on-exec flag
+ * - Call \ref socket_set_nonblocking() with given flag
+ */
 bool socket_setup(int sock, bool non_block);
+
+/**
+ * Flip sockets non-blocking flag
+ */
 bool socket_set_nonblocking(int sock, bool non_block);
+
+/**
+ * Set sockets keepalive flags.
+ *
+ * @param fd		TCP socket
+ * @param onoff		Whether to set keepalive on or off.
+ * @param keepidle	How long the socket must be idle before keepalive packets are sent
+ * @param keepintvl	How big period between consecutive keepalive packets.
+ * @param keepcnt	How many keepalive packets to send before considering socket dead.
+ */
 bool socket_set_keepalive(int fd, int onoff, int keepidle, int keepintvl, int keepcnt);
 
+/**
+ * Convert struct sockaddr to stirng.
+ *
+ * Supports: ipv4, ipv5, unix sockets.
+ */
 const char *sa2str(const struct sockaddr *sa, char *buf, int buflen);
 
 #ifndef HAVE_INET_NTOP
 #define inet_ntop(a,b,c,d) compat_inet_ntop(a,b,c,d)
+/** Compat: inet_ntop() */
 const char *inet_ntop(int af, const void *src, char *dst, int cnt);
 #endif
 
 #ifndef HAVE_GETPEEREID
 #define getpeereid(a,b,c) compat_getpeereid(a,b,c)
+/** Get user id of UNIX socket peer */
 int getpeereid(int fd, uid_t *uid_p, gid_t *gid_p);
 #endif
 
@@ -89,12 +129,14 @@ struct pollfd {
 	short revents;
 };
 typedef unsigned long nfds_t;
+/** Compat: select-based poll() */
 int poll(struct pollfd *fds, nfds_t nfds, int timeout_ms);
 #endif
 
 #ifdef WIN32
-int win32_socketpair(int d, int typ, int proto, int sv[2]);
 #define socketpair(a,b,c,d) win32_socketpair(a,b,c,d)
+/** Compat: socketpair() for win32 */
+int socketpair(int d, int typ, int proto, int sv[2]);
 #endif
 
 #endif

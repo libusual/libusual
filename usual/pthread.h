@@ -1,6 +1,4 @@
 /*
- * Pthreads compat.
- *
  * Copyright (c) 2007-2009 Marko Kreen
  *
  * Permission to use, copy, modify, and/or distribute this software for any
@@ -16,6 +14,10 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+/** @file
+ *
+ * Pthreads compat for win32.
+ */
 #ifndef _USUAL_PTHREAD_H_
 #define _USUAL_PTHREAD_H_
 

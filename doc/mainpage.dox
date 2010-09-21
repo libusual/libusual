@@ -1,10 +1,27 @@
 /**
  * @mainpage
  *
- * @section libusual    Introduction.
+ * @section libusual    libusual
  *
  * libusual is utility library.
  *
+ * Unlike APR or GLIB which create their own API world, libusual
+ * tries to use standardized API's whenever possible.
+ *
+ * Goals for portability APIs:
+ * - Follow modern POSIX, BSD, glibc.  Make the APIs available everywhere.
+ * - If compat is impossible, allow the user code to compile - eg. UNIX
+ *   sockets on win32.
+ * - Assume cooparating user:
+ *   - libusual needs to implement only API that are used and useful.  No need try to provide full POSIX.
+ *   - user code survives gracefully when libusual provides less functionality.
+ *
+ * Goals for new APIs:
+ * - Simple, clear API
+ * - Simple, clear implementation.
+ * - It is preferable to have simple code which can be copied and modified
+ *   for some special case than complex code that tries to handle
+ *   everything at once.
  *
  * @section modules  Module list.
  *

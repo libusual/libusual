@@ -1,6 +1,4 @@
 /*
- * Small POSIX-only regex engine.
- *
  * Copyright (c) 2009  Marko Kreen
  *
  * Permission to use, copy, modify, and/or distribute this software for any
@@ -22,17 +20,20 @@
  * POSIX regular expession API, provided by either libc or internally.
  *
  * The internal regex engine is only activated if OS does not provide
- * @ref regex_links "<regex.h>" (eg. Windows) or if
+ * @ref uregex_links "<regex.h>" (eg. Windows) or if
  * --with-internal-regex is used when configuring @ref libusual.
  *
- * @section uregex  Internal regex features.
+ * @section uregex  Features of internal regex (uregex).
  *
  * Simple recursive matcher, only features are small size
- * and POSIX compatibility.
+ * and POSIX compatibility.  Supports both Extended Regular Expressions (ERE)
+ * and Basic Regular Expressions (BRE).
  *
+ * @section uregex_syntax  Supported syntax
  * @code
- *   ERE syntax: . * ^ $ [] [[:cname:]] () {} | + ?
- *   BRE syntax: . * ^ $ [] [[:cname:]] \(\) \{\} \1-9
+ *   Both: . * ^ $ [] [[:cname:]]
+ *   ERE: () {} | + ?
+ *   BRE: \(\) \{\} \1-9
  * @endcode
  *
  * With REG_RELAXED_SYNTAX, following common escapes will be available:
@@ -46,17 +47,17 @@
  * leftmost-longest to all elements.  It skips the combinatorics to turn it
  * into guaranteed-longest match.
  *
- * @section skip Skipped POSIX features
+ * @section uregex_skip Skipped POSIX features
  * - collation classes: [[. .]]
  * - equivalence classes: [[= =]]
  * - char ranges by locale order: [a-z]  (byte order will be used)
  * - multi-byte chars: UTF-8
  *
- * @section globaldefs Global defines
+ * @section uregex_globaldefs Global defines
  * - USUAL_RELAXED_REGEX
  * - USE_INTERNAL_REGEX
  *
- * @section regex_links  Compatibility
+ * @section uregex_links  Compatibility
  *
  * - <a href="http://www.opengroup.org/onlinepubs/9699919799/basedefs/regex.h.html">
  *   POSIX-2008 <regex.h> spec</a> - by default uRegex run in mode where only
@@ -161,7 +162,7 @@
 /* @} */
 
 /**
- * @name Non-standard defines for regcomp()
+ * @name Non-standard flags for regcomp()
  * @{
  */
 
@@ -184,7 +185,8 @@
 /**
  * Dont permute groups in attempt to get longest match.
  *
- * May give minor speed win at the expense of strict POSIX compat.
+ * May give minor speed win at the expense of strict
+ * POSIX compatibility.
  */
 #define REG_RELAXED_MATCHING	(1 << 15)
 
@@ -227,23 +229,21 @@ typedef struct {
 #define regerror(a,b,c,d) usual_regerror(a,b,c,d)
 #define regfree(a) usual_regfree(a)
 
-/* public functions */
-
 /**
  * Compile regex.
  *
  * @param rx    Pre-allocated @ref regex_t structure to fill.
  * @param re    Regex as zero-terminated string.
- * @param flags See bove for regcomp() flags.
+ * @param flags See above for regcomp() flags.
  */
 int regcomp(regex_t *rx, const char *re, int flags);
 
 /**
- * Execute regex on string.
+ * Execute regex on a string.
  *
- * @param rx      Regex previously filled by regcomp()
+ * @param rx      Regex previously initialized with regcomp()
  * @param str     Zero-terminated string to match
- * @param nmatch  number of matches in pmatch
+ * @param nmatch  Number of matches in pmatch
  * @param pmatch  Array of matches.
  * @param eflags  Execution flags.  Supported flags: @ref REG_NOTBOL, @ref REG_NOTEOL
  */
@@ -261,7 +261,7 @@ size_t regerror(int err, const regex_t *rx, char *dst, size_t dstlen);
 
 /**
  * Free resources allocated by regcomp().
- * \param rx Regex previously filled by regcomp()
+ * @param rx Regex previously filled by regcomp()
  */
 void regfree(regex_t *rx);
 

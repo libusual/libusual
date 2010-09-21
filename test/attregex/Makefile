@@ -1,6 +1,8 @@
 
+#CC = i586-mingw32msvc-gcc
 CFLAGS = -O -g
-CPPFLAGS = -I../.. -DUSUAL -DUSE_INTERNAL_REGEX
+CPPFLAGS = -I../..
+DEFS = -DUSUAL -DUSE_INTERNAL_REGEX
 LDFLAGS = -g
 LIBS = ../libusual.a
 
@@ -13,7 +15,7 @@ testregex.o: testregex.c
 	$(CC) $(DEFS) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
 
 testregex.libc: testregex.c
-	$(CC)  $(CFLAGS) -o $@ $<
+	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $<
 
 
 clean:
