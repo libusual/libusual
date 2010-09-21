@@ -19,7 +19,7 @@
 #include <usual/sha1.h>
 
 #include <usual/endian.h>
-#include <usual/misc.h>
+#include <usual/bits.h>
 
 #define bufpos(ctx) ((ctx)->nbytes & (SHA1_BLOCK_SIZE - 1))
 

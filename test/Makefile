@@ -12,7 +12,7 @@ override DEFS = -DUSUAL_TEST_CONFIG
 OBJS = test_string.o test_crypto.o test_aatree.o test_heap.o \
        test_common.o test_list.o tinytest.o test_cbtree.o \
        test_utf8.o test_strpool.o test_pgutil.o test_regex.o \
-       test_cxalloc.o
+       test_cxalloc.o test_bits.o
 
 test-all: regtest
 

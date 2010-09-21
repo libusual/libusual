@@ -25,7 +25,7 @@
 
 #include <usual/cbtree.h>
 
-#include <usual/string.h>
+#include <usual/bits.h>
 
 /*
  * - Childs are either other nodes or user pointers.

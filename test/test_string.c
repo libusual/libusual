@@ -83,40 +83,6 @@ end:;
 }
 
 /*
- * fls
- */
-
-static void test_fls(void *p)
-{
-	int_check(fls(0), 0);
-	int_check(fls(1), 1);
-	int_check(fls(3), 2);
-	int_check(fls((int)-1), 32);
-end:;
-}
-
-static void test_flsl(void *p)
-{
-	int_check(flsl(0), 0);
-	int_check(flsl(1), 1);
-	int_check(flsl(3), 2);
-	if (sizeof(long) == 4)
-		int_check(flsl((long)-1), 32);
-	else
-		int_check(flsl((long)-1), 64);
-end:;
-}
-
-static void test_flsll(void *p)
-{
-	int_check(flsll(0), 0);
-	int_check(flsll(1), 1);
-	int_check(flsll(3), 2);
-	int_check(flsll((long long)-1), 64);
-end:;
-}
-
-/*
  * memrchr
  */
 
@@ -203,9 +169,6 @@ struct testcase_t string_tests[] = {
 	{ "strlcpy", test_strlcpy },
 	{ "strlcat", test_strlcat },
 	{ "strerror_r", test_strerror_r },
-	{ "fls", test_fls },
-	{ "flsl", test_flsl },
-	{ "flsll", test_flsll },
 	{ "memrchr", test_memrchr },
 	{ "basename", test_basename },
 	{ "dirname", test_dirname },

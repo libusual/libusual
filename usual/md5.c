@@ -19,8 +19,7 @@
 #include <usual/md5.h>
 
 #include <usual/endian.h>
-#include <usual/misc.h>
-#include <string.h>
+#include <usual/bits.h>
 
 /*
  * Support functions.

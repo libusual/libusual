@@ -45,6 +45,7 @@
  * <tr><td>  <usual/statlist.h>      </td><td>  List with stats   </td></tr>
  * <tr><td>  <usual/strpool.h>       </td><td>  Refcounted strings   </td></tr>
  * <tr><th colspan=2>  Data Processing  </th></tr>
+ * <tr><td>  <usual/bits.h>          </td><td>  Bit arithmetic   </td></tr>
  * <tr><td>  <usual/cfparser.h>      </td><td>  Config parser   </td></tr>
  * <tr><td>  <usual/crc32.h>         </td><td>  CRC32   </td></tr>
  * <tr><td>  <usual/endian.h>        </td><td>  Endianess conversion   </td></tr>
