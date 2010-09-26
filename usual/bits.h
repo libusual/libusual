@@ -78,10 +78,11 @@ static inline uint64_t ror64(uint64_t v, int s) { return rol64(v, 64 - s); }
 	return (x == 0) ? 0 : ((8*sizeof(type)) - __builtin_clz ## sfx(x))
 #else
 #define _FLS(sfx, type) \
+	unsigned type u = x; \
 	unsigned int bit; \
 	if (x == 0) return 0; \
 	/* count from smallest bit, assuming small values */ \
-	for (bit = 1; x > 1; bit++) x >>= 1; \
+	for (bit = 1; u > 1; bit++) u >>= 1; \
 	return bit
 #endif
 
