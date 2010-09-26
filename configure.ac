@@ -23,6 +23,12 @@ AC_USUAL_DEBUG
 
 AC_USUAL_LIBEVENT(opt)
 
+dnl search for common libraries
+AC_SEARCH_LIBS(clock_gettime, rt)
+AC_SEARCH_LIBS(getsockname, socket)
+AC_SEARCH_LIBS(gethostbyname, nsl)
+AC_SEARCH_LIBS(hstrerror, resolv)
+
 dnl Output findings
 AC_OUTPUT([config.mak])
 
