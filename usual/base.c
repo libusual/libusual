@@ -18,7 +18,7 @@
 
 #include <usual/base.h>
 
-#ifdef HAVE_MALLOC_H
+#if defined(HAVE_MALLOC_H) && defined(__darwin__)
 #include <malloc.h>
 #endif
 
