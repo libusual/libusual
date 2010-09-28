@@ -1,3 +1,5 @@
+/FFS/s,^,//,
+/FLS/s,^,//,
 /STRLCPY/s,^,//,
 /STRLCAT/s,^,//,
 /BASENAME/s,^,//,

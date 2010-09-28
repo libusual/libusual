@@ -87,18 +87,61 @@ static inline uint64_t ror64(uint64_t v, int s) { return rol64(v, 64 - s); }
 #endif
 
 #ifndef HAVE_FLS
+#define fls(x) usual_fls(x)
 /** Compat: Find last (MSB) set bit, 1-based ofs, 0 if arg == 0 */
 static inline int fls(int x) { _FLS(, int); }
 #endif
 #ifndef HAVE_FLSL
+#define flsl(x) usual_flsl(x)
 /** Compat: Find last (MSB) set bit, 1-based ofs, 0 if arg == 0 */
 static inline int flsl(long x) { _FLS(l, long); }
 #endif
 #ifndef HAVE_FLSLL
+#define flsll(x) usual_flsll(x)
 /** Compat: Find last (MSB) set bit, 1-based ofs, 0 if arg == 0 */
 static inline int flsll(long long x) { _FLS(ll, long long); }
 #endif
 #undef _FLS
+
+/*
+ * ffs(int)
+ * ffsl(long)
+ * ffsll(long long)
+ *
+ *   find LSB bit set, 1-based ofs, 0 if arg == 0
+ */
+
+#if defined(__GNUC__) && (__GNUC__ >= 4)
+#define _FFS(sfx, type) \
+	return __builtin_ffs ## sfx((unsigned type)(x))
+#else
+#define _FFS(sfx, type) \
+	unsigned int bit; \
+	unsigned type u = x; \
+	if (!x) return 0; \
+	/* count from smallest bit, assuming small values */ \
+	for (bit = 1; !(u & 1); bit++) { \
+		u >>= 1; \
+	} \
+	return bit
+#endif
+
+#ifndef HAVE_FFS
+#define ffs(x) usual_ffs(x)
+/** Compat: Find first (LSB) set bit, 1-based ofs, 0 if arg == 0 */
+static inline int ffs(int x) { _FFS(, int); }
+#endif
+#ifndef HAVE_FFSL
+#define ffsl(x) usual_ffsl(x)
+/** Compat: Find first (LSB) set bit, 1-based ofs, 0 if arg == 0 */
+static inline int ffsl(long x) { _FFS(l, long); }
+#endif
+#ifndef HAVE_FFSLL
+#define ffsll(x) usual_ffsll(x)
+/** Compat: Find first (LSB) set bit, 1-based ofs, 0 if arg == 0 */
+static inline int ffsll(long long x) { _FFS(ll, long long); }
+#endif
+#undef _FFS
 
 #endif
 

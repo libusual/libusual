@@ -48,7 +48,7 @@ static void test_ror(void *p)
 	/* ror32 */
 	int_check(ror32(1, 1), 0x80000000);
 	/* ror64 */
-	int_check(ror64(1, 1), 0x8000000000000000);
+	ull_check(ror64(1, 1), 0x8000000000000000ULL);
 end:;
 }
 
@@ -109,6 +109,8 @@ static void test_ffs(void *p)
 	int_check(ffsll(1), 1);
 	int_check(ffsll(3), 1);
 	int_check(ffsll((long long)-1), 1);
+	ull_check((1ULL << 63), ror64(1,1));
+	int_check(ffsll(1ULL << 63), 64);
 	int_check(ffsll(ror64(1,1)), 64);
 end:;
 }
