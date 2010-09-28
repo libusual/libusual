@@ -43,7 +43,7 @@ endif
 
 # rules follow
 
-all: libusual.a obj/testcompile
+all: info libusual.a obj/testcompile
 
 libusual.a: $(objs)
 	$(E) "	AR" $@
@@ -110,13 +110,21 @@ sparse: config.mak
 asms = $(objs:.o=.s)
 asm: $(asms)
 
-dbg:
+dbg: flags
 	@echo srcs=$(srcs)
 	@echo objs=$(objs)
 	@echo hdrs=$(hdrs)
+
+flags:
 	@echo DEFS=$(DEFS)
 	@echo CFLAGS=$(CFLAGS)
 	@echo CPPFLAGS=$(CPPFLAGS)
+
+info:
+	@echo CC: $(CC) $(DEFS) $(CPPFLAGS) $(CFLAGS)
+	@echo LD: $(LD) $(USUAL_LDFLAGS) $(USUAL_LIBS) $(LIBS)
+
+.PHONY: flags dbg info
 
 # requires 8.4+
 kws:
