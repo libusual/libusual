@@ -261,3 +261,25 @@ AC_SUBST(have_libevent)
 
 ]) dnl  AC_USUAL_LIBEVENT
 
+dnl
+dnl  AC_USUAL_UREGEX:  --with-uregex
+dnl
+dnl    Allow override of system regex
+dnl
+AC_DEFUN([AC_USUAL_UREGEX], [
+AC_MSG_CHECKING([whether to force internal regex])
+uregex=no
+AC_ARG_WITH(uregex,
+  AC_HELP_STRING([--with-uregex],[Force use of internal regex]),
+  [ if test "$withval" = "yes"; then
+      uregex=yes
+    fi ], [])
+
+if test "$uregex" = "yes"; then
+  AC_MSG_RESULT([yes])
+  AC_DEFINE(USE_INTERNAL_REGEX, 1, [Define to force use of uRegex.])
+else
+  AC_MSG_RESULT([no])
+fi
+]) dnl  AC_USUAL_UREGEX
+
