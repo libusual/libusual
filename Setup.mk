@@ -32,3 +32,9 @@ endif
 USUAL_LIBS = -lusual
 USUAL_LDFLAGS = -L$(USUAL_DIR)
 
+# dist files
+USUAL_DIST_NOPFX = usual m4 find_modules.sh m4/usual.m4 Setup.mk README usual/config.h.in
+USUAL_DIST = $(addprefix $(USUAL_DIR)/, $(USUAL_DIST_NOPFX))
+USUAL_DIST_AC_NOPFX = configure.ac configure config.mak.in
+USUAL_DIST_AC = $(addprefix $(USUAL_DIR)/, $(USUAL_DIST_AC_NOPFX))
+
