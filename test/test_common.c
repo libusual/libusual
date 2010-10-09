@@ -3,6 +3,7 @@
 #include "test_common.h"
 
 struct testgroup_t groups[] = {
+	{ "base/", base_tests },
 	{ "aatree/", aatree_tests },
 	{ "bits/", bits_tests },
 	{ "cxalloc/", cxalloc_tests },

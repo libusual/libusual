@@ -4,7 +4,7 @@ CFLAGS = -O -g
 CPPFLAGS = -I../..
 DEFS = -DUSUAL -DUSE_INTERNAL_REGEX
 LDFLAGS = -g
-LIBS = ../libusual.a
+LIBS = ../libusual_compat.a
 
 all: testregex.usual testregex.libc
 

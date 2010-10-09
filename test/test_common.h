@@ -20,4 +20,5 @@ extern struct testcase_t pgutil_tests[];
 extern struct testcase_t regex_tests[];
 extern struct testcase_t cxalloc_tests[];
 extern struct testcase_t bits_tests[];
+extern struct testcase_t base_tests[];
 
