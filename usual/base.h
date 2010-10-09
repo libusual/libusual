@@ -63,6 +63,11 @@
 #define container_of(ptr, type, field) ((type *)((char *)(ptr) - offsetof(type, field)))
 #endif
 
+/** get alignment requirement for a type */
+#ifndef alignof
+#define alignof(type) offsetof(struct { char c; type t; }, t)
+#endif
+
 /** power-of-2 alignment */
 #ifndef CUSTOM_ALIGN
 #define CUSTOM_ALIGN(x, a) (((unsigned long)(x) + (a) - 1) & ~((a) - 1))
