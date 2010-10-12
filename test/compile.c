@@ -51,6 +51,7 @@ int main(void)
 	md5_reset(&md5);
 	strlcpy(buf, "foo", sizeof(buf));
 	printf("xmalloc: %p\n", xmalloc(128));
+	if (0) die("0");
 	return 0;
 }
 

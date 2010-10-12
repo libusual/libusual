@@ -153,7 +153,7 @@ void log_fatal(const char *file, int line, const char *func, bool show_perror,
 
 /** Less verbose fatal() */
 #define die(fmt, args...) do { LOG_CONTEXT_DEF; \
-	log_generic(LG_FATAL, LOG_CONTEXT, ## args); \
+	log_generic(LG_FATAL, LOG_CONTEXT, fmt, ## args); \
 	exit(1); } while (0)
 
 /**
