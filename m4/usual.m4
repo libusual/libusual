@@ -143,6 +143,8 @@ AC_CHECK_FUNCS(inet_ntop poll getline memrchr regcomp)
 AC_CHECK_FUNCS(err errx warn warnx getprogname setprogname)
 AC_CHECK_FUNCS(posix_memalign memalign valloc)
 AC_CHECK_FUNCS(fls flsl flsll ffs ffsl ffsll)
+AC_SEARCH_LIBS(getaddrinfo_a, anl)
+AC_CHECK_FUNCS(getaddrinfo_a)
 ### Functions provided only on win32
 AC_CHECK_FUNCS(localtime_r recvmsg sendmsg usleep)
 ### Functions used by libusual itself

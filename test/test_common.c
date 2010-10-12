@@ -16,6 +16,7 @@ struct testgroup_t groups[] = {
 	{ "strpool/", strpool_tests },
 	{ "pgutil/", pgutil_tests },
 	{ "regex/", regex_tests },
+	{ "netdb/", netdb_tests },
 	END_OF_GROUPS
 };
 

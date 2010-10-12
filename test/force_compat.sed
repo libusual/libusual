@@ -5,3 +5,4 @@
 /BASENAME/s,^,//,
 /DIRNAME/s,^,//,
 /REGCOMP/s,^,//,
+/GETADDRINFO_A/s,^,//,
