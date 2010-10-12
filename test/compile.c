@@ -9,7 +9,7 @@
 #include <usual/event.h>
 #include <usual/fileutil.h>
 #include <usual/hashtab-impl.h>
-#include <usual/heap-impl.h>
+#include <usual/heap.h>
 #include <usual/list.h>
 #include <usual/logging.h>
 #include <usual/lookup3.h>

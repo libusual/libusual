@@ -31,6 +31,7 @@
 #include <usual/statlist.h>
 #include <usual/socket.h>
 #include <usual/signal.h>
+#include <usual/heap.h>
 
 #ifndef MSG_NOSIGNAL
 #define MSG_NOSIGNAL 0
@@ -48,15 +49,10 @@
 /* extra event flag to track if event is added */
 #define EV_ACTIVE 0x80
 
-/* load heap code */
-static inline void ev_save_pos(struct event *ev, int pos);
-#define SAVE_POS(ev, pos) ev_save_pos(ev, pos)
-#include <usual/heap-impl.h>
-
 
 struct event_base {
 	/* pending timeouts */
-	struct Heap timeout_heap;
+	struct Heap *timeout_heap;
 
 	/* fd events */
 	struct StatList fd_list;
@@ -172,14 +168,15 @@ static usec_t convert_timeout(struct event_base *base, struct timeval *tv)
 	return val;
 }
 
-static inline bool heap_is_better(const void *a, const void *b)
+static bool ev_is_better(const void *a, const void *b)
 {
 	const struct event *ev1 = a, *ev2 = b;
 	return ev1->timeout_val < ev2->timeout_val;
 }
 
-static inline void ev_save_pos(struct event *ev, int pos)
+static void ev_save_pos(void *obj, unsigned pos)
 {
+	struct event *ev = obj;
 	ev->timeout_idx = pos;
 }
 
@@ -263,7 +260,11 @@ struct event_base *event_base_new(void)
 		return NULL;
 
 	/* initialize timeout and fd areas */
-	heap_init(&base->timeout_heap);
+	base->timeout_heap = heap_create(ev_is_better, ev_save_pos, USUAL_ALLOC);
+	if (!base->timeout_heap) {
+		free(base);
+		return NULL;
+	}
 	statlist_init(&base->fd_list, "fd_list");
 
 	/* initialize signal areas */
@@ -289,7 +290,7 @@ void event_base_free(struct event_base *base)
 	}
 	if (base == current_base)
 		current_base = NULL;
-	heap_destroy(&base->timeout_heap);
+	heap_destroy(base->timeout_heap);
 	free(base->pfd_event);
 	free(base->pfd_list);
 	sig_close(base);
@@ -363,7 +364,7 @@ int event_del(struct event *ev)
 
 	/* remove from timeout tree */
 	if (ev->flags & EV_TIMEOUT) {
-		heap_delete_pos(&ev->base->timeout_heap, ev->timeout_idx);
+		heap_remove(ev->base->timeout_heap, ev->timeout_idx);
 		ev->flags &= ~EV_TIMEOUT;
 	}
 
@@ -392,7 +393,7 @@ int event_add(struct event *ev, struct timeval *timeout)
 	if (timeout) {
 		if (ev->flags & EV_PERSIST)
 			goto err_inval;
-		if (!heap_reserve(&base->timeout_heap, 1))
+		if (!heap_reserve(base->timeout_heap, 1))
 			return -1;
 	} else {
 		if (ev->flags & EV_TIMEOUT)
@@ -416,7 +417,7 @@ int event_add(struct event *ev, struct timeval *timeout)
 	if (timeout) {
 		ev->timeout_val = convert_timeout(base, timeout);
 		ev->flags |= EV_TIMEOUT;
-		heap_insert(&base->timeout_heap, ev);
+		heap_push(base->timeout_heap, ev);
 	}
 	ev->ev_idx = -1;
 	ev->flags |= EV_ACTIVE;
@@ -447,7 +448,7 @@ static void deliver_event(struct event *ev, short flags)
 
 static inline struct event *get_smallest_timeout(struct event_base *base)
 {
-	return heap_get_top(&base->timeout_heap);
+	return heap_top(base->timeout_heap);
 }
 
 /* decide how long poll() should sleep */

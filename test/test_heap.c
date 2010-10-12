@@ -1,4 +1,4 @@
-#include <usual/base.h>
+#include <usual/heap.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,11 +7,7 @@
 
 #include "test_common.h"
 
-static void my_save_pos(void *p, unsigned i);
-
-#define SAVE_POS(p, i) my_save_pos(p, i)
-
-#include <usual/heap-impl.h>
+#include <usual/heap.c>
 
 struct MyNode {
 	int value;
@@ -19,7 +15,7 @@ struct MyNode {
 };
 
 /* min-heap */
-static inline bool heap_is_better(const void *a, const void *b)
+static bool heap_is_better(const void *a, const void *b)
 {
 	const struct MyNode *aa = a, *bb = b;
 	return (aa->value < bb->value);
@@ -89,7 +85,7 @@ static const char *check(struct Heap *heap, int i)
 static const char *my_insert(struct Heap *heap, int value)
 {
 	struct MyNode *my = make_node(value);
-	if (!heap_insert(heap, my))
+	if (!heap_push(heap, my))
 		return "FAIL";
 	return check(heap, value);
 }
@@ -100,7 +96,7 @@ static const char *my_remove(struct Heap *heap, unsigned idx)
 	if (idx >= heap->used)
 		return "NEXIST";
 	n = heap->data[idx];
-	heap_delete_pos(heap, idx);
+	heap_remove(heap, idx);
 	free(n);
 	return check(heap, 0);
 }
@@ -122,10 +118,10 @@ static const char *my_clean(struct Heap *heap)
 
 static void test_heap_basic(void *p)
 {
-	struct Heap heap[1];
+	struct Heap *heap;
 	int i;
 
-	heap_init(heap);
+	heap = heap_create(heap_is_better, my_save_pos, USUAL_ALLOC);
 
 	str_check(my_remove(heap, 0), "NEXIST");
 	str_check(my_insert(heap, 0), "OK");
