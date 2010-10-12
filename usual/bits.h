@@ -23,8 +23,8 @@
  * - rol16, rol32, rol64
  * - ror16, ror32, ror64
  */
-#ifndef _USUAL_MISC_H_
-#define _USUAL_MISC_H_
+#ifndef _USUAL_BITS_H_
+#define _USUAL_BITS_H_
 
 #include <usual/base.h>
 
