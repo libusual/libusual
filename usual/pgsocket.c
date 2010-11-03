@@ -63,6 +63,9 @@ struct PgSocket {
 
 	/* temp place for resultset */
 	PGresult *last_result;
+
+	usec_t connect_time;
+	usec_t lifetime;
 };
 
 /* report event to user callback */
@@ -197,6 +200,7 @@ static void connect_cb(int sock, short flags, void *arg)
 		wait_event(db, EV_READ, connect_cb);
 		break;
 	case PGRES_POLLING_OK:
+		db->connect_time = get_time_usec();
 		send_event(db, PGS_CONNECT_OK);
 		break;
 	default:
@@ -248,6 +252,11 @@ struct PgSocket *pgs_create(const char *connstr, pgs_handler_f fn, void *handler
 void pgs_set_event_base(struct PgSocket *pgs, struct event_base *base)
 {
 	pgs->base = base;
+}
+
+void pgs_set_lifetime(struct PgSocket *pgs, double lifetime)
+{
+	pgs->lifetime = USEC * lifetime;
 }
 
 void pgs_connect(struct PgSocket *db)
@@ -303,6 +312,14 @@ void pgs_sleep(struct PgSocket *db, double timeout)
 	struct timeval tv;
 
 	Assert(!db->wait_type);
+
+	if (db->con && db->lifetime) {
+		usec_t now = get_time_usec();
+		if (db->connect_time + db->lifetime < now) {
+			pgs_disconnect(db);
+			db->reconnect = true;
+		}
+	}
 
 	tv.tv_sec = timeout;
 	tv.tv_usec = (timeout - tv.tv_sec) * USEC;

@@ -63,6 +63,9 @@ void pgs_free(struct PgSocket *db);
 /** Change the event base for PgSocket */
 void pgs_set_event_base(struct PgSocket *pgs, struct event_base *base);
 
+/** Set connection lifetime (in seconds) */
+void pgs_set_lifetime(struct PgSocket *pgs, double lifetime);
+
 /** Launch connection */
 void pgs_connect(struct PgSocket *db);
 
