@@ -115,7 +115,7 @@ struct Heap *heap_create(heap_is_better_f is_better_cb, heap_save_pos_f save_pos
 {
 	struct Heap *h;
 	
-	h = cx_alloc0(cx, sizeof(*cx));
+	h = cx_alloc0(cx, sizeof(*h));
 	if (!h)
 		return NULL;
 
@@ -146,7 +146,7 @@ bool heap_reserve(struct Heap *h, unsigned extra)
 	if (newalloc < h->used + extra)
 		newalloc = h->used + extra;
 
-	tmp = realloc(h->data, newalloc * sizeof(void *));
+	tmp = cx_realloc(h->cx, h->data, newalloc * sizeof(void *));
 	if (!tmp)
 		return false;
 	h->data = tmp;
@@ -185,11 +185,11 @@ void *heap_remove(struct Heap *h, unsigned pos)
 	obj = h->data[pos];
 
 	last = --h->used;
-	_heap_set(h, pos, h->data[last]);
+	if (pos < last) {
+		_heap_set(h, pos, h->data[last]);
+		rebalance(h, pos);
+	}
 	h->data[last] = NULL;
-
-	rebalance(h, pos);
-
 	return obj;
 }
 
