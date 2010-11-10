@@ -20,6 +20,7 @@
 
 #include <ctype.h>
 #include <string.h>
+#include <pwd.h>
 
 #include <usual/fileutil.h>
 #include <usual/logging.h>
@@ -244,6 +245,66 @@ bool cf_set_str(void *dst, const char *value)
 		free(*dst_p);
 	*dst_p = tmp;
 	return true;
+}
+
+bool cf_set_filename(void *dst, const char *value)
+{
+	char **dst_p = dst;
+	char *tmp, *home, *p;
+	int v_len, usr_len, home_len;
+	struct passwd *pw;
+
+	/* do we need to do tilde expansion */
+	if (value[0] != '~')
+		return cf_set_str(dst, value);
+
+	/* find username end */
+	v_len = strlen(value);
+	if ((p = memchr(value, '/', v_len)) == NULL)
+		usr_len = v_len - 1;
+	else
+		usr_len = (p - value) - 1;
+
+	if (usr_len) {
+		p = malloc(usr_len + 1);
+		if (!p)
+			return false;
+		memcpy(p, value + 1, usr_len);
+		p[usr_len] = 0;
+		pw = getpwnam(p);
+		free(p);
+		if (!pw)
+			goto fail;
+		home = pw->pw_dir;
+	} else {
+		home = getenv("HOME");
+		if (!home) {
+			pw = getpwuid(getuid());
+			if (!pw)
+				goto fail;
+			home = pw->pw_dir;
+		}
+	}
+	if (!home)
+		goto fail;
+
+	home_len = strlen(home);
+	tmp = malloc(v_len - usr_len + home_len);
+	if (!tmp)
+		return false;
+	memcpy(tmp, home, home_len);
+	memcpy(tmp + home_len, value + usr_len + 1, v_len - usr_len - 1);
+	tmp[v_len - usr_len + home_len] = 0;
+
+	log_debug("expanded '%s' -> '%s'", value, tmp);
+
+	if (*dst_p)
+		free(*dst_p);
+	*dst_p = tmp;
+	return true;
+fail:
+	log_error("cannot to expand filename: %s", value);
+	return false;
 }
 
 bool cf_set_time_usec(void *dst, const char *value)

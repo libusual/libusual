@@ -95,6 +95,8 @@ struct CfSect {
 
 /** Setter for string */
 bool cf_set_str(void *dst, const char *value);
+/** Setter for filename */
+bool cf_set_filename(void *dst, const char *value);
 /** Setter for int */
 bool cf_set_int(void *dst, const char *value);
 /** Setter for time-usec */
@@ -111,6 +113,9 @@ bool cf_set_time_double(void *dst, const char *value);
 /** String with offset relative to struct referenced in CF_REL_BASE */
 #define CF_REL_STR(x) cf_set_str, CF_VAL_REL, offsetof(CF_REL_BASE, x)
 
+/** Filename with offset relative to struct referenced in CF_REL_BASE */
+#define CF_REL_FILENAME(x) cf_set_filename, CF_VAL_REL, offsetof(CF_REL_BASE, x)
+
 /** Integer offset relative to struct referenced in CF_REL_BASE */
 #define CF_REL_BOOL(x) cf_set_int, CF_VAL_REL, offsetof(CF_REL_BASE, x)
 
@@ -125,6 +130,9 @@ bool cf_set_time_double(void *dst, const char *value);
 
 /** String with absolute pointer */
 #define CF_ABS_STR(x) cf_set_str, CF_VAL_ABS, (uintptr_t)&(x)
+
+/** Filename with absolute pointer */
+#define CF_ABS_FILENAME(x) cf_set_filename, CF_VAL_ABS, (uintptr_t)&(x)
 
 /** Bool with absolute pointer */
 #define CF_ABS_BOOL(x) cf_set_int, CF_VAL_ABS, (uintptr_t)&(x)
