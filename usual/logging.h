@@ -94,10 +94,12 @@ extern int cf_quiet;
  */
 extern const char *cf_logfile;
 
-/**
- * ident for syslog, if NULL syslog is disabled (default)
- */
+/** Syslog on/off */
+extern int cf_syslog;
+/** ident for syslog, if NULL syslog is disabled (default) */
 extern const char *cf_syslog_ident;
+/** Facility name */
+extern const char *cf_syslog_facility;
 
 /*
  * Internal API.

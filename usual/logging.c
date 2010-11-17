@@ -24,6 +24,7 @@
 
 #include <usual/string.h>
 #include <usual/time.h>
+#include <usual/err.h>
 
 #ifdef HAVE_SYSLOG_H
 #include <syslog.h>
@@ -51,7 +52,10 @@ static void win32_eventlog(int level, const char *fmt, ...);
 int cf_quiet = 0;
 int cf_verbose = 0;
 const char *cf_logfile = NULL;
+
+int cf_syslog = 0;
 const char *cf_syslog_ident = NULL;
+const char *cf_syslog_facility = NULL;
 
 /* optional function to fill prefix */
 logging_prefix_fn_t logging_prefix_cb;
@@ -73,6 +77,27 @@ static const struct LevelInfo log_level_list[] = {
 	{ "NOISE", LOG_DEBUG },
 };
 
+struct FacName { const char *name; int code; };
+static const struct FacName facility_names [] = {
+#ifndef WIN32
+	{ "auth",	LOG_AUTH },
+#ifdef LOG_AUTHPRIV
+	{ "authpriv",	LOG_AUTHPRIV },
+#endif
+	{ "daemon",	LOG_DAEMON },
+	{ "user",	LOG_USER },
+	{ "local0",	LOG_LOCAL0 },
+	{ "local1",	LOG_LOCAL1 },
+	{ "local2",	LOG_LOCAL2 },
+	{ "local3",	LOG_LOCAL3 },
+	{ "local4",	LOG_LOCAL4 },
+	{ "local5",	LOG_LOCAL5 },
+	{ "local6",	LOG_LOCAL6 },
+	{ "local7",	LOG_LOCAL7 },
+#endif
+	{ NULL },
+};
+
 void reset_logging(void)
 {
 	if (log_file) {
@@ -88,7 +113,29 @@ void reset_logging(void)
 
 static void start_syslog(void)
 {
-	openlog(cf_syslog_ident, LOG_PID, LOG_DAEMON);
+	const struct FacName *f;
+	int fac = LOG_DAEMON;
+	const char *ident = cf_syslog_ident;
+
+	if (!cf_syslog)
+		return;
+
+	if (cf_syslog_facility) {
+		for (f = facility_names; f->name; f++) {
+			if (strcmp(f->name, cf_syslog_facility) == 0) {
+				fac = f->code;
+				break;
+			}
+		}
+	}
+
+	if (!ident) {
+		ident = getprogname();
+		if (!ident)
+			ident = "unnamed";
+	}
+
+	openlog(ident, LOG_PID, fac);
 	syslog_started = 1;
 }
 
@@ -153,7 +200,7 @@ void log_generic(enum LogLevel level, void *ctx, const char *fmt, ...)
 	if (log_file)
 		fprintf(log_file, "%s %u %s %s\n", timebuf, pid, lev->tag, msg);
 
-	if (cf_syslog_ident) {
+	if (cf_syslog) {
 		if (!syslog_started)
 			start_syslog();
 		syslog(lev->syslog_prio, "%s", msg);
