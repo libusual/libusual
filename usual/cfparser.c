@@ -72,7 +72,7 @@ bool parse_ini_file(const char *fn, cf_handler_f user_handler, void *arg)
 			*p = 0;
 
 			log_debug("parse_ini_file: [%s]", key);
-			ok = user_handler(arg, CF_SECT, key, NULL);
+			ok = user_handler(arg, true, key, NULL);
 			*p++ = o1;
 			if (!ok)
 				goto failed;
@@ -116,7 +116,9 @@ bool parse_ini_file(const char *fn, cf_handler_f user_handler, void *arg)
 
 		log_debug("parse_ini_file: '%s' = '%s'", key, val);
 
-		ok = user_handler(arg, CF_KEY, key, val);
+		ok = user_handler(arg, false, key, val);
+
+		log_debug("parse_ini_file: '%s' = '%s' ok:%d", key, val, ok);
 
 		/* restore data, to keep count_lines() working */
 		key[klen] = o1;
@@ -136,127 +138,229 @@ failed:
 	return false;
 }
 
-struct LoaderCtx {
-	const struct CfSect *sect_list;
-	const struct CfSect *cur_sect;
-	void *target;
-	void *top_arg;
-};
+/*
+ * Config framework.
+ */
 
-static void *get_dest(struct LoaderCtx *ctx, const struct CfKey *k)
+static void *get_dest(void *base, const struct CfKey *k)
 {
 	char *dst;
 	if (k->flags & CF_VAL_REL) {
-		if (!ctx->target)
+		/* relative address requires base */
+		if (!base)
 			return NULL;
-		dst = (char *)ctx->target + k->key_ofs;
+		dst = (char *)base + k->key_ofs;
 	} else
 		dst = (char *)k->key_ofs;
 	return dst;
 }
 
+static const struct CfSect *find_sect(const struct CfContext *cf, const char *name)
+{
+	const struct CfSect *s;
+	for (s = cf->sect_list; s->sect_name; s++) {
+		if (strcmp(s->sect_name, name) == 0)
+			return s;
+		if (strcmp(s->sect_name, "*") == 0)
+			return s;
+	}
+	return NULL;
+}
+
+static const struct CfKey *find_key(const struct CfSect *s, const char *key)
+{
+	const struct CfKey *k;
+	for (k = s->key_list; k->key_name; k++) {
+		if (strcmp(k->key_name, key) == 0)
+			return k;
+	}
+	return k;
+}
+
+const char *cf_get(const struct CfContext *cf, const char *sect, const char *key,
+		   char *buf, int buflen)
+{
+	const struct CfSect *s;
+	const struct CfKey *k;
+	void *base, *p;
+	struct CfValue cv;
+
+	/* find section */
+	s = find_sect(cf, sect);
+	if (!s)
+		return NULL;
+
+	/* find section base */
+	base = cf->base;
+	if (s->base_lookup)
+	    base = s->base_lookup(base, sect);
+
+	/* handle dynamic keys */
+	if (s->set_key) {
+		if (!s->get_key)
+			return NULL;
+		return s->get_key(base, key, buf, buflen);
+	}
+
+	/* get fixed key */
+	k = find_key(s, key);
+	if (!k || !k->op.getter)
+		return NULL;
+	p = get_dest(base, k);
+	if (!p)
+		return NULL;
+	cv.key_name = k->key_name;
+	cv.extra = k->op.op_extra;
+	cv.value_p = p;
+	cv.buf = buf;
+	cv.buflen = buflen;
+	return k->op.getter(&cv);
+}
+
+bool cf_set(const struct CfContext *cf, const char *sect, const char *key, const char *val)
+{
+	const struct CfSect *s;
+	const struct CfKey *k;
+	void *base, *p;
+	struct CfValue cv;
+
+	/* find section */
+	s = find_sect(cf, sect);
+	if (!s)
+		return false;
+
+	/* find section base */
+	base = cf->base;
+	if (s->base_lookup)
+	    base = s->base_lookup(base, sect);
+
+	/* handle dynamic keys */
+	if (s->set_key)
+		return s->set_key(base, key, val);
+
+	/* set fixed key */
+	k = find_key(s, key);
+	if (!k || !k->op.setter)
+		return false;
+	if (k->flags & CF_READONLY)
+		return false;
+	if ((k->flags & CF_NO_RELOAD) && cf->loaded)
+		return false;
+	p = get_dest(base, k);
+	if (!p)
+		return false;
+	cv.key_name = k->key_name;
+	cv.extra = k->op.op_extra;
+	cv.value_p = p;
+	cv.buf = NULL;
+	cv.buflen = 0;
+	return k->op.setter(&cv, val);
+}
+
+/*
+ * File loader
+ */
+
+struct LoaderCtx {
+	const struct CfContext *cf;
+	const char *cur_sect;
+	void *top_base;
+};
+
 static bool fill_defaults(struct LoaderCtx *ctx)
 {
 	const struct CfKey *k;
-	void *dst;
-	for (k = ctx->cur_sect->key_list; k->key_name; k++) {
-		if (!k->def_value)
+	const struct CfSect *s;
+
+	s = find_sect(ctx->cf, ctx->cur_sect);
+	if (!s)
+		goto fail;
+
+	if (s->set_key)
+		return true;
+
+	for (k = s->key_list; k->key_name; k++) {
+		if (!k->def_value || k->flags & CF_READONLY)
 			continue;
-		dst = get_dest(ctx, k);
-		if (!dst)
-			return false;
-		if (!k->set_fn(dst, k->def_value))
-			return false;
+		if (k->flags & CF_NO_RELOAD && ctx->cf->loaded)
+			continue;
+		if (!cf_set(ctx->cf, ctx->cur_sect, k->key_name, k->def_value))
+			goto fail;
 	}
 	return true;
+fail:
+	log_error("fill_defaults fail");
+	return false;
 }
 
-static bool load_handler(void *arg, enum CfKeyType ktype, const char *key, const char *val)
+static bool load_handler(void *arg, bool is_sect, const char *key, const char *val)
 {
 	struct LoaderCtx *ctx = arg;
-	const struct CfSect *s;
-	const struct CfKey *k;
-	void *dst;
 
-	if (ktype == CF_SECT) {
-		for (s = ctx->sect_list; s->sect_name; s++) {
-			if (strcmp(s->sect_name, key) != 0
-			    && strcmp(s->sect_name, "*") != 0)
-				continue;
-			ctx->cur_sect = s;
-			if (s->create_target_fn)
-				ctx->target = s->create_target_fn(ctx->top_arg, key);
-			else
-				ctx->target = ctx->top_arg;
-			return fill_defaults(ctx);
-		}
-		log_error("load_init_file: unknown section: %s", key);
-		return false;
+	if (is_sect) {
+		if (ctx->cur_sect)
+			free(ctx->cur_sect);
+		ctx->cur_sect = strdup(key);
+		if (!ctx->cur_sect)
+			return false;
+		return fill_defaults(ctx);
 	} else if (!ctx->cur_sect) {
 		log_error("load_init_file: value without section: %s", key);
 		return false;
 	} else {
-		for (k = ctx->cur_sect->key_list; k->key_name; k++) {
-			if (strcmp(k->key_name, key) != 0)
-				continue;
-			dst = get_dest(ctx, k);
-			if (!dst)
-				return false;
-			return k->set_fn(dst, val);
-		}
-		log_error("load_init_file: unknown key: %s", key);
-		return false;
+		return cf_set(ctx->cf, ctx->cur_sect, key, val);
 	}
-
-	return true;
 }
 
-bool load_ini_file(const char *fn, const struct CfSect *sect_list, void *top_arg)
+bool cf_load_file(const struct CfContext *cf, const char *fn)
 {
 	struct LoaderCtx ctx = {
-		.top_arg = top_arg,
-		.sect_list = sect_list,
+		.cf = cf,
 		.cur_sect = NULL,
-		.target = NULL,
 	};
 
-	return parse_ini_file(fn, load_handler, &ctx);
+	bool ok = parse_ini_file(fn, load_handler, &ctx);
+	if (ctx.cur_sect)
+		free(ctx.cur_sect);
+	return ok;
 }
 
 /*
  * Various value parsers.
  */
 
-bool cf_set_int(void *dst, const char *value)
+bool cf_set_int(struct CfValue *cv, const char *value)
 {
-	int *ptr = dst;
+	int *ptr = cv->value_p;
 	*ptr = atoi(value);
 	return true;
 }
 
-bool cf_set_str(void *dst, const char *value)
+bool cf_set_str(struct CfValue *cv, const char *value)
 {
-	char **dst_p = dst;
+	char **dst_p = cv->value_p;
 
 	char *tmp = strdup(value);
-	if (!tmp)
+	if (!tmp) {
+		log_error("cf_set_str: no mem");
 		return false;
+	}
 	if (*dst_p)
 		free(*dst_p);
 	*dst_p = tmp;
 	return true;
 }
 
-bool cf_set_filename(void *dst, const char *value)
+bool cf_set_filename(struct CfValue *cv, const char *value)
 {
-	char **dst_p = dst;
+	char **dst_p = cv->value_p;
 	char *tmp, *home, *p;
 	int v_len, usr_len, home_len;
 	struct passwd *pw;
 
 	/* do we need to do tilde expansion */
 	if (value[0] != '~')
-		return cf_set_str(dst, value);
+		return cf_set_str(cv, value);
 
 	/* find username end */
 	v_len = strlen(value);
@@ -307,18 +411,78 @@ fail:
 	return false;
 }
 
-bool cf_set_time_usec(void *dst, const char *value)
+bool cf_set_time_usec(struct CfValue *cv, const char *value)
 {
-	usec_t *ptr = dst;
+	usec_t *ptr = cv->value_p;
 	*ptr = USEC * atof(value);
 	return true;
 }
 
-bool cf_set_time_double(void *dst, const char *value)
+bool cf_set_time_double(struct CfValue *cv, const char *value)
 {
-	double *ptr = dst;
+	double *ptr = cv->value_p;
 	*ptr = atof(value);
 	return true;
 }
 
+/*
+ * Various value formatters.
+ */
+
+const char *cf_get_str(struct CfValue *cv)
+{
+	char **p = cv->value_p;
+	return *p;
+}
+
+const char *cf_get_int(struct CfValue *cv)
+{
+	int *p = cv->value_p;
+	snprintf(cv->buf, cv->buflen, "%d", *p);
+	return cv->buf;
+}
+
+const char *cf_get_time_double(struct CfValue *cv)
+{
+	double *p = cv->value_p;
+	snprintf(cv->buf, cv->buflen, "%g", *p);
+	return cv->buf;
+}
+
+const char *cf_get_time_usec(struct CfValue *cv)
+{
+	struct CfValue tmp = *cv;
+	usec_t *p = cv->value_p;
+	double d = (double)(*p) / USEC;
+	tmp.value_p = &d;
+	return cf_get_time_double(&tmp);
+}
+
+/*
+ * str->int mapping
+ */
+
+const char *cf_get_lookup(struct CfValue *cv)
+{
+	int *p = cv->value_p;
+	const struct CfLookup *lk = cv->extra;
+	for (; lk->name; lk++) {
+		if (lk->value == *p)
+			return lk->name;
+	}
+	return "INVALID";
+}
+
+bool cf_set_lookup(struct CfValue *cv, const char *value)
+{
+	int *p = cv->value_p;
+	const struct CfLookup *lk = cv->extra;
+	for (; lk->name; lk++) {
+		if (strcasecmp(lk->name, value) == 0) {
+			*p = lk->value;
+			return true;
+		}
+	}
+	return false;
+}
 

@@ -27,16 +27,8 @@
  * @{
  */
 
-/**
- * Parsed line type.
- */
-enum CfKeyType {
-	CF_SECT,	/**< Section */
-	CF_KEY		/**< Parameter */
-};
-
 /** Callback signarure for @ref parse_ini_file() */
-typedef bool (*cf_handler_f)(void *arg, enum CfKeyType, const char *key, const char *val);
+typedef bool (*cf_handler_f)(void *arg, bool is_sect, const char *key, const char *val);
 
 /**
  * Simple parser, launches callback for each line
@@ -50,15 +42,46 @@ bool parse_ini_file(const char *fn, cf_handler_f user_handler, void *arg) _MUSTC
  * @{
  */
 
-/**
- * Callback for section initialization
+/** @name Per-key flags
+ * @{
  */
-typedef void *(*cf_create_target_f)(void *top_arg, const char *sect_name);
+
+/** The pointer is absolute */
+#define CF_VAL_ABS 0
+
+/** The pointer is relative to base */
+#define CF_VAL_REL (1<<1)
+
+/** Value must not be changed on reload */
+#define CF_NO_RELOAD (1<<2)
+
+/** Value can only be read */
+#define CF_READONLY (1<<3)
+
+/** @} */
 
 /**
- * Callback for setting a variable
+ * Helper structure for passing key info to CfOps
  */
-typedef bool (*cf_setter_f)(void *dst_p, const char *value);
+struct CfValue {
+	void *value_p;
+	const void *extra;
+	const char *key_name;
+	char *buf;
+	int buflen;
+};
+
+/**
+ * Callbacks for setting and getting a variable value.
+ *
+ * Getter requires temp buf, returns string pointer, which
+ * may or may not point to temp buf.  Getter is optional.
+ */
+struct CfOps {
+	bool (*setter)(struct CfValue *cv, const char *value);
+	const char *(*getter)(struct CfValue *cv);
+	const void *op_extra;
+};
 
 /**
  * Parameter description
@@ -66,8 +89,8 @@ typedef bool (*cf_setter_f)(void *dst_p, const char *value);
 struct CfKey {
 	/** Parameter name */
 	const char *key_name;
-	/** Setter function, called wit absolute pointer */
-	cf_setter_f set_fn;
+	/** Type-specific functions, called with absolute pointer */
+	struct CfOps op;
 	/** Flags: CF_VAL_ABS, CF_VAL_REL */
 	int flags;
 	/** Absolute or relative offset */
@@ -76,77 +99,131 @@ struct CfKey {
 	const char *def_value;
 };
 
-/** The pointer is relative to base */
-#define CF_VAL_REL 1
-/** The pointer is absolute */
-#define CF_VAL_ABS 2
-
 /**
  * Section description
  */
 struct CfSect {
 	/** Section name */
 	const char *sect_name;
-	/** Section creation function (optional) */
-	cf_create_target_f create_target_fn;
+
 	/** Key list */
 	const struct CfKey *key_list;
+
+	/** Get base pointer to dynamic sections (optional) */
+	void *(*base_lookup)(void *top_base, const char *sect_name);
+
+	/** Set dynamic keys (optional) */
+	bool (*set_key)(void *base, const char *key, const char *val);
+
+	/** Get dynamic keys (optional) */
+	const char *(*get_key)(void *base, const char *key, char *buf, int buflen);
 };
 
-/** Setter for string */
-bool cf_set_str(void *dst, const char *value);
-/** Setter for filename */
-bool cf_set_filename(void *dst, const char *value);
-/** Setter for int */
-bool cf_set_int(void *dst, const char *value);
-/** Setter for time-usec */
-bool cf_set_time_usec(void *dst, const char *value);
-/** Setter for time-double */
-bool cf_set_time_double(void *dst, const char *value);
-
-/* before using them do: #define CF_REL_BASE struct Foo */
-/* later: #undef CF_REL_BASE */
-
-/** Integer with offset relative to struct referenced in CF_REL_BASE */
-#define CF_REL_INT(x) cf_set_int, CF_VAL_REL, offsetof(CF_REL_BASE, x)
-
-/** String with offset relative to struct referenced in CF_REL_BASE */
-#define CF_REL_STR(x) cf_set_str, CF_VAL_REL, offsetof(CF_REL_BASE, x)
-
-/** Filename with offset relative to struct referenced in CF_REL_BASE */
-#define CF_REL_FILENAME(x) cf_set_filename, CF_VAL_REL, offsetof(CF_REL_BASE, x)
-
-/** Integer offset relative to struct referenced in CF_REL_BASE */
-#define CF_REL_BOOL(x) cf_set_int, CF_VAL_REL, offsetof(CF_REL_BASE, x)
-
-/** Integer offset relative to struct referenced in CF_REL_BASE */
-#define CF_REL_TIME_USEC(x) cf_set_time_usec, CF_VAL_REL, offsetof(CF_REL_BASE, x)
-
-/** Integer offset relative to struct referenced in CF_REL_BASE */
-#define CF_REL_TIME_DOUBLE(x) cf_set_time_double, CF_VAL_REL, offsetof(CF_REL_BASE, x)
-
-/** Integer with absolute pointer */
-#define CF_ABS_INT(x) cf_set_int, CF_VAL_ABS, (uintptr_t)&(x)
-
-/** String with absolute pointer */
-#define CF_ABS_STR(x) cf_set_str, CF_VAL_ABS, (uintptr_t)&(x)
-
-/** Filename with absolute pointer */
-#define CF_ABS_FILENAME(x) cf_set_filename, CF_VAL_ABS, (uintptr_t)&(x)
-
-/** Bool with absolute pointer */
-#define CF_ABS_BOOL(x) cf_set_int, CF_VAL_ABS, (uintptr_t)&(x)
-
-/** Time in seconds stored in usec_t */
-#define CF_ABS_TIME_USEC(x) cf_set_time_usec, CF_VAL_ABS, (uintptr_t)&(x)
-
-/** Time in second as double */
-#define CF_ABS_TIME_DOUBLE(x) cf_set_time_double, CF_VAL_ABS, (uintptr_t)&(x)
+/**
+ * Top-level config information
+ */
+struct CfContext {
+	/** Section list */
+	const struct CfSect *sect_list;
+	/** Top-level base pointer, needed for relative addressing */
+	void *base;
+	/** If set, then CF_NO_RELOAD keys cannot be changed anymore */
+	bool loaded;
+};
 
 /**
- * Main entry point
+ * @name Type-specific helpers
+ * @{
  */
-bool load_ini_file(const char *fn, const struct CfSect *sect_list, void *top_arg) _MUSTCHECK;
+
+/** Setter for string */
+bool cf_set_str(struct CfValue *cv, const char *value);
+/** Setter for filename */
+bool cf_set_filename(struct CfValue *cv, const char *value);
+/** Setter for int */
+bool cf_set_int(struct CfValue *cv, const char *value);
+/** Setter for time-usec */
+bool cf_set_time_usec(struct CfValue *cv, const char *value);
+/** Setter for time-double */
+bool cf_set_time_double(struct CfValue *cv, const char *value);
+/** Setter for lookup */
+bool cf_set_lookup(struct CfValue *cv, const char *value);
+
+/** Getter for string */
+const char *cf_get_str(struct CfValue *cv);
+/** Getter for int */
+const char *cf_get_int(struct CfValue *cv);
+/** Getter for time-usec */
+const char *cf_get_time_usec(struct CfValue *cv);
+/** Getter for time-double */
+const char *cf_get_time_double(struct CfValue *cv);
+/** Getter for int lookup */
+const char *cf_get_lookup(struct CfValue *cv);
+
+/** @} */
+
+/**
+ * @name Shortcut CfOps for well-known types
+ * @{
+ */
+
+/** Ops for string */
+#define CF_STR	{ cf_set_str, cf_get_str }
+/** Ops for filename */
+#define CF_FILE	{ cf_set_filename, cf_get_str }
+/** Ops for integer */
+#define CF_INT	{ cf_set_int, cf_get_int }
+/** Ops for boolean */
+#define CF_BOOL	{ cf_set_int, cf_get_int }
+/** Ops for time as usec */
+#define CF_TIME_USEC	{ cf_set_time_usec, cf_get_time_usec }
+/** Ops for time as double */
+#define CF_TIME_DOUBLE	{ cf_set_time_double, cf_get_time_double }
+/** Ops for lookup, takes table as argument */
+#define CF_LOOKUP(t)	{ cf_set_lookup, cf_get_lookup, t }
+
+/** @} */
+
+/**
+ * Lookup entry for CF_LOOKUP table.
+ */
+struct CfLookup {
+	const char *name;
+	int value;
+};
+
+/**
+ * Helper to describe CfKey with absolute addressing
+ */
+#define CF_ABS(name, ops, var, flags, def) \
+	{ name, ops, flags | CF_VAL_ABS, (uintptr_t)&(var), def }
+
+/**
+ * Helper to describe CfKey with relative addressing.
+ *
+ * Before using it do: #define CF_REL_BASE struct Foo
+ *
+ * The var should be field in that struct.
+ *
+ * Later: #undef CF_REL_BASE
+ */
+#define CF_REL(name, ops, var, flags, def) \
+	{ name, ops, flags | CF_VAL_REL, offsetof(CF_REL_BASE, var), def }
+
+/**
+ * Load config from file.
+ */
+bool cf_load_file(const struct CfContext *cf, const char *fn) _MUSTCHECK;
+
+/**
+ * Get single value.
+ */
+const char *cf_get(const struct CfContext *cf, const char *sect, const char *var, char *buf, int buflen);
+
+/**
+ * Set single value.
+ */
+bool cf_set(const struct CfContext *cf, const char *sect, const char *var, const char *val);
 
 /* @} */
 

@@ -17,6 +17,7 @@ struct testgroup_t groups[] = {
 	{ "pgutil/", pgutil_tests },
 	{ "regex/", regex_tests },
 	{ "netdb/", netdb_tests },
+	{ "cfparser/", cfparser_tests },
 	END_OF_GROUPS
 };
 

@@ -9,10 +9,12 @@ override CPPFLAGS = -I. -I..
 override USUAL_DIR = ..
 
 override DEFS = -DUSUAL_TEST_CONFIG
-OBJS = test_string.o test_crypto.o test_aatree.o test_heap.o \
-       test_common.o test_list.o tinytest.o test_cbtree.o \
-       test_utf8.o test_strpool.o test_pgutil.o test_regex.o \
-       test_cxalloc.o test_bits.o test_base.o test_netdb.o
+SRCS = test_string.c test_crypto.c test_aatree.c test_heap.c \
+       test_common.c test_list.c tinytest.c test_cbtree.c \
+       test_utf8.c test_strpool.c test_pgutil.c test_regex.c \
+       test_cxalloc.c test_bits.c test_base.c test_netdb.c \
+       test_cfparser.c
+OBJS = $(SRCS:.c=.o)
 
 test-all: regtest.compat
 
@@ -41,14 +43,14 @@ clean-test:
 config.mak: ../config.mak
 	cp ../config.mak .
 
-regtest.compat: ../usual/config.h force_compat.sed
+regtest.compat: ../usual/config.h force_compat.sed $(SRCS)
 	sed -f force_compat.sed $< > test_config.h
 	make regtest
 	mv regtest regtest.compat
 	mv libusual.a libusual_compat.a
 	rm test_config.h
 
-regtest.system: ../usual/config.h
+regtest.system: ../usual/config.h $(SRCS)
 	cp $< test_config.h
 	make regtest
 	mv regtest regtest.system

@@ -22,4 +22,5 @@ extern struct testcase_t cxalloc_tests[];
 extern struct testcase_t bits_tests[];
 extern struct testcase_t base_tests[];
 extern struct testcase_t netdb_tests[];
+extern struct testcase_t cfparser_tests[];
 
