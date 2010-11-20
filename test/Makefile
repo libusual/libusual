@@ -1,40 +1,55 @@
 
 
-#vpath %.mak ..
-#vpath %.mk ..
-#vpath %.c ..
-#vpath %.h ..
-
-override CPPFLAGS = -I. -I..
-override USUAL_DIR = ..
-
-override DEFS = -DUSUAL_TEST_CONFIG
 SRCS = test_string.c test_crypto.c test_aatree.c test_heap.c \
        test_common.c test_list.c tinytest.c test_cbtree.c \
        test_utf8.c test_strpool.c test_pgutil.c test_regex.c \
        test_cxalloc.c test_bits.c test_base.c test_netdb.c \
        test_cfparser.c
-OBJS = $(SRCS:.c=.o)
+OBJS = $(addprefix obj/, $(SRCS:.c=.o))
+HDRS = test_common.h test_config.h tinytest.h tinytest_macros.h
+LIBS =
 
-test-all: regtest.compat
+USUAL_DIR = ..
+USUAL_OBJDIR = obj
+USUAL_LOCAL_SRCS = $(SRCS) $(HDRS)
+include $(USUAL_DIR)/Setup.mk
+include ../config.mak
 
-include ../Makefile
+DEFS += -DUSUAL_TEST_CONFIG
+CPPFLAGS += -I.. -I.
 
-hdrs += test_config.h
+hdrs = $(HDRS) $(USUAL_HDRS)
+objs = $(OBJS) $(USUAL_OBJS)
 
-%.o: %.c $(hdrs)
-	@mkdir -p $(USUAL_OBJDIR)
+.SUFFIXES:
+
+# Quiet by default, 'make V=1' shows commands
+V=0
+ifeq ($(V), 0)
+Q = @
+E = @echo
+else
+Q = 
+E = @true
+endif
+
+all: regtest
+
+obj/%.o: %.c $(hdrs)
+	@mkdir -p obj
 	$(E) "	CC" $<
-	$(Q) $(CC) -c -o $@ $(DEFS) $(CPPFLAGS) $(CFLAGS) $<
+	$(Q) $(CC) -c -o $@ $< $(DEFS) $(CFLAGS) $(CPPFLAGS) $(WFLAGS)
 
+obj/%.o: $(USUAL_DIR)/usual/%.c $(hdrs)
+	@mkdir -p obj
+	$(E) "	CC" $<
+	$(Q) $(CC) -c -o $@ $< $(DEFS) $(CFLAGS) $(CPPFLAGS) $(WFLAGS)
 
-regtest: libusual.a $(OBJS)
+regtest: $(objs)
 	$(E) "	LD" $@
-	$(Q) $(CC) -o $@ $(OBJS) -L. -lusual
+	$(Q) $(CC) -o $@ $(objs) $(LIBS)
 
-clean: clean-test
-
-clean-test:
+clean:
 	rm -f libusual.a obj/* *.o regtest
 	rm -f config.test usual/config.h test_config.h
 	rm -f regtest.compat regtest.system
@@ -43,21 +58,18 @@ clean-test:
 config.mak: ../config.mak
 	cp ../config.mak .
 
-regtest.compat: ../usual/config.h force_compat.sed $(SRCS)
-	sed -f force_compat.sed $< > test_config.h
-	make regtest
-	mv regtest regtest.compat
-	mv libusual.a libusual_compat.a
-	rm test_config.h
+test_config.h: ../usual/config.h force_compat.sed
+	$(E) "	GEN-COMPAT" $<
+	$(Q) sed -f force_compat.sed $< > test_config.h
 
-regtest.system: ../usual/config.h $(SRCS)
-	cp $< test_config.h
-	make regtest
-	mv regtest regtest.system
-	mv libusual.a libusual_system.a
-	rm test_config.h
+sys: ../usual/config.h
+	rm -f test_config.h
+	cp ../usual/config.h test_config.h
+	make
 
-test: regtest.compat regtest.system
-	./regtest.compat
-	./regtest.system
+test: regtest
+	./regtest
+
+vcheck: regtest
+	valgrind --leak-check=full ./regtest
 

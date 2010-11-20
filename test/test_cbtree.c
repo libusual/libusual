@@ -1,7 +1,8 @@
 
-#include "test_common.h"
+#include <usual/cbtree.h>
 
-#include <usual/cbtree.c>
+#include <usual/string.h>
+#include "test_common.h"
 
 static char *OK = "OK";
 
@@ -26,9 +27,10 @@ static struct MyNode *make_node(int value)
 	return node;
 }
 
-static void my_node_free(struct MyNode *node)
+static bool my_node_free(void *ctx, void *obj)
 {
-	free(node);
+	free(obj);
+	return true;
 }
 
 /*
@@ -68,7 +70,6 @@ static const char *my_remove(struct CBTree *tree, int value)
 	cbtree_delete(tree, buf, strlen(buf));
 	if (cbtree_lookup(tree, buf, strlen(buf)) != NULL)
 		return "still found";
-	my_node_free(my);
 	return OK;
 }
 
@@ -81,7 +82,7 @@ static void test_cbtree_basic(void *p)
 	struct CBTree *tree;
 	int i;
 
-	tree = cbtree_create(my_getkey, NULL, NULL, USUAL_ALLOC);
+	tree = cbtree_create(my_getkey, my_node_free, NULL, USUAL_ALLOC);
 
 	str_check(my_search(tree, 1), "not found");
 
@@ -138,7 +139,7 @@ static void test_cbtree_random(void *p)
 	srandom(123123);
 	memset(is_added, 0, sizeof(is_added));
 
-	tree = cbtree_create(my_getkey, NULL, NULL, USUAL_ALLOC);
+	tree = cbtree_create(my_getkey, my_node_free, NULL, USUAL_ALLOC);
 
 	while (total < 100000) {
 		int r = random() & 15;

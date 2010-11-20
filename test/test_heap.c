@@ -1,3 +1,4 @@
+
 #include <usual/heap.h>
 
 #include <stdio.h>
@@ -6,8 +7,6 @@
 #include <string.h>
 
 #include "test_common.h"
-
-#include <usual/heap.c>
 
 struct MyNode {
 	int value;
@@ -37,6 +36,17 @@ static struct MyNode *make_node(int v)
 	return n;
 }
 
+static unsigned _heap_get_child(unsigned i, unsigned child_nr)
+{
+	return 2*i + 1 + child_nr;
+}
+
+static bool _heap_is_better(struct Heap *h, unsigned i1, unsigned i2)
+{
+	return heap_is_better(heap_get_obj(h, i1), heap_get_obj(h, i2));
+}
+
+
 /*
  * Test tree sanity
  */
@@ -54,17 +64,18 @@ static const char *check_sub(struct Heap *heap, unsigned idx, int i)
 	unsigned c1 = _heap_get_child(idx, 1);
 	struct MyNode *n;
 	const char *res;
+	unsigned used = heap_size(heap);
 
-	if (idx >= heap->used)
+	if (idx >= used)
 		return OK;
 
-	n = heap->data[idx];
+	n = heap_get_obj(heap, idx);
 	if (n->heap_idx != idx)
 		return mkerr("wrong saved idx", idx, i);
 
-	if (c0 < heap->used && _heap_is_better(heap, c0, idx))
+	if (c0 < used && _heap_is_better(heap, c0, idx))
 		return mkerr("c0 wrong order", idx, i);
-	if (c1 < heap->used && _heap_is_better(heap, c1, idx))
+	if (c1 < used && _heap_is_better(heap, c1, idx))
 		return mkerr("c1 wrong order", idx, i);
 
 	res = check_sub(heap, c0, i);
@@ -90,21 +101,21 @@ static const char *my_insert(struct Heap *heap, int value)
 	return check(heap, value);
 }
 
-static const char *my_remove(struct Heap *heap, unsigned idx)
+static const char *my_remove(struct Heap *h, unsigned idx)
 {
 	struct MyNode *n;
-	if (idx >= heap->used)
+	if (idx >= heap_size(h))
 		return "NEXIST";
-	n = heap->data[idx];
-	heap_remove(heap, idx);
+	n = heap_get_obj(h, idx);
+	heap_remove(h, idx);
 	free(n);
-	return check(heap, 0);
+	return check(h, 0);
 }
 
 static const char *my_clean(struct Heap *heap)
 {
 	const char *res;
-	while (heap->used > 0) {
+	while (heap_size(heap) > 0) {
 		res = my_remove(heap, 0);
 		if (res != OK)
 			return res;

@@ -102,10 +102,10 @@ end:;
 
 static const char *run_basename(const char *path)
 {
-	char buf[128];
+	static char buf[128];
 	const char *res;
 	if (!path)
-		return basename(path);
+		return basename(NULL);
 	strlcpy(buf, path, sizeof(buf));
 	res = basename(buf);
 	if (strcmp(buf, path) != 0)
@@ -132,10 +132,10 @@ end:;
 
 static const char *run_dirname(const char *path)
 {
-	char buf[128];
+	static char buf[128];
 	const char *res;
 	if (!path)
-		return dirname(path);
+		return dirname(NULL);
 	strlcpy(buf, path, sizeof(buf));
 	res = dirname(buf);
 	if (strcmp(buf, path) != 0)
