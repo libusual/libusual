@@ -198,3 +198,15 @@ void *heap_pop(struct Heap *h)
 	return heap_remove(h, 0);
 }
 
+unsigned heap_size(struct Heap *h)
+{
+	return h->used;
+}
+
+void *heap_get_obj(struct Heap *h, unsigned pos)
+{
+	if (pos < h->used)
+		return h->data[pos];
+	return NULL;
+}
+

@@ -92,5 +92,12 @@ void *heap_remove(struct Heap *h, unsigned pos);
  */
 bool heap_reserve(struct Heap *h, unsigned extra);
 
+
+/** Return number of objects in heap */
+unsigned heap_size(struct Heap *h);
+
+/* Return object by index, for testing */
+void *heap_get_obj(struct Heap *h, unsigned pos);
+
 #endif
 
