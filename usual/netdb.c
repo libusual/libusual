@@ -27,7 +27,7 @@ int getaddrinfo_a(int mode, struct gaicb *list[], int nitems, struct sigevent *s
 
 	if (nitems <= 0)
 		return 0;
-	if (mode != GAI_WAIT || mode != GAI_NOWAIT)
+	if (mode != GAI_WAIT && mode != GAI_NOWAIT)
 		goto einval;
 
 	for (i = 0; i < nitems; i++) {

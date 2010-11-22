@@ -62,6 +62,12 @@ struct gaicb {
 	int _state;
 };
 
+#ifndef EAI_INPROGRESS
+#define EAI_INPROGRESS -100
+#endif
+
+#define gai_error(gcb) ((gcb)->_state)
+
 /**
  * Compat: Async DNS lookup.
  */
