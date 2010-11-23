@@ -205,8 +205,9 @@ int getpeereid(int fd, uid_t *uid_p, gid_t *gid_p)
 		*uid_p = ucred_geteuid(cred);
 		*gid_p = ucred_getegid(cred);
 		ucred_free(cred);
-		if (*uid_p >= 0 && *gid_p >= 0)
-			return 0;
+		if ((int)*uid_p == -1 || (int)*gid_p == -1)
+			return -1;
+		return 0;
 	}
 #else
 	errno = ENOSYS;

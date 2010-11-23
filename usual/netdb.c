@@ -42,7 +42,7 @@ int getaddrinfo_a(int mode, struct gaicb *list[], int nitems, struct sigevent *s
 	if (sevp->sigev_notify == SIGEV_SIGNAL) {
 		raise(sevp->sigev_signo);
 	} else if (sevp->sigev_notify == SIGEV_THREAD) {
-		sigval_t sv;
+		union sigval sv;
 		sevp->sigev_notify_function(sv);
 	} else
 		goto einval;

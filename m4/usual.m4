@@ -83,7 +83,7 @@ if test x"$GCC" = xyes; then
 
   # avoid -Wextra if missing-field.initializers does not work
   echo "$warnings" | grep missing-field-initializers > /dev/null \
-  || warnings=`echo "$warnings"|sed 's/-Wextra//'`
+  || WFLAGS=`echo "$WFLAGS"|sed 's/ -Wextra//'`
 
   CFLAGS="$good_CFLAGS"
   AC_MSG_RESULT([done])

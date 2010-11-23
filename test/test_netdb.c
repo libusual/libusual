@@ -8,7 +8,7 @@
 
 static int gotres;
 
-static void cb_func(sigval_t v)
+static void cb_func(union sigval v)
 {
 	gotres++;
 }
