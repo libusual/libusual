@@ -26,7 +26,9 @@
 
 #include <usual/signal.h>
 
+#ifdef HAVE_NETDB_H
 #include <netdb.h>
+#endif
 
 #ifndef HAVE_GETADDRINFO_A
 
@@ -64,6 +66,10 @@ struct gaicb {
 
 #ifndef EAI_INPROGRESS
 #define EAI_INPROGRESS -100
+#endif
+
+#ifndef EAI_SYSTEM
+#define EAI_SYSTEM -10
 #endif
 
 #define gai_error(gcb) ((gcb)->_state)

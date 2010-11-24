@@ -58,11 +58,30 @@ static inline int getrlimit(int res, struct rlimit *dst)
 struct passwd {
 	char *pw_name;
 	char *pw_passwd;
-	int pw_uid;
-	int pw_gid;
+	uid_t pw_uid;
+	pid_t pw_gid;
+	char *pw_gecos;
+	char *pw_dir;
+	char *pw_shell;
 };
-static inline const struct passwd * getpwnam(const char *u) { return NULL; }
+static inline struct passwd *getpwnam(const char *u) { return NULL; }
+static inline struct passwd *getpwuid(uid_t uid) { return NULL; }
 
+
+/* sigevent structures */
+union sigval {
+	int sival_int;
+	void *sival_ptr;
+};
+struct sigevent {
+	int sigev_notify;
+	int sigev_signo;
+	union sigval sigev_value;
+	void (*sigev_notify_function)(union sigval);
+};
+#define SIGEV_NONE 0
+#define SIGEV_SIGNAL 1
+#define SIGEV_THREAD 2
 
 /*
  * Minimal dlopen, dlsym, dlclose, dlerror compat.

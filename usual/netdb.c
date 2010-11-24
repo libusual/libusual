@@ -18,6 +18,8 @@
 
 #include <usual/netdb.h>
 
+#include <usual/socket.h>
+
 #ifndef HAVE_GETADDRINFO_A
 
 int getaddrinfo_a(int mode, struct gaicb *list[], int nitems, struct sigevent *sevp)

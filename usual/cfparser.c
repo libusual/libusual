@@ -20,7 +20,10 @@
 
 #include <ctype.h>
 #include <string.h>
+
+#ifdef HAVE_PWD_H
 #include <pwd.h>
+#endif
 
 #include <usual/fileutil.h>
 #include <usual/logging.h>
