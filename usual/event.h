@@ -153,6 +153,9 @@ int event_loopexit(struct timeval *timeout);
 int event_base_loopexit(struct event_base *base, struct timeval *timeout);
 int event_base_set(struct event_base *base, struct event *ev);
 
+const char *event_get_version(void);
+const char *event_get_method(void);
+
 /* pointless compat */
 #define event_dispatch() event_loop(0)
 #define event_base_dispatch(base) event_base_loop(base, 0)

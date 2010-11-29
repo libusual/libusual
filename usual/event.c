@@ -774,4 +774,18 @@ int event_base_loopexit(struct event_base *base, struct timeval *timeout)
 	return event_base_once(base, -1, 0, loopexit_handler, base, timeout);
 }
 
+/*
+ * Info
+ */
+
+const char *event_get_version(void)
+{
+	return "usual/event";
+}
+
+const char *event_get_method(void)
+{
+	return "poll";
+}
+
 #endif /* !HAVE_LIBEVENT */
