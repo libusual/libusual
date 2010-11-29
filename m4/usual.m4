@@ -207,6 +207,17 @@ AC_SUBST(enable_debug)
 dnl
 dnl  AC_USUAL_LIBEVENT:  --with-libevent
 dnl
+dnl  AC_USUAL_LIBEVENT - prefer-yes:
+dnl     default   - search for libevent, error if not found
+dnl     --with    - search for libevent, error if not found
+dnl     --without - use libusual
+dnl
+dnl  AC_USUAL_LIBEVENT_OPT - prefer-no:
+dnl     default   - use libusual
+dnl     --with    - search for libevent, error if not found
+dnl     --without - use libusual
+dnl
+AC_DEFUN([AC_USUAL_LIBEVENT_OPT], [AC_USUAL_LIBEVENT(1)])
 AC_DEFUN([AC_USUAL_LIBEVENT], [
 ifelse([$#], [0], [levent=yes], [levent=no])
 AC_MSG_CHECKING([for libevent])
