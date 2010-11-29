@@ -179,7 +179,7 @@ void daemonize(const char *pidfile, bool go_background)
 	if (!go_background)
 		return;
 
-	if (!cf_logfile && !cf_syslog_ident)
+	if ((!cf_logfile || !cf_logfile[0]) && !cf_syslog)
 		fatal("daemon needs logging configured");
 
 	/* send stdin, stdout, stderr to /dev/null */
