@@ -142,9 +142,11 @@ int event_base_loopbreak(struct event_base *base);
 
 #define evtimer_set(ev, cb, arg) event_set(ev, -1, 0, cb, arg)
 #define evtimer_add(ev, tv) event_add(ev, tv)
+#define evtimer_del(ev) event_del(ev)
 
 #define signal_set(ev, sig, cb, arg) event_set(ev, sig, EV_SIGNAL | EV_PERSIST, cb, arg)
 #define signal_add(ev, tv) event_add(ev, tv)
+#define signal_del(ev) event_del(ev)
 
 /* random compat */
 int event_once(int fd, short flags, uevent_cb_f cb_func, void *cb_arg, struct timeval *timeout);
