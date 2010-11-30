@@ -283,9 +283,9 @@ static bool fill_defaults(struct LoaderCtx *ctx)
 		return true;
 
 	for (k = s->key_list; k->key_name; k++) {
-		if (!k->def_value || k->flags & CF_READONLY)
+		if (!k->def_value || (k->flags & CF_READONLY))
 			continue;
-		if (k->flags & CF_NO_RELOAD && ctx->cf->loaded)
+		if ((k->flags & CF_NO_RELOAD) && ctx->cf->loaded)
 			continue;
 		if (!cf_set(ctx->cf, ctx->cur_sect, k->key_name, k->def_value))
 			goto fail;
