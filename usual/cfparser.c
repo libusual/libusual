@@ -229,8 +229,10 @@ bool cf_set(const struct CfContext *cf, const char *sect, const char *key, const
 
 	/* find section */
 	s = find_sect(cf, sect);
-	if (!s)
+	if (!s) {
+		log_error("Unknown section: %s", sect);
 		return false;
+	}
 
 	/* find section base */
 	base = cf->base;
@@ -243,15 +245,23 @@ bool cf_set(const struct CfContext *cf, const char *sect, const char *key, const
 
 	/* set fixed key */
 	k = find_key(s, key);
-	if (!k || !k->op.setter)
+	if (!k) {
+		log_error("Unknown parameter: %s/%s", sect, key);
 		return false;
-	if (k->flags & CF_READONLY)
-		return false;
-	if ((k->flags & CF_NO_RELOAD) && cf->loaded)
-		return false;
+	}
+	if (!k->op.setter || (k->flags & CF_READONLY)) {
+		/* silently ignore */
+		return true;
+	}
+	if ((k->flags & CF_NO_RELOAD) && cf->loaded) {
+		/* silently ignore */
+		return true;
+	}
 	p = get_dest(base, k);
-	if (!p)
+	if (!p) {
+		log_error("Bug - no base for relative key: %s/%s", sect, key);
 		return false;
+	}
 	cv.key_name = k->key_name;
 	cv.extra = k->op.op_extra;
 	cv.value_p = p;
