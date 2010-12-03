@@ -1,0 +1,5 @@
+configure
+usual/config.h*
+config.status
+config.log
+config.mak
