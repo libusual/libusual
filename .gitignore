@@ -3,3 +3,9 @@ usual/config.h*
 config.status
 config.log
 config.mak
+obj
+test/obj
+test/test_config.h
+test/regtest
+doc/html
+*.[oas]
