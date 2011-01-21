@@ -278,8 +278,9 @@ static bool fdbuf_resize(struct fd_buf *buf, int fd)
 	int alloc = sizeof(fd_set);
 
 #ifdef WIN32
+	int cnt = buf->set ? buf->set->fd_count : 0;
 	/* win32 fd_set is array of handles, +8 for count&padding */
-	need_bytes = (buf->set->fd_count + 1) * sizeof(buf->set->fd_array[0]) + 8;
+	need_bytes = (cnt + 1) * sizeof(buf->set->fd_array[0]) + 8;
 #else
 	/* otherwise, fd_set is bitmap, +8 for int/long alignment */
 	need_bytes = fd / 8 + 8;
