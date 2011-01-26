@@ -117,6 +117,9 @@ struct CfSect {
 
 	/** Get dynamic keys (optional) */
 	const char *(*get_key)(void *base, const char *key, char *buf, int buflen);
+
+	/** New section callback (optional) */
+	bool (*section_start)(void *top_base, const char *sect_name);
 };
 
 /**
