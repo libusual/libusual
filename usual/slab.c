@@ -98,7 +98,7 @@ struct Slab *slab_create(const char *name, unsigned obj_size, unsigned align,
 	struct Slab *slab;
 
 	/* new slab object */
-	slab = cx_alloc(cx, sizeof(*slab));
+	slab = cx_alloc0(cx, sizeof(*slab));
 	if (slab)
 		init_slab(slab, name, obj_size, align, init_func, cx);
 	return slab;
@@ -137,7 +137,7 @@ static void grow(struct Slab *slab)
 	size = count * slab->final_size;
 
 	/* allocate & init */
-	frag = cx_alloc(slab->cx, size + sizeof(struct SlabFrag));
+	frag = cx_alloc0(slab->cx, size + sizeof(struct SlabFrag));
 	if (!frag)
 		return;
 	list_init(&frag->head);
