@@ -57,6 +57,10 @@ int cf_syslog = 0;
 const char *cf_syslog_ident = NULL;
 const char *cf_syslog_facility = NULL;
 
+enum LogLevel cf_syslog_level = LG_INFO;
+enum LogLevel cf_logfile_level = LG_NOISE;
+enum LogLevel cf_stderr_level = LG_NOISE;
+
 /* optional function to fill prefix */
 logging_prefix_fn_t logging_prefix_cb;
 
@@ -69,12 +73,13 @@ struct LevelInfo {
 };
 
 static const struct LevelInfo log_level_list[] = {
-	{ "FATAL", LOG_CRIT },
-	{ "ERROR", LOG_ERR },
-	{ "WARNING", LOG_WARNING },
-	{ "LOG", LOG_INFO },
-	{ "DEBUG", LOG_DEBUG },
-	{ "NOISE", LOG_DEBUG },
+	{ "FATAL", LOG_CRIT },	/* LG_FATAL */
+	{ "ERROR", LOG_ERR },	/* LG_ERROR */
+	{ "WARNING", LOG_WARNING },/* LG_WARNING */
+	{ "LOG", LOG_INFO },	/* LG_STATS*/
+	{ "LOG", LOG_INFO },	/* LG_INFO */
+	{ "DEBUG", LOG_DEBUG },	/* LG_DEBUG */
+	{ "NOISE", LOG_DEBUG },	/* LG_NOISE */
 };
 
 struct FacName { const char *name; int code; };
@@ -194,13 +199,13 @@ void log_generic(enum LogLevel level, void *ctx, const char *fmt, ...)
 		}
 	}
 
-	if (!cf_quiet)
+	if (!cf_quiet && level <= cf_stderr_level)
 		fprintf(stderr, "%s %u %s %s\n", timebuf, pid, lev->tag, msg);
 
-	if (log_file)
+	if (log_file && level <= cf_logfile_level)
 		fprintf(log_file, "%s %u %s %s\n", timebuf, pid, lev->tag, msg);
 
-	if (cf_syslog) {
+	if (cf_syslog && level <= cf_syslog_level) {
 		if (!syslog_started)
 			start_syslog();
 		syslog(lev->syslog_prio, "%s", msg);

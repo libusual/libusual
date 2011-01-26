@@ -48,9 +48,10 @@ enum LogLevel {
 	LG_FATAL = 0,
 	LG_ERROR = 1,
 	LG_WARNING = 2,
-	LG_INFO = 3,
-	LG_DEBUG = 4,
-	LG_NOISE = 5,
+	LG_STATS = 3,
+	LG_INFO = 4,
+	LG_DEBUG = 5,
+	LG_NOISE = 6,
 };
 #ifndef LOG_CONTEXT_DEF
 /** Example: Prepare dummy context pointer */
@@ -101,6 +102,13 @@ extern const char *cf_syslog_ident;
 /** Facility name */
 extern const char *cf_syslog_facility;
 
+/** Max log level for syslog writer */
+extern enum LogLevel cf_syslog_level;
+/** Max log level for logfile writer */
+extern enum LogLevel cf_logfile_level;
+/** Max log level for stderr writer */
+extern enum LogLevel cf_stderr_level;
+
 /*
  * Internal API.
  */
@@ -124,6 +132,11 @@ void log_fatal(const char *file, int line, const char *func, bool show_perror,
 /** Log warning message */
 #define log_warning(fmt, args...) do { LOG_CONTEXT_DEF; \
 		log_generic(LG_WARNING, LOG_CONTEXT, fmt, ## args); \
+	} while (0)
+
+/** Log stats (liveness) message */
+#define log_stats(fmt, args...) do { LOG_CONTEXT_DEF; \
+		log_generic(LG_STATS, LOG_CONTEXT, fmt, ## args); \
 	} while (0)
 
 /** Log info message */

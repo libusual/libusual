@@ -47,6 +47,7 @@ int main(void)
 		log_debug("test");
 	if (!parse_ini_file("foo", NULL, NULL))
 		log_debug("test");
+	log_stats("1");
 	file_size("foo");
 	md5_reset(&md5);
 	strlcpy(buf, "foo", sizeof(buf));
