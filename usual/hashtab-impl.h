@@ -68,7 +68,7 @@ typedef bool (*hash_cmp_fn)(const htab_val_t curval, const void *arg);
 #endif
 
 #define MASK(h) ((h)->size - 1)
-#define CALC_POS(h, key) (key & MASK(h))
+#define CALC_POS(h, key) ((key) & MASK(h))
 #define NEXT_POS(h, pos) (((pos) * 5 + 1) & MASK(h))
 #define MAX_USED(h) ((h)->size * HTAB_MAX_FILL / 100)
 
@@ -87,7 +87,7 @@ static struct HashTab *hashtab_create(unsigned size, hash_cmp_fn cmp_fn, CxMem *
 {
 	struct HashTab *h;
 	unsigned len = size * sizeof(struct HashItem) + offsetof(struct HashTab, tab);
-	h = cx_alloc(ca, len);
+	h = cx_alloc0(ca, len);
 	if (h) {
 		h->size = size;
 		h->cmp_fn = cmp_fn;
