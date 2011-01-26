@@ -289,6 +289,11 @@ static bool fill_defaults(struct LoaderCtx *ctx)
 	if (!s)
 		goto fail;
 
+	if (s->section_start) {
+		if (!s->section_start(ctx->top_base, ctx->cur_sect))
+			return false;
+	}
+
 	if (s->set_key)
 		return true;
 

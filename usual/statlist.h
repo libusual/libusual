@@ -110,6 +110,12 @@ static inline struct List *statlist_first(const struct StatList *list)
 	return list_first(&list->head);
 }
 
+/** Return last element */
+static inline struct List *statlist_last(const struct StatList *list)
+{
+	return list_last(&list->head);
+}
+
 /** Is list empty */
 static inline bool statlist_empty(const struct StatList *list)
 {
