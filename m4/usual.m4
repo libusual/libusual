@@ -152,6 +152,27 @@ AC_CHECK_FUNCS(syslog mmap recvmsg sendmsg getpeerucred)
 ### win32: link with ws2_32
 AC_SEARCH_LIBS(WSAGetLastError, ws2_32)
 AC_FUNC_STRERROR_R
+###
+AC_MSG_CHECKING([for integer enc/dec functions])
+AC_LINK_IFELSE([
+  #include <sys/types.h>
+  #ifdef HAVE_SYS_ENDIAN_H
+  #include <sys/endian.h>
+  #endif
+  #ifdef HAVE_ENDIAN_H
+  #include <endian.h>
+  #endif
+  char p[[]] = "01234567";
+  int main(void) {
+    be16enc(p, 0); be32enc(p, 1); be64enc(p, 2);
+    le16enc(p, 2); le32enc(p, 3); le64enc(p, 4);
+    return (int)(be16dec(p) + be32dec(p) + be64dec(p)) +
+           (int)(le16dec(p) + le32dec(p) + le64dec(p));
+  } ],
+[ AC_MSG_RESULT([found])
+  AC_DEFINE([HAVE_ENCDEC_FUNCS], [1], [Define if *enc & *dec functions are available]) ],
+[AC_MSG_RESULT([not found])])
+
 ])
 
 dnl

@@ -158,6 +158,8 @@ static inline uint64_t _gen_bswap64(uint64_t x)
  * Read LE/BE values from memory.
  */
 
+#ifndef HAVE_ENCDEC_FUNCS
+
 #define _DEC(name, typ, decode) \
 static inline typ name(const void *p) { \
 	typ tmp; \
@@ -189,5 +191,7 @@ _ENC(le16enc, uint16_t, htole16)
 _ENC(le32enc, uint32_t, htole32)
 _ENC(le64enc, uint64_t, htole64)
 #undef _ENC
+
+#endif /* !HAVE_ENCDEC_FUNCS */
 
 #endif	/* _USUAL_ENDIAN_H_ */
