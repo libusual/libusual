@@ -9,6 +9,7 @@ struct testgroup_t groups[] = {
 	{ "cxalloc/", cxalloc_tests },
 	{ "cbtree/", cbtree_tests },
 	{ "crypto/", crypto_tests },
+	{ "endian/", endian_tests },
 	{ "string/", string_tests },
 	{ "heap/", heap_tests },
 	{ "list/", list_tests },
