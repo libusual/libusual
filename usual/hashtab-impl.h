@@ -181,7 +181,7 @@ static void hashtab_delete(struct HashTab *h, htab_key_t key, void *arg)
 
 	/* find right tab */
 	hd = container_of(vptr, struct HashItem, value);
-	while (h && ((hd < h->tab) && (hd >= h->tab + h->size)))
+	while (h && ((hd < h->tab) || (hd >= h->tab + h->size)))
 		h = h->next;
 
 	/* calculate index */
