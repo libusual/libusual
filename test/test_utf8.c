@@ -4,6 +4,7 @@
 #include "test_common.h"
 
 #include <stdarg.h>
+#include <string.h>
 
 static int uget1(int a)
 {
@@ -89,9 +90,53 @@ static void test_utf8_get_char(void *p)
 end:;
 }
 
+static const char *uput(unsigned c, int buflen)
+{
+	static char res[64];
+	unsigned char buf[8];
+	char *dst = (char *)buf;
+	char *dstend = (char *)buf + buflen;
+	unsigned len, i;
+	bool ok;
+
+	memset(buf, 11, sizeof(buf));
+	ok = utf8_put_char(c, &dst, dstend);
+	if (!ok)
+		return "FAILED";
+	len = dst - (char *)buf;
+	for (i = len; i < 8; i++) {
+		if (buf[i] != 11)
+			return "OVER";
+	}
+	snprintf(res, sizeof(res), "%02X %02X %02X %02X %02X %02X",
+		 buf[0], buf[1], buf[2], buf[3], buf[4], buf[5]);
+	if (len)
+		res[len*3 - 1] = 0;
+	else
+		res[0] = 0;
+	return res;
+}
+
 static void test_utf8_put_char(void *p)
 {
-	int_check(uget1(0), 0);
+	str_check(uput(0, 1), "00");
+	str_check(uput(0x7F, 1), "7F");
+	str_check(uput(0xA2, 2), "C2 A2");
+	str_check(uput(0x20AC, 3), "E2 82 AC");
+	str_check(uput(0x024B62, 4), "F0 A4 AD A2");
+	str_check(uput(0x80FFFFFF, 5), "");
+	str_check(uput(0xD801, 5), "");
+	str_check(uput(0xFEFF, 5), "EF BB BF");
+	str_check(uput(0xFFFE, 5), "EF BF BE");
+
+	str_check(uput(0, 0), "FAILED");
+	str_check(uput(0xA2, 1), "FAILED");
+	str_check(uput(0x20AC, 2), "FAILED");
+	str_check(uput(0x20AC, 1), "FAILED");
+	str_check(uput(0x024B62, 3), "FAILED");
+	str_check(uput(0x024B62, 2), "FAILED");
+	str_check(uput(0x024B62, 1), "FAILED");
+	str_check(uput(0x024B62, 0), "FAILED");
 end:;
 }
 
