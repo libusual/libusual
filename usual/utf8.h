@@ -45,10 +45,10 @@ int  utf8_get_char(const char **src_p, const char *srcend);
  * @param dstend  Pointer to end of buffer.
  * @return false if not room, true otherwise.
  */
-bool utf8_put_char(int c, char **dst_p, const char *dstend);
+bool utf8_put_char(unsigned int c, char **dst_p, const char *dstend);
 
 /** Return UTF8 seq length based on unicode codepoint */
-int utf8_char_size(int c);
+int utf8_char_size(unsigned int c);
 
 /** Return UTF8 seq length based on first byte */
 int utf8_seq_size(unsigned char c);

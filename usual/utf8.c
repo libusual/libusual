@@ -85,7 +85,7 @@ eos:
 }
 
 /* encode one char - skip invalid ones */
-bool utf8_put_char(int c, char **dst_p, const char *dstend)
+bool utf8_put_char(unsigned int c, char **dst_p, const char *dstend)
 {
 	char *dst = *dst_p;
 	if (c < 0x80) {
@@ -120,7 +120,7 @@ no_room:
 	return false;
 }
 
-int utf8_char_size(int c)
+int utf8_char_size(unsigned int c)
 {
 	if (c < 0x80) return 1;
 	if (c < 0x800) return 2;
