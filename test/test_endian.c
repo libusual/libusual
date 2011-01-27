@@ -78,7 +78,7 @@ static const char *tencode(int t, uint64_t val)
 		}
 	}
 
-	for (i = t; i < sizeof(buf); i++) {
+	for (i = t; i < (int)sizeof(buf); i++) {
 		if (buf[i] != 0xFC)
 			return "OVER";
 	}
