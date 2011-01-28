@@ -202,6 +202,7 @@ static void *urldec_str(CxMem *cx, const char **src_p, const char *end, unsigned
 			*d++ = *s++;
 		}
 	}
+	*d = 0;
 	*len_p = d - dst;
 	*src_p = s;
 	return dst;
@@ -216,17 +217,19 @@ bool mdict_urldecode(struct MDict *dict, const char *str, unsigned len)
 	const char *end = s + len;
 	const char *k, *v;
 	unsigned klen, vlen;
-	bool res = false;
+	struct MDictElem *el;
 
 	while (s < end) {
+		v = NULL;
+		vlen = 0;
+		el = NULL;
+
 		/* read key */
 		k = urldec_str(dict->cx, &s, end, &klen);
 		if (!k)
 			goto fail;
 
 		/* read value */
-		v = NULL;
-		vlen = 0;
 		if (s < end && *s == '=') {
 			s++;
 			v = urldec_str(dict->cx, &s, end, &vlen);
@@ -236,12 +239,28 @@ bool mdict_urldecode(struct MDict *dict, const char *str, unsigned len)
 		if (s < end && *s == '&')
 			s++;
 
-		if (!mdict_put_str(dict, k, klen, v, vlen))
-			goto fail;
+		/* insert value */
+		el = cbtree_lookup(dict->tree, k, klen);
+		if (el) {
+			mbuf_free(&el->val);
+			mbuf_init_fixed_reader(&el->val, v, vlen);
+		} else {
+			el = cx_alloc(dict->cx, sizeof(*el));
+			if (!el)
+				goto fail;
+
+			mbuf_init_fixed_reader(&el->key, k, klen);
+			mbuf_init_fixed_reader(&el->val, v, vlen);
+			if (!cbtree_insert(dict->tree, el))
+				goto fail;
+		}
 	}
-	res = true;
+	return true;
 fail:
-	return res;
+	if (k) cx_free(dict->cx, k);
+	if (v) cx_free(dict->cx, v);
+	if (el) cx_free(dict->cx, el);
+	return false;
 }
 
 /*
