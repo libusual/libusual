@@ -25,4 +25,5 @@ extern struct testcase_t netdb_tests[];
 extern struct testcase_t cfparser_tests[];
 extern struct testcase_t endian_tests[];
 extern struct testcase_t hashtab_tests[];
+extern struct testcase_t mdict_tests[];
 

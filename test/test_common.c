@@ -20,6 +20,7 @@ struct testgroup_t groups[] = {
 	{ "regex/", regex_tests },
 	{ "netdb/", netdb_tests },
 	{ "cfparser/", cfparser_tests },
+	{ "mdict/", mdict_tests },
 	END_OF_GROUPS
 };
 
