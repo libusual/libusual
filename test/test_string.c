@@ -7,6 +7,7 @@
 #undef dirname
 
 #include <usual/string.h>
+#include <usual/mbuf.h>
 
 #include "test_common.h"
 
@@ -160,6 +161,55 @@ static void test_dirname(void *p)
 end:;
 }
 
+/*
+ * strlist
+ */
+
+static bool slshow(void *arg, const char *s)
+{
+	struct MBuf *mb = arg;
+	if (mbuf_written(mb) > 0) {
+		if (!mbuf_write_byte(mb, ','))
+			return false;
+	}
+	if (!s) s = "NULL";
+	//printf("writing: <%s>\n", s);
+	return mbuf_write(mb, s, strlen(s));
+}
+
+static const char *lshow(const struct StrList *sl)
+{
+	static char buf[128];
+	bool ok;
+	struct MBuf mb;
+	mbuf_init_fixed_writer(&mb, buf, sizeof(buf));
+	ok = strlist_foreach(sl, slshow, &mb);
+	if (!ok) return "FAIL";
+	ok = mbuf_write_byte(&mb, 0);
+	if (!ok) return "FAIL";
+	return buf;
+}
+
+static void test_strlist(void *p)
+{
+	struct StrList *sl = NULL;
+	const char *s;
+	sl = strlist_new(USUAL_ALLOC);
+	str_check(lshow(sl), "");
+	strlist_append(sl, "1");
+	str_check(lshow(sl), "1");
+	strlist_append(sl, "2");
+	str_check(lshow(sl), "1,2");
+	strlist_append(sl, "3");
+	str_check(lshow(sl), "1,2,3");
+	s = strlist_pop(sl);
+	str_check(s, "1");
+	free(s);
+	strlist_append(sl, NULL);
+	str_check(lshow(sl), "2,3,NULL");
+	strlist_free(sl);
+end:;
+}
 
 /*
  * Describe
@@ -172,6 +222,7 @@ struct testcase_t string_tests[] = {
 	{ "memrchr", test_memrchr },
 	{ "basename", test_basename },
 	{ "dirname", test_dirname },
+	{ "strlist", test_strlist },
 	END_OF_TESTCASES
 };
 
