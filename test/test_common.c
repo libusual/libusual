@@ -14,6 +14,7 @@ struct testgroup_t groups[] = {
 	{ "heap/", heap_tests },
 	{ "hashtab/", hashtab_tests },
 	{ "list/", list_tests },
+	{ "shlist/", shlist_tests },
 	{ "utf8/", utf8_tests },
 	{ "strpool/", strpool_tests },
 	{ "pgutil/", pgutil_tests },
