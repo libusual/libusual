@@ -18,38 +18,6 @@
  * @file
  *
  * Endianess conversion macros.
- *
- * @section endian_swap  Swap value
- *
- * Signature:
- * - uintX  fn(uintX)
- *
- * Always swap:
- * - bswap16, bswap32, bswap64
- *
- * Host <> LE/BE
- * - htobe16, htobe32, htobe64
- * - htole16, htole32, htole64
- * - be16toh, be32toh, be64toh
- * - le16toh, le32toh, le64toh
- *
- * @section endian_dec  Read value from memory
- *
- * Signature:
- * - uintX dec(const void *p)
- *
- * Variants:
- * - le16dec, le32dec, le64dec
- * - be16dec, be32dec, be64dec
- *
- * @section endian_enc  Write value to memory
- *
- * Signature:
- * - void enc(void *p, uintX val)
- *
- * Variants:
- * - le16enc, le32enc, le64enc
- * - be16enc, be32enc, be64enc
  */
 
 #ifndef _USUAL_ENDIAN_H_
@@ -69,19 +37,19 @@
 
 #include <string.h>
 
-/*
- * Always swap.
+/**
+ * @name  Always swap.
+ * @{
  */
 
 #ifndef bswap16
 #ifdef bswap_16
 #define bswap16(x) bswap_16(x)
 #else
-static inline uint16_t _gen_bswap16(uint16_t x)
+static inline uint16_t bswap16(uint16_t x)
 {
 	return (x << 8) | (x >> 8);
 }
-#define bswap16(x) _gen_bswap16(x)
 #endif
 #endif
 
@@ -89,7 +57,7 @@ static inline uint16_t _gen_bswap16(uint16_t x)
 #ifdef bswap_32
 #define bswap32(x) bswap_32(x)
 #else
-static inline uint32_t _gen_bswap32(uint32_t x)
+static inline uint32_t bswap32(uint32_t x)
 {
 #if defined(__GNUC__) && ((__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 3)))
 	return __builtin_bswap32(x);
@@ -98,7 +66,6 @@ static inline uint32_t _gen_bswap32(uint32_t x)
 	return (x << 16) | (x >> 16);
 #endif
 }
-#define bswap32(x) _gen_bswap32(x)
 #endif
 #endif
 
@@ -106,16 +73,18 @@ static inline uint32_t _gen_bswap32(uint32_t x)
 #ifdef bswap_64
 #define bswap64(x) bswap_64(x)
 #else
-static inline uint64_t _gen_bswap64(uint64_t x)
+static inline uint64_t bswap64(uint64_t x)
 {
 	return ((uint64_t)bswap32(x) << 32) | bswap32(x >> 32);
 }
-#define bswap64(x) _gen_bswap64(x)
 #endif
 #endif
 
-/*
- * Host <-> LE/BE
+/* @} */
+
+/**
+ * @name  Host <-> LE/BE
+ * @{
  */
 
 #ifndef le64toh
@@ -154,43 +123,87 @@ static inline uint64_t _gen_bswap64(uint64_t x)
 
 #endif
 
-/*
- * Read LE/BE values from memory.
- */
+/* @} */
 
 #ifndef HAVE_ENCDEC_FUNCS
 
-#define _DEC(name, typ, decode) \
-static inline typ name(const void *p) { \
-	typ tmp; \
-	memcpy(&tmp, p, sizeof(typ)); \
-	return decode(tmp); \
-}
-
-_DEC(be16dec, uint16_t, be16toh)
-_DEC(be32dec, uint32_t, be32toh)
-_DEC(be64dec, uint64_t, be64toh)
-_DEC(le16dec, uint16_t, le16toh)
-_DEC(le32dec, uint32_t, le32toh)
-_DEC(le64dec, uint64_t, le64toh)
-#undef _DEC
-
-/*
- * Write LE/BE values to memory.
+/**
+ * @name Read LE/BE values from memory and convert to host format
+ * @{
  */
-
-#define _ENC(name, typ, encode) \
-static inline void name(void *p, typ val) { \
-	typ tmp = encode(val); \
-	memcpy(p, &tmp, sizeof(typ)); \
+static inline uint16_t be16dec(const void *p)
+{
+	uint16_t tmp;
+	memcpy(&tmp, p, sizeof(tmp));
+	return htobe16(tmp);
 }
-_ENC(be16enc, uint16_t, htobe16)
-_ENC(be32enc, uint32_t, htobe32)
-_ENC(be64enc, uint64_t, htobe64)
-_ENC(le16enc, uint16_t, htole16)
-_ENC(le32enc, uint32_t, htole32)
-_ENC(le64enc, uint64_t, htole64)
-#undef _ENC
+static inline uint32_t be32dec(const void *p)
+{
+	uint32_t tmp;
+	memcpy(&tmp, p, sizeof(tmp));
+	return htobe32(tmp);
+}
+static inline uint64_t be64dec(const void *p)
+{
+	uint64_t tmp;
+	memcpy(&tmp, p, sizeof(tmp));
+	return htobe64(tmp);
+}
+static inline uint16_t le16dec(const void *p)
+{
+	uint16_t tmp;
+	memcpy(&tmp, p, sizeof(tmp));
+	return htole16(tmp);
+}
+static inline uint32_t le32dec(const void *p)
+{
+	uint32_t tmp;
+	memcpy(&tmp, p, sizeof(tmp));
+	return htole32(tmp);
+}
+static inline uint64_t le64dec(const void *p)
+{
+	uint64_t tmp;
+	memcpy(&tmp, p, sizeof(tmp));
+	return htole64(tmp);
+}
+/* @} */
+
+/**
+ * @name Convert host value to LE/BE and write to memory
+ * @{
+ */
+static inline void be16enc(void *p, uint16_t x)
+{
+	uint16_t tmp = htobe16(x);
+	memcpy(p, &tmp, sizeof(tmp));
+}
+static inline void be32enc(void *p, uint32_t x)
+{
+	uint32_t tmp = htobe32(x);
+	memcpy(p, &tmp, sizeof(tmp));
+}
+static inline void be64enc(void *p, uint64_t x)
+{
+	uint64_t tmp = htobe64(x);
+	memcpy(p, &tmp, sizeof(tmp));
+}
+static inline void le16enc(void *p, uint16_t x)
+{
+	uint16_t tmp = htole16(x);
+	memcpy(p, &tmp, sizeof(tmp));
+}
+static inline void le32enc(void *p, uint32_t x)
+{
+	uint32_t tmp = htole32(x);
+	memcpy(p, &tmp, sizeof(tmp));
+}
+static inline void le64enc(void *p, uint64_t x)
+{
+	uint64_t tmp = htole64(x);
+	memcpy(p, &tmp, sizeof(tmp));
+}
+/* @} */
 
 #endif /* !HAVE_ENCDEC_FUNCS */
 
