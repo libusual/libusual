@@ -76,7 +76,7 @@ void *cx_memdup(CxMem *cx, const void *src, size_t len)
 
 void *cx_strdup(CxMem *cx, const char *s)
 {
-	return cx_memdup(cx, s, strlen(s));
+	return cx_memdup(cx, s, strlen(s) + 1);
 }
 
 /*
