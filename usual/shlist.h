@@ -78,7 +78,7 @@ static inline void shlist_append(struct SHList *list, struct SHList *item)
 /** Insert as first element */
 static inline void shlist_prepend(struct SHList *list, struct SHList *item)
 {
-	struct SHList *first = _sh2ptr(list, list->prev);
+	struct SHList *first = _sh2ptr(list, list->next);
 	item->next = _ptr2sh(list, first);
 	item->prev = _ptr2sh(list, list);
 	list->next = _ptr2sh(list, item);
