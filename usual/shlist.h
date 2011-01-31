@@ -101,12 +101,30 @@ static inline bool shlist_empty(const struct SHList *list)
 	return list->next == list->prev;
 }
 
+static inline struct SHList *shlist_next(const struct SHList *list, const struct SHList *elem)
+{
+	return _sh2ptr(list, elem->next);
+}
+
+static inline struct SHList *shlist_prev(const struct SHList *list, const struct SHList *elem)
+{
+	return _sh2ptr(list, elem->prev);
+}
+
 /** Return first elem */
 static inline struct SHList *shlist_first(const struct SHList *list)
 {
 	if (shlist_empty(list))
 		return NULL;
 	return _sh2ptr(list, list->next);
+}
+
+/** Return last elem */
+static inline struct SHList *shlist_last(const struct SHList *list)
+{
+	if (shlist_empty(list))
+		return NULL;
+	return _sh2ptr(list, list->prev);
 }
 
 /** Remove first elem */
