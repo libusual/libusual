@@ -129,15 +129,15 @@ info:
 # requires 8.4+
 kws:
 	@test -f "$(KWLIST)" || { echo "kwlist.h not found"; exit 1; }
-	cat usual/pgutil_kwlookup.g > usual/pgutil_kwlookup.gp
 	grep '^PG_KEYWORD' "$(KWLIST)" \
 	| grep -v UNRESERVED \
 	| sed 's/.*"\(.*\)",.*, *\(.*\)[)].*/\1/' \
 	>> usual/pgutil_kwlookup.gp
-	$(GPERF) usual/pgutil_kwlookup.gp \
+
+kwh:
+	$(GPERF) usual/pgutil_kwlookup.g \
 	| sed '/^#line/d' \
 	> usual/pgutil_kwlookup.h
-	rm -f usual/pgutil_kwlookup.gp
 
 tgz: config.mak $(DISTFILES)
 	# create tarfile

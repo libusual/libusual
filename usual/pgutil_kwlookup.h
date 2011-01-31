@@ -1,5 +1,5 @@
 /* ANSI-C code produced by gperf version 3.0.3 */
-/* Command-line: gperf -m5 usual/pgutil_kwlookup.gp  */
+/* Command-line: gperf -m5 usual/pgutil_kwlookup.g  */
 /* Computed positions: -k'1-2,6,9,$' */
 
 #if !((' ' == 32) && ('!' == 33) && ('"' == 34) && ('#' == 35) \
@@ -29,7 +29,7 @@
 #error "gperf generated tables don't work with this execution character set. Please report a bug to <bug-gnu-gperf@gnu.org>."
 #endif
 
-/* maximum key range = 324, duplicates = 0 */
+/* maximum key range = 296, duplicates = 0 */
 
 #ifdef __GNUC__
 __inline
@@ -43,32 +43,32 @@ pg_keyword_lookup_hash (register const char *str, register unsigned int len)
 {
   static const unsigned short asso_values[] =
     {
-      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
-      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
-      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
-      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
-      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
-      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
-      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
-      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
-      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
-      329, 329, 329, 329, 329, 329, 329,  22,  32,  55,
-       85,   5,  84, 101,  84,  26,   2,   9,  16, 114,
-        9,   1,  71, 329,   3,  32,   1,  58, 105,  37,
-        2, 131,   4, 329, 329, 329, 329, 329, 329, 329,
-      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
-      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
-      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
-      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
-      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
-      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
-      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
-      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
-      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
-      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
-      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
-      329, 329, 329, 329, 329, 329, 329, 329, 329, 329,
-      329, 329, 329, 329, 329, 329
+      312, 312, 312, 312, 312, 312, 312, 312, 312, 312,
+      312, 312, 312, 312, 312, 312, 312, 312, 312, 312,
+      312, 312, 312, 312, 312, 312, 312, 312, 312, 312,
+      312, 312, 312, 312, 312, 312, 312, 312, 312, 312,
+      312, 312, 312, 312, 312, 312, 312, 312, 312, 312,
+      312, 312, 312, 312, 312, 312, 312, 312, 312, 312,
+      312, 312, 312, 312, 312, 312, 312, 312, 312, 312,
+      312, 312, 312, 312, 312, 312, 312, 312, 312, 312,
+      312, 312, 312, 312, 312, 312, 312, 312, 312, 312,
+      312, 312, 312, 312, 312, 312, 312,  38, 125,  31,
+       64,  10,  96,  60, 125,  26,   7,   5,  13,  63,
+       10,  12,  70, 312,   5,  19,   3,  71, 131,  65,
+       50,  77,   3, 312, 312, 312, 312, 312, 312, 312,
+      312, 312, 312, 312, 312, 312, 312, 312, 312, 312,
+      312, 312, 312, 312, 312, 312, 312, 312, 312, 312,
+      312, 312, 312, 312, 312, 312, 312, 312, 312, 312,
+      312, 312, 312, 312, 312, 312, 312, 312, 312, 312,
+      312, 312, 312, 312, 312, 312, 312, 312, 312, 312,
+      312, 312, 312, 312, 312, 312, 312, 312, 312, 312,
+      312, 312, 312, 312, 312, 312, 312, 312, 312, 312,
+      312, 312, 312, 312, 312, 312, 312, 312, 312, 312,
+      312, 312, 312, 312, 312, 312, 312, 312, 312, 312,
+      312, 312, 312, 312, 312, 312, 312, 312, 312, 312,
+      312, 312, 312, 312, 312, 312, 312, 312, 312, 312,
+      312, 312, 312, 312, 312, 312, 312, 312, 312, 312,
+      312, 312, 312, 312, 312, 312
     };
   register int hval = len;
 
@@ -106,344 +106,340 @@ pg_keyword_lookup_real (register const char *str, register unsigned int len)
 {
   enum
     {
-      TOTAL_KEYWORDS = 146,
+      TOTAL_KEYWORDS = 148,
       MIN_WORD_LENGTH = 2,
       MAX_WORD_LENGTH = 17,
-      MIN_HASH_VALUE = 5,
-      MAX_HASH_VALUE = 328
+      MIN_HASH_VALUE = 16,
+      MAX_HASH_VALUE = 311
     };
 
   struct pgkw_t
     {
-      char pgkw_str5[sizeof("to")];
-      char pgkw_str9[sizeof("or")];
-      char pgkw_str10[sizeof("treat")];
-      char pgkw_str12[sizeof("order")];
-      char pgkw_str13[sizeof("true")];
-      char pgkw_str14[sizeof("not")];
-      char pgkw_str15[sizeof("except")];
-      char pgkw_str16[sizeof("join")];
-      char pgkw_str19[sizeof("none")];
-      char pgkw_str21[sizeof("on")];
-      char pgkw_str26[sizeof("left")];
-      char pgkw_str27[sizeof("least")];
-      char pgkw_str28[sizeof("real")];
-      char pgkw_str30[sizeof("else")];
-      char pgkw_str33[sizeof("table")];
-      char pgkw_str35[sizeof("right")];
-      char pgkw_str36[sizeof("time")];
-      char pgkw_str37[sizeof("localtime")];
-      char pgkw_str39[sizeof("int")];
-      char pgkw_str40[sizeof("into")];
-      char pgkw_str41[sizeof("inout")];
-      char pgkw_str42[sizeof("some")];
-      char pgkw_str43[sizeof("inner")];
-      char pgkw_str44[sizeof("row")];
-      char pgkw_str45[sizeof("select")];
-      char pgkw_str46[sizeof("in")];
-      char pgkw_str47[sizeof("analyze")];
-      char pgkw_str48[sizeof("limit")];
-      char pgkw_str49[sizeof("notnull")];
-      char pgkw_str50[sizeof("integer")];
-      char pgkw_str51[sizeof("like")];
-      char pgkw_str52[sizeof("ilike")];
-      char pgkw_str54[sizeof("new")];
-      char pgkw_str57[sizeof("all")];
-      char pgkw_str58[sizeof("between")];
-      char pgkw_str60[sizeof("references")];
-      char pgkw_str62[sizeof("bit")];
-      char pgkw_str63[sizeof("out")];
-      char pgkw_str64[sizeof("national")];
-      char pgkw_str66[sizeof("bigint")];
-      char pgkw_str67[sizeof("outer")];
-      char pgkw_str69[sizeof("collate")];
-      char pgkw_str70[sizeof("extract")];
-      char pgkw_str71[sizeof("boolean")];
-      char pgkw_str72[sizeof("nchar")];
-      char pgkw_str74[sizeof("create")];
-      char pgkw_str75[sizeof("analyse")];
-      char pgkw_str76[sizeof("natural")];
-      char pgkw_str77[sizeof("exists")];
-      char pgkw_str78[sizeof("intersect")];
-      char pgkw_str79[sizeof("constraint")];
-      char pgkw_str80[sizeof("column")];
-      char pgkw_str81[sizeof("union")];
-      char pgkw_str82[sizeof("cast")];
-      char pgkw_str83[sizeof("unique")];
-      char pgkw_str86[sizeof("case")];
-      char pgkw_str87[sizeof("null")];
-      char pgkw_str88[sizeof("as")];
-      char pgkw_str89[sizeof("do")];
-      char pgkw_str90[sizeof("similar")];
-      char pgkw_str91[sizeof("for")];
-      char pgkw_str92[sizeof("is")];
-      char pgkw_str93[sizeof("offset")];
-      char pgkw_str95[sizeof("cross")];
-      char pgkw_str96[sizeof("isnull")];
-      char pgkw_str97[sizeof("user")];
-      char pgkw_str98[sizeof("then")];
-      char pgkw_str101[sizeof("coalesce")];
-      char pgkw_str102[sizeof("end")];
-      char pgkw_str103[sizeof("freeze")];
-      char pgkw_str105[sizeof("old")];
-      char pgkw_str106[sizeof("float")];
-      char pgkw_str108[sizeof("localtimestamp")];
-      char pgkw_str110[sizeof("grant")];
-      char pgkw_str111[sizeof("session_user")];
-      char pgkw_str112[sizeof("asc")];
-      char pgkw_str113[sizeof("over")];
-      char pgkw_str114[sizeof("default")];
-      char pgkw_str115[sizeof("position")];
-      char pgkw_str116[sizeof("false")];
-      char pgkw_str118[sizeof("greatest")];
-      char pgkw_str119[sizeof("and")];
-      char pgkw_str121[sizeof("both")];
-      char pgkw_str122[sizeof("trim")];
-      char pgkw_str124[sizeof("deferrable")];
-      char pgkw_str125[sizeof("xmlroot")];
-      char pgkw_str126[sizeof("setof")];
-      char pgkw_str127[sizeof("authorization")];
-      char pgkw_str129[sizeof("distinct")];
-      char pgkw_str130[sizeof("xmlforest")];
-      char pgkw_str131[sizeof("where")];
-      char pgkw_str132[sizeof("xmlparse")];
-      char pgkw_str133[sizeof("precision")];
-      char pgkw_str134[sizeof("when")];
-      char pgkw_str135[sizeof("decimal")];
-      char pgkw_str136[sizeof("xmlconcat")];
-      char pgkw_str138[sizeof("leading")];
-      char pgkw_str139[sizeof("trailing")];
-      char pgkw_str140[sizeof("current_time")];
-      char pgkw_str141[sizeof("xmlelement")];
-      char pgkw_str142[sizeof("current_role")];
-      char pgkw_str143[sizeof("window")];
-      char pgkw_str145[sizeof("only")];
-      char pgkw_str146[sizeof("char")];
-      char pgkw_str147[sizeof("xmlpi")];
-      char pgkw_str148[sizeof("dec")];
-      char pgkw_str149[sizeof("desc")];
-      char pgkw_str150[sizeof("asymmetric")];
-      char pgkw_str151[sizeof("with")];
-      char pgkw_str152[sizeof("xmlserialize")];
-      char pgkw_str153[sizeof("check")];
-      char pgkw_str154[sizeof("verbose")];
-      char pgkw_str155[sizeof("numeric")];
-      char pgkw_str159[sizeof("varchar")];
-      char pgkw_str161[sizeof("array")];
-      char pgkw_str162[sizeof("full")];
-      char pgkw_str164[sizeof("interval")];
-      char pgkw_str165[sizeof("any")];
-      char pgkw_str168[sizeof("overlaps")];
-      char pgkw_str172[sizeof("off")];
-      char pgkw_str178[sizeof("fetch")];
-      char pgkw_str179[sizeof("timestamp")];
-      char pgkw_str180[sizeof("group")];
-      char pgkw_str181[sizeof("smallint")];
-      char pgkw_str190[sizeof("current_schema")];
-      char pgkw_str194[sizeof("xmlattributes")];
-      char pgkw_str195[sizeof("current_user")];
-      char pgkw_str196[sizeof("using")];
-      char pgkw_str197[sizeof("values")];
-      char pgkw_str202[sizeof("foreign")];
-      char pgkw_str204[sizeof("placing")];
-      char pgkw_str205[sizeof("from")];
-      char pgkw_str209[sizeof("character")];
-      char pgkw_str211[sizeof("current_timestamp")];
-      char pgkw_str215[sizeof("primary")];
-      char pgkw_str224[sizeof("current_date")];
-      char pgkw_str228[sizeof("returning")];
-      char pgkw_str241[sizeof("nullif")];
-      char pgkw_str266[sizeof("overlay")];
-      char pgkw_str275[sizeof("variadic")];
-      char pgkw_str283[sizeof("symmetric")];
-      char pgkw_str293[sizeof("current_catalog")];
-      char pgkw_str304[sizeof("substring")];
-      char pgkw_str314[sizeof("having")];
-      char pgkw_str326[sizeof("binary")];
-      char pgkw_str328[sizeof("initially")];
+      char pgkw_str16[sizeof("treat")];
+      char pgkw_str22[sizeof("true")];
+      char pgkw_str24[sizeof("or")];
+      char pgkw_str27[sizeof("order")];
+      char pgkw_str28[sizeof("not")];
+      char pgkw_str29[sizeof("to")];
+      char pgkw_str30[sizeof("left")];
+      char pgkw_str31[sizeof("least")];
+      char pgkw_str32[sizeof("real")];
+      char pgkw_str33[sizeof("join")];
+      char pgkw_str34[sizeof("on")];
+      char pgkw_str36[sizeof("none")];
+      char pgkw_str37[sizeof("else")];
+      char pgkw_str39[sizeof("right")];
+      char pgkw_str41[sizeof("select")];
+      char pgkw_str42[sizeof("int")];
+      char pgkw_str43[sizeof("time")];
+      char pgkw_str44[sizeof("inout")];
+      char pgkw_str45[sizeof("some")];
+      char pgkw_str46[sizeof("inner")];
+      char pgkw_str47[sizeof("limit")];
+      char pgkw_str48[sizeof("in")];
+      char pgkw_str51[sizeof("nchar")];
+      char pgkw_str52[sizeof("into")];
+      char pgkw_str53[sizeof("like")];
+      char pgkw_str54[sizeof("ilike")];
+      char pgkw_str55[sizeof("notnull")];
+      char pgkw_str56[sizeof("table")];
+      char pgkw_str57[sizeof("localtime")];
+      char pgkw_str58[sizeof("integer")];
+      char pgkw_str60[sizeof("cross")];
+      char pgkw_str62[sizeof("create")];
+      char pgkw_str63[sizeof("collate")];
+      char pgkw_str64[sizeof("references")];
+      char pgkw_str66[sizeof("is")];
+      char pgkw_str67[sizeof("all")];
+      char pgkw_str68[sizeof("analyze")];
+      char pgkw_str69[sizeof("column")];
+      char pgkw_str70[sizeof("intersect")];
+      char pgkw_str71[sizeof("constraint")];
+      char pgkw_str72[sizeof("except")];
+      char pgkw_str73[sizeof("grant")];
+      char pgkw_str75[sizeof("trim")];
+      char pgkw_str76[sizeof("cast")];
+      char pgkw_str77[sizeof("isnull")];
+      char pgkw_str78[sizeof("as")];
+      char pgkw_str79[sizeof("national")];
+      char pgkw_str80[sizeof("coalesce")];
+      char pgkw_str83[sizeof("case")];
+      char pgkw_str84[sizeof("analyse")];
+      char pgkw_str85[sizeof("row")];
+      char pgkw_str86[sizeof("greatest")];
+      char pgkw_str87[sizeof("end")];
+      char pgkw_str88[sizeof("new")];
+      char pgkw_str89[sizeof("out")];
+      char pgkw_str90[sizeof("do")];
+      char pgkw_str91[sizeof("asc")];
+      char pgkw_str92[sizeof("old")];
+      char pgkw_str93[sizeof("outer")];
+      char pgkw_str95[sizeof("similar")];
+      char pgkw_str96[sizeof("union")];
+      char pgkw_str97[sizeof("default")];
+      char pgkw_str98[sizeof("null")];
+      char pgkw_str99[sizeof("user")];
+      char pgkw_str100[sizeof("leading")];
+      char pgkw_str101[sizeof("extract")];
+      char pgkw_str102[sizeof("trailing")];
+      char pgkw_str103[sizeof("only")];
+      char pgkw_str104[sizeof("exists")];
+      char pgkw_str106[sizeof("natural")];
+      char pgkw_str107[sizeof("unique")];
+      char pgkw_str108[sizeof("dec")];
+      char pgkw_str109[sizeof("desc")];
+      char pgkw_str111[sizeof("distinct")];
+      char pgkw_str112[sizeof("deferrable")];
+      char pgkw_str115[sizeof("and")];
+      char pgkw_str116[sizeof("for")];
+      char pgkw_str117[sizeof("float")];
+      char pgkw_str119[sizeof("smallint")];
+      char pgkw_str120[sizeof("offset")];
+      char pgkw_str122[sizeof("localtimestamp")];
+      char pgkw_str123[sizeof("precision")];
+      char pgkw_str125[sizeof("array")];
+      char pgkw_str126[sizeof("position")];
+      char pgkw_str127[sizeof("freeze")];
+      char pgkw_str128[sizeof("any")];
+      char pgkw_str129[sizeof("session_user")];
+      char pgkw_str130[sizeof("setof")];
+      char pgkw_str132[sizeof("decimal")];
+      char pgkw_str133[sizeof("xmlforest")];
+      char pgkw_str134[sizeof("asymmetric")];
+      char pgkw_str135[sizeof("xmlroot")];
+      char pgkw_str136[sizeof("xmlparse")];
+      char pgkw_str137[sizeof("current_time")];
+      char pgkw_str138[sizeof("xmlconcat")];
+      char pgkw_str139[sizeof("current_role")];
+      char pgkw_str140[sizeof("group")];
+      char pgkw_str142[sizeof("then")];
+      char pgkw_str144[sizeof("xmlpi")];
+      char pgkw_str145[sizeof("numeric")];
+      char pgkw_str146[sizeof("xmlelement")];
+      char pgkw_str147[sizeof("concurrently")];
+      char pgkw_str149[sizeof("false")];
+      char pgkw_str152[sizeof("over")];
+      char pgkw_str153[sizeof("xmlserialize")];
+      char pgkw_str154[sizeof("returning")];
+      char pgkw_str155[sizeof("using")];
+      char pgkw_str157[sizeof("bit")];
+      char pgkw_str160[sizeof("placing")];
+      char pgkw_str162[sizeof("between")];
+      char pgkw_str163[sizeof("bigint")];
+      char pgkw_str164[sizeof("primary")];
+      char pgkw_str165[sizeof("char")];
+      char pgkw_str166[sizeof("check")];
+      char pgkw_str168[sizeof("from")];
+      char pgkw_str170[sizeof("symmetric")];
+      char pgkw_str175[sizeof("authorization")];
+      char pgkw_str177[sizeof("verbose")];
+      char pgkw_str181[sizeof("timestamp")];
+      char pgkw_str183[sizeof("current_schema")];
+      char pgkw_str184[sizeof("full")];
+      char pgkw_str185[sizeof("foreign")];
+      char pgkw_str186[sizeof("xmlexists")];
+      char pgkw_str188[sizeof("interval")];
+      char pgkw_str192[sizeof("boolean")];
+      char pgkw_str198[sizeof("current_date")];
+      char pgkw_str200[sizeof("current_user")];
+      char pgkw_str202[sizeof("current_timestamp")];
+      char pgkw_str204[sizeof("when")];
+      char pgkw_str205[sizeof("where")];
+      char pgkw_str206[sizeof("character")];
+      char pgkw_str207[sizeof("off")];
+      char pgkw_str208[sizeof("overlaps")];
+      char pgkw_str213[sizeof("values")];
+      char pgkw_str218[sizeof("current_catalog")];
+      char pgkw_str219[sizeof("varchar")];
+      char pgkw_str220[sizeof("with")];
+      char pgkw_str224[sizeof("substring")];
+      char pgkw_str227[sizeof("window")];
+      char pgkw_str236[sizeof("fetch")];
+      char pgkw_str237[sizeof("initially")];
+      char pgkw_str265[sizeof("overlay")];
+      char pgkw_str266[sizeof("both")];
+      char pgkw_str272[sizeof("variadic")];
+      char pgkw_str273[sizeof("xmlattributes")];
+      char pgkw_str279[sizeof("nullif")];
+      char pgkw_str289[sizeof("having")];
+      char pgkw_str311[sizeof("binary")];
     };
   static const struct pgkw_t pgkw_contents =
     {
-      "to",
-      "or",
       "treat",
-      "order",
       "true",
+      "or",
+      "order",
       "not",
-      "except",
-      "join",
-      "none",
-      "on",
+      "to",
       "left",
       "least",
       "real",
+      "join",
+      "on",
+      "none",
       "else",
-      "table",
       "right",
-      "time",
-      "localtime",
+      "select",
       "int",
-      "into",
+      "time",
       "inout",
       "some",
       "inner",
-      "row",
-      "select",
-      "in",
-      "analyze",
       "limit",
-      "notnull",
-      "integer",
+      "in",
+      "nchar",
+      "into",
       "like",
       "ilike",
-      "new",
-      "all",
-      "between",
-      "references",
-      "bit",
-      "out",
-      "national",
-      "bigint",
-      "outer",
-      "collate",
-      "extract",
-      "boolean",
-      "nchar",
+      "notnull",
+      "table",
+      "localtime",
+      "integer",
+      "cross",
       "create",
-      "analyse",
-      "natural",
-      "exists",
+      "collate",
+      "references",
+      "is",
+      "all",
+      "analyze",
+      "column",
       "intersect",
       "constraint",
-      "column",
-      "union",
-      "cast",
-      "unique",
-      "case",
-      "null",
-      "as",
-      "do",
-      "similar",
-      "for",
-      "is",
-      "offset",
-      "cross",
-      "isnull",
-      "user",
-      "then",
-      "coalesce",
-      "end",
-      "freeze",
-      "old",
-      "float",
-      "localtimestamp",
+      "except",
       "grant",
-      "session_user",
-      "asc",
-      "over",
-      "default",
-      "position",
-      "false",
-      "greatest",
-      "and",
-      "both",
       "trim",
-      "deferrable",
-      "xmlroot",
-      "setof",
-      "authorization",
-      "distinct",
-      "xmlforest",
-      "where",
-      "xmlparse",
-      "precision",
-      "when",
-      "decimal",
-      "xmlconcat",
+      "cast",
+      "isnull",
+      "as",
+      "national",
+      "coalesce",
+      "case",
+      "analyse",
+      "row",
+      "greatest",
+      "end",
+      "new",
+      "out",
+      "do",
+      "asc",
+      "old",
+      "outer",
+      "similar",
+      "union",
+      "default",
+      "null",
+      "user",
       "leading",
+      "extract",
       "trailing",
-      "current_time",
-      "xmlelement",
-      "current_role",
-      "window",
       "only",
-      "char",
-      "xmlpi",
+      "exists",
+      "natural",
+      "unique",
       "dec",
       "desc",
-      "asymmetric",
-      "with",
-      "xmlserialize",
-      "check",
-      "verbose",
-      "numeric",
-      "varchar",
-      "array",
-      "full",
-      "interval",
-      "any",
-      "overlaps",
-      "off",
-      "fetch",
-      "timestamp",
-      "group",
+      "distinct",
+      "deferrable",
+      "and",
+      "for",
+      "float",
       "smallint",
-      "current_schema",
-      "xmlattributes",
-      "current_user",
-      "using",
-      "values",
-      "foreign",
-      "placing",
-      "from",
-      "character",
-      "current_timestamp",
-      "primary",
-      "current_date",
+      "offset",
+      "localtimestamp",
+      "precision",
+      "array",
+      "position",
+      "freeze",
+      "any",
+      "session_user",
+      "setof",
+      "decimal",
+      "xmlforest",
+      "asymmetric",
+      "xmlroot",
+      "xmlparse",
+      "current_time",
+      "xmlconcat",
+      "current_role",
+      "group",
+      "then",
+      "xmlpi",
+      "numeric",
+      "xmlelement",
+      "concurrently",
+      "false",
+      "over",
+      "xmlserialize",
       "returning",
-      "nullif",
-      "overlay",
-      "variadic",
+      "using",
+      "bit",
+      "placing",
+      "between",
+      "bigint",
+      "primary",
+      "char",
+      "check",
+      "from",
       "symmetric",
+      "authorization",
+      "verbose",
+      "timestamp",
+      "current_schema",
+      "full",
+      "foreign",
+      "xmlexists",
+      "interval",
+      "boolean",
+      "current_date",
+      "current_user",
+      "current_timestamp",
+      "when",
+      "where",
+      "character",
+      "off",
+      "overlaps",
+      "values",
       "current_catalog",
+      "varchar",
+      "with",
       "substring",
+      "window",
+      "fetch",
+      "initially",
+      "overlay",
+      "both",
+      "variadic",
+      "xmlattributes",
+      "nullif",
       "having",
-      "binary",
-      "initially"
+      "binary"
     };
   #define pgkw ((const char *) &pgkw_contents)
   static const int wordlist[] =
     {
-      -1, -1, -1, -1, -1,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str5,
-      -1, -1, -1,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str9,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str10,
-      -1,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str12,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str13,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str14,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str15,
+      -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      -1, -1, -1, -1, -1, -1, -1,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str16,
-      -1, -1,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str19,
+      -1, -1, -1, -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str22,
       -1,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str21,
-      -1, -1, -1, -1,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str26,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str24,
+      -1, -1,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str27,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str28,
-      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str29,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str30,
-      -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str31,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str32,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str33,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str34,
       -1,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str35,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str36,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str37,
       -1,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str39,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str40,
+      -1,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str41,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str42,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str43,
@@ -452,13 +448,13 @@ pg_keyword_lookup_real (register const char *str, register unsigned int len)
       (int)(long)&((struct pgkw_t *)0)->pgkw_str46,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str47,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str48,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str49,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str50,
+      -1, -1,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str51,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str52,
-      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str53,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str54,
-      -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str55,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str56,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str57,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str58,
       -1,
@@ -470,23 +466,23 @@ pg_keyword_lookup_real (register const char *str, register unsigned int len)
       -1,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str66,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str67,
-      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str68,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str69,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str70,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str71,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str72,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str73,
       -1,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str74,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str75,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str76,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str77,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str78,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str79,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str80,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str81,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str82,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str83,
       -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str83,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str84,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str85,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str86,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str87,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str88,
@@ -500,124 +496,131 @@ pg_keyword_lookup_real (register const char *str, register unsigned int len)
       (int)(long)&((struct pgkw_t *)0)->pgkw_str96,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str97,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str98,
-      -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str99,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str100,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str101,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str102,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str103,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str104,
       -1,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str105,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str106,
-      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str107,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str108,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str109,
       -1,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str110,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str111,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str112,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str113,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str114,
+      -1, -1,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str115,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str116,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str117,
       -1,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str118,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str119,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str120,
       -1,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str121,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str122,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str123,
       -1,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str124,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str125,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str126,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str127,
-      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str128,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str129,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str130,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str131,
+      -1,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str132,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str133,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str134,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str135,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str136,
-      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str137,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str138,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str139,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str140,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str141,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str142,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str143,
       -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str142,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str144,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str145,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str146,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str147,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str148,
+      -1,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str149,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str150,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str151,
+      -1, -1,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str152,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str153,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str154,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str155,
-      -1, -1, -1,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str159,
       -1,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str161,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str157,
+      -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str160,
+      -1,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str162,
-      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str163,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str164,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str165,
-      -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str166,
+      -1,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str168,
-      -1, -1, -1,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str172,
-      -1, -1, -1, -1, -1,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str178,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str179,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str180,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str181,
-      -1, -1, -1, -1, -1, -1, -1, -1,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str190,
-      -1, -1, -1,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str194,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str195,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str196,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str197,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str170,
       -1, -1, -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str175,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str177,
+      -1, -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str181,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str183,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str184,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str185,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str186,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str188,
+      -1, -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str192,
+      -1, -1, -1, -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str198,
+      -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str200,
+      -1,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str202,
       -1,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str204,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str205,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str206,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str207,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str208,
+      -1, -1, -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str213,
+      -1, -1, -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str218,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str219,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str220,
       -1, -1, -1,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str209,
-      -1,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str211,
-      -1, -1, -1,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str215,
-      -1, -1, -1, -1, -1, -1, -1, -1,
       (int)(long)&((struct pgkw_t *)0)->pgkw_str224,
-      -1, -1, -1,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str228,
-      -1, -1, -1, -1, -1, -1, -1, -1, -1,
-      -1, -1, -1,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str241,
-      -1, -1, -1, -1, -1, -1, -1, -1, -1,
-      -1, -1, -1, -1, -1, -1, -1, -1, -1,
-      -1, -1, -1, -1, -1, -1,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str266,
-      -1, -1, -1, -1, -1, -1, -1, -1,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str275,
-      -1, -1, -1, -1, -1, -1, -1,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str283,
-      -1, -1, -1, -1, -1, -1, -1, -1, -1,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str293,
-      -1, -1, -1, -1, -1, -1, -1, -1, -1,
-      -1,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str304,
-      -1, -1, -1, -1, -1, -1, -1, -1, -1,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str314,
-      -1, -1, -1, -1, -1, -1, -1, -1, -1,
       -1, -1,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str326,
-      -1,
-      (int)(long)&((struct pgkw_t *)0)->pgkw_str328
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str227,
+      -1, -1, -1, -1, -1, -1, -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str236,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str237,
+      -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str265,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str266,
+      -1, -1, -1, -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str272,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str273,
+      -1, -1, -1, -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str279,
+      -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str289,
+      -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      -1, -1, -1,
+      (int)(long)&((struct pgkw_t *)0)->pgkw_str311
     };
 
   if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)
