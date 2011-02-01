@@ -2,6 +2,7 @@
 #include <usual/netdb.h>
 
 #include <usual/string.h>
+#include <usual/socket.h>
 #include <usual/time.h>
 
 #include "test_common.h"
