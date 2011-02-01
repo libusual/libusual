@@ -9,6 +9,7 @@ struct testgroup_t groups[] = {
 	{ "cxalloc/", cxalloc_tests },
 	{ "cbtree/", cbtree_tests },
 	{ "crypto/", crypto_tests },
+	{ "hashing/", hashing_tests },
 	{ "endian/", endian_tests },
 	{ "string/", string_tests },
 	{ "heap/", heap_tests },
@@ -22,6 +23,8 @@ struct testgroup_t groups[] = {
 	{ "netdb/", netdb_tests },
 	{ "cfparser/", cfparser_tests },
 	{ "mdict/", mdict_tests },
+	{ "time/", time_tests },
+	{ "fileutil/", fileutil_tests },
 	END_OF_GROUPS
 };
 
