@@ -19,11 +19,17 @@ static void test_mdict(void *p)
 	d = mdict_new(USUAL_ALLOC);
 	str_check(xget(d, "key"), "NULL");
 	int_check(mdict_put(d, "key", "val"), 1);
+	int_check(mdict_put(d, "key2", "foo"), 1);
 	int_check(mdict_put(d, "key2", ""), 1);
 	int_check(mdict_put(d, "key3", NULL), 1);
+	int_check(mdict_put(d, "key4", "v1"), 1);
+	int_check(mdict_del(d, "key4"), 1);
 	str_check(xget(d, "key"), "val");
 	str_check(xget(d, "key2"), "");
 	str_check(xget(d, "key3"), "NULL");
+	str_check(xget(d, "key4"), "NULL");
+	str_check(xget(d, "key5"), "NULL");
+	int_check(mdict_del(d, "key5"), 0);
 
 	mbuf_init_dynamic(&buf);
 	int_check(mdict_urlencode(d, &buf), 1);
