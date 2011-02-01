@@ -186,7 +186,7 @@ static void test_aatree_random(void *p)
 	memset(is_added, 0, sizeof(is_added));
 
 	aatree_init(tree, my_node_cmp, my_node_free);
-	while (total < 100000) {
+	while (total < 20000) {
 		int r = random() & 15;
 		if (prefer_remove)
 			op = r > 5;
