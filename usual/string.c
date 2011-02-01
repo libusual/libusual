@@ -159,8 +159,6 @@ bool parse_word_list(const char *s, str_cb cb_func, void *cb_arg)
 		}
 
 		/* extract string */
-		if (start == end)
-			goto failed_syntax;
 		if (!mbuf_write(&buf, start, end - start))
 			goto failed;
 		if (!mbuf_write_byte(&buf, 0))
