@@ -211,6 +211,38 @@ static void test_strlist(void *p)
 end:;
 }
 
+static bool sl_add(void *arg, const char *s)
+{
+	return strlist_append(arg, s);
+}
+
+static const char *wlist(const char *s)
+{
+	const char *res = "FAIL";
+	struct StrList *sl = strlist_new(USUAL_ALLOC);
+	bool ok = parse_word_list(s, sl_add, sl);
+	if (ok) {
+		if (strlist_empty(sl))
+			res = "-";
+		else
+			res = lshow(sl);
+	}
+	strlist_free(sl);
+	return res;
+}
+
+static void test_wlist(void *p)
+{
+	str_check(wlist("1,2,3"), "1,2,3");
+	str_check(wlist(" 1 , \n 2 \t , \t3"), "1,2,3");
+	str_check(wlist("  1 "), "1");
+	str_check(wlist("  1 ,"), "1");
+	str_check(wlist(",  1 "), "1");
+	str_check(wlist("1  2"), "1  2");
+	str_check(wlist("  "), "");
+end:;
+}
+
 /*
  * Describe
  */
@@ -223,6 +255,7 @@ struct testcase_t string_tests[] = {
 	{ "basename", test_basename },
 	{ "dirname", test_dirname },
 	{ "strlist", test_strlist },
+	{ "parse_wordlist", test_wlist },
 	END_OF_TESTCASES
 };
 
