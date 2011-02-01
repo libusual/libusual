@@ -34,7 +34,7 @@ struct MappedFile {
 };
 
 /** Signature for per-line callback */
-typedef void (*procline_cb)(void *arg, const char *line, ssize_t len);
+typedef bool (*procline_cb)(void *arg, const char *line, ssize_t len);
 
 /** Read file into memory */
 void *load_file(const char *fn, size_t *len_p);

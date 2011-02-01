@@ -72,17 +72,22 @@ bool foreach_line(const char *fn, procline_cb proc_line, void *arg)
 	size_t len = 0;
 	ssize_t res;
 	FILE *f = fopen(fn, "rb");
+	bool ok = false;
 	if (!f)
 		return false;
 	while (1) {
 		res = getline(&ln, &len, f);
-		if (res < 0)
+		if (res < 0) {
+			if (feof(f))
+				ok = true;
 			break;
-		proc_line(arg, ln, res);
+		}
+		if (!proc_line(arg, ln, res))
+			break;
 	}
 	fclose(f);
 	free(ln);
-	return true;
+	return ok;
 }
 
 /*
