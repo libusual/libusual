@@ -105,7 +105,7 @@ boot:
 # run sparse over code
 sparse: config.mak
 	REAL_CC="$(CC)" \
-	$(MAKE) clean libusual.a CC="cgcc -Wsparse-all"
+	$(MAKE) clean libusual.a CC="cgcc -Wsparse-all -Wno-transparent-union"
 
 asms = $(objs:.o=.s)
 asm: $(asms)
