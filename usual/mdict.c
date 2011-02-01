@@ -1,9 +1,5 @@
 /*
- * Low-level tools.
- *
- * - dict type
- * - urlenc/urldec for dict.
- * - Postgres array parser.
+ * A string to string dictionary.
  */
 
 #include <usual/mdict.h>
@@ -13,15 +9,6 @@
 #include <usual/string.h>
 
 #include <ctype.h>
-
-
-/*
- * Quick dicts for urlencode.
- * - fast lookup
- * - fast creation
- * - not very memory-efficient
- * - existing keys cannot be freed
- */
 
 struct MDict {
 	struct CBTree *tree;
@@ -102,7 +89,7 @@ bool mdict_put_str(struct MDict *dict, const char *key, unsigned klen, const cha
 	}
 	el = cbtree_lookup(dict->tree, key, klen);
 	if (el) {
-		mbuf_free(&el->val);
+		cx_free(dict->cx, mbuf_data(&el->val));
 		mbuf_init_fixed_reader(&el->val, vptr, vlen);
 	} else {
 		kptr = cx_alloc(dict->cx, klen + 1);
@@ -121,6 +108,11 @@ bool mdict_put_str(struct MDict *dict, const char *key, unsigned klen, const cha
 			return false;
 	}
 	return true;
+}
+
+bool mdict_del_key(struct MDict *dict, const char *key, unsigned klen)
+{
+	return cbtree_delete(dict->tree, key, klen);
 }
 
 /*
@@ -242,7 +234,7 @@ bool mdict_urldecode(struct MDict *dict, const char *str, unsigned len)
 		/* insert value */
 		el = cbtree_lookup(dict->tree, k, klen);
 		if (el) {
-			mbuf_free(&el->val);
+			cx_free(dict->cx, mbuf_data(&el->val));
 			mbuf_init_fixed_reader(&el->val, v, vlen);
 		} else {
 			el = cx_alloc(dict->cx, sizeof(*el));

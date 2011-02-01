@@ -43,6 +43,9 @@ const char *mdict_get_str(struct MDict *dict, const char *key, unsigned klen);
 /** Put string to dict */
 bool mdict_put_str(struct MDict *dict, const char *key, unsigned klen, const char *val, unsigned vlen);
 
+/** Remove a key from dict */
+bool mdict_del_key(struct MDict *dict, const char *key, unsigned klen);
+
 /** Signature for walker callback */
 typedef bool (*mdict_walker_f)(void *arg, const struct MBuf *k, const struct MBuf *v);
 
@@ -74,6 +77,12 @@ static inline bool mdict_put_buf(struct MDict *dict, const char *key, const stru
 	const char *val = buf ? mbuf_data(buf) : NULL;
 	unsigned vlen = buf ? mbuf_written(buf) : 0;
 	return mdict_put_str(dict, key, klen, val, vlen);
+}
+
+/** Remove value from dict */
+static inline bool mdict_del(struct MDict *dict, const char *key)
+{
+	return mdict_del_key(dict, key, strlen(key));
 }
 
 /** Urldecode string and add keys with values to dict */
