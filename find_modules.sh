@@ -1,9 +1,8 @@
 #! /bin/sh
 
-top="$1"
-shift
-
 set -e
+
+top="$1"
 
 # sanity check
 test -n "$top" || {
@@ -14,17 +13,20 @@ test -f "$top/usual/base.h" || {
   echo "usage: $0 USUAL_DIR SRC ..." >&2
   exit 1
 }
+
+shift
 test -n "$1" || exit 0
 
 # return uniq module names, exclude already found ones
 grep_usual() {
   excl="nonex"
   for m in $m_done; do
-    excl="$excl\\|$m"
+    excl="$excl|$m"
   done
-  sed -n \
-    -e "/^#include[ \t]*[<\"]usual[/]\\($excl\\)[.]h/d" \
-    -e '/^#include[ \t]*[<"]usual[/]/  s,.*[<"]usual/\(.*\)[.]h[>"].*,\1,p' "$@" \
+  awk "
+/^#include[ \t]*[<\"]usual\\/($excl)[.]h/  { next; }
+/^#include[ \t]*[<\"]usual\\//             { split(\$0, tmp, \"[./]\"); print tmp[2]; }
+" "$@" \
   | sort -u
 }
 
