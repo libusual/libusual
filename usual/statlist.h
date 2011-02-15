@@ -125,8 +125,14 @@ static inline bool statlist_empty(const struct StatList *list)
 /** Loop over list */
 #define statlist_for_each(item, list) list_for_each(item, &((list)->head))
 
+/** Loop over list backwards */
+#define statlist_for_each_reverse(item, list) list_for_each_reverse(item, &((list)->head))
+
 /** Loop over list safely, so that elements can be removed during */
 #define statlist_for_each_safe(item, list, tmp) list_for_each_safe(item, &((list)->head), tmp)
+
+/** Loop over list backwards safely, so that elements can be removed during */
+#define statlist_for_each_reverse_safe(item, list, tmp) list_for_each_reverse_safe(item, &((list)->head), tmp)
 
 /** Put intem before another */
 static inline void statlist_put_before(struct StatList *list, struct List *item, struct List *pos)

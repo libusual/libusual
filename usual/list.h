@@ -118,11 +118,23 @@ static inline struct List *list_last(const struct List *list)
 	     (item) != (list); \
 	     (item) = (item)->next)
 
+/** Loop over list backwards */
+#define list_for_each_reverse(item, list) \
+	for ((item) = (list)->prev; \
+	     (item) != (list); \
+	     (item) = (item)->prev)
+
 /** Loop over list and allow removing item */
 #define list_for_each_safe(item, list, tmp) \
 	for ((item) = (list)->next, (tmp) = (list)->next->next; \
 	     (item) != (list); \
 	     (item) = (tmp), (tmp) = (tmp)->next)
+
+/** Loop over list backwards and allow removing item */
+#define list_for_each_reverse_safe(item, list, tmp) \
+	for ((item) = (list)->prev, (tmp) = (list)->prev->prev; \
+	     (item) != (list); \
+	     (item) = (tmp), (tmp) = (tmp)->prev)
 
 /** Comparator function signature for list_sort() */
 typedef int (*list_cmp_f)(const struct List *a, const struct List *b);
