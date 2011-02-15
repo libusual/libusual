@@ -139,7 +139,7 @@ dnl
 AC_DEFUN([AC_USUAL_FUNCTION_CHECK], [
 ### Functions provided if missing
 AC_CHECK_FUNCS(basename dirname strlcpy strlcat getpeereid sigaction)
-AC_CHECK_FUNCS(inet_ntop poll getline memrchr regcomp)
+AC_CHECK_FUNCS(inet_ntop inet_pton poll getline memrchr regcomp)
 AC_CHECK_FUNCS(err errx warn warnx getprogname setprogname)
 AC_CHECK_FUNCS(posix_memalign memalign valloc)
 AC_CHECK_FUNCS(fls flsl flsll ffs ffsl ffsll)

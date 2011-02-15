@@ -20,6 +20,7 @@ struct testgroup_t groups[] = {
 	{ "strpool/", strpool_tests },
 	{ "pgutil/", pgutil_tests },
 	{ "regex/", regex_tests },
+	{ "socket/", socket_tests },
 	{ "netdb/", netdb_tests },
 	{ "cfparser/", cfparser_tests },
 	{ "mdict/", mdict_tests },

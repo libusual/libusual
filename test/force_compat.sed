@@ -6,3 +6,5 @@
 /DIRNAME/s,^,//,
 /REGCOMP/s,^,//,
 /GETADDRINFO_A/s,^,//,
+/INET_NTOP/s,^,//,
+/INET_PTON/s,^,//,

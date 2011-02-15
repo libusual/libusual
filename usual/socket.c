@@ -218,34 +218,6 @@ int getpeereid(int fd, uid_t *uid_p, gid_t *gid_p)
 #endif
 
 
-#ifndef HAVE_INET_NTOP
-const char *inet_ntop(int af, const void *src, char *dst, int dstlen)
-{
-	const unsigned char *p = src;
-	if (dstlen < 0) {
-		errno = EINVAL;
-		return NULL;
-	}
-	switch (af) {
-	case AF_INET:
-		snprintf(dst, dstlen, "%d.%d.%d.%d", p[0], p[1], p[2], p[3]);
-		break;
-	case AF_INET6:
-		snprintf(dst, dstlen,
-			 "%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:"
-			 "%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x",
-			 p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7],
-			 p[8], p[9], p[10], p[11], p[12], p[13], p[14], p[15]);
-		break;
-	default:
-		errno = EINVAL;
-		return NULL;
-	}
-	return dst;
-}
-#endif
-
-
 #ifndef HAVE_POLL
 /*
  * Emulate poll() with select()

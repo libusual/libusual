@@ -28,6 +28,10 @@
 #undef EAGAIN
 #define EAGAIN WSAEWOULDBLOCK // WSAEAGAIN
 
+#ifndef EAFNOSUPPORT
+#define EAFNOSUPPORT ENOSYS
+#endif
+
 /* dummy types / functions */
 #define hstrerror strerror
 #define getuid() (6667)

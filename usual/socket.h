@@ -104,9 +104,15 @@ bool socket_set_keepalive(int fd, int onoff, int keepidle, int keepintvl, int ke
 const char *sa2str(const struct sockaddr *sa, char *buf, int buflen);
 
 #ifndef HAVE_INET_NTOP
-#define inet_ntop(a,b,c,d) compat_inet_ntop(a,b,c,d)
+#define inet_ntop(a,b,c,d) usual_inet_ntop(a,b,c,d)
 /** Compat: inet_ntop() */
 const char *inet_ntop(int af, const void *src, char *dst, int cnt);
+#endif
+
+#ifndef HAVE_INET_PTON
+#define inet_pton(a,b,c) usual_inet_pton(a,b,c)
+/** Compat: inet_pton() */
+int inet_pton(int af, const char *src, void *dst);
 #endif
 
 #ifndef HAVE_GETPEEREID
