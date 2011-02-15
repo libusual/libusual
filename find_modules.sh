@@ -31,7 +31,7 @@ grep_usual() {
 # return module filename globs
 make_pats() {
   for m in "$@"; do
-    echo "$top/usual/$m.[ch]"
+    echo "$top/usual/$m*.[ch]"
   done
 }
 

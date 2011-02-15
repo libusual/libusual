@@ -16,7 +16,7 @@ USUAL_CPPFLAGS = -I$(USUAL_DIR)
 
 USUAL_OBJDIR ?= .
 USUAL_HDRS = $(addprefix $(USUAL_DIR)/usual/, $(addsuffix .h, $(USUAL_MODULES)))
-USUAL_SRCS = $(wildcard $(addprefix $(USUAL_DIR)/usual/, $(addsuffix .c, $(USUAL_MODULES))))
+USUAL_SRCS = $(wildcard $(addprefix $(USUAL_DIR)/usual/, $(addsuffix *.c, $(USUAL_MODULES))))
 USUAL_OBJS = $(addprefix $(USUAL_OBJDIR)/, $(notdir $(USUAL_SRCS:.c=.o)))
 
 # find_modules is slow, so do immediate assignment
