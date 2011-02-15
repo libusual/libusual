@@ -24,7 +24,7 @@ static const char filename[] = "test_fileutil.tmp";
 
 static bool createfile(void)
 {
-	FILE *f = fopen(filename, "w+");
+	FILE *f = fopen(filename, "wb+");
 	if (!f) return false;
 	fwrite(fdata, 1, strlen(fdata), f);
 	fclose(f);
