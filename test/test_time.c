@@ -16,7 +16,7 @@ static void test_get_time(void *p)
 
 	usleep(USEC / 4);
 	t2 = get_time_usec();
-	tt_assert(t + USEC / 4 < t2);
+	tt_assert(t + USEC / 4 <= t2);
 
 	ct2 = get_cached_time();
 	tt_assert(ct2 == ct);
