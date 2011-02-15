@@ -49,7 +49,7 @@ obj/%.o: $(USUAL_DIR)/usual/%.c $(hdrs)
 
 regtest: $(objs)
 	$(E) "	LD" $@
-	$(Q) $(CC) -o $@ $(objs) $(LIBS)
+	$(Q) $(CC) -o $@ $(LDFLAGS) $(objs) $(LIBS)
 
 clean:
 	rm -f libusual.a obj/* *.o regtest *.gcov
