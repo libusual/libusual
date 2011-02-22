@@ -275,6 +275,7 @@ failed:
 #define inline
 #define __inline
 #define __attribute__(x)
+#define long uintptr_t
 
 /* include gperf code */
 const char *pg_keyword_lookup_real(const char *str, unsigned int len);
