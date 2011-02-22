@@ -30,7 +30,7 @@ struct AATree;
 struct AANode;
 
 /** Callback for node comparision against value */
-typedef int (*aatree_cmp_f)(long, struct AANode *node);
+typedef int (*aatree_cmp_f)(uintptr_t, struct AANode *node);
 
 /** Callback for walking the tree */
 typedef void (*aatree_walker_f)(struct AANode *n, void *arg);
@@ -73,13 +73,13 @@ enum AATreeWalkType {
 void aatree_init(struct AATree *tree, aatree_cmp_f cmpfn, aatree_walker_f release_cb);
 
 /** Search for node */
-struct AANode *aatree_search(struct AATree *tree, long value);
+struct AANode *aatree_search(struct AATree *tree, uintptr_t value);
 
 /** Insert new node */
-void aatree_insert(struct AATree *tree, long value, struct AANode *node);
+void aatree_insert(struct AATree *tree, uintptr_t value, struct AANode *node);
 
 /** Remote node */
-void aatree_remove(struct AATree *tree, long value);
+void aatree_remove(struct AATree *tree, uintptr_t value);
 
 /** Walk over all nodes */
 void aatree_walk(struct AATree *tree, enum AATreeWalkType wtype, aatree_walker_f walker, void *arg);

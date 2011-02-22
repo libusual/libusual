@@ -138,7 +138,7 @@ static Node *rebalance_on_remove(Node *current)
  * Recursive insertion
  */
 
-static Node * insert_sub(Tree *tree, Node *current, long value, Node *node)
+static Node * insert_sub(Tree *tree, Node *current, uintptr_t value, Node *node)
 {
 	int cmp;
 
@@ -167,7 +167,7 @@ static Node * insert_sub(Tree *tree, Node *current, long value, Node *node)
 	return rebalance_on_insert(current);
 }
 
-void aatree_insert(Tree *tree, long value, Node *node)
+void aatree_insert(Tree *tree, uintptr_t value, Node *node)
 {
 	tree->root = insert_sub(tree, tree->root, value, node);
 }
@@ -217,7 +217,7 @@ static Node *drop_this_node(Tree *tree, Node *old)
 	return new;
 }
 
-static Node *remove_sub(Tree *tree, Node *current, long value)
+static Node *remove_sub(Tree *tree, Node *current, uintptr_t value)
 {
 	int cmp;
 
@@ -236,7 +236,7 @@ static Node *remove_sub(Tree *tree, Node *current, long value)
 	return rebalance_on_remove(current);
 }
 
-void aatree_remove(Tree *tree, long value)
+void aatree_remove(Tree *tree, uintptr_t value)
 {
 	tree->root = remove_sub(tree, tree->root, value);
 }
@@ -298,7 +298,7 @@ void aatree_init(Tree *tree, aatree_cmp_f cmpfn, aatree_walker_f release_cb)
 /*
  * search function
  */
-Node *aatree_search(Tree *tree, long value)
+Node *aatree_search(Tree *tree, uintptr_t value)
 {
 	Node *current = tree->root;
 	while (current != NIL) {
