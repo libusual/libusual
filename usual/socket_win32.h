@@ -70,7 +70,17 @@ struct cmsghdr {
 
 /*
  * unify WSAGetLastError() with errno.
+ *
+ * and convert int <-> SOCKET.
  */
+
+/* int <-> socket */
+#define FD2S(fd) ((intptr_t)(fd))
+#define S2FD(fd) ((int)(fd))
+
+/* socket <-> HANDLE, plain casts */
+#define FD2H(fd) ((HANDLE)FD2S(fd))
+#define H2FD(h) S2FD((SOCKET)(h))
 
 static inline int ewrap(int res) {
 	if (res < 0)
@@ -81,30 +91,30 @@ static inline int ewrap(int res) {
 /* proper signature for setsockopt */
 static inline int w_setsockopt(int fd, int level, int optname, const void *optval, int optlen)
 {
-	return ewrap(setsockopt(fd, level, optname, optval, optlen));
+	return ewrap(setsockopt(FD2S(fd), level, optname, optval, optlen));
 }
 #define setsockopt(a,b,c,d,e) w_setsockopt(a,b,c,d,e)
 
 /* proper signature for send */
 static inline ssize_t w_send(int fd, const void *buf, size_t len, int flags) {
-	return ewrap(send(fd, buf, len, flags));
+	return ewrap(send(FD2S(fd), buf, len, flags));
 }
 #define send(a,b,c,d) w_send(a,b,c,d)
 
 /* proper signature for recv */
 static inline ssize_t w_recv(int fd, void *buf, size_t len, int flags) {
-	return ewrap(recv(fd, buf, len, flags));
+	return ewrap(recv(FD2S(fd), buf, len, flags));
 }
 #define recv(a,b,c,d) w_recv(a,b,c,d)
 
-#define getsockopt(a,b,c,d,e) ewrap(getsockopt(a,b,c,d,e))
-#define connect(a,b,c) ewrap(connect(a,b,c))
-#define socket(a,b,c) ewrap(socket(a,b,c))
-#define bind(a,b,c) ewrap(bind(a,b,c))
-#define listen(a,b) ewrap(listen(a,b))
-#define accept(a,b,c) ewrap(accept(a,b,c))
-#define getpeername(a,b,c) ewrap(getpeername(a,b,c))
-#define getsockname(a,b,c) ewrap(getsockname(a,b,c))
+#define getsockopt(a,b,c,d,e) ewrap(getsockopt(FD2S(a),b,c,d,e))
+#define connect(a,b,c) ewrap(connect(FD2S(a),b,c))
+#define socket(a,b,c) ewrap(S2FD(socket(a,b,c)))
+#define bind(a,b,c) ewrap(bind(FD2S(a),b,c))
+#define listen(a,b) ewrap(listen(FD2S(a),b))
+#define accept(a,b,c) ewrap(accept(FD2S(a),b,c))
+#define getpeername(a,b,c) ewrap(getpeername(FD2S(a),b,c))
+#define getsockname(a,b,c) ewrap(getsockname(FD2S(a),b,c))
 #define select(a,b,c,d,e) ewrap(select(a,b,c,d,e))
 
 static inline struct hostent *w_gethostbyname(const char *n) {
@@ -117,7 +127,7 @@ static inline struct hostent *w_gethostbyname(const char *n) {
 
 /* make unix socket related code compile */
 struct sockaddr_un {
-	int sun_family;
+	short sun_family;
 	char sun_path[128];
 };
 
@@ -162,13 +172,13 @@ static inline int fcntl(int fd, int cmd, long arg)
 	DWORD dval;
 	switch (cmd) {
 	case F_GETFD:
-		if (GetHandleInformation((HANDLE)fd, &dval))
+		if (GetHandleInformation(FD2H(fd), &dval))
 			return dval;
 		errno = EINVAL;
 		return -1;
 	case F_SETFD:
 		/* set FD_CLOEXEC */
-		if (SetHandleInformation((HANDLE)fd, FD_CLOEXEC, arg))
+		if (SetHandleInformation(FD2H(fd), FD_CLOEXEC, arg))
 			return 0;
 		errno = EINVAL;
 		return -1;
@@ -178,7 +188,7 @@ static inline int fcntl(int fd, int cmd, long arg)
 	case F_SETFL:
 		/* set O_NONBLOCK */
 		lval = (arg & O_NONBLOCK) ? 1 : 0;
-		if (ioctlsocket(fd, FIONBIO, &lval) == SOCKET_ERROR) {
+		if (ioctlsocket(FD2S(fd), FIONBIO, &lval) == SOCKET_ERROR) {
 			errno = WSAGetLastError();
 			return -1;
 		}
