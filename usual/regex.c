@@ -424,7 +424,7 @@ static void add_char(struct ClassData *cd, unsigned char c, bool icase)
 
 struct NamedClass {
 	const char name[7];
-	int name_len;
+	unsigned char name_len;
 	int (*check_func)(int c);
 };
 static const struct NamedClass ctype_list[] = {
@@ -440,14 +440,14 @@ static const struct NamedClass ctype_list[] = {
 	{ "space", 5, isspace },
 	{ "upper", 5, isupper },
 	{ "xdigit", 6, isxdigit },
-	{ "" }
 };
 
 static int fill_class(struct ClassData *cd, const char *name, const char **s_p, bool icase)
 {
 	unsigned c;
 	const struct NamedClass *cc = ctype_list;
-	for (cc = ctype_list; cc->name[0]; cc++) {
+	for (c = 0; c < ARRAY_NELEM(ctype_list); c++) {
+		cc = ctype_list + c;
 		if (strncmp(name, cc->name, cc->name_len) != 0)
 			continue;
 		name += cc->name_len;
