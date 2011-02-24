@@ -24,7 +24,7 @@ static int my_node_pair_cmp(const struct AANode *n1, const struct AANode *n2)
 	return m1->value - m2->value;
 }
 
-static int my_node_cmp(long value, struct AANode *node)
+static int my_node_cmp(uintptr_t value, struct AANode *node)
 {
 	MyNode *my = container_of(node, MyNode, node);
 	return value - my->value;
