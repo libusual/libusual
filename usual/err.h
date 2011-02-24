@@ -32,19 +32,19 @@
 
 #ifndef HAVE_ERR
 /** Print formatted message and strerror(errno) to stderr and exit with given error code */
-void err(int e, const char *fmt, ...);
+void err(int e, const char *fmt, ...) _PRINTF(2, 3);
 #endif
 #ifndef HAVE_ERRX
 /** Print formatted message to stderr and exit with given error code */
-void errx(int e, const char *fmt, ...);
+void errx(int e, const char *fmt, ...) _PRINTF(2, 3);
 #endif
 #ifndef HAVE_WARN
 /** Print formatted message and strerror(errno) to stderr */
-void warn(const char *fmt, ...);
+void warn(const char *fmt, ...)  _PRINTF(1, 2);
 #endif
 #ifndef HAVE_WARNX
 /** Print formatted message to stderr */
-void warnx(const char *fmt, ...);
+void warnx(const char *fmt, ...)  _PRINTF(1, 2);
 #endif
 #ifndef HAVE_SETPROGNAME
 /** Set program name to that will printed as prefix to error messages */
