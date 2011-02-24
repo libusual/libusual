@@ -23,6 +23,7 @@ struct testgroup_t groups[] = {
 	{ "socket/", socket_tests },
 	{ "netdb/", netdb_tests },
 	{ "cfparser/", cfparser_tests },
+	{ "getopt/", getopt_tests },
 	{ "mdict/", mdict_tests },
 	{ "time/", time_tests },
 	{ "fileutil/", fileutil_tests },

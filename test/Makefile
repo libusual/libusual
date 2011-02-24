@@ -6,7 +6,8 @@ SRCS = test_string.c test_crypto.c test_aatree.c test_heap.c \
        test_cxalloc.c test_bits.c test_base.c test_netdb.c \
        test_cfparser.c test_endian.c test_hashtab.c test_mdict.c \
        test_shlist.c test_time.c test_hashing.c test_fileutil.c \
-       test_socket.c
+       test_socket.c test_getopt.c
+
 OBJS = $(addprefix obj/, $(SRCS:.c=.o))
 HDRS = test_common.h test_config.h tinytest.h tinytest_macros.h
 LIBS =

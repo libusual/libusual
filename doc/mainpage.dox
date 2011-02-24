@@ -28,6 +28,9 @@
  * <table>
  * <tr><th colspan=2>  Compat includes  </th></tr>
  * <tr><td>  <usual/base.h>          </td><td>  Base C environment  </td></tr>
+ * <tr><td>  <usual/getopt.h>        </td><td>  Command line argument processing  </td></tr>
+ * <tr><td>  <usual/err.h>           </td><td>  Error handling for command-line tools  </td></tr>
+ * <tr><td>  <usual/netdb.h>         </td><td>  Async DNS lookup  </td></tr>
  * <tr><td>  <usual/pthread.h>       </td><td>  Pthreads compat   </td></tr>
  * <tr><td>  <usual/signal.h>        </td><td>  Signal compat   </td></tr>
  * <tr><td>  <usual/socket.h>        </td><td>  Socket compat and helper functions   </td></tr>
@@ -64,9 +67,7 @@
  * <tr><th colspan=2>  OS support  </th></tr>
  * <tr><td>  <usual/event.h>         </td><td>  libevent compat   </td></tr>
  * <tr><td>  <usual/daemon.h>        </td><td>  Process daemonization   </td></tr>
- * <tr><td>  <usual/err.h>           </td><td>  Error handling for command-line tools  </td></tr>
  * <tr><td>  <usual/fileutil.h>      </td><td>  Various file I/O tools   </td></tr>
- * <tr><td>  <usual/netdb.h>         </td><td>  Async DNS lookup  </td></tr>
  * <tr><td>  <usual/logging.h>       </td><td>  Logging framework for daemons   </td></tr>
  * <tr><td>  <usual/pgsocket.h>      </td><td>  Async Postgres connection framework   </td></tr>
  * <tr><td>  <usual/safeio.h>        </td><td>  Safety wrappers around OS I/O   </td></tr>
