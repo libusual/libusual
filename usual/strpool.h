@@ -42,7 +42,7 @@ struct PStr {
 	/** String length */
 	int len;
 	/** Zero-terminated value */
-	char str[];
+	char str[FLEX_ARRAY];
 };
 
 /** Create new pool */
