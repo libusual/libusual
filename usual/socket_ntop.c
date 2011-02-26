@@ -31,8 +31,8 @@
 #define INT16SZ 2
 #endif
 
-typedef unsigned char u_char;
-typedef unsigned int u_int;
+#define u_char uint8_t
+#define u_int unsigned int
 
 /*
  * WARNING: Don't even consider trying to compile this on a system where
