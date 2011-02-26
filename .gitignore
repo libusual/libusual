@@ -9,3 +9,4 @@ test/test_config.h
 test/regtest
 doc/html
 *.[oas]
+*.gc[odn][aov]
