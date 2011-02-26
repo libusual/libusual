@@ -589,7 +589,7 @@ loop:
  */
 
 /* global signal handler registered via sigaction() */
-static void uevent_sig_handler(int sig, siginfo_t *si, void *arg)
+static void uevent_sig_handler(int sig)
 {
 	struct List *node, *tmp;
 	struct event_base *base;
@@ -677,8 +677,8 @@ static bool sig_init(struct event_base *base, int sig)
 	if (!signal_set_up[sig]) {
 		struct sigaction sa;
 		memset(&sa, 0, sizeof(sa));
-		sa.sa_sigaction = uevent_sig_handler;
-		sa.sa_flags = SA_SIGINFO | SA_RESTART;
+		sa.sa_handler = uevent_sig_handler;
+		sa.sa_flags = SA_RESTART;
 		sigfillset(&sa.sa_mask);
 		if (sigaction(sig, &sa, &old_handler[sig]) != 0)
 			return false;
