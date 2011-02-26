@@ -61,8 +61,6 @@ int	opterr = 1;		/* if error message should be printed */
 int	optind = 1;		/* index into parent argv vector */
 int	optopt = '?';		/* character checked for validity */
 
-static int optreset;		/* reset getopt.  do optind=0 externally */
-
 #define PRINT_ERROR	((opterr) && (*options != ':'))
 
 #define FLAG_PERMUTE	0x01	/* permute non-options to the end of argv */
@@ -275,6 +273,7 @@ getopt_internal(int nargc, char * const *nargv, const char *options,
 	char *oli;				/* option letter list index */
 	int optchar, short_too;
 	static int posixly_correct = -1;
+	int optreset = 0;
 
 	if (options == NULL)
 		return (-1);
@@ -293,8 +292,7 @@ getopt_internal(int nargc, char * const *nargv, const char *options,
 		options++;
 
 	/*
-	 * XXX Some GNU programs (like cvs) set optind to 0 instead of
-	 * XXX using optreset.  Work around this braindamage.
+	 * reset if requested
 	 */
 	if (optind == 0)
 		optind = optreset = 1;
