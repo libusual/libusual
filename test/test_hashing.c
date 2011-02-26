@@ -30,14 +30,13 @@ end:;
 static void test_lookup3(void *p)
 {
 #ifdef WORDS_BIGENDIAN
-	#warning n/a
 	int_check(xlookup3(""), 3735928559);
-	int_check(xlookup3("a"), 1490454280);
-	int_check(xlookup3("abc"), 238646833);
-	int_check(xlookup3("message digest"), 2512672053);
-	int_check(xlookup3("abcdefghijklmnopqrstuvwxyz"), 1966650813);
-	int_check(xlookup3("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"), 3992286962);
-	int_check(xlookup3("12345678901234567890123456789012345678901234567890123456789012345678901234567890"), 2776963519);
+	int_check(xlookup3("a"), -454251968);
+	int_check(xlookup3("abc"), -1186250080);
+	int_check(xlookup3("message digest"), 670730672);
+	int_check(xlookup3("abcdefghijklmnopqrstuvwxyz"), 251682059);
+	int_check(xlookup3("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"), 567386262);
+	int_check(xlookup3("12345678901234567890123456789012345678901234567890123456789012345678901234567890"), 312582506);
 #else
 	int_check(xlookup3(""), 3735928559);
 	int_check(xlookup3("a"), 1490454280);
