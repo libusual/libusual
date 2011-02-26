@@ -34,75 +34,73 @@ struct Heap {
  * Low-level operations.
  */
 
-#define inline __attribute__((always_inline))
-
-static unsigned _heap_get_parent(unsigned i)
+static unsigned get_parent(unsigned i)
 {
 	return (i - 1) / 2;
 }
 
-static unsigned _heap_get_child(unsigned i, unsigned child_nr)
+static unsigned get_child(unsigned i, unsigned child_nr)
 {
 	return 2*i + 1 + child_nr;
 }
 
-static bool _heap_is_better(struct Heap *h, unsigned i1, unsigned i2)
+static bool is_better(struct Heap *h, unsigned i1, unsigned i2)
 {
 	return h->is_better(h->data[i1], h->data[i2]);
 }
 
-static void _heap_set(struct Heap *h, unsigned i, void *ptr)
+static void set(struct Heap *h, unsigned i, void *ptr)
 {
 	h->data[i] = ptr;
 	if (h->save_pos)
 		h->save_pos(ptr, i);
 }
 
-static void _heap_swap(struct Heap *h, unsigned i1, unsigned i2)
+static void swap(struct Heap *h, unsigned i1, unsigned i2)
 {
 	void *tmp = h->data[i1];
-	_heap_set(h, i1, h->data[i2]);
-	_heap_set(h, i2, tmp);
+	set(h, i1, h->data[i2]);
+	set(h, i2, tmp);
 }
 
-static void _heap_bubble_up(struct Heap *h, unsigned i)
+static void bubble_up(struct Heap *h, unsigned i)
 {
 	unsigned p;
 	while (i > 0) {
-		p = _heap_get_parent(i);
-		if (!_heap_is_better(h, i, p))
+		p = get_parent(i);
+		if (!is_better(h, i, p))
 			break;
-		_heap_swap(h, i, p);
+		swap(h, i, p);
 		i = p;
 	}
 }
 
-static void _heap_bubble_down(struct Heap *h, unsigned i)
+static void bubble_down(struct Heap *h, unsigned i)
 {
-	unsigned c = _heap_get_child(i, 0);
+	unsigned c = get_child(i, 0);
 	while (c < h->used) {
 		if (c + 1 < h->used) {
-			if (_heap_is_better(h, c + 1, c))
+			if (is_better(h, c + 1, c))
 				c = c + 1;
 		}
-		if (!_heap_is_better(h, c, i))
+		if (!is_better(h, c, i))
 			break;
-		_heap_swap(h, i, c);
+		swap(h, i, c);
 		i = c;
-		c = _heap_get_child(i, 0);
+		c = get_child(i, 0);
 	}
 }
 
 static void rebalance(struct Heap *h, unsigned pos)
 {
 	if (pos == 0) {
-		_heap_bubble_down(h, pos);
+		bubble_down(h, pos);
 	} else if (pos == h->used - 1) {
-		_heap_bubble_up(h, pos);
-	} else if (_heap_is_better(h, pos, _heap_get_parent(pos))) {
-		_heap_bubble_up(h, pos);
+		bubble_up(h, pos);
+	} else if (is_better(h, pos, get_parent(pos))) {
+		bubble_up(h, pos);
 	} else {
-		_heap_bubble_down(h, pos);
+		bubble_down(h, pos);
 	}
 }
 
@@ -169,8 +167,8 @@ bool heap_push(struct Heap *h, void *ptr)
 	}
 
 	pos = h->used++;
-	_heap_set(h, pos, ptr);
-	_heap_bubble_up(h, pos);
+	set(h, pos, ptr);
+	bubble_up(h, pos);
 	return true;
 }
 
@@ -186,7 +184,7 @@ void *heap_remove(struct Heap *h, unsigned pos)
 
 	last = --h->used;
 	if (pos < last) {
-		_heap_set(h, pos, h->data[last]);
+		set(h, pos, h->data[last]);
 		rebalance(h, pos);
 	}
 	h->data[last] = NULL;
