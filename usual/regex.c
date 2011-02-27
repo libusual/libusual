@@ -1183,20 +1183,13 @@ better_match:
 /* fill in proper matcher */
 static void set_op_type(struct Op *op, enum OpType op_type)
 {
+	static const matcher_f mlist[] = {
+		match_char, match_any, match_class, match_group, match_bref,
+		match_bol, match_eol, match_wchange, match_wchange,
+		match_gend, got_full_match
+	};
+	op->matcher = mlist[op_type];
 	op->type = op_type;
-	switch (op_type) {
-	case OP_CHAR:		op->matcher = match_char; break;
-	case OP_ANY:		op->matcher = match_any; break;
-	case OP_GROUP:		op->matcher = match_group; break;
-	case OP_CLASS:		op->matcher = match_class; break;
-	case OP_BOL:		op->matcher = match_bol; break;
-	case OP_EOL:		op->matcher = match_eol; break;
-	case OP_WCHANGE:	op->matcher = match_wchange; break;
-	case OP_NWCHANGE:	op->matcher = match_wchange; break;
-	case OP_BREF:   	op->matcher = match_bref; break;
-	case OP_GMATCH:		op->matcher = match_gend; break;
-	case OP_FULLMATCH:	op->matcher = got_full_match; break;
-	}
 }
 
 /*
