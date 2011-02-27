@@ -204,11 +204,20 @@ struct CfLookup {
 /**
  * Helper to describe CfKey with relative addressing.
  *
- * Before using it do: #define CF_REL_BASE struct Foo
+ * Before using it defined CF_REL_BASE to base struct.
  *
  * The var should be field in that struct.
  *
- * Later: #undef CF_REL_BASE
+ * @code
+ * struct Foo {
+ * 	char *foo_name;
+ * };
+ * #define CF_REL_BASE struct Foo
+ * ...
+ * CF_REL("name", CF_STR, foo_name, 0, NULL)
+ * ...
+ * #undef CF_REL_BASE
+ * @endcode
  */
 #define CF_REL(name, ops, var, flags, def) \
 	{ name, ops, flags | CF_VAL_REL, offsetof(CF_REL_BASE, var), def }
