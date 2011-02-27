@@ -7,7 +7,7 @@
 
 #include <usual/pgutil.h>
 
-#include <ctype.h>
+#include <usual/ctype.h>
 
 /* str -> E'str' */
 bool pg_quote_literal(char *_dst, const char *_src, int dstlen)

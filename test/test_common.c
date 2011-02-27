@@ -12,6 +12,7 @@ struct testgroup_t groups[] = {
 	{ "hashing/", hashing_tests },
 	{ "endian/", endian_tests },
 	{ "string/", string_tests },
+	{ "ctype/", ctype_tests },
 	{ "heap/", heap_tests },
 	{ "hashtab/", hashtab_tests },
 	{ "list/", list_tests },

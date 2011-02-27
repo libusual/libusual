@@ -32,4 +32,4 @@ extern struct testcase_t hashing_tests[];
 extern struct testcase_t fileutil_tests[];
 extern struct testcase_t socket_tests[];
 extern struct testcase_t getopt_tests[];
-
+extern struct testcase_t ctype_tests[];

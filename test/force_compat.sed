@@ -9,3 +9,4 @@
 /INET_NTOP/s,^,//,
 /INET_PTON/s,^,//,
 /GETOPT/s,^,//,
+/CTYPE_ON_CHAR/s,^,//,

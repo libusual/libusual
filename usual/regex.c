@@ -42,7 +42,7 @@
 #ifndef USE_SYSTEM_REGEX
 
 #include <usual/mempool.h>
-#include <ctype.h>
+#include <usual/ctype.h>
 #include <string.h>
 #include <stdio.h>
 

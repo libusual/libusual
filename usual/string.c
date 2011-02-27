@@ -20,9 +20,9 @@
 
 #include <usual/mbuf.h>
 #include <usual/statlist.h>
+#include <usual/ctype.h>
 
 #include <errno.h>
-#include <ctype.h>
 
 /*
  * Dynamic list of strings.

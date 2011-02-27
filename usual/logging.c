@@ -20,8 +20,8 @@
 
 #include <stdio.h>
 #include <stdarg.h>
-#include <ctype.h>
 
+#include <usual/ctype.h>
 #include <usual/string.h>
 #include <usual/time.h>
 #include <usual/err.h>

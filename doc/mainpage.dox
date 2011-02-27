@@ -28,6 +28,7 @@
  * <table>
  * <tr><th colspan=2>  Compat includes  </th></tr>
  * <tr><td>  <usual/base.h>          </td><td>  Base C environment  </td></tr>
+ * <tr><td>  <usual/ctype.h>         </td><td>  ctype compat  </td></tr>
  * <tr><td>  <usual/getopt.h>        </td><td>  Command line argument processing  </td></tr>
  * <tr><td>  <usual/err.h>           </td><td>  Error handling for command-line tools  </td></tr>
  * <tr><td>  <usual/netdb.h>         </td><td>  Async DNS lookup  </td></tr>

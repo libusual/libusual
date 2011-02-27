@@ -7,8 +7,7 @@
 #include <usual/cbtree.h>
 #include <usual/mbuf.h>
 #include <usual/string.h>
-
-#include <ctype.h>
+#include <usual/ctype.h>
 
 struct MDict {
 	struct CBTree *tree;
