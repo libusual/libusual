@@ -46,19 +46,22 @@ void *load_file(const char *fn, size_t *len_p)
 		return NULL;
 
 	f = fopen(fn, "r");
-	if (!f)
+	if (!f) {
+		free(buf);
 		return NULL;
+	}
 
 	if ((res = fread(buf, 1, st.st_size, f)) < 0) {
+		free(buf);
 		fclose(f);
 		return NULL;
 	}
 
 	fclose(f);
 
-	buf[st.st_size] = 0;
+	buf[res] = 0;
 	if (len_p)
-		*len_p = st.st_size;
+		*len_p = res;
 	return buf;
 }
 
