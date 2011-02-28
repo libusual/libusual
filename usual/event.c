@@ -111,7 +111,7 @@ static void base_dbg(struct event_base *base, const char *s, ...)
 
 	log_noise("event base=%p: fdlist=%u timeouts=%d pfds=%d: %s",
 	       base, statlist_count(&base->fd_list),
-	       base->timeout_heap.used,
+	       heap_size(base->timeout_heap),
 	       base->pfd_size, buf);
 }
 
