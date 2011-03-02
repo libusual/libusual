@@ -161,7 +161,7 @@ int main(void)
 	}
 	return 0;
 }
-])], [_good_ctype=yes], [_good_ctype=no])
+])], [_good_ctype=yes], [_good_ctype=no], [_good_ctype=no])
 AC_MSG_RESULT([$_good_ctype])
 if test $_good_ctype = yes; then
   AC_DEFINE(HAVE_CTYPE_ON_CHAR, [1], [Define if <ctype.h> macros work on char.])
