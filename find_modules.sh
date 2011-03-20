@@ -39,10 +39,11 @@ make_pats() {
 
 # loop over grep until all mods are found
 m_done=""
-m_tocheck=$(grep_usual "$@")
+m_tocheck=`grep_usual "$@"`
 while test -n "$m_tocheck"; do
   m_done="$m_done $m_tocheck"
-  m_tocheck=$(grep_usual $(make_pats $m_tocheck))
+  pats=`make_pats $m_tocheck`
+  m_tocheck=`grep_usual $pats`
 done
 
 # done
