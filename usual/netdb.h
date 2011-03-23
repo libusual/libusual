@@ -30,6 +30,11 @@
 #include <netdb.h>
 #endif
 
+/* older glibcs have broken getaddrinfo_a() */
+#if defined(__GLIBC_PREREQ) && !__GLIBC_PREREQ(2,7)
+#undef HAVE_GETADDRINFO_A
+#endif
+
 #ifndef HAVE_GETADDRINFO_A
 
 /** Async execution */
