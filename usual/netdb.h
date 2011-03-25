@@ -31,8 +31,10 @@
 #endif
 
 /* older glibcs have broken getaddrinfo_a() */
-#if defined(__GLIBC_PREREQ) && !__GLIBC_PREREQ(2,7)
+#ifdef __GLIBC_PREREQ
+#if !__GLIBC_PREREQ(2,9)
 #undef HAVE_GETADDRINFO_A
+#endif
 #endif
 
 #ifndef HAVE_GETADDRINFO_A
