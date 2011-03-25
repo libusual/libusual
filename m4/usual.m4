@@ -361,7 +361,7 @@ dnl
 AC_DEFUN([AC_USUAL_GETADDRINFO_A], [
 AC_SEARCH_LIBS(getaddrinfo_a, anl)
 AC_CACHE_CHECK([whether to use native getaddinfo_a], ac_cv_usual_glibc_gaia,
-  [AC_TRY_COMPILE([
+  [AC_TRY_LINK([
 #include <stdio.h>
 #ifdef HAVE_NETDB_H
 #include <netdb.h>
