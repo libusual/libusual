@@ -183,8 +183,6 @@ AC_CHECK_FUNCS(err errx warn warnx getprogname setprogname)
 AC_CHECK_FUNCS(posix_memalign memalign valloc)
 AC_CHECK_FUNCS(getopt getopt_long getopt_long_only)
 AC_CHECK_FUNCS(fls flsl flsll ffs ffsl ffsll)
-AC_SEARCH_LIBS(getaddrinfo_a, anl)
-AC_CHECK_FUNCS(getaddrinfo_a)
 ### Functions provided only on win32
 AC_CHECK_FUNCS(localtime_r recvmsg sendmsg usleep)
 ### Functions used by libusual itself
@@ -357,3 +355,31 @@ else
 fi
 ]) dnl  AC_USUAL_UREGEX
 
+dnl
+dnl  AC_USUAL_GETADDRINFO_A - getaddrinfo_a() is required
+dnl
+AC_DEFUN([AC_USUAL_GETADDRINFO_A], [
+AC_SEARCH_LIBS(getaddrinfo_a, anl)
+AC_CACHE_CHECK([whether to use native getaddinfo_a], ac_cv_usual_glibc_gaia,
+  [AC_TRY_COMPILE([
+#include <stdio.h>
+#ifdef HAVE_NETDB_H
+#include <netdb.h>
+#endif
+], [
+#if __GLIBC_PREREQ(2,9)
+	getaddrinfo_a(0,NULL,0,NULL);
+#else
+	none or broken
+#endif
+], [ac_cv_usual_glibc_gaia=yes], [ac_cv_usual_glibc_gaia=no])])
+
+if test x"$ac_cv_usual_glibc_gaia" = xyes ; then
+  AC_DEFINE(HAVE_GETADDRINFO_A, 1, [Define to 1 if you have the getaddrinfo_a() function.])
+else
+  ACX_PTHREAD(, [AC_MSG_RESULT([*** Threads not available, fallback getaddrinfo_a() non-functional.])])
+  CC="$PTHREAD_CC"
+  CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
+  LIBS="$LIBS $PTHREAD_LIBS"
+fi
+])
