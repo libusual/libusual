@@ -328,7 +328,7 @@ AC_EGREP_CPP([HTTP_SERVUNAVAIL],
 [AC_MSG_ERROR([no, cannot proceed])],
 [AC_MSG_RESULT([yes])])
 
-AC_CHECK_FUNCS(event_loopbreak event_base_new)
+AC_CHECK_FUNCS(event_loopbreak event_base_new evdns_base_new)
 have_libevent=yes
 fi # libevent
 AC_SUBST(have_libevent)
