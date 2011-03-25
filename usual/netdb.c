@@ -20,17 +20,23 @@
 
 #include <usual/socket.h>
 
+/* is compat function needed? */
 #ifndef HAVE_GETADDRINFO_A
 
-int getaddrinfo_a(int mode, struct gaicb *list[], int nitems, struct sigevent *sevp)
+/* full compat if threads are available */
+#ifdef HAVE_PTHREAD_H
+
+#include <pthread.h>
+#include <usual/list.h>
+
+/*
+ * Basic blocking lookup
+ */
+
+static void gaia_lookup(pthread_t origin, struct gaicb *list[], int nitems, struct sigevent *sevp)
 {
 	struct gaicb *g;
 	int i, res;
-
-	if (nitems <= 0)
-		return 0;
-	if (mode != GAI_WAIT && mode != GAI_NOWAIT)
-		goto einval;
 
 	for (i = 0; i < nitems; i++) {
 		g = list[i];
@@ -38,21 +44,175 @@ int getaddrinfo_a(int mode, struct gaicb *list[], int nitems, struct sigevent *s
 		g->_state = res;
 	}
 
-	if (!sevp || sevp->sigev_notify == SIGEV_NONE)
-		return 0;
-
-	if (sevp->sigev_notify == SIGEV_SIGNAL) {
-		raise(sevp->sigev_signo);
+	if (!sevp || sevp->sigev_notify == SIGEV_NONE) {
+		/* do nothing */
+	} else if (sevp->sigev_notify == SIGEV_SIGNAL) {
+		/* send signal */
+		pthread_kill(origin, sevp->sigev_signo);
 	} else if (sevp->sigev_notify == SIGEV_THREAD) {
+		/* call function */
 		union sigval sv;
 		sevp->sigev_notify_function(sv);
-	} else
-		goto einval;
+	}
+}
+
+/*
+ * Thread to run blocking lookup in
+ */
+
+struct GAIAContext {
+	struct List req_list;
+	pthread_cond_t cond;
+	pthread_mutex_t lock;
+	pthread_t thread;
+};
+
+struct GAIARequest {
+	struct List node;
+	pthread_t origin;
+	int nitems;
+	struct sigevent sev;
+	struct gaicb *list[FLEX_ARRAY];
+};
+
+#define RQ_SIZE(n) (offsetof(struct GAIARequest,list) + (n)*(sizeof(struct gaicb *)))
+
+static void gaia_lock_reqs(struct GAIAContext *ctx)
+{
+	pthread_mutex_lock(&ctx->lock);
+}
+
+static void gaia_unlock_reqs(struct GAIAContext *ctx)
+{
+	pthread_mutex_unlock(&ctx->lock);
+}
+
+static void *gaia_lookup_thread(void *arg)
+{
+	struct GAIAContext *ctx = arg;
+	struct GAIARequest *rq;
+	struct List *el;
+
+	gaia_lock_reqs(ctx);
+loop:
+	while (1) {
+		el = list_pop(&ctx->req_list);
+		if (!el)
+			break;
+		gaia_unlock_reqs(ctx);
+
+		rq = container_of(el, struct GAIARequest, node);
+		gaia_lookup(rq->origin, rq->list, rq->nitems, &rq->sev);
+		free(rq);
+
+		gaia_lock_reqs(ctx);
+	}
+	pthread_cond_wait(&ctx->cond, &ctx->lock);
+	goto loop;
+
+	return NULL;
+}
+
+/*
+ * Functions run in user thread
+ */
+
+static int gaia_post_request(struct GAIAContext *ctx, struct gaicb *list[], int nitems, struct sigevent *sevp)
+{
+	struct GAIARequest *rq;
+	
+	rq = malloc(RQ_SIZE(nitems));
+	if (!rq)
+		return EAI_MEMORY;
+
+	list_init(&rq->node);
+	rq->origin = pthread_self();
+	rq->nitems = nitems;
+	if (sevp)
+		rq->sev = *sevp;
+	else
+		rq->sev.sigev_notify = SIGEV_NONE;
+	memcpy(rq->list, list, sizeof(struct gaicb *));
+
+	gaia_lock_reqs(ctx);
+	list_append(&ctx->req_list, &rq->node);
+	gaia_unlock_reqs(ctx);
+
+	pthread_cond_signal(&ctx->cond);
+
 	return 0;
+}
+
+static struct GAIAContext *gaia_create_context(void)
+{
+	struct GAIAContext *ctx;
+	int err;
+
+	ctx = malloc(sizeof(*ctx));
+	if (!ctx)
+		return NULL;
+
+	list_init(&ctx->req_list);
+	err = pthread_cond_init(&ctx->cond, NULL);
+	if (err)
+		goto failed;
+
+	err = pthread_mutex_init(&ctx->lock, NULL);
+	if (err)
+		goto failed;
+
+	err = pthread_create(&ctx->thread, NULL, gaia_lookup_thread, ctx);
+	if (err)
+		goto failed;
+
+	return ctx;
+
+failed:
+	free(ctx);
+	errno = err;
+	return NULL;
+}
+
+/*
+ * Final interface
+ */
+
+int getaddrinfo_a(int mode, struct gaicb *list[], int nitems, struct sigevent *sevp)
+{
+	static struct GAIAContext *ctx;
+
+	if (nitems <= 0)
+		return 0;
+
+	if (sevp && sevp->sigev_notify != SIGEV_NONE
+	    && sevp->sigev_notify != SIGEV_SIGNAL
+	    && sevp->sigev_notify != SIGEV_THREAD)
+		goto einval;
+
+	if (mode == GAI_WAIT) {
+		gaia_lookup(pthread_self(), list, nitems, sevp);
+		return 0;
+	} else if (mode == GAI_NOWAIT) {
+		if (!ctx) {
+			ctx = gaia_create_context();
+			if (!ctx)
+				return EAI_MEMORY;
+		}
+		return gaia_post_request(ctx, list, nitems, sevp);
+	}
 einval:
 	errno = EINVAL;
 	return EAI_SYSTEM;
 }
 
-#endif
+#else /* without threads not much to do */
+
+int getaddrinfo_a(int mode, struct gaicb *list[], int nitems, struct sigevent *sevp)
+{
+	errno = ENOSYS;
+	return EAI_SYSTEM;
+}
+
+#endif /* !HAVE_PTHREAD_H */
+#endif /* !HAVE_GETADDRINFO_A */
 
