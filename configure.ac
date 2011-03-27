@@ -25,6 +25,8 @@ AC_USUAL_UREGEX
 
 AC_USUAL_LIBEVENT(opt)
 
+AC_USUAL_GETADDRINFO_A
+
 dnl search for common libraries
 AC_SEARCH_LIBS(clock_gettime, rt)
 AC_SEARCH_LIBS(getsockname, socket)

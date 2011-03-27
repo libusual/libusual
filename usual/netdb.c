@@ -19,15 +19,16 @@
 #include <usual/netdb.h>
 
 #include <usual/socket.h>
+#include <usual/list.h>
 
 /* is compat function needed? */
 #ifndef HAVE_GETADDRINFO_A
 
 /* full compat if threads are available */
-#ifdef HAVE_PTHREAD_H
+#ifdef HAVE_PTHREAD
 
 #include <pthread.h>
-#include <usual/list.h>
+#include <string.h>
 
 /*
  * Basic blocking lookup
@@ -51,8 +52,7 @@ static void gaia_lookup(pthread_t origin, struct gaicb *list[], int nitems, stru
 		pthread_kill(origin, sevp->sigev_signo);
 	} else if (sevp->sigev_notify == SIGEV_THREAD) {
 		/* call function */
-		union sigval sv;
-		sevp->sigev_notify_function(sv);
+		sevp->sigev_notify_function(sevp->sigev_value);
 	}
 }
 
@@ -94,11 +94,12 @@ static void *gaia_lookup_thread(void *arg)
 	struct List *el;
 
 	gaia_lock_reqs(ctx);
-loop:
 	while (1) {
 		el = list_pop(&ctx->req_list);
-		if (!el)
-			break;
+		if (!el) {
+			pthread_cond_wait(&ctx->cond, &ctx->lock);
+			continue;
+		}
 		gaia_unlock_reqs(ctx);
 
 		rq = container_of(el, struct GAIARequest, node);
@@ -107,8 +108,6 @@ loop:
 
 		gaia_lock_reqs(ctx);
 	}
-	pthread_cond_wait(&ctx->cond, &ctx->lock);
-	goto loop;
 
 	return NULL;
 }
