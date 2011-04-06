@@ -88,11 +88,7 @@ realclean:
 	rm -f usual/pgutil_kwlookup.h
 
 boot:
-	rm -rf usual/config.*
-	aclocal -I ./m4
-	autoheader
-	autoconf
-	rm -rf aclocal* autom4te.*
+	./autogen.sh
 
 #config.mak:
 #	@echo "Config out-of-date, please run ./configure again"
