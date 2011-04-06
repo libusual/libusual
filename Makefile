@@ -82,7 +82,7 @@ clean:
 	rm -f usual/pgutil_kwlookup.h.gp
 
 distclean: clean
-	rm -f config.mak usual/config.h
+	rm -f config.mak usual/config.h config.status
 
 realclean:
 	rm -f usual/pgutil_kwlookup.h
