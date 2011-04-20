@@ -23,11 +23,11 @@ grep_usual() {
   for m in $m_done; do
     excl="$excl|$m"
   done
-  awk "
-/^#include[ \t]*[<\"]usual\\/($excl)[.]h/  { next; }
-/^#include[ \t]*[<\"]usual\\//             { split(\$0, tmp, \"[./]\"); print tmp[2]; }
-" "$@" \
-  | sort -u
+  prog='
+/^#include[ \t]*[<"]usual\/('"$excl"')[.]h/  { next; }
+/^#include[ \t]*[<"]usual\// { p1 = index($0, "/"); p2 = index($0,"."); print substr($0, p1+1, p2-p1-1); }
+'
+  awk "$prog" "$@" | sort -u
 }
 
 # return module filename globs
