@@ -87,9 +87,22 @@ static inline uint64_t bswap64(uint64_t x)
  * @{
  */
 
-#ifndef le64toh
+/* Ignore OS defines, as they may define only some subset of functions */
+#undef htobe16
+#undef htobe32
+#undef htobe64
+#undef htole16
+#undef htole32
+#undef htole64
+#undef be16toh
+#undef be32toh
+#undef be64toh
+#undef le16toh
+#undef le32toh
+#undef le64toh
 
 #ifdef WORDS_BIGENDIAN
+
 #define	htobe16(x)	((uint16_t)(x))
 #define	htobe32(x)	((uint32_t)(x))
 #define	htobe64(x)	((uint64_t)(x))
@@ -119,7 +132,6 @@ static inline uint64_t bswap64(uint64_t x)
 #define	le16toh(x)	((uint16_t)(x))
 #define	le32toh(x)	((uint32_t)(x))
 #define	le64toh(x)	((uint64_t)(x))
-#endif
 
 #endif
 
