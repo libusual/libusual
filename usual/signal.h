@@ -32,6 +32,17 @@
 #include <signal.h>
 
 /*
+ * Compat sigval, detect based on siginfo_t.si_code.
+ */
+
+#ifndef SI_QUEUE
+union sigval {
+	int sival_int;
+	void *sival_ptr;
+};
+#endif
+
+/*
  * Compat sigevent
  */
 
@@ -39,10 +50,6 @@
 #define SIGEV_NONE 0
 #define SIGEV_SIGNAL 1
 #define SIGEV_THREAD 2
-union sigval {
-	int sival_int;
-	void *sival_ptr;
-};
 struct sigevent {
 	int sigev_notify;
 	int sigev_signo;
