@@ -184,9 +184,9 @@ AC_CHECK_FUNCS(posix_memalign memalign valloc)
 AC_CHECK_FUNCS(getopt getopt_long getopt_long_only)
 AC_CHECK_FUNCS(fls flsl flsll ffs ffsl ffsll)
 ### Functions provided only on win32
-AC_CHECK_FUNCS(localtime_r recvmsg sendmsg usleep)
+AC_CHECK_FUNCS(localtime_r gettimeofday recvmsg sendmsg usleep getrusage)
 ### Functions used by libusual itself
-AC_CHECK_FUNCS(syslog mmap recvmsg sendmsg getpeerucred)
+AC_CHECK_FUNCS(syslog mmap getpeerucred)
 ### win32: link with ws2_32
 AC_SEARCH_LIBS(WSAGetLastError, ws2_32)
 AC_FUNC_STRERROR_R

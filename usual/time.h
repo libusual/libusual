@@ -49,15 +49,37 @@ usec_t get_cached_time(void);
 void reset_time_cache(void);
 
 #ifdef WIN32
+
+
+#ifndef HAVE_GETTIMEOFDAY
+#define gettimeofday(t,z) usual_gettimeofday(t,z)
+
 /** Compat: gettimeofday() */
 int gettimeofday(struct timeval * tp, void * tzp);
+
+#endif
+
+
+#ifndef HAVE_LOCALTIME_R
+#define localtime_r(t,b) usual_localtime_r(t,b)
+
 /** Compat: localtime_r() */
 struct tm *localtime_r(const time_t *tp, struct tm *buf);
 
+#endif
+
 #ifndef HAVE_USLEEP
+#define usleep(x) usual_usleep(x)
+
 /** Compat: usleep() */
 static inline void usleep(long usec) { Sleep(usec / 1000); }
+
 #endif
+
+#ifndef HAVE_GETRUSAGE
+#define getrusage(w,d) usual_getrusage(w,d)
+
+#define RUSAGE_SELF 0
 
 /** Compat: rusage for win32 */
 struct rusage {
@@ -65,9 +87,10 @@ struct rusage {
 	struct timeval ru_stime;
 };
 
-#define RUSAGE_SELF 0
 /** Compat: getrusage() for win32 */
 int getrusage(int who, struct rusage *dst);
+
+#endif
 
 #endif
 

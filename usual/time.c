@@ -106,6 +106,8 @@ static void ft2tv(FILETIME *src, struct timeval *dst, bool use_epoch)
 	dst->tv_usec = (tmp.QuadPart % FT_SEC) / 10;
 }
 
+#ifndef HAVE_GETTIMEOFDAY
+
 int gettimeofday(struct timeval * tp, void * tzp)
 {
 	FILETIME file_time;
@@ -120,6 +122,10 @@ int gettimeofday(struct timeval * tp, void * tzp)
 
 	return 0;
 }
+
+#endif /* !HAVE_GETTIMEOFDAY */
+
+#ifndef HAVE_LOCALTIME_R
 
 struct tm *localtime_r(const time_t *tp, struct tm *dst)
 {
@@ -151,6 +157,10 @@ struct tm *localtime_r(const time_t *tp, struct tm *dst)
 	return dst;
 }
 
+#endif /* !HAVE_LOCALTIME_R */
+
+#ifndef HAVE_GETRUSAGE
+
 int getrusage(int who, struct rusage *dst)
 {
 	FILETIME tcreate, texit, tkern, tuser;
@@ -165,4 +175,6 @@ int getrusage(int who, struct rusage *dst)
 	return 0;
 }
 
-#endif
+#endif /* !HAVE_GETRUSAGE */
+
+#endif /* WIN32 */
