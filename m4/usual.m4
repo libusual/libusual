@@ -60,10 +60,10 @@ if test "$GCC" = "yes"; then
   old_LDFLAGS="$LDFLAGS"
   LDFLAGS="$LDFLAGS -Wl,--as-needed"
   AC_MSG_CHECKING([whether linker supports --as-needed])
-  AC_LINK_IFELSE([int main(void) { return 0; }],
+  AC_LINK_IFELSE([AC_LANG_SOURCE([int main(void) { return 0; }],
     [AC_MSG_RESULT([yes])],
     [AC_MSG_RESULT([no])
-     LDFLAGS="$old_LDFLAGS"])
+     LDFLAGS="$old_LDFLAGS"])])
 fi
 dnl Pick good warning flags for gcc
 WFLAGS=""
@@ -80,7 +80,8 @@ if test x"$GCC" = xyes; then
   flags="$flags -Wuninitialized -Wuninitialized-experimental"
   for f in $flags; do
     CFLAGS="$good_CFLAGS $WFLAGS $f"
-    AC_COMPILE_IFELSE([void foo(void){}], [WFLAGS="$WFLAGS $f"])
+    AC_COMPILE_IFELSE([AC_LANG_SOURCE([void foo(void){}])],
+	[WFLAGS="$WFLAGS $f"])
   done
 
   # avoid -Wextra if missing-field.initializers does not work
@@ -192,7 +193,7 @@ AC_SEARCH_LIBS(WSAGetLastError, ws2_32)
 AC_FUNC_STRERROR_R
 ###
 AC_MSG_CHECKING([for integer enc/dec functions])
-AC_LINK_IFELSE([
+AC_LINK_IFELSE([AC_LANG_SOURCE([
   #include <sys/types.h>
   #ifdef HAVE_SYS_ENDIAN_H
   #include <sys/endian.h>
@@ -206,7 +207,7 @@ AC_LINK_IFELSE([
     le16enc(p, 2); le32enc(p, 3); le64enc(p, 4);
     return (int)(be16dec(p) + be32dec(p) + be64dec(p)) +
            (int)(le16dec(p) + le32dec(p) + le64dec(p));
-  } ],
+  } ])],
 [ AC_MSG_RESULT([found])
   AC_DEFINE([HAVE_ENCDEC_FUNCS], [1], [Define if *enc & *dec functions are available]) ],
 [AC_MSG_RESULT([not found])])
@@ -301,7 +302,7 @@ if test "$levent" = "no"; then
 else # libevent
 AC_DEFINE(HAVE_LIBEVENT, 1, [Use real libevent.])
 LIBS="-levent $LIBS"
-AC_LINK_IFELSE([
+AC_LINK_IFELSE([AC_LANG_SOURCE([
   #include <sys/types.h>
   #include <sys/time.h>
   #include <stdio.h>
@@ -312,7 +313,7 @@ AC_LINK_IFELSE([
     event_set(&ev, 1, EV_READ, NULL, NULL);
     /* this checks for 1.2+ but next we check for 1.3b+ anyway */
     /* event_base_free(NULL); */
-  } ],
+  } ])],
 [AC_MSG_RESULT([found])],
 [AC_MSG_ERROR([not found, cannot proceed])])
 
@@ -377,7 +378,7 @@ AC_CACHE_CHECK([whether to use native getaddinfo_a], ac_cv_usual_glibc_gaia,
 if test x"$ac_cv_usual_glibc_gaia" = xyes ; then
   AC_DEFINE(HAVE_GETADDRINFO_A, 1, [Define to 1 if you have the getaddrinfo_a() function.])
 else
-  ACX_PTHREAD(, [AC_MSG_RESULT([*** Threads not available, fallback getaddrinfo_a() non-functional.])])
+  ACX_PTHREAD(, [AC_MSG_RESULT([Threads not available and fallback getaddrinfo_a() non-functional.])])
   CC="$PTHREAD_CC"
   CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
   LIBS="$LIBS $PTHREAD_LIBS"
