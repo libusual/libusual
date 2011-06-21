@@ -122,6 +122,8 @@
 #define _UNUSED                 __attribute__((unused))
 /** Do not inline function. */
 #define _NOINLINE               __attribute__((noinline))
+/** Indicates that function never returns */
+#define _NORETURN               __attribute__((noreturn))
 
 /* compiler hints - those do not seem to work well */
 #define unlikely(x) __builtin_expect(!!(x), 0)
@@ -135,6 +137,7 @@
 #define _MALLOC
 #define _UNUSED
 #define _NOINLINE
+#define _NORETURN
 #define unlikely(x) x
 #define likely(x) x
 
