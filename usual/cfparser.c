@@ -416,7 +416,7 @@ bool cf_set_filename(struct CfValue *cv, const char *value)
 		return false;
 	memcpy(tmp, home, home_len);
 	memcpy(tmp + home_len, value + usr_len + 1, v_len - usr_len - 1);
-	tmp[v_len - usr_len + home_len] = 0;
+	tmp[v_len - 1 - usr_len + home_len] = 0;
 
 	log_debug("expanded '%s' -> '%s'", value, tmp);
 
