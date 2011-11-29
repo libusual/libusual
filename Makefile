@@ -112,7 +112,11 @@ sparse: config.mak
 
 # generate api documentation
 dox:
+	rm -rf doc/html/mk
+	#rm -rf mk/temos/html
 	doxygen doc/Doxyfile
+	$(MAKE) -C mk/temos
+	cp -rp mk/temos/html doc/html/mk
 
 #
 # rest is for pgutil_kwlookup generation

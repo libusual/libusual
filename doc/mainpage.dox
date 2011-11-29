@@ -23,6 +23,10 @@
  *   for some special case than complex code that tries to handle
  *   everything at once.
  *
+ * @section antimake  Antimake build system.
+ *
+ * <a href="mk/">Build system demos and docs</a>.
+ *
  * @section modules  Module list.
  *
  * <table>

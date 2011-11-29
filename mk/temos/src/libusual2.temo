@@ -1,0 +1,135 @@
+
+. ./libtemo.sh || exit 1
+
+test_start
+
+title Embedding libusual as part of the source.
+
+longmsg <<-"MSG"
+	Here we build libusual as part of top-level tree.
+	This gives the advantage of building only the modules
+	that are actually used in main tree and without the
+	intermediate `libusual.a` step.
+
+	This method is for projects that are developed
+	in parallel with libusual.  Not recommended for
+	casual usage.
+MSG
+
+title2 Configure libusual
+
+msg Here we configure libusual, but do not build it.
+
+usual_clone lib
+
+run cd lib
+
+runq ./autogen.sh
+runq ./configure
+
+run cd ..
+
+title2 Prepare own code
+
+msg Here is the source that needs to be linked with libusual:
+
+cat_file prog.c <<"EOF"
+	#include <usual/crc32.h>
+	#include <stdio.h>
+	#include <string.h>
+
+	int main(void)
+	{
+		const char *data = "CECSFXX";
+		uint32_t crc;
+
+		crc = calc_crc32(data, strlen(data), 0);
+		printf("crc: %08x\n", crc);
+		return 0;
+	}
+EOF
+
+title2 Old way, with plain Make
+
+msg Here is corresponding Makefile:
+
+cat_file Makefile <<"EOF"
+	CC = gcc
+	CFLAGS = -O -g -Wall
+
+	# here we describe our program
+	SRCS = prog.c
+	OBJS = $(SRCS:.c=.o)
+
+	# here we link to libusual
+	USUAL_DIR = ./lib
+	USUAL_LOCAL_SRCS = $(SRCS)
+	CPPFLAGS = $(USUAL_CPPFLAGS)
+	OBJS += $(USUAL_OBJS)
+
+	# this looks what modules are used by files in USUAL_LOCAL_SRCS
+	# and fills the USUAL_OBJS variable based on that
+	include $(USUAL_DIR)/Setup.mk
+
+	all: prog
+
+	prog: $(OBJS)
+		$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) $(LIBS) -o $@
+
+	%.o: %.c
+		$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
+
+	# special rule to build 
+	%.o: $(USUAL_DIR)/usual/%.c
+		$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
+
+	clean:
+		rm -f *.o prog
+EOF
+
+msg Build the project
+run make
+run ls
+run ./prog
+run make clean
+run ls
+
+longmsg <<-"MSG"
+	It's quite complex and that is even without trying to get
+	dependencies rigth.  See next section for preferred way.
+MSG
+
+title2 New way, with Antimake.
+
+longmsg <<-"MSG"
+	Antimake is build framework on plain GNU Make that reads
+	build instructons with Automake syntax.  It has also hooks
+	for libusual integration.
+
+	Here is Makefile that uses Antimake:
+MSG
+
+cat_file Makefile <<"EOF"
+	# the automake-style build description for 'prog'
+	noinst_PROGRAMS = prog
+	prog_SOURCES = prog.c
+
+	# location of configured libusual
+	USUAL_DIR = lib
+
+	# mention that 'prog' wants embedded libusual
+	prog_EMBED_LIBUSUAL = 1
+
+	# launch Antimake
+	include $(USUAL_DIR)/mk/antimake.mk
+EOF
+
+msg Build the project
+run make
+run ls
+run ./prog
+run make clean
+run ls
+
+msg Done
+
