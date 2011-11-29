@@ -69,7 +69,7 @@
 
 /** power-of-2 alignment */
 #ifndef CUSTOM_ALIGN
-#define CUSTOM_ALIGN(x, a) (((unsigned long)(x) + (a) - 1) & ~((a) - 1))
+#define CUSTOM_ALIGN(x, a) (((uintptr_t)(x) + (uintptr_t)(a) - 1) & ~((uintptr_t)(a) - 1))
 #endif
 
 /** preferred alignment */
