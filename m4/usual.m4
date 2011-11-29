@@ -34,10 +34,10 @@ dnl Set the flags before any feature tests.
 if test "$PORTNAME" = "win32"; then
   AC_DEFINE([WIN32_LEAN_AND_MEAN], [1], [Define to request cleaner win32 headers.])
   AC_DEFINE([WINVER], [0x0501], [Define to max win32 API version (0x0501=XP).])
+else
+  AC_DEFINE([_GNU_SOURCE], [1], [Define to get working glibc.])
 fi
 
-dnl Request full API-s
-AC_USE_SYSTEM_EXTENSIONS
 ])
 
 

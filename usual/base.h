@@ -30,6 +30,7 @@
 /* solaris is broken otherwise */
 #if defined(__sun)
 #define _XPG4_2
+#define __EXTENSIONS__
 #endif
 
 #include <sys/types.h>
