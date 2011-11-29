@@ -1,6 +1,6 @@
 
 dnl Those depend on correct order:
-dnl  AC_USUAL_PORT_CHECK
+dnl  AC_USUAL_INIT
 dnl  AC_USUAL_PROGRAM_CHECK
 dnl  AC_USUAL_HEADER_CHECK
 dnl  AC_USUAL_TYPE_CHECK
@@ -10,13 +10,22 @@ dnl  AC_USUAL_CASSERT
 dnl  AC_USUAL_WERROR
 dnl  AC_USUAL_DEBUG
 
+
 dnl
-dnl  AC_USUAL_PORT_CHECK: Sets PORTNAME=win32/unix
+dnl  AC_USUAL_INIT:
+dnl    - Sets PORTNAME=win32/unix
+dnl    - If building from separate dir, writes top-level Makefile (antimake)
 dnl
 dnl  Also defines port-specific flags:
 dnl   _GNU_SOURCE, _WIN32_WINNT, WIN32_LEAN_AND_MEAN
 dnl
-AC_DEFUN([AC_USUAL_PORT_CHECK], [
+AC_DEFUN([AC_USUAL_INIT], [
+
+# if building separately from srcdir, write top-level makefile
+if test "$srcdir" != "."; then
+  echo "include $srcdir/Makefile" > Makefile
+fi
+
 AC_MSG_CHECKING([target host type])
 xhost="$host_alias"
 if test "x$xhost" = "x"; then
@@ -38,8 +47,15 @@ else
   AC_DEFINE([_GNU_SOURCE], [1], [Define to get working glibc.])
 fi
 
+dnl Package-specific data
+AC_SUBST([pkgdatadir], ['${datarootdir}'/${PACKAGE_TARNAME}])
+dnl pkgconfig files
+AC_SUBST([pkgconfigdir], ['${libdir}/pkgconfig'])
+
 ])
 
+dnl Old name for initial checks
+AC_DEFUN([AC_USUAL_PORT_CHECK], [AC_USUAL_INIT])
 
 dnl
 dnl AC_USUAL_PROGRAM_CHECK:  Simple C environment: CC, CPP, INSTALL
@@ -65,6 +81,27 @@ if test "$GCC" = "yes"; then
     [AC_MSG_RESULT([no])
      LDFLAGS="$old_LDFLAGS"])])
 fi
+
+dnl Check if compiler supports gcc-style dependencies
+AC_MSG_CHECKING([whether compiler supports dependency generation])
+old_CFLAGS="$CFLAGS"
+HAVE_CC_DEPFLAG=no
+DEPFLAG=""
+for flg in '-Wp,-MMD,' '-Wp,-MD,'; do
+  CFLAGS="$flg,conftest.d"
+  AC_COMPILE_IFELSE([AC_LANG_SOURCE([void foo(void){}])],
+     [WFLAGS="$WFLAGS $f"])
+  if test "$HAVE_CC_DEPFLAG" = "yes"; then
+    DEPFLAG="$flg"
+    break
+  fi
+done
+rm -f conftest.d
+CFLAGS="$old_CFLAGS"
+AC_MSG_RESULT([$HAVE_CC_DEPFLAG])
+AC_SUBST(HAVE_CC_DEPFLAG)
+AC_SUBST(DEPFLAG)
+
 dnl Pick good warning flags for gcc
 WFLAGS=""
 if test x"$GCC" = xyes; then
@@ -91,14 +128,20 @@ if test x"$GCC" = xyes; then
   CFLAGS="$good_CFLAGS"
   AC_MSG_RESULT([done])
 fi
-# autoconf does not want to find 'install', if not using automake...
-INSTALL=install
-BININSTALL="$INSTALL"
-AC_SUBST(INSTALL)
 AC_SUBST(WFLAGS)
-AC_SUBST(BININSTALL)
+
+AC_PROG_INSTALL
+AC_PROG_MKDIR_P
+AC_PROG_LN_S
+AC_PROG_SED
+AC_PROG_EGREP
+AC_PROG_AWK
+
 AC_CHECK_TOOL([STRIP], [strip])
+AC_CHECK_TOOL([RANLIB], [ranlib], [true])
 AC_CHECK_TOOL([AR], [ar])
+ARFLAGS=rcu
+AC_SUBST(ARFLAGS)
 ])
 
 

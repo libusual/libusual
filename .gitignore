@@ -10,3 +10,13 @@ test/regtest
 doc/html
 *.[oas]
 *.gc[odn][aov]
+
+install-sh
+config.guess
+config.sub
+ltmain.sh
+libtool
+build.mk
+.objs
+.libs
+.deps

@@ -1,29 +1,29 @@
 
+SUBLOC = test/attregex
 
-include ../../config.mak
+AM_CPPFLAGS = -I$(top_srcdir) -I$(top_builddir)
+VPATH = $(top_srcdir)
+USUAL_DIR = $(top_srcdir)
 
-DEFS += -DUSUAL -DUSE_INTERNAL_REGEX
-CPPFLAGS += -I../..
-OBJS = testregex.o regex.o mempool.o
+EXTRA_PROGRAMS = testregex.usual testregex.libc
 
-all: testregex.usual testregex.libc
+testregex_usual_SOURCES = testregex.c
+testregex_usual_DEFS = -DUSUAL -DUSE_INTERNAL_REGEX
+testregex_usual_EMBED_LIBUSUAL = 1
 
-testregex.usual: $(OBJS)
-	$(CC) $(LDFLAGS) -o $@ $(OBJS)
+testregex_libc_SOURCES = testregex.c
 
-testregex.o: testregex.c
-	$(CC) $(DEFS) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
+EXTRA_DIST = Makefile run.sh \
+	data/basic.dat \
+	data/categorize.dat \
+	data/forcedassoc.dat \
+	data/interpretation.dat \
+	data/leftassoc.dat \
+	data/nullsubexpr.dat \
+	data/repetition.dat \
+	data/rightassoc.dat
 
-regex.o: ../../usual/regex.c ../../usual/regex.h
-	$(CC) $(DEFS) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
+test: $(EXTRA_PROGRAMS)
 
-mempool.o: ../../usual/mempool.c ../../usual/mempool.h
-	$(CC) $(DEFS) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
-
-testregex.libc: testregex.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $<
-
-
-clean:
-	rm -f testregex *.o testregex.usual testregex.libc
+include ../../build.mk
 
