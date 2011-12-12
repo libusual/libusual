@@ -29,7 +29,12 @@ static void test_gai(void *p)
 	sev.sigev_notify_function = cb_func;
 
 	res = getaddrinfo_a(GAI_NOWAIT, rlist, 1, &sev);
-	int_check(res, 0);
+	if (res == EAI_SYSTEM && errno == ENOSYS) {
+		/* ok - no impl */
+		goto end;
+	} else {
+		int_check(res, 0);
+	}
 
 	while (gai_error(&req) == EAI_INPROGRESS || gotres == 0)
 		usleep(10000);
