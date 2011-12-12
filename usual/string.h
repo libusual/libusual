@@ -26,10 +26,6 @@
 
 #include <string.h>
 
-#ifdef HAVE_LIBGEN_H
-#include <libgen.h>
-#endif
-
 /**
  * @name  List of strings.
  * @{
@@ -79,13 +75,16 @@ void *memrchr(const void *s, int c, size_t n);
 #ifndef HAVE_BASENAME
 #undef basename
 #define basename(a) usual_basename(a)
-/** Compat: Return pointer to last non-path element */
+/** Compat: Return pointer to last non-path element.
+    Never modifies path, returns either pointer inside path or static buffer.  */
 const char *basename(const char *path);
 #endif
 
 #ifndef HAVE_DIRNAME
 #undef dirname
 #define dirname(a) usual_dirname(a)
+/** Compat: Return directory part of pathname.
+    Never modifies path, returns either pointer inside path or static buffer.  */
 const char *dirname(const char *path);
 #endif
 

@@ -164,7 +164,7 @@ dnl
 AC_DEFUN([AC_USUAL_HEADER_CHECK], [
 AC_CHECK_HEADERS([sys/socket.h poll.h sys/poll.h sys/un.h])
 AC_CHECK_HEADERS([arpa/inet.h netinet/in.h netinet/tcp.h])
-AC_CHECK_HEADERS([sys/param.h sys/uio.h libgen.h pwd.h grp.h])
+AC_CHECK_HEADERS([sys/param.h sys/uio.h pwd.h grp.h])
 AC_CHECK_HEADERS([sys/wait.h sys/mman.h syslog.h netdb.h dlfcn.h])
 AC_CHECK_HEADERS([err.h pthread.h endian.h sys/endian.h byteswap.h])
 AC_CHECK_HEADERS([malloc.h regex.h getopt.h])
@@ -221,7 +221,8 @@ dnl  AC_USUAL_FUNCTION_CHECK:  Basic functions
 dnl
 AC_DEFUN([AC_USUAL_FUNCTION_CHECK], [
 ### Functions provided if missing
-AC_CHECK_FUNCS(basename dirname strlcpy strlcat getpeereid sigaction)
+dnl AC_CHECK_FUNCS(basename dirname) # unstable, provide always
+AC_CHECK_FUNCS(strlcpy strlcat getpeereid sigaction)
 AC_CHECK_FUNCS(inet_ntop inet_pton poll getline memrchr regcomp)
 AC_CHECK_FUNCS(err errx warn warnx getprogname setprogname)
 AC_CHECK_FUNCS(posix_memalign memalign valloc)
