@@ -176,11 +176,16 @@ CPP ?= cpp
 CPPFLAGS ?=
 CFLAGS ?= -O -g
 DEFS ?=
-WFLAGS ?= -Wall
 
 # C++ language
 CXX ?= c++
 CXXFLAGS ?= -O -g
+
+# warning flags are keps separately to allow easy override
+WFLAGS ?= -Wall
+# add them to main flags now
+CFLAGS += $(WFLAGS)
+CXXFLAGS += $(WFLAGS)
 
 # linking
 LD ?= ld
