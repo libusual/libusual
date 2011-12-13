@@ -1272,7 +1272,7 @@ size_t regerror(int err, const regex_t *rx, char *dst, size_t dstlen)
 		"ESUBREG",	/* 13 */
 	};
 	const char *s = "EUNKNOWN";
-	if ((size_t)err <= ARRAY_NELEM(errlist))
+	if ((size_t)err < ARRAY_NELEM(errlist))
 		s = errlist[err];
 	return snprintf(dst, dstlen, "%s", s);
 }
