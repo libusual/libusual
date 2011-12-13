@@ -26,6 +26,9 @@ aclocal -I${USUAL_DIR}/m4
 autoheader
 autoconf
 
+# workaround for old autotools that dont provide install-sh
+test -f install-sh || cp -p ${USUAL_DIR}/mk/install-sh .
+
 # clean junk
 rm -rf autom4te.* aclocal*
 

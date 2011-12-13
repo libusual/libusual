@@ -11,7 +11,7 @@ doc/html
 *.[oas]
 *.gc[odn][aov]
 
-install-sh
+./install-sh
 config.guess
 config.sub
 ltmain.sh
