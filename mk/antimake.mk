@@ -46,9 +46,9 @@
 
 # detect GNU make version, confuse others
 $(eval GNUMAKE380=1)
-GNUMAKE381=$(or ,1)
+GNUMAKE381=$(or ,$(GNUMAKE380))
 define GNUMAKE382 =
-1
+$(GNUMAKE381)
 endef
 
 # give error of too old
