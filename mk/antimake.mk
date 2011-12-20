@@ -650,14 +650,16 @@ ForEachTarget = $(call ForEachList,ForEachTarget2,$(2),$(1))
 ## Utility functions for libusual link
 ##
 
+_USUAL_DIR = $(call JoinPath,$(srcdir),$(USUAL_DIR))
+
 # module names from sources (plus headers)
-UsualMods = $(trace1)$(shell $(USUAL_DIR)/find_modules.sh $(USUAL_DIR) $(wildcard $(addprefix $(srcdir)/,$(1))))
+UsualMods = $(trace1)$(shell $(_USUAL_DIR)/find_modules.sh $(_USUAL_DIR) $(wildcard $(addprefix $(srcdir)/,$(1))))
 
 # full-path sources based on module list
-UsualSrcsFull = $(wildcard $(addprefix $(USUAL_DIR)/usual/,$(addsuffix *.[ch],$(1))))
+UsualSrcsFull = $(trace1)$(wildcard $(addprefix $(_USUAL_DIR)/usual/,$(addsuffix *.[ch],$(1))))
 
 # remove USUAL_DIR
-UsualStrip = $(subst $(USUAL_DIR)/,,$(1))
+UsualStrip = $(trace1)$(subst $(_USUAL_DIR)/,,$(1))
 
 # simple-path sources based on module list
 UsualSrcs = $(call UsualStrip,$(call UsualSrcsFull,$(1)))
@@ -912,6 +914,9 @@ $(1)_OBJS += $$(call UsualObjs,$(1),$$($(1)_SOURCES) $$(nodist_$(1)_SOURCES))
 $(1)_CPPFLAGS += -I$$(USUAL_DIR)
 $(IFEQ) ($$(filter $$(USUAL_DIR),$(VPATH)),)
 VPATH += $$(USUAL_DIR)
+$(ENDIF)
+$(IFNEQ) ($$(srcdir),$$(builddir),)
+VPATH += $$(call JoinPath,$$(srcdir),$$(USUAL_DIR))
 $(ENDIF)
 $(ENDIF)
 
@@ -1170,10 +1175,32 @@ AM_FLAGS += real
 
 ## EMBED_SUBDIRS end
 
+
+##
+## Now generate the rules
+##
+
+## check which target func to call
+# 1=cleantgt,2=rawtgt,3=prim,4=dest,5=flags
+MakeTarget = $(call $(if $(filter $(AM_BIG_PRIMARIES),$(3)),MakeBigTarget,MakeSmallTarget),$(1),$(2),$(3),$(4),$(5))
+
+## process all targets in one list
+# 1-list, 2-prim,3-dest,4-flags
+MakeTargetList = $(foreach tgt,$($(1)),$(call MakeTarget,$(call CleanName,$(tgt)),$(tgt),$(2),$(3),$(4)))
+
+## process all target lists
+# 1=list names
+ProcessTargets = $(call ForEachTarget,MakeTarget,$(1))
+
+# process non-EXTRA targets
+$(eval $(call ProcessTargets,$(am_TARGETLISTS)))
+
+# process EXTRA_* last, they may already have been processed
+$(eval $(call ProcessTargets,$(am_EXTRA_TARGETLISTS)))
+
 ##
 ## clean targets
 ##
-
 
 clean:
 ifdef CLEANFILES
@@ -1281,28 +1308,6 @@ am-show-distfiles:
 .PHONY: am-check-distfiles
 am-make-distfiles: $(am_FINAL_DISTFILES)
 	$(foreach dir,$(am_DISTDIRS),@$(MAKE) $(AM_MAKEFLAGS) -C $(dir) $@ $(NewLine))
-
-##
-## Now generate the rules
-##
-
-## check which target func to call
-# 1=cleantgt,2=rawtgt,3=prim,4=dest,5=flags
-MakeTarget = $(call $(if $(filter $(AM_BIG_PRIMARIES),$(3)),MakeBigTarget,MakeSmallTarget),$(1),$(2),$(3),$(4),$(5))
-
-## process all targets in one list
-# 1-list, 2-prim,3-dest,4-flags
-MakeTargetList = $(foreach tgt,$($(1)),$(call MakeTarget,$(call CleanName,$(tgt)),$(tgt),$(2),$(3),$(4)))
-
-## process all target lists
-# 1=list names
-ProcessTargets = $(call ForEachTarget,MakeTarget,$(1))
-
-# process non-EXTRA targets
-$(eval $(call ProcessTargets,$(am_TARGETLISTS)))
-
-# process EXTRA_* last, they may already have been processed
-$(eval $(call ProcessTargets,$(am_EXTRA_TARGETLISTS)))
 
 ##
 ## debug target
