@@ -1,5 +1,11 @@
 #! /bin/sh
 
+# autogen for non-automake trees
+#
+# - it installs files: config.sub, config.guess, install-sh
+# - it installs ltmain.sh, if LT_INIT or *LIBTOOL macro is used
+#
+
 USUAL_DIR="$1"
 test -n "${USUAL_DIR}" || USUAL_DIR="."
 
