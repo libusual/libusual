@@ -76,10 +76,10 @@ if test "$GCC" = "yes"; then
   old_LDFLAGS="$LDFLAGS"
   LDFLAGS="$LDFLAGS -Wl,--as-needed"
   AC_MSG_CHECKING([whether linker supports --as-needed])
-  AC_LINK_IFELSE([AC_LANG_SOURCE([int main(void) { return 0; }],
+  AC_LINK_IFELSE([AC_LANG_SOURCE([int main(void) { return 0; }])],
     [AC_MSG_RESULT([yes])],
     [AC_MSG_RESULT([no])
-     LDFLAGS="$old_LDFLAGS"])])
+     LDFLAGS="$old_LDFLAGS"])
 fi
 
 dnl Check if compiler supports gcc-style dependencies
