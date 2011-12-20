@@ -28,7 +28,7 @@ fi
 grep -qE 'LT_INIT|LIBTOOL' configure.ac || rm -f ltmain.sh
 
 # Now generate configure & config.h
-aclocal -I${USUAL_DIR}/m4
+aclocal -I ${USUAL_DIR}/m4
 autoheader
 autoconf
 

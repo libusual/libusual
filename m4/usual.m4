@@ -131,11 +131,23 @@ fi
 AC_SUBST(WFLAGS)
 
 AC_PROG_INSTALL
-AC_PROG_MKDIR_P
 AC_PROG_LN_S
-AC_PROG_SED
 AC_PROG_EGREP
 AC_PROG_AWK
+
+dnl AC_PROG_MKDIR_P and AC_PROG_SED are from newer autotools
+m4_ifdef([AC_PROG_MKDIR_P], [
+  AC_PROG_MKDIR_P
+], [
+  MKDIR_P="mkdir -p"
+  AC_SUBST(MKDIR_P)
+])
+m4_ifdef([AC_PROG_SED], [
+  AC_PROG_SED
+], [
+  SED="sed"
+  AC_SUBST(SED)
+])
 
 AC_CHECK_TOOL([STRIP], [strip])
 AC_CHECK_TOOL([RANLIB], [ranlib], [true])

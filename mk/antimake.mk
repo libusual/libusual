@@ -233,8 +233,14 @@ pkgconfigdir ?= ${libdir}/pkgconfig
 # autoconf values for top dir
 abs_top_srcdir ?= $(CURDIR)
 abs_top_builddir ?= $(CURDIR)
-nosub_top_builddir ?= .
-nosub_top_srcdir ?= .
+
+# make sure nosub vals are not empty
+ifeq ($(nosub_top_builddir),)
+nosub_top_builddir = .
+endif
+ifeq ($(nosub_top_srcdir),)
+nosub_top_srcdir = .
+endif
 
 ##
 ## Variables for user makefiles
