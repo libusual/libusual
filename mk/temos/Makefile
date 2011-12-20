@@ -54,7 +54,7 @@ output/%.txt: src/%.temo libtemo.sh
 
 html/%.html: output/%.txt
 	@mkdir -p html
-	asciidoc -o $@ $<
+	asciidoc -o - $< | grep -v '^Last updated ' > $@
 
 ack:
 	cp output/*.txt expected/
@@ -64,9 +64,9 @@ clean:
 
 html/index.html: index.txt
 	@mkdir -p html
-	asciidoc -o $@ $<
+	asciidoc -o - $< | grep -v '^Last updated ' > $@
 
 html/antimake.html: ../antimake.txt
 	@mkdir -p html
-	asciidoc -a toc -o $@ $<
+	asciidoc -a toc -o - $< | grep -v '^Last updated ' > $@
 

@@ -115,7 +115,7 @@ dox:
 	rm -rf doc/html/mk
 	#rm -rf mk/temos/html
 	doxygen doc/Doxyfile
-	$(MAKE) -C mk/temos
+	$(MAKE) -C mk/temos html
 	cp -rp mk/temos/html doc/html/mk
 
 #
