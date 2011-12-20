@@ -13,7 +13,7 @@ test -f "${USUAL_DIR}/m4/usual.m4" || {
 # the file if they dont exist
 rm -f config.guess config.sub install-sh ltmain.sh libtool
 if libtoolize --help | grep "[-][-]install" > /dev/null; then
-  libtoolize -i -q
+  libtoolize -i -q -f
 else
   libtoolize
 fi
