@@ -21,9 +21,9 @@ usual_clone lib
 run cd lib
 
 runq ./autogen.sh
-runq ./configure --disable-shared --prefix=`pwd`/../inst
+runq ./configure --disable-shared --prefix=/opt
 runq make
-runq make install
+runq make install 'DESTDIR=`pwd`/../inst'
 
 run cd ..
 
@@ -55,8 +55,8 @@ cat_file Makefile <<"EOF"
 	OBJS = $(SRCS:.c=.o)
 
 	# here we link to libusual
-	CPPFLAGS = -I./inst/include
-	LDFLAGS = -L./inst/lib
+	CPPFLAGS = -I./inst/opt/include
+	LDFLAGS = -L./inst/opt/lib
 	LIBS = -lusual
 
 	CC = gcc

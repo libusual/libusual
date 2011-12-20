@@ -19,11 +19,11 @@ done.
 $ cd lib
 $ ./autogen.sh
 [...]
-$ ./configure --disable-shared --prefix=/home/marko/src/libusual/mk/temos/tmp/lib/../inst
+$ ./configure --disable-shared --prefix=/opt
 [...]
 $ make
 [...]
-$ make install
+$ make install DESTDIR=`pwd`/../inst
 [...]
 $ cd ..
 ---------------------------------
@@ -64,8 +64,8 @@ SRCS = prog.c
 OBJS = $(SRCS:.c=.o)
 
 # here we link to libusual
-CPPFLAGS = -I./inst/include
-LDFLAGS = -L./inst/lib
+CPPFLAGS = -I./inst/opt/include
+LDFLAGS = -L./inst/opt/lib
 LIBS = -lusual
 
 CC = gcc
@@ -81,8 +81,8 @@ Build the project
 
 ---------------------------------
 $ make
-gcc -O -g -Wall -I./inst/include  -c -o prog.o prog.c
-gcc -O -g -Wall -L./inst/lib prog.o -lusual -o prog
+gcc -O -g -Wall -I./inst/opt/include  -c -o prog.o prog.c
+gcc -O -g -Wall -L./inst/opt/lib prog.o -lusual -o prog
 $ ls
 Makefile  inst	lib  prog  prog.c  prog.o
 $ ./prog

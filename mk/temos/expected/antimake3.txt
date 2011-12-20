@@ -103,6 +103,10 @@ Prepare sources
 -----------------------------------
 #include <stdio.h>
 
+void func1(void);
+void func2(void);
+void func3(void);
+
 int main(void)
 {
 	func1();
@@ -209,13 +213,13 @@ func3
 main
 ---------------------------------
 
-We can even install it already:
+We can now install it:
 
 ---------------------------------
-$ make install prefix=/opt
-     INSTALL  prog /opt/bin
-$ ls /opt/bin
-hello  prog
+$ make install prefix=/opt DESTDIR=./inst
+     INSTALL  prog ./inst/opt/bin
+$ ls ./inst/opt/bin
+prog
 ---------------------------------
 
 Now we can create package that can be given to others.
@@ -227,7 +231,8 @@ $ make dist
      COPY     test-subdirs-1.0
      PACK     test-subdirs-1.0.tar.gz
 $ ls
-Makefile  antimake.mk  lib1  lib2  main.c  prog  src  test-subdirs-1.0.tar.gz
+Makefile     inst  lib2    prog  test-subdirs-1.0.tar.gz
+antimake.mk  lib1  main.c  src
 $ tar tzf test-subdirs-1.0.tar.gz | sort
 test-subdirs-1.0/
 test-subdirs-1.0/Makefile
@@ -254,7 +259,7 @@ $ make clean
      CLEAN    lib2/func3.a
      CLEAN    clean
 $ ls
-Makefile  antimake.mk  lib1  lib2  main.c  src	test-subdirs-1.0.tar.gz
+Makefile  antimake.mk  inst  lib1  lib2  main.c  src  test-subdirs-1.0.tar.gz
 ---------------------------------
 
 Done!

@@ -8,10 +8,7 @@ title Antimake stress-test
 msg Autoconf setup
 
 cat_file autogen.sh <<"EOF"
-	libtoolize -i -q
-	aclocal -I../../../m4
-	autoconf
-	rm -rf autom4te.cache aclocal.m4
+	../../std-autogen.sh ../../..
 
 	# fetch Antimake template from libusual
 	grep -Ei '@[a-z_]+@' ../../antimake.mk > build.mk.in
@@ -108,6 +105,8 @@ msg Now fill makefiles
 cat_file Makefile <<"EOF"
 	SUBDIRS = sub
 	EMBED_SUBDIRS = esub
+
+	override WFLAGS = -Wall
 
 	EXTRA_DIST = Makefile antimake.mk $(MAINTAINERCLEANFILES)
 

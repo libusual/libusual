@@ -7,10 +7,7 @@ Autoconf setup
 .File: autogen.sh
 [source,shell]
 -----------------------------------
-libtoolize -i -q
-aclocal -I../../../m4
-autoconf
-rm -rf autom4te.cache aclocal.m4
+../../std-autogen.sh ../../..
 
 # fetch Antimake template from libusual
 grep -Ei '@[a-z_]+@' ../../antimake.mk > build.mk.in
@@ -115,6 +112,8 @@ Now fill makefiles
 -----------------------------------
 SUBDIRS = sub
 EMBED_SUBDIRS = esub
+
+override WFLAGS = -Wall
 
 EXTRA_DIST = Makefile antimake.mk $(MAINTAINERCLEANFILES)
 
@@ -389,28 +388,28 @@ Clean up
 
 ---------------------------------
 $ make maintainer-clean
-     CLEAN    esub/libfunc4.a
-     CLEAN    esub/esub/libfunc6.a
-     CLEAN    cpptest
-     CLEAN    esub/prog
      -->      sub
-     CLEAN    libfunc1.a
-     CLEAN    esub/libfunc2.a
      -->      sub/sub
      CLEAN    libfunc3.a
      <--      sub/sub
+     CLEAN    libfunc1.a
+     CLEAN    esub/libfunc2.a
      CLEAN    clean
      <--      sub
      -->      esub/sub
      CLEAN    libfunc5.a
      <--      esub/sub
+     CLEAN    esub/libfunc4.a
+     CLEAN    esub/esub/libfunc6.a
+     CLEAN    cpptest
+     CLEAN    esub/prog
      CLEAN    clean
      -->      sub
-     CLEAN    libfunc1.a
-     CLEAN    esub/libfunc2.a
      -->      sub/sub
      CLEAN    libfunc3.a
      <--      sub/sub
+     CLEAN    libfunc1.a
+     CLEAN    esub/libfunc2.a
      CLEAN    clean
      -->      sub/sub
      CLEAN    libfunc3.a

@@ -23,8 +23,15 @@ run cp ../../antimake.mk .
 
 msg Prepare sources
 
+cat_file api.h <<"EOF"
+	void func1(void);
+	void func2(void);
+	void func3(void);
+EOF
+
 cat_file main.c <<"EOF"
 	#include <stdio.h>
+	#include "api.h"
 
 	int main(void)
 	{
@@ -38,6 +45,7 @@ EOF
 
 cat_file lib1/func1.c <<"EOF"
 	#include <stdio.h>
+	#include "api.h"
 
 	void func1(void)
 	{
@@ -47,6 +55,7 @@ EOF
 
 cat_file lib1/sublib/func2.c <<"EOF"
 	#include <stdio.h>
+	#include "api.h"
 
 	void func2(void)
 	{
@@ -56,6 +65,7 @@ EOF
 
 cat_file lib2/func3.c <<"EOF"
 	#include <stdio.h>
+	#include "api.h"
 
 	void func3(void)
 	{
@@ -86,6 +96,7 @@ cat_file lib1/Makefile <<"EOF"
 
 	noinst_LIBRARIES = func1.a
 	func1_a_SOURCES = func1.c
+	func1_a_CPPFLAGS = -I..
 
 	EXTRA_DIST = Makefile
 
@@ -97,6 +108,7 @@ cat_file lib1/sublib/Makefile <<"EOF"
 
 	noinst_LIBRARIES = func2.a
 	func2_a_SOURCES = func2.c
+	func2_a_CPPFLAGS = -I../..
 
 	EXTRA_DIST = Makefile
 
@@ -108,6 +120,7 @@ cat_file lib2/Makefile <<"EOF"
 
 	noinst_LIBRARIES = func3.a
 	func3_a_SOURCES = func3.c
+	func3_a_CPPFLAGS = -I$(top_srcdir)
 
 	EXTRA_DIST = Makefile
 
@@ -122,9 +135,9 @@ run make
 run ls
 run ./prog
 
-msg We can even install it already:
-run make install prefix=/opt
-run ls /opt/bin
+msg We can now install it:
+run make install DESTDIR=./inst
+run ls ./inst/usr/local/bin
 
 msg Now we can create package that can be given to others.
 run make dist

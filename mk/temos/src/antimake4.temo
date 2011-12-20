@@ -8,10 +8,7 @@ title Using Antimake with autoconf
 msg Autoconf setup
 
 cat_file autogen.sh <<"EOF"
-	libtoolize -i -q
-	aclocal -I../../../m4
-	autoconf
-	rm -rf autom4te.cache ltmain.sh aclocal.m4
+	../../std-autogen.sh ../../..
 
 	# fetch Antimake template from libusual
 	cp ../../antimake.mk antimake.mk.in

@@ -63,10 +63,10 @@ Hello, world
 We can even install it already:
 
 ---------------------------------
-$ make install prefix=/opt
-     INSTALL  hello /opt/bin
-$ ls /opt/bin
-hello  prog
+$ make install prefix=/opt DESTDIR=./inst
+     INSTALL  hello ./inst/opt/bin
+$ ls ./inst/opt/bin
+hello
 ---------------------------------
 
 For creating source package, we need to provide additional info:
@@ -95,7 +95,7 @@ $ make dist
      COPY     myhello-1.0
      PACK     myhello-1.0.tar.gz
 $ ls
-Makefile  antimake.mk  hello  hello.c  myhello-1.0.tar.gz
+Makefile  antimake.mk  hello  hello.c  inst  myhello-1.0.tar.gz
 $ tar tzf myhello-1.0.tar.gz | sort
 myhello-1.0/
 myhello-1.0/Makefile
@@ -109,7 +109,7 @@ Clean the tree
 $ make clean
      CLEAN    hello
 $ ls
-Makefile  antimake.mk  hello.c	myhello-1.0.tar.gz
+Makefile  antimake.mk  hello.c	inst  myhello-1.0.tar.gz
 ---------------------------------
 
 Done!

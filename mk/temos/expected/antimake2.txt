@@ -22,10 +22,18 @@ $ cp ../../antimake.mk .
 
 Prepare sources
 
+.File: api.h
+[source,c]
+-----------------------------------
+void func1(void);
+void func2(void);
+void func3(void);
+-----------------------------------
 .File: main.c
 [source,c]
 -----------------------------------
 #include <stdio.h>
+#include "api.h"
 
 int main(void)
 {
@@ -40,6 +48,7 @@ int main(void)
 [source,c]
 -----------------------------------
 #include <stdio.h>
+#include "api.h"
 
 void func1(void)
 {
@@ -50,6 +59,7 @@ void func1(void)
 [source,c]
 -----------------------------------
 #include <stdio.h>
+#include "api.h"
 
 void func2(void)
 {
@@ -60,6 +70,7 @@ void func2(void)
 [source,c]
 -----------------------------------
 #include <stdio.h>
+#include "api.h"
 
 void func3(void)
 {
@@ -93,6 +104,7 @@ SUBDIRS = sublib
 
 noinst_LIBRARIES = func1.a
 func1_a_SOURCES = func1.c
+func1_a_CPPFLAGS = -I..
 
 EXTRA_DIST = Makefile
 
@@ -105,6 +117,7 @@ SUBLOC = lib1/sublib
 
 noinst_LIBRARIES = func2.a
 func2_a_SOURCES = func2.c
+func2_a_CPPFLAGS = -I../..
 
 EXTRA_DIST = Makefile
 
@@ -117,6 +130,7 @@ SUBLOC = lib2
 
 noinst_LIBRARIES = func3.a
 func3_a_SOURCES = func3.c
+func3_a_CPPFLAGS = -I$(top_srcdir)
 
 EXTRA_DIST = Makefile
 
@@ -148,7 +162,7 @@ $ make
      CC       main.c
      CCLD     prog
 $ ls
-Makefile  antimake.mk  lib1  lib2  main.c  prog
+Makefile  antimake.mk  api.h  lib1  lib2  main.c  prog
 $ ./prog
 func1
 func2
@@ -156,10 +170,10 @@ func3
 main
 ---------------------------------
 
-We can even install it already:
+We can now install it:
 
 ---------------------------------
-$ make install prefix=/opt
+$ make install DESTDIR=./inst
      -->      lib1
      -->      lib1/sublib
 make[2]: Nothing to be done for `install'.
@@ -168,9 +182,9 @@ make[2]: Nothing to be done for `install'.
      -->      lib2
 make[1]: Nothing to be done for `install'.
      <--      lib2
-     INSTALL  prog /opt/bin
-$ ls /opt/bin
-hello  prog
+     INSTALL  prog ./inst/usr/local/bin
+$ ls ./inst/usr/local/bin
+prog
 ---------------------------------
 
 Now we can create package that can be given to others.
@@ -182,7 +196,8 @@ $ make dist
      COPY     test-subdirs-1.0
      PACK     test-subdirs-1.0.tar.gz
 $ ls
-Makefile  antimake.mk  lib1  lib2  main.c  prog  test-subdirs-1.0.tar.gz
+Makefile     api.h  lib1  main.c  test-subdirs-1.0.tar.gz
+antimake.mk  inst   lib2  prog
 $ tar tzf test-subdirs-1.0.tar.gz | sort
 test-subdirs-1.0/
 test-subdirs-1.0/Makefile
@@ -214,7 +229,7 @@ $ make clean
      <--      lib2
      CLEAN    prog
 $ ls
-Makefile  antimake.mk  lib1  lib2  main.c  test-subdirs-1.0.tar.gz
+Makefile  antimake.mk  api.h  inst  lib1  lib2	main.c	test-subdirs-1.0.tar.gz
 ---------------------------------
 
 Test O=
@@ -243,7 +258,8 @@ $ make O=build
      CC       ../main.c
      CCLD     prog
 $ ls
-Makefile  antimake.mk  build  lib1  lib2  main.c  test-subdirs-1.0.tar.gz
+Makefile     api.h  inst  lib2	  test-subdirs-1.0.tar.gz
+antimake.mk  build  lib1  main.c
 $ ls build
 Makefile  antimake.mk  lib1  lib2  prog
 ---------------------------------

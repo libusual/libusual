@@ -93,6 +93,10 @@ msg Prepare sources
 cat_file main.c <<"EOF"
 	#include <stdio.h>
 
+	void func1(void);
+	void func2(void);
+	void func3(void);
+
 	int main(void)
 	{
 		func1();
@@ -175,9 +179,9 @@ run make
 run ls
 run ./prog
 
-msg We can even install it already:
-run make install prefix=/opt
-run ls /opt/bin
+msg We can now install it:
+run make install prefix=/opt DESTDIR=./inst
+run ls ./inst/opt/bin
 
 msg Now we can create package that can be given to others.
 run make dist

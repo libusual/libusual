@@ -47,8 +47,8 @@ run ls
 run ./hello
 
 msg We can even install it already:
-run make install prefix=/opt
-run ls /opt/bin
+run make install prefix=/opt DESTDIR=./inst
+run ls ./inst/opt/bin
 
 msg For creating source package, we need to provide additional info:
 

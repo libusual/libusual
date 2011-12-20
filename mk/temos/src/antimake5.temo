@@ -8,10 +8,7 @@ title Shared libraries and autoconf
 msg Autoconf setup
 
 cat_file autogen.sh <<"EOF"
-	libtoolize -i -q
-	aclocal -I../../../m4
-	autoconf
-	rm -rf autom4te.cache aclocal.m4
+	../../std-autogen.sh ../../..
 
 	# fetch Antimake template from libusual
 	cp ../../antimake.mk antimake.mk.in
@@ -44,6 +41,7 @@ EOF
 cat_file func.c <<"EOF"
 	#include <stdio.h>
 
+	void func1(void);
 	void func1(void)
 	{
 		printf("hello from func1\n");
