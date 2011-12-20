@@ -1314,7 +1314,7 @@ am-show-distfiles:
 
 # do dependencies as separate step, in case building outputs anything
 .PHONY: am-check-distfiles
-am-make-distfiles: $(am_FINAL_DISTFILES)
+am-check-distfiles: $(am_FINAL_DISTFILES)
 	$(foreach dir,$(am_DISTDIRS),@$(MAKE) $(AM_MAKEFLAGS) -C $(dir) $@ $(NewLine))
 
 ##
