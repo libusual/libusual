@@ -329,7 +329,6 @@ RM = rm -f
 # varables that can be set per-target with target_VAR
 # they appear as AM_foo.  [Not supported: COMPILE]
 AM_TARGET_VARIABLES += CFLAGS CPPFLAGS LDFLAGS LIBTOOLFLAGS DEFS LIBS
-AM_TARGET_RELOC_VARIABLES += CFLAGS CPPFLAGS LDFLAGS
 
 # list of language (rather compiler) names
 AM_LANGUAGES += C CXX
