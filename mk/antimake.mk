@@ -962,9 +962,10 @@ $(1)_CFLAGS := $$(call FixIncludes,$$(srcdir),$$($(1)_CFLAGS))
 # allow target-specific variables
 $$(call VarOverride,$(1))
 
-# build by default, unless EXTRA_foo
+# build and clean by default, unless flagged EXTRA
 $(IFNEQ) ($(4),EXTRA)
 all: build_$(1)
+clean: clean_$(1)
 $(ENDIF)
 
 build_$(1): $$($(1)_SOURCES) $$(nodist_$(1)_SOURCES)
@@ -974,7 +975,6 @@ $$($(1)_FINAL): $$($(1)_OBJS)
 	@$$(MKDIR_P) $$(dir $$@)
 	$$($(if $(filter LIBRARIES,$(3)),ar_lib,$$($(1)_LINKVAR)))
 
-clean: clean_$(1)
 clean_$(1):
 	$$(E) "CLEAN" "$$($(1)_FINAL)"
 	$$(Q) $$($(1)_RM) -- $$($(1)_OBJS) $(if $(call TargetNoDist,$(3),$(5)),$$($(1)_FINAL))
