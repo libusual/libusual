@@ -352,9 +352,15 @@ bool cf_set_int(struct CfValue *cv, const char *value)
 	int *ptr = cv->value_p;
 	char *end;
 	long val;
+
+	errno = 0;
 	val = strtol(value, &end, 0);
-	if (end == value)
+	if (end == value || *end != 0) {
+		/* reject partial parse */
+		if (!errno)
+			errno = EINVAL;
 		return false;
+	}
 	*ptr = val;
 	return true;
 }
