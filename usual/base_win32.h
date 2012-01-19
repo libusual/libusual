@@ -41,6 +41,7 @@
 #define fork() (-1)
 #define geteuid() getuid()
 #define setgroups(s, p) (-1)
+#define chown(f, u, g) (-1)
 
 #define srandom(s) srand(s)
 #define random() rand()
@@ -71,6 +72,15 @@ struct passwd {
 static inline struct passwd *getpwnam(const char *u) { return NULL; }
 static inline struct passwd *getpwuid(uid_t uid) { return NULL; }
 
+/* dummy getgrnam() */
+struct group {
+	char *gr_name;
+	char *gr_passwd;
+	gid_t gr_gid;
+	char **gr_mem;
+};
+static inline struct group *getgrnam(const char *g) { return NULL; }
+static inline struct group *getgrgid(gid_t gid) { return NULL; }
 
 /*
  * Minimal dlopen, dlsym, dlclose, dlerror compat.
