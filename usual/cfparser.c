@@ -350,7 +350,12 @@ bool cf_load_file(const struct CfContext *cf, const char *fn)
 bool cf_set_int(struct CfValue *cv, const char *value)
 {
 	int *ptr = cv->value_p;
-	*ptr = atoi(value);
+	char *end;
+	long val;
+	val = strtol(value, &end, 0);
+	if (end == value)
+		return false;
+	*ptr = val;
 	return true;
 }
 
