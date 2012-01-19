@@ -114,7 +114,7 @@ if test x"$GCC" = xyes; then
   flags="$flags -Wmissing-prototypes -Wpointer-arith -Wendif-labels"
   flags="$flags -Wdeclaration-after-statement -Wold-style-definition"
   flags="$flags -Wstrict-prototypes -Wundef -Wformat=2"
-  flags="$flags -Wuninitialized -Wuninitialized-experimental"
+  flags="$flags -Wuninitialized"
   for f in $flags; do
     CFLAGS="$good_CFLAGS $WFLAGS $f"
     AC_COMPILE_IFELSE([AC_LANG_SOURCE([void foo(void){}])],
