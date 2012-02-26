@@ -34,7 +34,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-static const char id[] = "\n@(#)$Id: testregex (AT&T Research) 2009-11-11 $\0\n";
+static const char id[] = "\n@(#)$Id: testregex (AT&T Research) 2010-06-10 $\0\n";
 
 #if _PACKAGE_ast
 #include <ast.h>
@@ -60,6 +60,10 @@ static const char id[] = "\n@(#)$Id: testregex (AT&T Research) 2009-11-11 $\0\n"
 #include <usual/regex.h>
 #else
 #include <regex.h>
+#endif
+
+#ifndef RE_DUP_MAX
+#define RE_DUP_MAX	32767
 #endif
 
 #if !_PACKAGE_ast
@@ -266,9 +270,11 @@ T("\n");
 T("    number		use number for nmatch (20 by default)\n");
 T("\n");
 T("  Field 2: the regular expression pattern; SAME uses the pattern from\n");
-T("    the previous specification.\n");
+T("    the previous specification. RE_DUP_MAX inside {...} expands to the\n");
+T("    value from <limits.h>.\n");
 T("\n");
-T("  Field 3: the string to match.\n");
+T("  Field 3: the string to match. X...{RE_DUP_MAX} expands to RE_DUP_MAX\n");
+T("    copies of X.\n");
 T("\n");
 T("  Field 4: the test outcome. This is either one of the posix error\n");
 T("    codes (with REG_ omitted) or the match array, a list of (m,n)\n");
@@ -283,7 +289,7 @@ T("    matched (?{...}) expression, where x is the text enclosed by {...},\n");
 T("    o is the expression ordinal counting from 1, and n is the length of\n");
 T("    the unmatched portion of the subject string. If x starts with a\n");
 T("    number then that is the return value of re_execf(), otherwise 0 is\n");
-T("    returned.\n");
+T("    returned. RE_DUP_MAX[-+]N expands to the <limits.h> value -+N.\n");
 T("\n");
 T("  Field 5: optional comment appended to the report.\n");
 T("\n");
@@ -918,6 +924,13 @@ matchcheck(regmatch_t* match, int nmatch, int nsub, char* ans, char* re, char* s
 			m = -1;
 			p++;
 		}
+		else if (*p == 'R' && !memcmp(p, "RE_DUP_MAX", 10))
+		{
+			m = RE_DUP_MAX;
+			p += 10;
+			if (*p == '+' || *p == '-')
+				m += strtol(p, &p, 10);
+		}
 		else
 			m = strtol(p, &p, 10);
 		if (*p++ != ',')
@@ -926,6 +939,13 @@ matchcheck(regmatch_t* match, int nmatch, int nsub, char* ans, char* re, char* s
 		{
 			n = -1;
 			p++;
+		}
+		else if (*p == 'R' && !memcmp(p, "RE_DUP_MAX", 10))
+		{
+			n = RE_DUP_MAX;
+			p += 10;
+			if (*p == '+' || *p == '-')
+				n += strtol(p, &p, 10);
 		}
 		else
 			n = strtol(p, &p, 10);
@@ -1147,6 +1167,59 @@ catchfree(regex_t* preg, int flags, int* tabs, char* spec, char* re, char* s, ch
 	return eret;
 }
 
+static char*
+expand(char* os, char* ot)
+{
+	char*	s = os;
+	char*	t;
+	int	n = 0;
+	int	r;
+	long	m;
+
+	for (;;)
+	{
+		switch (*s++)
+		{
+		case 0:
+			break;
+		case '{':
+			n++;
+			continue;
+		case '}':
+			n--;
+			continue;
+		case 'R':
+			if (n == 1 && !memcmp(s, "E_DUP_MAX", 9))
+			{
+				s--;
+				for (t = ot; os < s; *t++ = *os++);
+				r = ((t - ot) >= 5 && t[-1] == '{' && t[-2] == '.' && t[-3] == '.' && t[-4] == '.') ? t[-5] : 0;
+				os = ot;
+				m = RE_DUP_MAX;
+				if (*(s += 10) == '+' || *s == '-')
+					m += strtol(s, &s, 10);
+				if (r)
+				{
+					t -= 5;
+					while (m-- > 0)
+						*t++ = r;
+					while (*s && *s++ != '}');
+				}
+				else
+					t += snprintf(t, 32, "%ld", m);
+				while (*t = *s++)
+					t++;
+				break;
+			}
+			continue;
+		default:
+			continue;
+		}
+		break;
+	}
+	return os;
+}
+
 int
 main(int argc, char** argv)
 {
@@ -1188,6 +1261,8 @@ main(int argc, char** argv)
 	regex_t		preg;
 
 	static char	pat[32 * 1024];
+	static char	patbuf[32 * 1024];
+	static char	strbuf[32 * 1024];
 
 	int		nonosub = REG_NOSUB == 0;
 	int		nonexec = 0;
@@ -1738,19 +1813,24 @@ main(int argc, char** argv)
 				{
 					if (test & TEST_EXPAND)
 						escape(re);
+					re = expand(re, patbuf);
 					strcpy(ppat = pat, re);
 				}
 			}
 			else
 				ppat = 0;
 			nstr = -1;
-			if ((s = field[2]) && (test & TEST_EXPAND))
+			if (s = field[2])
 			{
-				nstr = escape(s);
+				s = expand(s, strbuf);
+				if (test & TEST_EXPAND)
+				{
+					nstr = escape(s);
 #if _REG_nexec
-				if (nstr != strlen(s))
-					nexec = nstr;
+					if (nstr != strlen(s))
+						nexec = nstr;
 #endif
+				}
 			}
 			if (!(ans = field[(test & TEST_DECOMP) ? 2 : 3]))
 				bad("NIL answer\n", NiL, NiL, 0, test);
