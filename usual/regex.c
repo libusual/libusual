@@ -650,23 +650,14 @@ loop:
 
 escaped:
 	c = *re++;
-	switch (c) {
-	case 0:
-		return REG_EESCAPE;
-	case '.': case '^': case '$':
-	case '*': case '?': case '+':
-	case '(': case ')': case '|':
-	case '{': case '[': case '\\':
-	case '}': case ']':
-		err = op_char(ctx, c);
-		break;
-	case '1': case '2': case '3': case '4': case '5':
-	case '6': case '7': case '8': case '9':
+	if (c == 0)
+		err = REG_EESCAPE;
+	else if (c >= '0' && c <= '9')
 		err = STRICT ? REG_BADPAT : op_bref(ctx, c);
-		break;
-	default:
+	else if (isalpha(c))
 		err = parse_relaxed_escapes(ctx, c);
-	}
+	else
+		err = op_char(ctx, c);
 	goto loop;
 }
 
