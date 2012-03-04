@@ -248,6 +248,21 @@ src_hello_SOURCES = src/main.c
 src_hello_CPPFLAGS = -I./src/include
 ----------------------
 
+Variables, where file names are converted:
+
+* SUBDIRS, DIST_SUBDIRS, EMBED_SUBDIRS
+* DISTFILES, CLEANFILES, DISTCLEANFILES, MAINTAINERCLEANFILES
+* target lists
+* <tgt>_SOURCES, <tgt>_LDADD, <tgt>_LIBADD
+
+Variables, where -L and -I flags are converted:
+
+* <tgt>_CFLAGS
+* <tgt>_CPPFLAGS
+* <tgt>_LDFLAGS
+
+Makefile should be written in a way that those conversions
+would be enough.
 
 === Global variables for current location ===
 

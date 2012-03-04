@@ -691,7 +691,7 @@ UsualSources = $(call UsualSrcsFull,$(call UsualMods,$(1)))
 
 ## add subdir to files
 # 1-subdir, 2-file list
-RelocFiles = $(foreach f,$(2),$(call JoinPath,$(1),$(f)))
+RelocFiles = $(foreach f,$(2),$(if $(filter -%,$(f)),$(f),$(call JoinPath,$(1),$(f))))
 
 
 # 1-dir, 2-pfx, 3-full
@@ -702,14 +702,13 @@ RelocOneFlag = $(if $(filter -L%,$(2)), \
                     $(call RelocOneFlag2,$(1),-L,$(2)), \
 		    $(if $(filter -I%,$(2)), \
                          $(call RelocOneFlag2,$(1),-I,$(2)), \
-			 $(if $(filter -%,$(2)), \
-			      $(2), \
-			      $(call JoinPath,$(1),$(2)))))
+			 $(2)))
 
 ## Relocate relative files, relative -I/-L, ignore -*
 # 1-dir, 2- flaglist
 RelocFlags = $(strip $(if $(filter-out .,$(1)), \
-                          $(foreach flg,$(2),$(call RelocOneFlag,$(1),$(flg))),$(2)))
+                          $(foreach flg,$(2),$(call RelocOneFlag,$(1),$(flg))), \
+		          $(2)))
 
 
 ## Separate build dir relocation
@@ -761,8 +760,8 @@ $(foreach var,$(AM_TARGET_VARIABLES),$(NewLine)$$(am_PFX)_$(1)_$(var) := $$($(1)
 
 # move and relocate
 $$(am_PFX)_$(1)_SOURCES := $$(call RelocFiles,$$(am_DIR),$$($(1)_SOURCES))
-$$(am_PFX)_$(1)_LDADD := $$(call RelocFlags,$$(am_DIR),$$($(1)_LDADD))
-$$(am_PFX)_$(1)_LIBADD := $$(call RelocFlags,$$(am_DIR),$$($(1)_LIBADD))
+$$(am_PFX)_$(1)_LDADD := $$(call RelocFiles,$$(am_DIR),$$($(1)_LDADD))
+$$(am_PFX)_$(1)_LIBADD := $$(call RelocFiles,$$(am_DIR),$$($(1)_LIBADD))
 $$(am_PFX)_$(1)_CFLAGS := $$(call RelocFlags,$$(am_DIR),$$($(1)_CFLAGS))
 $$(am_PFX)_$(1)_CPPFLAGS := $$(call RelocFlags,$$(am_DIR),$$($(1)_CPPFLAGS))
 $$(am_PFX)_$(1)_LDFLAGS := $$(call RelocFlags,$$(am_DIR),$$($(1)_LDFLAGS))
