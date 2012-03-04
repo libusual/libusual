@@ -11,7 +11,7 @@ Here we close libusual repo, but do not configure nor build it.
 
 ---------------------------------
 $ git clone git://github.com/libusual/libusual.git lib
-Cloning into lib...
+Cloning into 'lib'...
 done.
 ---------------------------------
 

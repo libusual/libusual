@@ -176,14 +176,15 @@ EXTRA_DIST = Makefile.am
 noinst_LIBRARIES = libfunc4.a
 libfunc4_a_SOURCES = func4.c func4.h
 
-EXTRA_PROGRAMS = prog
+noinst_PROGRAMS = prog
 prog_SOURCES = prog.c
+prog_LDFLAGS = -L../sub -L../sub/esub -L.  -Lsub
 prog_LDADD = \
-	-L../sub -lfunc1 \
-	-L../sub/esub -lfunc2 \
+	-lfunc1 \
+	-lfunc2 \
 	$(topdir)/sub/sub/libfunc3.a \
-	-L. -lfunc4 \
-	-Lsub -lfunc5 \
+	-lfunc4 \
+	-lfunc5 \
 	esub/libfunc6.a
 
 prog_CFLAGS = -I../sub
@@ -244,13 +245,12 @@ $ make
      RANLIB   esub/esub/libfunc6.a
      CXX      cpptest.cpp
      CXXLD    cpptest
+     CC       esub/prog.c
+     CCLD     esub/prog
 $ ls
 Makefile     build.mk	   config.log	  configure	cpptest.cpp  libtool
 antimake.mk  build.mk.in   config.status  configure.ac	esub	     ltmain.sh
 autogen.sh   config.guess  config.sub	  cpptest	install-sh   sub
-$ make esub/prog
-     CC       esub/prog.c
-     CCLD     esub/prog
 $ ./esub/prog
 esub/prog.c
 func1.c
@@ -368,11 +368,12 @@ $ make
      RANLIB   esub/esub/libfunc6.a
      CXX      ../actest-0.1/cpptest.cpp
      CXXLD    cpptest
+     CC       ../actest-0.1/esub/prog.c
+     CCLD     esub/prog
 $ ls
 Makefile  build.mk  config.log	config.status  cpptest	esub  libtool  sub
 $ make esub/prog
-     CC       ../actest-0.1/esub/prog.c
-     CCLD     esub/prog
+make: `esub/prog' is up to date.
 $ ./esub/prog
 ../actest-0.1/esub/prog.c
 ../../actest-0.1/sub/func1.c

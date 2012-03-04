@@ -14,7 +14,7 @@ in your project.
 
 ---------------------------------
 $ git clone git://github.com/libusual/libusual.git lib
-Cloning into lib...
+Cloning into 'lib'...
 done.
 $ cd lib
 $ ./autogen.sh
