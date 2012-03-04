@@ -35,7 +35,7 @@
  * Compat sigval, detect based on siginfo_t.si_code.
  */
 
-#ifndef SI_QUEUE
+#if !defined(SI_QUEUE) && !defined(HAVE_SIGQUEUE)
 union sigval {
 	int sival_int;
 	void *sival_ptr;
