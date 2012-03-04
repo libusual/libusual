@@ -611,13 +611,22 @@ UpDirStep3 = $(subst / ,/,$(call UpDirStep2,$(1)))
 UpDirStep4 = $(patsubst %/,%,$(call UpDirStep3,$(1)))
 UpDir = $(if $(filter-out .,$(1)),$(call UpDirStep4,$(1)),.)
 
+# convert abs path back to relative - replace or recurse updir
+# 1-abspath 2-relabs 3-relsubst
+RelPath2 = $(if $(call Eq,$(1),$(subst $(2)/,$(3),$(1))),$(call RelPath1,$(1),$(abspath $(2)/..),../$(3)),$(subst $(2)/,$(3),$(1)))
+
+# convert abs path back to relative - detect loops
+# 1-abspath 2-relabs 3-relsubst
+RelPath1 = $(if $(call Eq,$(2),/),$(error Invalid pathname),$(call RelPath2,$(1),$(2),$(3)))
+
+# convert path to abs and then convert back
+JoinPath3 = $(call RelPath1,$(abspath $(1)/$(2)),$(abspath .),)
+
 # a,b -> a/b, skips component if '.'
-JoinPath2 = $(if $(filter-out .,$(1)),$(if $(filter-out .,$(2)),$(1)/$(2),$(1)),$(2))
+JoinPath2 = $(if $(filter-out .,$(1)),$(if $(filter-out .,$(2)),$(call JoinPath3,$(1),$(2)),$(1)),$(2))
 
 # a,b -> a/b, unless b is absolute
-JoinPath = $(if $(filter /%,$(2)),$(2),$(call JoinPath2,$(1),$(2)))
-
-
+JoinPath = $(if $(filter /%,$(2)),$(2),$(if $(call Eq,$(1)/$(2),/),,$(call JoinPath2,$(1),$(2))))
 
 ##
 ## Parse target list variables
@@ -1363,7 +1372,7 @@ am-debug:
 ## regtests for basic tools
 ##
 
-AM_TESTS = 1 2 3 4 5 6 7 8 9 10 11 12 13 14
+AM_TESTS = 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
 AM_TEST_1 = $(call Eq,a b c,a b c),$(call Eq,,),$(call Eq,a,aa),$(call Eq,a,a a)
 AM_TEST_1_RES = true,true,,
 AM_TEST_2 = $(call Neq,a,aa),$(call Neq,a,a)
@@ -1396,12 +1405,18 @@ AM_TEST_10_RES = nobase_bin_PROGRAMS|a|
 AM_TEST_11_Show = $(4)-$(3)-$(2)
 AM_TEST_11 = $(call ForEachList,AM_TEST_11_Show,bin_PROGRAMS foo_DATA baz_foo base_nobase_dist_nodist_DATA_PROGRAMS)
 AM_TEST_11_RES = -bin-PROGRAMS --DATA -- base nobase dist nodist--DATA PROGRAMS
-AM_TEST_12 = $(call RelocFlags,sub/dir,-I. -I./foo -Lfoo/bar -I/inc -L/lib -lfoo obj.o ../mod.a /lib/c.a)
-AM_TEST_12_RES = -Isub/dir -Isub/dir/./foo -Lsub/dir/foo/bar -I/inc -L/lib -lfoo sub/dir/obj.o sub/dir/../mod.a /lib/c.a
+AM_TEST_12 = $(call RelocFlags,sub/dir,-I. -I./foo -Lfoo/bar -I/inc -L/lib -lfoo)
+AM_TEST_12_RES = -Isub/dir -Isub/dir/foo -Lsub/dir/foo/bar -I/inc -L/lib -lfoo
 AM_TEST_13 = $(call TargetNoDist,HEADERS,)|$(call TargetNoDist,HEADERS,nodist)|$(call TargetNoDist,PROGRAMS,)|$(call TargetNoDist,PROGRAMS,dist)
 AM_TEST_13_RES = |true|PROGRAMS|
 AM_TEST_14 = $(call ShellQuote,foo'bar\')|$(call ShellQuote,as!d' \\ $$foo)
 AM_TEST_14_RES = 'foo'\''bar\'\'''|'as!d'\'' \\ $$foo'
+AM_TEST_15 = $(call JoinPath,sub/dir,../foo) , \
+	     $(call JoinPath,sub/dir,../../foo) , \
+	     $(call JoinPath,sub/dir,../../../foo) , \
+	     $(call JoinPath,sub/dir/,../foo)
+AM_TEST_15_RES = sub/foo , foo , ../foo , sub/foo
+
 
 AmTest = $(if $(call Eq,$($(1)),$($(2))),@echo '$(1): OK',@echo '$(1): FAIL: $($(1)) != $($(2))')$(NewLine)
 am-test:
