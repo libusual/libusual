@@ -860,7 +860,8 @@ endef
 DoEmbed = $(trace1)$(strip \
 	$(if $(wildcard $(am_srcdir)/$(1)/Makefile.am), \
                $(eval include $(am_srcdir)/$(1)/Makefile.am $(NewLine)) \
-	       $(eval $(call EmbedProcess,$(1),$(call CleanName,$(1)),$(AM_ALL_TLISTS))), \
+	       $(eval $(call EmbedProcess,$(1),$(call CleanName,$(1)),$(AM_NONEXTRA_TLISTS))), \
+	       $(eval $(call EmbedProcess,$(1),$(call CleanName,$(1)),$(AM_EXTRA_TLISTS))), \
 	     $(error $(SUBLOC)/Makefile failure: $(call JoinPath,$(SUBLOC),$(1)/Makefile.am) not found.)))
 
 ##
@@ -1125,6 +1126,8 @@ all-local clean-local install-local distclean-local maintainer-clean-local:
 
 AM_ALL_TLISTS2 = $(filter $(addprefix %,$(AM_PRIMARIES)),$(.VARIABLES))
 AM_ALL_TLISTS = $(call ForEachList,CheckName,$(AM_ALL_TLISTS2))
+AM_NONEXTRA_TLISTS = $(filter-out EXTRA_%,$(AM_ALL_TLISTS))
+AM_EXTRA_TLISTS = $(filter EXTRA_%,$(AM_ALL_TLISTS))
 
 am_srcdir := $(srcdir)
 am_DIR := .
@@ -1134,7 +1137,8 @@ am_EXTRA_TARGETLISTS :=
 am_TOP_NAMES :=
 
 # move top-level targets away
-$(eval $(call ForEachList,RelocTList,$(AM_ALL_TLISTS)))
+$(eval $(call ForEachList,RelocTList,$(AM_NONEXTRA_TLISTS)))
+$(eval $(call ForEachList,RelocTList,$(AM_EXTRA_TLISTS)))
 
 am_SUBDIRS := $(SUBDIRS)
 am_DIST_SUBDIRS := $(DIST_SUBDIRS)
