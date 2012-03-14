@@ -759,7 +759,9 @@ $(trace5)
 $(foreach var,$(AM_TARGET_VARIABLES),$(NewLine)$$(am_PFX)_$(1)_$(var) := $$($(1)_$(var)))
 
 # move and relocate
+EXTRA_$$(am_PFX)_$(1)_SOURCES := $$(call RelocFiles,$$(am_DIR),$$(EXTRA_$(1)_SOURCES))
 $$(am_PFX)_$(1)_SOURCES := $$(call RelocFiles,$$(am_DIR),$$($(1)_SOURCES))
+$$(am_PFX)_$(1)_DEPENDENCIES := $$(call RelocFiles,$$(am_DIR),$$($(1)_DEPENDENCIES))
 $$(am_PFX)_$(1)_LDADD := $$(call RelocFiles,$$(am_DIR),$$($(1)_LDADD))
 $$(am_PFX)_$(1)_LIBADD := $$(call RelocFiles,$$(am_DIR),$$($(1)_LIBADD))
 $$(am_PFX)_$(1)_CFLAGS := $$(call RelocFlags,$$(am_DIR),$$($(1)_CFLAGS))
