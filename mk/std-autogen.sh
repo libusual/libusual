@@ -21,9 +21,9 @@ test -f "${USUAL_DIR}/m4/usual.m4" || {
 rm -f config.guess config.sub install-sh ltmain.sh libtool
 cp -p ${USUAL_DIR}/mk/install-sh .
 if libtoolize --help | grep "[-][-]install" > /dev/null; then
-  libtoolize -i -f -q
+  libtoolize -i -f -q -c
 else
-  libtoolize
+  libtoolize -c
 fi
 
 # drop ltmain.sh if libtool is not used
