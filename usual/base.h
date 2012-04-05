@@ -90,6 +90,22 @@
 #define FLEX_ARRAY 1
 #endif
 
+/** Make string token from C expression */
+#define STR(x) _STR_(x)
+#define _STR_(x) #x
+
+/** Make single C token from 2 separate tokens */
+#define CONCAT(a, b)    _CONCAT_(a, b)
+#define _CONCAT_(a, b)  a ## b
+
+/** Make single C token from 3 separate tokens */
+#define CONCAT3(a, b, c)     _CONCAT3_(a, b, c)
+#define _CONCAT3_(a, b, c)  a ## b ## c
+
+/** Make single C token from 4 separate tokens */
+#define CONCAT4(a, b, c, d)    _CONCAT4_(a, b, c, d)
+#define _CONCAT4_(a, b, c, d)  a ## b ## c ## d
+
 /**
  * @name Compiler attributes.
  */
@@ -184,10 +200,6 @@ static inline void *zmalloc(size_t len)
 /** Compat: posix_memalign() */
 int posix_memalign(void **ptr_p, size_t align, size_t len);
 #endif
-
-/** cpp expr -> string */
-#define STR(x) _STR_(x)
-#define _STR_(x) #x
 
 #endif
 
