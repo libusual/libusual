@@ -39,6 +39,8 @@ int main(void)
 	struct md5_ctx md5;
 	char buf[128];
 
+	static_assert(sizeof(int) >= 4, "unsupported int size");
+
 	aatree_init(&aatree, NULL, NULL);
 	cbtree = cbtree_create(NULL, NULL, NULL, USUAL_ALLOC);
 	cbtree_destroy(cbtree);

@@ -43,6 +43,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <unistd.h>
+#include <assert.h>
 
 #ifdef WIN32
 #include <usual/base_win32.h>
@@ -170,6 +171,26 @@
 #endif
 
 /* @} */
+
+
+/**
+ * Compile-time assert.
+ *
+ * Expression must be evaluatable at compile time.
+ * If false, stop compilation with message.
+ *
+ * It can be used in either global or function scope.
+ */
+#ifndef static_assert
+#if _COMPILER_GNUC(4,6) || _COMPILER_CLANG(3,0) || _COMPILER_MSC(1600)
+/* Version for new compilers */
+#define static_assert(expr, msg) _Static_assert(expr, msg)
+#else
+/* Version for old compilers */
+#define static_assert(expr, msg) enum { CONCAT4(static_assert_failure_, __LINE__, _, __COUNTER__) = 1/(1 != (1 + (expr))) }
+#endif
+#endif /* !static_assert */
+
 
 /** assert() that uses <usual/logging> module  */
 #ifndef Assert
