@@ -110,6 +110,14 @@
  * @name Compiler attributes.
  */
 
+/* Compiler detection for internal usage.  */
+#define _COMPILER_GNUC(maj,min) (defined(__GNUC__) && \
+	  ((__GNUC__ > (maj)) || (__GNUC__ == (maj) && __GNUC_MINOR__ >= (min))))
+#define _COMPILER_CLANG(maj,min) (defined(__clang__) && \
+	   ((__clang_major__ > (maj)) || (__clang_major__ == (maj) && __clang_minor__ >= (min))))
+#define _COMPILER_MSC(ver) (defined(_MSC_VER) && (_MSC_VER >= (ver)))
+#define _COMPILER_ICC(ver) (defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= (ver)))
+
 /** Disable padding for structure */
 #define _PACKED			__attribute__((packed))
 
