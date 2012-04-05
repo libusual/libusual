@@ -19,7 +19,7 @@ test -n "$1" || exit 0
 
 # return uniq module names, exclude already found ones
 grep_usual() {
-  excl="nonex"
+  excl="config"
   for m in $m_done; do
     excl="$excl|$m"
   done
