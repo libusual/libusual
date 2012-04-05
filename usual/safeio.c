@@ -83,18 +83,34 @@ loop:
 int safe_close(int fd)
 {
 	int res;
-loop:
-	/* by manpage, the close() could be interruptable
-	   although it seems that at least in linux it cannot happen */
+
 #ifndef WIN32
+	/*
+	 * POSIX says close() can return EINTR but fd state is "undefined"
+	 * later.  Seems Linux and BSDs close the fd anyway and EINTR is
+	 * simply informative.  Thus retry is dangerous.
+	 */
 	res = close(fd);
 #else
-	/* Pending(this is necessary to wait for FIN of a client.) */
-	log_debug("closesocket(%d)",fd);
+	/*
+	 * Seems on windows it can returns proper EINTR but only when
+	 * WSACancelBlockingCall() is called.  As we don't do it,
+	 * ignore EINTR on win32 too.
+	 */
 	res = closesocket(fd);
 #endif
+	if (res < 0) {
+		char ebuf[128];
+		log_warning("safe_close(%d) = %s", fd,
+			    strerror_r(errno, ebuf, sizeof(ebuf)));
+	} else if (cf_verbose > 2) {
+		log_noise("safe_close(%d) = %d", fd, res);
+	}
+
+	/* ignore EINTR */
 	if (res < 0 && errno == EINTR)
-		goto loop;
+		return 0;
+
 	return res;
 }
 
