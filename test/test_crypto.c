@@ -6,6 +6,7 @@
 
 #define str_check(a, b) tt_str_op(a, ==, b)
 
+#include <usual/hmac.h>
 #include <usual/md5.h>
 #include <usual/sha1.h>
 
@@ -88,7 +89,7 @@ static const char *run_sha1(const char *str)
 
 	if (memcmp(res, res2, SHA1_DIGEST_LENGTH) != 0)
 		return "FAIL";
-	
+
 	return mkhex(res, SHA1_DIGEST_LENGTH);
 }
 
@@ -104,13 +105,70 @@ static void test_sha1(void *ptr)
 end:;
 }
 
+
 /*
- * Laucher.
+ * HMAC
+ */
+
+static const char *run_hmac_sha1(const char *key, const char *str)
+{
+	struct hmac_sha1_ctx ctx[1];
+	uint8_t monolithic_res[SHA1_DIGEST_LENGTH];
+	uint8_t incremental_res[SHA1_DIGEST_LENGTH];
+	int i, len = strlen(str), step;
+
+	/* Compute HMAC all at once */
+	hmac_sha1_reset(ctx, (void *) key, strlen(key));
+	hmac_sha1_update(ctx, str, len);
+	hmac_sha1_final(monolithic_res, ctx);
+
+	/* Compute HMAC incrementally */
+	hmac_sha1_reset(ctx, (void *) key, strlen(key));
+	step = 3;
+	for (i = 0; i < len; i += step)
+		hmac_sha1_update(ctx, str+i,
+					(i + step <= len)
+					? (step) : (len - i));
+	hmac_sha1_final(incremental_res, ctx);
+
+	if (memcmp(monolithic_res, incremental_res, SHA1_DIGEST_LENGTH) != 0)
+		return "FAIL";
+
+	return mkhex(monolithic_res, SHA1_DIGEST_LENGTH);
+}
+
+static void test_hmac(void *ptr)
+{
+	const char *long_key = (
+		"quite a very long key, longer than a sha1 block size, "
+		"so it needs to be sha-1d before being used as a key");
+	const char *text = "The quick brown fox jumps over the lazy dog";
+
+	str_check(run_hmac_sha1("", ""),
+			  "fbdb1d1b18aa6c08324b7d64b71fb76370690e1d");
+
+	str_check(run_hmac_sha1("shrt", ""),
+			  "41fee95de96c437cf6c2f38363eb38eb0067ff64");
+
+	str_check(run_hmac_sha1(long_key, ""),
+		"496ca9bda3e523814ba7f99f68a2035e4de7702a");
+
+	str_check(run_hmac_sha1(long_key, text),
+		"924e1ee84da31f5f569a27dd6201533b42c999c6");
+
+	str_check(run_hmac_sha1("key", text),
+		"de7c9b85b8b78aa6bc8a7a36f70a90701c9db4d9");
+end:;
+}
+
+/*
+ * Launcher.
  */
 
 struct testcase_t crypto_tests[] = {
 	{ "md5", test_md5 },
 	{ "sha1", test_sha1 },
+	{ "hmac", test_hmac },
 	END_OF_TESTCASES
 };
 
