@@ -29,6 +29,7 @@ libusual_la_SOURCES = usual/config.h.in \
 	usual/getopt.h usual/getopt.c \
 	usual/hashtab-impl.h \
 	usual/heap.h usual/heap.c \
+	usual/hmac.h usual/hmac.c \
 	usual/list.h usual/list.c \
 	usual/logging.h usual/logging.c \
 	usual/lookup3.h usual/lookup3.c \
