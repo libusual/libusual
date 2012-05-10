@@ -16,6 +16,11 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+/**
+ * @file
+ * HMAC-SHA1 implementation (RFC2104).
+ */
+
 #ifndef _USUAL_HMAC_H_
 #define _USUAL_HMAC_H_
 
@@ -23,17 +28,20 @@
 
 #include <usual/sha1.h>
 
-/* HMAC-SHA1 Context */
+/** HMAC-SHA1 Context */
 struct hmac_sha1_ctx {
 	struct	sha1_ctx	ctx;
-	uint8_t				key[SHA1_BLOCK_SIZE];
-	size_t				key_len;
+	uint8_t			key[SHA1_BLOCK_SIZE];
+	unsigned int		key_len;
 };
 
-void hmac_sha1_reset(struct hmac_sha1_ctx *ctx,
-				const u_int8_t *key, u_int key_len);
-void hmac_sha1_update(struct hmac_sha1_ctx *ctx,
-					  const void *data, unsigned int len);
+/** Initialize context with new key */
+void hmac_sha1_reset(struct hmac_sha1_ctx *ctx, const uint8_t *key, unsigned int key_len);
+
+/** Hash more data */
+void hmac_sha1_update(struct hmac_sha1_ctx *ctx, const void *data, unsigned int len);
+
+/** Get final result */
 void hmac_sha1_final(uint8_t *dst, struct hmac_sha1_ctx *ctx);
 
 #endif /* _USUAL_HMAC_H_ */

@@ -57,6 +57,7 @@
  * <tr><td>  <usual/cfparser.h>      </td><td>  Config parser   </td></tr>
  * <tr><td>  <usual/crc32.h>         </td><td>  CRC32   </td></tr>
  * <tr><td>  <usual/endian.h>        </td><td>  Endianess conversion   </td></tr>
+ * <tr><td>  <usual/hmac.h>          </td><td>  HMAC-SHA1   </td></tr>
  * <tr><td>  <usual/lookup3.h>       </td><td>  Jenkins' lookup3 hash   </td></tr>
  * <tr><td>  <usual/misc.h>          </td><td>  Misc arithmetic   </td></tr>
  * <tr><td>  <usual/md5.h>           </td><td>  MD5 hash   </td></tr>

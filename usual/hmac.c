@@ -16,18 +16,18 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <string.h>
-
 #include <usual/hmac.h>
 #include <usual/sha1.h>
+
+#include <string.h>
 
 /* Clean HMAC-SHA1 state */
 void
 hmac_sha1_reset(struct hmac_sha1_ctx *ctx,
-				const u_int8_t *key, u_int key_len)
+		const uint8_t *key, unsigned int key_len)
 {
-	uint8_t				 k_ipad[65];
-	int					 i;
+	uint8_t k_ipad[SHA1_BLOCK_SIZE];
+	int i;
 
 	if (key_len > SHA1_BLOCK_SIZE) {
 		sha1_reset(&ctx->ctx);
@@ -59,14 +59,16 @@ hmac_sha1_reset(struct hmac_sha1_ctx *ctx,
 /* Update HMAC-SHA1 state with more data */
 void
 hmac_sha1_update(struct hmac_sha1_ctx *ctx,
-				 const void *data, unsigned int len) {
+		 const void *data, unsigned int len)
+{
 	sha1_update(&ctx->ctx, data, len);
 }
 
 
 /* Get final HMAC-SHA1 result */
-void hmac_sha1_final(uint8_t *dst, struct hmac_sha1_ctx *ctx) {
-	u_int8_t k_opad[SHA1_BLOCK_SIZE];
+void hmac_sha1_final(uint8_t *dst, struct hmac_sha1_ctx *ctx)
+{
+	uint8_t k_opad[SHA1_BLOCK_SIZE];
 	int i;
 
 	sha1_final(dst, &ctx->ctx);
