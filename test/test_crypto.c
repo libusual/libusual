@@ -89,7 +89,7 @@ static const char *run_sha1(const char *str)
 
 	if (memcmp(res, res2, SHA1_DIGEST_LENGTH) != 0)
 		return "FAIL";
-	
+
 	return mkhex(res, SHA1_DIGEST_LENGTH);
 }
 
@@ -162,7 +162,7 @@ end:;
 }
 
 /*
- * Laucher.
+ * Launcher.
  */
 
 struct testcase_t crypto_tests[] = {
