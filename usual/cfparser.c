@@ -440,17 +440,40 @@ fail:
 	return false;
 }
 
+/* parse float with error checking.  returns -1 if failed */
+static double parse_time(const char *value)
+{
+	double v;
+	char *endp = NULL;
+
+	errno = 0;
+	v = strtod(value, &endp);
+	if (errno)
+		return -1;
+	if (*endp || endp == value || v < 0) {
+		errno = EINVAL;
+		return -1;
+	}
+	return v;
+}
+
 bool cf_set_time_usec(struct CfValue *cv, const char *value)
 {
 	usec_t *ptr = cv->value_p;
-	*ptr = USEC * atof(value);
+	double v = parse_time(value);
+	if (v < 0)
+		return false;
+	*ptr = USEC * v;
 	return true;
 }
 
 bool cf_set_time_double(struct CfValue *cv, const char *value)
 {
 	double *ptr = cv->value_p;
-	*ptr = atof(value);
+	double v = parse_time(value);
+	if (v < 0)
+		return false;
+	*ptr = v;
 	return true;
 }
 
