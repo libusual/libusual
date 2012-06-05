@@ -136,6 +136,7 @@ USUAL_DIR = lib
 
 # mention that 'prog' wants embedded libusual
 prog_EMBED_LIBUSUAL = 1
+AM_FEATURES = libusual
 
 # launch Antimake
 include $(USUAL_DIR)/mk/antimake.mk

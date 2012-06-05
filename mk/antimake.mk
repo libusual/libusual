@@ -147,6 +147,7 @@ libdir = @libdir@
 localedir = @localedir@
 pkgdatadir = @pkgdatadir@
 pkgconfigdir = @pkgconfigdir@
+aclocaldir = @aclocaldir@
 
 # autoconf values for top dir
 abs_top_srcdir ?= @abs_top_srcdir@
@@ -231,6 +232,7 @@ libdir ?= ${exec_prefix}/lib
 localedir ?= ${datarootdir}/locale
 pkgdatadir ?= ${datarootdir}/${PACKAGE_TARNAME}
 pkgconfigdir ?= ${libdir}/pkgconfig
+aclocaldir ?= ${datarootdir}/aclocal
 
 # autoconf values for top dir
 abs_top_srcdir ?= $(CURDIR)
@@ -339,7 +341,7 @@ AM_SMALL_PRIMARIES += HEADERS SCRIPTS DATA MANS
 # list of destinations per primary
 AM_DESTINATIONS += bin lib libexec sbin \
 		   data doc include locale man sysconf \
-		   pkgdata pkgconfig \
+		   pkgdata pkgconfig aclocal \
 		   noinst EXTRA
 
 # primaries where 'dist' is default
@@ -521,6 +523,10 @@ trace2=$(warning $0('$1','$2'))
 trace3=$(warning $0('$1','$2','$3'))
 trace4=$(warning $0('$1','$2','$3','$4'))
 trace5=$(warning $0('$1','$2','$3','$4','$5'))
+trace6=$(warning $0('$1','$2','$3','$4','$5','$6'))
+trace7=$(warning $0('$1','$2','$3','$4','$5','$6','$7'))
+trace8=$(warning $0('$1','$2','$3','$4','$5','$6','$7','$8'))
+trace9=$(warning $0('$1','$2','$3','$4','$5','$6','$7','$8','$9'))
 endif
 
 # for use inside $(eval)
@@ -574,11 +580,14 @@ DepFiles = $(wildcard $(addsuffix .d,$(1)))
 # per-target var override, 1=target, 2=varname
 # if foo_VAR exists, expand to:
 #   build_foo install_foo clean_foo: AM_VAR = $(foo_VAR)
-#TgtVar = $(if $($(1)_$(2)),build_$(1): AM_$(2) = $($(1)_$(2)))
-TgtVar = $(if $($(1)_$(2)),$$($(1)_FINAL): AM_$(2) = $($(1)_$(2)))
 
-# loop TgtVar over AM_TARGET_VARIABLES, 1=target
-VarOverride = $(foreach var,$(AM_TARGET_VARIABLES),$(eval $(call TgtVar,$(1),$(var))))
+
+# 1-tgt, 2-var, 3-final
+TgtVar2 = $(3): AM_$(2) = $$($(1)_$(2))$(NewLine)
+TgtVar = $(if $($(1)_$(2)),$(call TgtVar2,$(1),$(2),$(3)))
+
+# loop TgtVar over AM_TARGET_VARIABLES, 1=target, 2-final
+VarOverride = $(foreach var,$(AM_TARGET_VARIABLES),$(call TgtVar,$(1),$(var),$(2)))
 
 # check if actual target (.h, .exe) is nodist based on primary and flags
 # 1-prim 2-flags
@@ -660,31 +669,6 @@ ForEachTarget2 = $(foreach tgt,$($(1)),$(call $(5),$(call CleanName,$(tgt)),$(tg
 # 1-func, 2- var list
 # func args: 1-cleantgt, 2-tgt, 3-prim, 4-dest, 5-flags
 ForEachTarget = $(call ForEachList,ForEachTarget2,$(2),$(1))
-
-
-##
-## Utility functions for libusual link
-##
-
-_USUAL_DIR = $(call JoinPath,$(srcdir),$(USUAL_DIR))
-
-# module names from sources (plus headers)
-UsualMods = $(trace1)$(shell $(_USUAL_DIR)/find_modules.sh $(_USUAL_DIR) $(wildcard $(addprefix $(srcdir)/,$(1))))
-
-# full-path sources based on module list
-UsualSrcsFull = $(trace1)$(wildcard $(addprefix $(_USUAL_DIR)/usual/,$(addsuffix *.[ch],$(1))))
-
-# remove USUAL_DIR
-UsualStrip = $(trace1)$(subst $(_USUAL_DIR)/,,$(1))
-
-# simple-path sources based on module list
-UsualSrcs = $(call UsualStrip,$(call UsualSrcsFull,$(1)))
-
-# objs with objdir from source file list (1-cleantgt, 2-src list)
-UsualObjs = $(call SourceObjs,$(1),$(call UsualSrcs,$(call UsualMods,$(2))))
-
-# usual sources from user source file list
-UsualSources = $(call UsualSrcsFull,$(call UsualMods,$(1)))
 
 
 ## EMBED_SUBDIRS relocations
@@ -904,6 +888,10 @@ endef
 ## Rules for big target
 ##
 
+# calculate target file name
+# 1-clean, 2-raw, 3-prim
+FinalTargetFile = $(if $(filter PROGRAMS,$(3)$($(1)_EXT)),$(2)$($(1)_EXT),$(2)$(EXEEXT))
+
 # 1=cleantgt,2=rawtgt,3=prim,4=dest,5=flags
 define BigTargetBuild
 $(trace5)
@@ -925,19 +913,6 @@ $(1)_OBJS += $$(filter-out -%,$$($(1)_LIBADD))
 $(1)_LIBS += $$(filter -%,$$($(1)_LIBADD))
 $(ENDIF)
 
-# embed libusual objects directly
-$(IFEQ) ($$($(1)_EMBED_LIBUSUAL),1)
-$(1)_USUAL_SRCS = $$(call UsualSources,$$($(1)_ALLSRCS))
-$(1)_OBJS += $$(call UsualObjs,$(1),$$($(1)_SOURCES) $$(nodist_$(1)_SOURCES))
-$(1)_CPPFLAGS += -I$$(USUAL_DIR)
-$(IFEQ) ($$(filter $$(USUAL_DIR),$(VPATH)),)
-VPATH += $$(USUAL_DIR)
-$(ENDIF)
-$(IFNEQ) ($$(srcdir),$$(builddir),)
-VPATH += $$(call JoinPath,$$(srcdir),$$(USUAL_DIR))
-$(ENDIF)
-$(ENDIF)
-
 # autodetect linker, unless given
 $(IFEQ) ($($(1)_LINK),)
 $(1)_LINKVAR := $$(call DetectLinkVar,$$($(1)_ALLSRCS))
@@ -946,11 +921,7 @@ $(1)_LINKVAR := $(1)_LINK
 $(ENDIF)
 
 # calculate target file name
-$(IFEQ) ($(3)$($(1)_EXT),PROGRAMS)
-$(1)_FINAL = $(2)$$(EXEEXT)
-$(ELSE)
-$(1)_FINAL = $(2)$$($(1)_EXT)
-$(ENDIF)
+$(1)_FINAL = $(call FinalTargetFile,$(1),$(2),$(3))
 
 # hook libtool into LTLIBRARIES cleanup
 $(IFEQ) ($(3),LTLIBRARIES)
@@ -970,7 +941,7 @@ $(1)_CFLAGS := $$(call FixIncludes,$$(srcdir),$$($(1)_CFLAGS))
 .PHONY: build_$(1) clean_$(1)
 
 # allow target-specific variables
-$$(call VarOverride,$(1))
+$(call VarOverride,$(1),$(call FinalTargetFile,$(1),$(2),$(3)))
 
 # build and clean by default, unless flagged EXTRA
 $(IFNEQ) ($(4),EXTRA)
@@ -1076,29 +1047,34 @@ endif
 
 
 ##
-## Actual rules start
+## O=<tgtdir>
+##    if given, create wrapper makefiles in target dir
+##    that include makefiles from source dir, then run
+##    make from target dir.
 ##
-
-# if output is redirected, prepare target dir and launch submake
 
 ifneq ($(O),)
 
-ABS_DST := $(call JoinPath,$(CURDIR),$(O))
-.PHONY: $(MAKECMDGOALS)
-
-all $(filter-out all,$(MAKECMDGOALS)):
-	@test -d $(O) || { echo "Directory $(O) does not exist"; exit 1; }
-	@for mk in $(filter-out /%,$(MAKEFILE_LIST)); do \
-	    if ! test -f $(O)/$${mk}; then \
-	        printf '%s\n%s\n%s\n%s\n%s\n' \
+# 1-makefile
+define WrapMakeFileCmd
+	@$(MKDIR_P) '$(dir $(O)/$(1))'
+	@printf '%s\n%s\n%s\n%s\n%s\n' \
 		'abs_top_srcdir = $(CURDIR)' \
-		'abs_top_builddir = $(ABS_DST)' \
+		'abs_top_builddir = $(call JoinPath,$(CURDIR),$(O))' \
 		'nosub_top_srcdir = $(call UpDir,$(O))' \
 		'nosub_top_builddir = .' \
-		'include $$(abs_top_srcdir)/'"$${mk}" \
-	        > $(O)/$${mk}; \
-	    fi; \
-	done
+		'include $(abs_top_srcdir)/$(1)' \
+		> $(O)/$(1)
+endef
+
+# 1-makefile
+WrapMakeFile = $(if $(wildcard $(O)/$(1)),,$(call WrapMakeFileCmd,$(1))$(NewLine))
+
+# redirect whatever rule was given
+.PHONY: all $(MAKECMDGOALS)
+all $(filter-out all,$(MAKECMDGOALS)):
+	$(if $(wildcard $(O)),,$(error O=$(O): Directory '$(O)' does not exist))
+	$(foreach mk,$(filter-out /%,$(MAKEFILE_LIST)),$(call WrapMakeFile,$(mk)))
 	$(Q) $(MAKE) O= -C $(O) $(MAKECMDGOALS)
 
 # O=empty, this is main makefile
@@ -1195,6 +1171,25 @@ am_EXTRA_TARGETLISTS := $(sort $(am_EXTRA_TARGETLISTS))
 AM_FLAGS += real
 
 ## EMBED_SUBDIRS end
+
+##
+## Launch target hooks
+##
+
+amdir = $(dir $(realpath $(filter %/antimake.mk antimake.mk,$(MAKEFILE_LIST))))
+
+# 1-feat name
+FeatFile = $(amdir)/amext-$(1).mk
+
+
+# 1- fname
+LoadFeature = $(if $(wildcard $(call FeatFile,$(1))),$(eval include $(call FeatFile,$(1))),$(error Feature "$(call FeatFile,$(1))" is not available.))
+
+$(foreach f,$(AM_FEATURES),$(call LoadFeature,$(f)))
+
+
+
+$(eval $(foreach hook,$(AM_TARGET_HOOKS),$(call ForEachTarget,$(hook),$(am_TARGETLISTS))))
 
 
 ##

@@ -44,6 +44,7 @@ inst/include/usual/fileutil.h
 inst/include/usual/getopt.h
 inst/include/usual/hashtab-impl.h
 inst/include/usual/heap.h
+inst/include/usual/hmac.h
 inst/include/usual/list.h
 inst/include/usual/logging.h
 inst/include/usual/lookup3.h
@@ -82,6 +83,8 @@ inst/share/aclocal/antimake.m4
 inst/share/aclocal/usual.m4
 inst/share/libusual
 inst/share/libusual/Setup.mk
+inst/share/libusual/amext-libusual.mk
+inst/share/libusual/amext-modes.mk
 inst/share/libusual/antimake.mk
 inst/share/libusual/find_modules.sh
 inst/share/libusual/std-autogen.sh

@@ -69,6 +69,7 @@ cat_file Makefile <<"EOF"
 
 	# mention that 'prog' wants embedded libusual
 	prog_EMBED_LIBUSUAL = 1
+	AM_FEATURES = libusual
 
 	# clean configured files
 	DISTCLEANFILES = config.status config.log \

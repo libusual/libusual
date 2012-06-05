@@ -221,9 +221,10 @@ EMBED_SUBDIRS::
 	The fragment is included in main makefile and file
 	and variable names are converted and merged with top-level targets.
 
-USUAL_DIR::
-	Location of libusual tree, used for embedding libusual
-	sources.
+AM_FEATURES::
+	List of extensions to load.  Extensions are Makefile fragments
+	that are loaded before actual rules are generated, so they
+	can change or add targets.
 
 === More details on EMBED_SUBDIRS ===
 
