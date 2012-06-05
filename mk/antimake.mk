@@ -941,7 +941,7 @@ $(1)_CFLAGS := $$(call FixIncludes,$$(srcdir),$$($(1)_CFLAGS))
 .PHONY: build_$(1) clean_$(1)
 
 # allow target-specific variables
-$(call VarOverride,$(1),$(call FinalTargetFile,$(1),$(2),$(3)))
+$$(eval $$(call VarOverride,$(1),$(call FinalTargetFile,$(1),$(2),$(3))))
 
 # build and clean by default, unless flagged EXTRA
 $(IFNEQ) ($(4),EXTRA)
