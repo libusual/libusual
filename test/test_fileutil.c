@@ -35,9 +35,9 @@ static void test_fsize(void *p)
 {
 	int_check(createfile(), 1);
 
-	tt_assert(file_size(filename) == strlen(fdata));
-	tt_assert(file_size(filename) == sizeof(fdata) - 1);
-	tt_assert(file_size("nonexist") ==-1);
+	tt_assert(file_size(filename) == (int)strlen(fdata));
+	tt_assert(file_size(filename) == (int)sizeof(fdata) - 1);
+	tt_assert(file_size("nonexist") == -1);
 end:;
 }
 
