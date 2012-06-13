@@ -49,15 +49,15 @@ static void nofail_destroy(void *next)
 }
 
 const struct CxOps cx_nofail_ops = {
-	.c_alloc = nofail_alloc,
-	.c_realloc = nofail_realloc,
-	.c_free = nofail_free,
-	.c_destroy = nofail_destroy,
+	nofail_alloc,
+	nofail_realloc,
+	nofail_free,
+	nofail_destroy,
 };
 
 const struct CxMem cx_libc_nofail = {
-	.ops = &cx_nofail_ops,
-	.ctx = (void*)&cx_libc_allocator,
+	&cx_nofail_ops,
+	(void*)&cx_libc_allocator,
 };
 
 /*
@@ -164,10 +164,10 @@ static void pool_destroy(void *ctx)
 }
 
 static const struct CxOps pool_ops = {
-	.c_alloc = pool_alloc,
-	.c_realloc = pool_realloc,
-	.c_free = pool_free,
-	.c_destroy = pool_destroy,
+	pool_alloc,
+	pool_realloc,
+	pool_free,
+	pool_destroy,
 };
 
 /*
@@ -275,10 +275,10 @@ static void tree_destroy(void *ctx)
 }
 
 static const struct CxOps tree_ops = {
-	.c_alloc = tree_alloc,
-	.c_realloc = tree_realloc,
-	.c_free = tree_free,
-	.c_destroy = tree_destroy,
+	tree_alloc,
+	tree_realloc,
+	tree_free,
+	tree_destroy,
 };
 
 

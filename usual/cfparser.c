@@ -332,12 +332,12 @@ static bool load_handler(void *arg, bool is_sect, const char *key, const char *v
 
 bool cf_load_file(const struct CfContext *cf, const char *fn)
 {
-	struct LoaderCtx ctx = {
-		.cf = cf,
-		.cur_sect = NULL,
-	};
+	struct LoaderCtx ctx;
+	bool ok;
+	memset(&ctx, 0, sizeof(ctx));
+	ctx.cf = cf;
 
-	bool ok = parse_ini_file(fn, load_handler, &ctx);
+	ok = parse_ini_file(fn, load_handler, &ctx);
 	if (ctx.cur_sect)
 		free(ctx.cur_sect);
 	return ok;

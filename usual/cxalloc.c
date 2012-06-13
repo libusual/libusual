@@ -99,14 +99,14 @@ static void libc_free(void *ctx, const void *ptr)
 }
 
 static const struct CxOps libc_alloc_ops = {
-	.c_alloc = libc_alloc,
-	.c_realloc = libc_realloc,
-	.c_free = libc_free,
+	libc_alloc,
+	libc_realloc,
+	libc_free,
 };
 
 const struct CxMem cx_libc_allocator = {
-	.ops = &libc_alloc_ops,
-	.ctx = NULL,
+	&libc_alloc_ops,
+	NULL,
 };
 
 
