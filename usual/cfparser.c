@@ -481,7 +481,7 @@ bool cf_set_time_usec(struct CfValue *cv, const char *value)
 	double v = parse_time(value);
 	if (v < 0)
 		return false;
-	*ptr = USEC * v;
+	*ptr = (usec_t)(USEC * v);
 	return true;
 }
 
