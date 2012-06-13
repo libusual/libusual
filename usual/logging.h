@@ -125,50 +125,50 @@ void log_fatal(const char *file, int line, const char *func, bool show_perror,
  */
 
 /** Log error message */
-#define log_error(fmt, args...) do { LOG_CONTEXT_DEF; \
-		log_generic(LG_ERROR, LOG_CONTEXT, fmt, ## args); \
+#define log_error(...) do { LOG_CONTEXT_DEF; \
+		log_generic(LG_ERROR, LOG_CONTEXT, __VA_ARGS__); \
 	} while (0)
 
 /** Log warning message */
-#define log_warning(fmt, args...) do { LOG_CONTEXT_DEF; \
-		log_generic(LG_WARNING, LOG_CONTEXT, fmt, ## args); \
+#define log_warning(...) do { LOG_CONTEXT_DEF; \
+		log_generic(LG_WARNING, LOG_CONTEXT, __VA_ARGS__); \
 	} while (0)
 
 /** Log stats (liveness) message */
-#define log_stats(fmt, args...) do { LOG_CONTEXT_DEF; \
-		log_generic(LG_STATS, LOG_CONTEXT, fmt, ## args); \
+#define log_stats(...) do { LOG_CONTEXT_DEF; \
+		log_generic(LG_STATS, LOG_CONTEXT, __VA_ARGS__); \
 	} while (0)
 
 /** Log info message */
-#define log_info(fmt, args...) do { LOG_CONTEXT_DEF; \
-		log_generic(LG_INFO, LOG_CONTEXT, fmt, ## args); \
+#define log_info(...) do { LOG_CONTEXT_DEF; \
+		log_generic(LG_INFO, LOG_CONTEXT, __VA_ARGS__); \
 	} while (0)
 
 /** Log debug message */
-#define log_debug(fmt, args...) do { LOG_CONTEXT_DEF; \
+#define log_debug(...) do { LOG_CONTEXT_DEF; \
 		if (unlikely(cf_verbose > 0)) \
-			log_generic(LG_DEBUG, LOG_CONTEXT, fmt, ## args); \
+			log_generic(LG_DEBUG, LOG_CONTEXT, __VA_ARGS__); \
 	} while (0)
 
 /** Log debug noise */
-#define log_noise(fmt, args...) do { LOG_CONTEXT_DEF; \
+#define log_noise(...) do { LOG_CONTEXT_DEF; \
 		if (unlikely(cf_verbose > 1)) \
-			log_generic(LG_NOISE, LOG_CONTEXT, fmt, ## args); \
+			log_generic(LG_NOISE, LOG_CONTEXT, __VA_ARGS__); \
 	} while (0)
 
 /** Log and die.  It also logs source location */
-#define fatal(fmt, args...) do { LOG_CONTEXT_DEF; \
-	log_fatal(__FILE__, __LINE__, __func__, false, LOG_CONTEXT, fmt, ## args); \
+#define fatal(...) do { LOG_CONTEXT_DEF; \
+	log_fatal(__FILE__, __LINE__, __func__, false, LOG_CONTEXT, __VA_ARGS__); \
 	exit(1); } while (0)
 
 /** Log strerror and die.  Error message also includes strerror(errno) */
-#define fatal_perror(fmt, args...) do { LOG_CONTEXT_DEF; \
-	log_fatal(__FILE__, __LINE__, __func__, true, LOG_CONTEXT, fmt, ## args); \
+#define fatal_perror(...) do { LOG_CONTEXT_DEF; \
+	log_fatal(__FILE__, __LINE__, __func__, true, LOG_CONTEXT, __VA_ARGS__); \
 	exit(1); } while (0)
 
 /** Less verbose fatal() */
-#define die(fmt, args...) do { LOG_CONTEXT_DEF; \
-	log_generic(LG_FATAL, LOG_CONTEXT, fmt, ## args); \
+#define die(...) do { LOG_CONTEXT_DEF; \
+	log_generic(LG_FATAL, LOG_CONTEXT, __VA_ARGS__); \
 	exit(1); } while (0)
 
 /**
