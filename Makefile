@@ -2,16 +2,16 @@
 AM_CPPFLAGS = -I$(builddir) -I$(srcdir)
 
 # main target
-lib_LTLIBRARIES = libusual.la
+lib_LIBRARIES = libusual.a
 
 # sources that are not always built
-EXTRA_libusual_la_SOURCES = usual/pgsocket.h usual/pgsocket.c
+EXTRA_libusual_a_SOURCES = usual/pgsocket.h usual/pgsocket.c
 
 # sources not in tar.gz
-nodist_libusual_la_SOURCES = usual/config.h
+nodist_libusual_a_SOURCES = usual/config.h
 
 # regular source files
-libusual_la_SOURCES = usual/config.h.in \
+libusual_a_SOURCES = usual/config.h.in \
 	usual/aatree.h usual/aatree.c \
 	usual/base.h usual/base.c usual/base_win32.h \
 	usual/bits.h \
@@ -62,7 +62,7 @@ libusual_la_SOURCES = usual/config.h.in \
 	usual/wchar.h usual/wchar.c
 
 # we want to filter headers, so cannot use usual install method via _HEADERS
-USUAL_HEADERS = $(filter %.h,$(libusual_la_SOURCES) $(nodist_libusual_la_SOURCES))
+USUAL_HEADERS = $(filter %.h,$(libusual_a_SOURCES) $(nodist_libusual_a_SOURCES))
 
 # define aclocal destination
 aclocaldir = ${datarootdir}/aclocal
@@ -76,7 +76,7 @@ dist_aclocal_DATA = m4/usual.m4 m4/antimake.m4
 # test program for link-test
 noinst_PROGRAMS = test/compile
 test_compile_SOURCES = test/compile.c
-test_compile_LDADD = libusual.la
+test_compile_LDADD = libusual.a
 
 # extra clean files
 DISTCLEANFILES = config.log build.mk config.status libtool config.mak
