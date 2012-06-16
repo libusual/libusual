@@ -1195,7 +1195,7 @@ AM_FLAGS += real
 amdir = $(dir $(realpath $(filter %/antimake.mk antimake.mk,$(MAKEFILE_LIST))))
 
 # 1-feat name
-FeatFile = $(amdir)/amext-$(1).mk
+FeatFile = $(call JoinPath,$(amdir),amext-$(1).mk)
 
 
 # 1- fname
