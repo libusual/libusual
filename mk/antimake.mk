@@ -454,7 +454,7 @@ endef
 ##
 
 define ar_lib
-	@$(MKDIR_P) $(dir $@)
+	$(Q) $(MKDIR_P) $(dir $@)
 	$(E) "AR" $@
 	$(Q) $(AM_AR) $@ $^
 	$(E) "RANLIB" $@
@@ -501,7 +501,7 @@ endef
 define LangObjTarget
 $(trace3)
 $$(OBJDIR)/$(1)/%.o $$(OBJDIR)/$(1)/%.lo: %$(3)
-	@$$(MKDIR_P) $$(dir $$@)
+	$$(Q) $$(MKDIR_P) $$(dir $$@)
 	$$(AM_LANG_$(2)_COMPILE)
 endef
 
@@ -969,7 +969,7 @@ build_$(1): $$($(1)_SOURCES) $$(nodist_$(1)_SOURCES)
 build_$(1): $$($(1)_DEPENDENCIES)
 build_$(1): $$($(1)_FINAL)
 $$($(1)_FINAL): $$($(1)_OBJS)
-	@$$(MKDIR_P) $$(dir $$@)
+	$$(Q) $$(MKDIR_P) $$(dir $$@)
 	$$($(if $(filter LIBRARIES,$(3)),ar_lib,$$($(1)_LINKVAR)))
 
 clean_$(1):
