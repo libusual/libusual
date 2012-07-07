@@ -620,22 +620,39 @@ UpDirStep3 = $(subst / ,/,$(call UpDirStep2,$(1)))
 UpDirStep4 = $(patsubst %/,%,$(call UpDirStep3,$(1)))
 UpDir = $(if $(filter-out .,$(1)),$(call UpDirStep4,$(1)),.)
 
-# convert abs path back to relative - replace or recurse updir
-# 1-abspath 2-relabs 3-relsubst
-RelPath2 = $(if $(call Eq,$(1),$(subst $(2)/,$(3),$(1))),$(call RelPath1,$(1),$(abspath $(2)/..),../$(3)),$(subst $(2)/,$(3),$(1)))
+#
+# AntiMake requires that joining clean names must result in clean names.
+#
+# Thus:
+#   JoinPath(.,foo) -> foo
+#   JoinPath(foo,/abs) -> /abs
+#   JoinPath(a/b,../c) -> a/c
+#   JoinPath(a,../../b/c) -> ../b/c
+#
 
-# convert abs path back to relative - detect loops
-# 1-abspath 2-relabs 3-relsubst
-RelPath1 = $(if $(call Eq,$(2),/),$(error Invalid pathname),$(call RelPath2,$(1),$(2),$(3)))
+# 1-path, 2-last name : remove last elem, or return '.' if only one elem
+CutLastName = $(if $(filter $(2),$(1)),.,$(patsubst %/$(2),%,$(1)))
 
-# convert path to abs and then convert back
-JoinPath3 = $(call RelPath1,$(abspath $(1)/$(2)),$(abspath .),)
+# 1-path component, remove last elem :
+CutLast = $(call CutLastName,$(1),$(lastword $(subst /, ,$(1))))
 
-# a,b -> a/b, skips component if '.'
+# 1/2 : actual place where / is put
+JoinPathFinal = $(if $(filter /,$(1)),$(1)$(2),$(1)/$(2))
+
+# 1/2 : second starts with ../, remove it and last component of $(1)
+JoinPath5 = $(call JoinPath,$(call CutLast,$(1)),$(patsubst ../%,%,$(2)))
+
+# 1/2: check if first ends with ..
+JoinPath4 = $(if $(filter .. %/..,$(1)),$(call JoinPathFinal,$(1),$(2)),$(call JoinPath5,$(1),$(2)))
+
+# 1/2 : check if second starts with ..; otherwise join
+JoinPath3 = $(if $(filter ../%,$(2)),$(call JoinPath4,$(1),$(2)),$(call JoinPathFinal,$(1),$(2)))
+
+# 1/2 : skips component if '.'
 JoinPath2 = $(if $(filter-out .,$(1)),$(if $(filter-out .,$(2)),$(call JoinPath3,$(1),$(2)),$(1)),$(2))
 
-# a,b -> a/b, unless b is absolute
-JoinPath = $(if $(filter /%,$(2)),$(2),$(if $(call Eq,$(1)/$(2),/),,$(call JoinPath2,$(1),$(2))))
+# 1/2 : check if b is absolute, otherwise fix minor problems
+JoinPath = $(trace2)$(if $(filter /%,$(2)),$(2),$(call JoinPath2,$(if $(filter /,$(1)),$(1),$(patsubst %/,%,$(1))),$(patsubst ./%,%,$(2))))
 
 ##
 ## Parse target list variables
@@ -1389,8 +1406,8 @@ AM_TEST_6 = $(call DetectLinkVar,foo.c c.foo),$(call DetectLinkVar,foo.c c.foo x
 AM_TEST_6_RES = AM_LANG_C_LINK,AM_LANG_CXX_LINK,AM_LANG_C_LINK,AM_LANG_C_LINK
 AM_TEST_7 = $(call UpDir,foo)|$(call UpDir,)|$(call UpDir,.)|$(call UpDir,foo/bar)|$(call UpDir,a/b/c)|
 AM_TEST_7_RES = ..|.|.|../..|../../..|
-AM_TEST_8 = $(call JoinPath,.,.)|$(call JoinPath,,)|$(call JoinPath,a,.)|$(call JoinPath,.,b)|$(call JoinPath,a,b)
-AM_TEST_8_RES = .||a|b|a/b
+AM_TEST_8 = $(call JoinPath,.,.)|$(call JoinPath,,)|$(call JoinPath,a,.)|$(call JoinPath,.,b)|$(call JoinPath,a,b)|$(call JoinPath,a/b,../c)|$(call JoinPath,a/b,../../../c)
+AM_TEST_8_RES = .||a|b|a/b|a/c|../c
 define AM_TEST_9_EVAL
 $(IFEQ) ($$(AM_TEST_9_RES),OK)
 AM_TEST_9 = OK
@@ -1414,8 +1431,11 @@ AM_TEST_14_RES = 'foo'\''bar\'\'''|'as!d'\'' \\ $$foo'
 AM_TEST_15 = $(call JoinPath,sub/dir,../foo) , \
 	     $(call JoinPath,sub/dir,../../foo) , \
 	     $(call JoinPath,sub/dir,../../../foo) , \
-	     $(call JoinPath,sub/dir/,../foo)
-AM_TEST_15_RES = sub/foo , foo , ../foo , sub/foo
+	     $(call JoinPath,sub/dir/,../foo) , \
+	     $(call JoinPath,/,./foo) , \
+	     $(call JoinPath,..,../foo) , \
+	     $(call JoinPath,foo/..,./foo)
+AM_TEST_15_RES = sub/foo , foo , ../foo , sub/foo , /foo , ../../foo , foo/../foo
 
 
 AmTest = $(if $(call Eq,$($(1)),$($(2))),@echo '$(1): OK',@echo '$(1): FAIL: $($(1)) != $($(2))')$(NewLine)
