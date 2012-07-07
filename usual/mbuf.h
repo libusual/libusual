@@ -115,6 +115,12 @@ static inline unsigned mbuf_written(const struct MBuf *buf)
 	return buf->write_pos;
 }
 
+/** How many bytes have been read from buffer */
+static inline unsigned mbuf_consumed(const struct MBuf *buf)
+{
+	return buf->read_pos;
+}
+
 /** Return pointer to data area. */
 static inline const void *mbuf_data(const struct MBuf *buf)
 {
