@@ -863,8 +863,7 @@ endef
 DoEmbed = $(trace1)$(strip \
 	$(if $(wildcard $(am_srcdir)/$(1)/Makefile.am), \
                $(eval include $(am_srcdir)/$(1)/Makefile.am $(NewLine)) \
-	       $(eval $(call EmbedProcess,$(1),$(call CleanName,$(1)),$(AM_NONEXTRA_TLISTS))), \
-	       $(eval $(call EmbedProcess,$(1),$(call CleanName,$(1)),$(AM_EXTRA_TLISTS))), \
+	       $(eval $(call EmbedProcess,$(1),$(call CleanName,$(1)),$(AM_NONEXTRA_TLISTS) $(AM_EXTRA_TLISTS))), \
 	     $(error $(SUBLOC)/Makefile failure: $(call JoinPath,$(SUBLOC),$(1)/Makefile.am) not found.)))
 
 ##
