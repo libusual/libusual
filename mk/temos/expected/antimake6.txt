@@ -10,7 +10,7 @@ Autoconf setup
 ../../std-autogen.sh ../../..
 
 # fetch Antimake template from libusual
-grep -Ei '@[a-z_]+@' ../../antimake.mk > build.mk.in
+make -f ../../antimake.mk show-config > build.mk.in
 echo 'include $(abs_top_srcdir)/antimake.mk' >> build.mk.in
 ln -sf ../../antimake.mk .
 -----------------------------------
