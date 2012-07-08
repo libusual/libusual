@@ -630,8 +630,8 @@ UpDir = $(if $(filter-out .,$(1)),$(call UpDirStep4,$(1)),.)
 #   JoinPath(a,../../b/c) -> ../b/c
 #
 
-# 1-path, 2-last name : remove last elem, or return '.' if only one elem
-CutLastName = $(if $(filter $(2),$(1)),.,$(patsubst %/$(2),%,$(1)))
+# 1-path, 2-last name :  foo => . | /foo => / | foo/bar => foo
+CutLastName = $(if $(filter $(2),$(1)),.,$(if $(filter /$(2),$(1)),/,$(patsubst %/$(2),%,$(1))))
 
 # 1-path component, remove last elem :
 CutLast = $(call CutLastName,$(1),$(lastword $(subst /, ,$(1))))
@@ -1433,8 +1433,10 @@ AM_TEST_15 = $(call JoinPath,sub/dir,../foo) , \
 	     $(call JoinPath,sub/dir/,../foo) , \
 	     $(call JoinPath,/,./foo) , \
 	     $(call JoinPath,..,../foo) , \
+	     $(call JoinPath,/foo,../baz) , \
+	     $(call JoinPath,/foo,../../baz) , \
 	     $(call JoinPath,foo/..,./foo)
-AM_TEST_15_RES = sub/foo , foo , ../foo , sub/foo , /foo , ../../foo , foo/../foo
+AM_TEST_15_RES = sub/foo , foo , ../foo , sub/foo , /foo , ../../foo , /baz , /baz , foo/../foo
 
 
 AmTest = $(if $(call Eq,$($(1)),$($(2))),@echo '$(1): OK',@echo '$(1): FAIL: $($(1)) != $($(2))')$(NewLine)
