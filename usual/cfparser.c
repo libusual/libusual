@@ -365,6 +365,24 @@ bool cf_set_int(struct CfValue *cv, const char *value)
 	return true;
 }
 
+bool cf_set_uint(struct CfValue *cv, const char *value)
+{
+	unsigned int *ptr = cv->value_p;
+	char *end;
+	unsigned long val;
+
+	errno = 0;
+	val = strtoul(value, &end, 0);
+	if (end == value || *end != 0) {
+		/* reject partial parse */
+		if (!errno)
+			errno = EINVAL;
+		return false;
+	}
+	*ptr = val;
+	return true;
+}
+
 bool cf_set_str(struct CfValue *cv, const char *value)
 {
 	char **dst_p = cv->value_p;
@@ -491,6 +509,13 @@ const char *cf_get_int(struct CfValue *cv)
 {
 	int *p = cv->value_p;
 	snprintf(cv->buf, cv->buflen, "%d", *p);
+	return cv->buf;
+}
+
+const char *cf_get_uint(struct CfValue *cv)
+{
+	unsigned int *p = cv->value_p;
+	snprintf(cv->buf, cv->buflen, "%u", *p);
 	return cv->buf;
 }
 

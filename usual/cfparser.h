@@ -145,6 +145,8 @@ bool cf_set_str(struct CfValue *cv, const char *value);
 bool cf_set_filename(struct CfValue *cv, const char *value);
 /** Setter for int */
 bool cf_set_int(struct CfValue *cv, const char *value);
+/** Setter for unsigned int */
+bool cf_set_uint(struct CfValue *cv, const char *value);
 /** Setter for time-usec */
 bool cf_set_time_usec(struct CfValue *cv, const char *value);
 /** Setter for time-double */
@@ -156,6 +158,8 @@ bool cf_set_lookup(struct CfValue *cv, const char *value);
 const char *cf_get_str(struct CfValue *cv);
 /** Getter for int */
 const char *cf_get_int(struct CfValue *cv);
+/** Getter for unsigned int */
+const char *cf_get_uint(struct CfValue *cv);
 /** Getter for time-usec */
 const char *cf_get_time_usec(struct CfValue *cv);
 /** Getter for time-double */
@@ -176,6 +180,8 @@ const char *cf_get_lookup(struct CfValue *cv);
 #define CF_FILE	{ cf_set_filename, cf_get_str }
 /** Ops for integer */
 #define CF_INT	{ cf_set_int, cf_get_int }
+/** Ops for unsigned integer */
+#define CF_UINT { cf_set_uint, cf_get_uint }
 /** Ops for boolean */
 #define CF_BOOL	{ cf_set_int, cf_get_int }
 /** Ops for time as usec */
