@@ -90,7 +90,7 @@ DEPFLAG=""
 for flg in '-Wp,-MMD,' '-Wp,-MD,'; do
   CFLAGS="$flg,conftest.d"
   AC_COMPILE_IFELSE([AC_LANG_SOURCE([void foo(void){}])],
-     [WFLAGS="$WFLAGS $f"])
+     [HAVE_CC_DEPFLAG=yes])
   if test "$HAVE_CC_DEPFLAG" = "yes"; then
     DEPFLAG="$flg"
     break
