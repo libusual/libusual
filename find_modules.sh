@@ -23,6 +23,7 @@ grep_usual() {
   for m in $m_done; do
     excl="$excl|$m"
   done
+  excl=`echo $excl | sed 's,/,\\\\/,g'`
   prog='
 /^#include[ \t]*[<"]usual\/('"$excl"')[.]h/  { next; }
 /^#include[ \t]*[<"]usual\// { p1 = index($0, "/"); p2 = index($0,"."); print substr($0, p1+1, p2-p1-1); }
