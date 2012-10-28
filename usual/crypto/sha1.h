@@ -48,14 +48,7 @@ void sha1_reset(struct sha1_ctx *ctx);
 void sha1_update(struct sha1_ctx *ctx, const void *data, unsigned int len);
 
 /** Get final result */
-void sha1_final(uint8_t *dst, struct sha1_ctx *ctx);
-
-#ifndef AVOID_SHA1_COMPAT
-typedef struct sha1_ctx SHA1_CTX;
-#define SHA1Init(ctx) sha1_reset(ctx)
-#define SHA1Update(ctx, data, len) sha1_update(ctx, data, len)
-#define SHA1Final(dst, ctx) sha1_final(dst, ctx)
-#endif
+void sha1_final(struct sha1_ctx *ctx, uint8_t *dst);
 
 #endif
 

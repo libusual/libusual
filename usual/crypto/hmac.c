@@ -32,7 +32,7 @@ hmac_sha1_reset(struct hmac_sha1_ctx *ctx,
 	if (key_len > SHA1_BLOCK_SIZE) {
 		sha1_reset(&ctx->ctx);
 		sha1_update(&ctx->ctx, key, key_len);
-		sha1_final(ctx->key, &ctx->ctx);
+		sha1_final(&ctx->ctx, ctx->key);
 		ctx->key_len = SHA1_DIGEST_LENGTH;
 	} else {
 		memcpy(ctx->key, key, key_len);
@@ -66,12 +66,12 @@ hmac_sha1_update(struct hmac_sha1_ctx *ctx,
 
 
 /* Get final HMAC-SHA1 result */
-void hmac_sha1_final(uint8_t *dst, struct hmac_sha1_ctx *ctx)
+void hmac_sha1_final(struct hmac_sha1_ctx *ctx, uint8_t *dst)
 {
 	uint8_t k_opad[SHA1_BLOCK_SIZE];
 	int i;
 
-	sha1_final(dst, &ctx->ctx);
+	sha1_final(&ctx->ctx, dst);
 
 	memset(k_opad, 0, sizeof k_opad);
 	memcpy(k_opad, ctx->key, ctx->key_len);
@@ -81,7 +81,7 @@ void hmac_sha1_final(uint8_t *dst, struct hmac_sha1_ctx *ctx)
 	sha1_reset(&ctx->ctx);
 	sha1_update(&ctx->ctx, k_opad, SHA1_BLOCK_SIZE);
 	sha1_update(&ctx->ctx, dst, SHA1_DIGEST_LENGTH);
-	sha1_final(dst, &ctx->ctx);
+	sha1_final(&ctx->ctx, dst);
 
 	/*
 	 * Seen in OpenBSD source, presumably to prevent key leakage through

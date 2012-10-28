@@ -118,7 +118,7 @@ void sha1_update(struct sha1_ctx *ctx, const void *data, unsigned int len)
 	}
 }
 
-void sha1_final(uint8_t *dst, struct sha1_ctx *ctx)
+void sha1_final(struct sha1_ctx *ctx, uint8_t *dst)
 {
 	static const uint8_t padding[SHA1_BLOCK_SIZE] = { 0x80 };
 	uint64_t nbits = ctx->nbytes * 8;

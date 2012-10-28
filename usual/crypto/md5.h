@@ -47,14 +47,7 @@ void md5_reset(struct md5_ctx *ctx);
 void md5_update(struct md5_ctx *ctx, const void *data, unsigned int len);
 
 /** Get final result */
-void md5_final(uint8_t *dst, struct md5_ctx *ctx);
-
-#ifdef MD5_COMPAT
-typedef struct md5_ctx MD5_CTX;
-#define MD5_Init(c) md5_reset(c)
-#define MD5_Update(c, d, l) md5_update(c, d, l)
-#define MD5_Final(d, c) md5_final(d, c)
-#endif
+void md5_final(struct md5_ctx *ctx, uint8_t *dst);
 
 #endif
 

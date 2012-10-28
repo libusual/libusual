@@ -168,7 +168,7 @@ void md5_update(struct md5_ctx *ctx, const void *data, unsigned int len)
 	}
 }
 
-void md5_final(uint8_t *dst, struct md5_ctx *ctx)
+void md5_final(struct md5_ctx *ctx, uint8_t *dst)
 {
 	static const uint8_t padding[MD5_BLOCK_LENGTH] = { 0x80 };
 	uint64_t final_len = ctx->nbytes * 8;

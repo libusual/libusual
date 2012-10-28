@@ -42,6 +42,6 @@ void hmac_sha1_reset(struct hmac_sha1_ctx *ctx, const uint8_t *key, unsigned int
 void hmac_sha1_update(struct hmac_sha1_ctx *ctx, const void *data, unsigned int len);
 
 /** Get final result */
-void hmac_sha1_final(uint8_t *dst, struct hmac_sha1_ctx *ctx);
+void hmac_sha1_final(struct hmac_sha1_ctx *ctx, uint8_t *dst);
 
 #endif /* _USUAL_HMAC_H_ */

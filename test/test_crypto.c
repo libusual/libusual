@@ -36,7 +36,7 @@ static const char *run_md5(const char *str)
 
 	md5_reset(ctx);
 	md5_update(ctx, str, len);
-	md5_final(res, ctx);
+	md5_final(ctx, res);
 
 	md5_reset(ctx);
 	step = 3;
@@ -44,7 +44,7 @@ static const char *run_md5(const char *str)
 		md5_update(ctx, str+i,
 			   (i + step <= len)
 			   ? (step) : (len - i));
-	md5_final(res2, ctx);
+	md5_final(ctx, res2);
 
 	if (memcmp(res, res2, MD5_DIGEST_LENGTH) != 0)
 		return "FAIL";
@@ -77,7 +77,7 @@ static const char *run_sha1(const char *str)
 
 	sha1_reset(ctx);
 	sha1_update(ctx, str, len);
-	sha1_final(res, ctx);
+	sha1_final(ctx, res);
 
 	sha1_reset(ctx);
 	step = 3;
@@ -85,7 +85,7 @@ static const char *run_sha1(const char *str)
 		sha1_update(ctx, str+i,
 			    (i + step <= len)
 			    ? (step) : (len - i));
-	sha1_final(res2, ctx);
+	sha1_final(ctx, res2);
 
 	if (memcmp(res, res2, SHA1_DIGEST_LENGTH) != 0)
 		return "FAIL";
@@ -120,7 +120,7 @@ static const char *run_hmac_sha1(const char *key, const char *str)
 	/* Compute HMAC all at once */
 	hmac_sha1_reset(ctx, (void *) key, strlen(key));
 	hmac_sha1_update(ctx, str, len);
-	hmac_sha1_final(monolithic_res, ctx);
+	hmac_sha1_final(ctx, monolithic_res);
 
 	/* Compute HMAC incrementally */
 	hmac_sha1_reset(ctx, (void *) key, strlen(key));
@@ -129,7 +129,7 @@ static const char *run_hmac_sha1(const char *key, const char *str)
 		hmac_sha1_update(ctx, str+i,
 					(i + step <= len)
 					? (step) : (len - i));
-	hmac_sha1_final(incremental_res, ctx);
+	hmac_sha1_final(ctx, incremental_res);
 
 	if (memcmp(monolithic_res, incremental_res, SHA1_DIGEST_LENGTH) != 0)
 		return "FAIL";
