@@ -22,8 +22,8 @@
  * SHA1 implementation.
  */
 
-#ifndef _USUAL_SHA1_H_
-#define _USUAL_SHA1_H_
+#ifndef _USUAL_CRYPTO_SHA1_H_
+#define _USUAL_CRYPTO_SHA1_H_
 
 #include <usual/base.h>
 

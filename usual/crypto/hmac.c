@@ -16,8 +16,8 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <usual/hmac.h>
-#include <usual/sha1.h>
+#include <usual/crypto/hmac.h>
+#include <usual/crypto/sha1.h>
 
 #include <string.h>
 

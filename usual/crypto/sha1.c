@@ -16,7 +16,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <usual/sha1.h>
+#include <usual/crypto/sha1.h>
 
 #include <usual/endian.h>
 #include <usual/bits.h>

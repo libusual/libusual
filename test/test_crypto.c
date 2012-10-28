@@ -6,9 +6,9 @@
 
 #define str_check(a, b) tt_str_op(a, ==, b)
 
-#include <usual/hmac.h>
-#include <usual/md5.h>
-#include <usual/sha1.h>
+#include <usual/crypto/hmac.h>
+#include <usual/crypto/md5.h>
+#include <usual/crypto/sha1.h>
 
 static const char *mkhex(const uint8_t *src, int len)
 {

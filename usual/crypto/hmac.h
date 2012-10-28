@@ -21,12 +21,12 @@
  * HMAC-SHA1 implementation (RFC2104).
  */
 
-#ifndef _USUAL_HMAC_H_
-#define _USUAL_HMAC_H_
+#ifndef _USUAL_CRYPTO_HMAC_H_
+#define _USUAL_CRYPTO_HMAC_H_
 
 #include <usual/base.h>
 
-#include <usual/sha1.h>
+#include <usual/crypto/sha1.h>
 
 /** HMAC-SHA1 Context */
 struct hmac_sha1_ctx {

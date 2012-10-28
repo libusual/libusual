@@ -22,8 +22,8 @@
  * MD5 cryptographic hash.
  */
 
-#ifndef _USUAL_MD5_H_
-#define _USUAL_MD5_H_
+#ifndef _USUAL_CRYPTO_MD5_H_
+#define _USUAL_CRYPTO_MD5_H_
 
 #include <usual/base.h>
 

@@ -14,7 +14,7 @@
 #include <usual/logging.h>
 #include <usual/lookup3.h>
 #include <usual/mbuf.h>
-#include <usual/md5.h>
+#include <usual/crypto/md5.h>
 #include <usual/misc.h>
 //#include <usual/pgsocket.h>
 #include <usual/safeio.h>

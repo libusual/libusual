@@ -16,7 +16,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <usual/md5.h>
+#include <usual/crypto/md5.h>
 
 #include <usual/endian.h>
 #include <usual/bits.h>
