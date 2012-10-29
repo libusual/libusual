@@ -17,6 +17,7 @@
  */
 
 #include <usual/crypto/md5.h>
+#include <usual/crypto/digest.h>
 
 #include <usual/endian.h>
 #include <usual/bits.h>
@@ -191,5 +192,23 @@ void md5_final(struct md5_ctx *ctx, uint8_t *dst)
 	le32enc(dst + 4, ctx->b);
 	le32enc(dst + 8, ctx->c);
 	le32enc(dst + 12, ctx->d);
+}
+
+/*
+ * DigestInfo
+ */
+
+static const struct DigestInfo md5 = {
+	(DigestInitFunc *)md5_reset,
+	(DigestUpdateFunc *)md5_update,
+	(DigestFinalFunc *)md5_final,
+	sizeof(struct md5_ctx),
+	MD5_DIGEST_LENGTH,
+	MD5_BLOCK_LENGTH
+};
+
+const struct DigestInfo *digest_MD5(void)
+{
+	return &md5;
 }
 

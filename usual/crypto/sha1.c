@@ -18,6 +18,7 @@
 
 #include <usual/crypto/sha1.h>
 
+#include <usual/crypto/digest.h>
 #include <usual/endian.h>
 #include <usual/bits.h>
 
@@ -141,5 +142,23 @@ void sha1_final(struct sha1_ctx *ctx, uint8_t *dst)
 	be32enc(dst + 2*4, ctx->c);
 	be32enc(dst + 3*4, ctx->d);
 	be32enc(dst + 4*4, ctx->e);
+}
+
+/*
+ * DigestInfo
+ */
+
+static const struct DigestInfo sha1_info = {
+	(DigestInitFunc *)sha1_reset,
+	(DigestUpdateFunc *)sha1_update,
+	(DigestFinalFunc *)sha1_final,
+	sizeof(struct sha1_ctx),
+	SHA1_DIGEST_LENGTH,
+	SHA1_BLOCK_SIZE
+};
+
+const struct DigestInfo *digest_SHA1(void)
+{
+	return &sha1_info;
 }
 

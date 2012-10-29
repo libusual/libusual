@@ -24,24 +24,26 @@
 #ifndef _USUAL_CRYPTO_HMAC_H_
 #define _USUAL_CRYPTO_HMAC_H_
 
-#include <usual/base.h>
+#include <usual/crypto/digest.h>
 
-#include <usual/crypto/sha1.h>
+/** HMAC Context */
+struct HMAC;
 
-/** HMAC-SHA1 Context */
-struct hmac_sha1_ctx {
-	struct	sha1_ctx	ctx;
-	uint8_t			key[SHA1_BLOCK_SIZE];
-	unsigned int		key_len;
-};
+/** Create context with key */
+struct HMAC *hmac_new(const struct DigestInfo *impl,
+		      const void *key, unsigned int key_len,
+		      CxMem *cx);
 
-/** Initialize context with new key */
-void hmac_sha1_reset(struct hmac_sha1_ctx *ctx, const uint8_t *key, unsigned int key_len);
+/** Initialize context */
+void hmac_reset(struct HMAC *ctx);
 
 /** Hash more data */
-void hmac_sha1_update(struct hmac_sha1_ctx *ctx, const void *data, unsigned int len);
+void hmac_update(struct HMAC *ctx, const void *data, unsigned int len);
 
 /** Get final result */
-void hmac_sha1_final(struct hmac_sha1_ctx *ctx, uint8_t *dst);
+void hmac_final(struct HMAC *ctx, uint8_t *dst);
+
+unsigned hmac_block_len(struct HMAC *ctx);
+unsigned hmac_result_len(struct HMAC *ctx);
 
 #endif /* _USUAL_HMAC_H_ */

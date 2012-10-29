@@ -1,5 +1,5 @@
 /*
- * HMAC-SHA1 implementation based on OpenBSD hmac.c
+ * HMAC implementation based on OpenBSD hmac.c
  *
  * Copyright (c) 2012 Daniel Farina
  *
@@ -17,75 +17,102 @@
  */
 
 #include <usual/crypto/hmac.h>
-#include <usual/crypto/sha1.h>
 
 #include <string.h>
 
-/* Clean HMAC-SHA1 state */
-void
-hmac_sha1_reset(struct hmac_sha1_ctx *ctx,
-		const uint8_t *key, unsigned int key_len)
-{
-	uint8_t k_ipad[SHA1_BLOCK_SIZE];
-	int i;
 
-	if (key_len > SHA1_BLOCK_SIZE) {
-		sha1_reset(&ctx->ctx);
-		sha1_update(&ctx->ctx, key, key_len);
-		sha1_final(&ctx->ctx, ctx->key);
-		ctx->key_len = SHA1_DIGEST_LENGTH;
+struct HMAC {
+	struct DigestContext *hash;
+	CxMem *cx;
+	uint8_t *ipad;
+	uint8_t *opad;
+};
+
+struct HMAC *hmac_new(const struct DigestInfo *impl,
+		      const void *key, unsigned int key_len,
+		      CxMem *cx)
+{
+	struct DigestContext *hash;
+	struct HMAC *hmac;
+	unsigned bs = impl->block_len;
+	unsigned i;
+
+	/* load hash */
+	hash = digest_new(impl, cx);
+	if (!hash)
+		return NULL;
+
+	/* struct setup */
+	hmac = cx_alloc0(cx, sizeof(struct HMAC) + 2*bs);
+	if (!hmac) {
+		digest_free(hash);
+		return NULL;
+	}
+	hmac->hash = hash;
+	hmac->cx = cx;
+	hmac->ipad = (uint8_t *)(hmac + 1);
+	hmac->opad = hmac->ipad + bs;
+
+	/* copy key to pads */
+	if (key_len > bs) {
+		digest_update(hash, key, key_len);
+		digest_final(hash, hmac->ipad);
+		digest_reset(hash);
+		memcpy(hmac->opad, hmac->ipad, digest_result_len(hash));
 	} else {
-		memcpy(ctx->key, key, key_len);
-		ctx->key_len = key_len;
+		memcpy(hmac->ipad, key, key_len);
+		memcpy(hmac->opad, key, key_len);
 	}
 
-	memset(k_ipad, 0, sizeof k_ipad);
-	memcpy(k_ipad, ctx->key, ctx->key_len);
+	/* calculate pads */
+	for (i = 0; i < bs; i++) {
+		hmac->ipad[i] ^= 0x36;
+		hmac->opad[i] ^= 0x5c;
+	}
 
-	for (i = 0; i < SHA1_BLOCK_SIZE; i += 1)
-		k_ipad[i] ^= 0x36;
-
-	sha1_reset(&ctx->ctx);
-	sha1_update(&ctx->ctx, k_ipad, SHA1_BLOCK_SIZE);
-
-	/*
-	 * Seen in OpenBSD source, presumably to prevent key leakage through
-	 * uninitialized memory.
-	 */
-	memset(k_ipad, 0, sizeof k_ipad);
+	/* prepare for user data */
+	digest_update(hmac->hash, hmac->ipad, bs);
+	return hmac;
 }
 
-
-/* Update HMAC-SHA1 state with more data */
-void
-hmac_sha1_update(struct hmac_sha1_ctx *ctx,
-		 const void *data, unsigned int len)
+/* Clean HMAC state */
+void hmac_reset(struct HMAC *ctx)
 {
-	sha1_update(&ctx->ctx, data, len);
+	unsigned bs = digest_block_len(ctx->hash);
+
+	digest_reset(ctx->hash);
+	digest_update(ctx->hash, ctx->ipad, bs);
 }
 
 
-/* Get final HMAC-SHA1 result */
-void hmac_sha1_final(struct hmac_sha1_ctx *ctx, uint8_t *dst)
+/* Update HMAC state with more data */
+void hmac_update(struct HMAC *ctx, const void *data, unsigned int len)
 {
-	uint8_t k_opad[SHA1_BLOCK_SIZE];
-	int i;
-
-	sha1_final(&ctx->ctx, dst);
-
-	memset(k_opad, 0, sizeof k_opad);
-	memcpy(k_opad, ctx->key, ctx->key_len);
-	for (i = 0; i < SHA1_BLOCK_SIZE; i += 1)
-		k_opad[i] ^= 0x5c;
-
-	sha1_reset(&ctx->ctx);
-	sha1_update(&ctx->ctx, k_opad, SHA1_BLOCK_SIZE);
-	sha1_update(&ctx->ctx, dst, SHA1_DIGEST_LENGTH);
-	sha1_final(&ctx->ctx, dst);
-
-	/*
-	 * Seen in OpenBSD source, presumably to prevent key leakage through
-	 * uninitialized memory.
-	 */
-	memset(k_opad, 0, sizeof k_opad);
+	digest_update(ctx->hash, data, len);
 }
+
+
+/* Get final HMAC result */
+void hmac_final(struct HMAC *ctx, uint8_t *dst)
+{
+	unsigned bs = digest_block_len(ctx->hash);
+	unsigned rs = digest_result_len(ctx->hash);
+
+	digest_final(ctx->hash, dst);
+
+	digest_reset(ctx->hash);
+	digest_update(ctx->hash, ctx->opad, bs);
+	digest_update(ctx->hash, dst, rs);
+	digest_final(ctx->hash, dst);
+}
+
+unsigned hmac_block_len(struct HMAC *ctx)
+{
+	return digest_block_len(ctx->hash);
+}
+
+unsigned hmac_result_len(struct HMAC *ctx)
+{
+	return digest_result_len(ctx->hash);
+}
+

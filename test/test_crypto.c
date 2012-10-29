@@ -9,6 +9,8 @@
 #include <usual/crypto/hmac.h>
 #include <usual/crypto/md5.h>
 #include <usual/crypto/sha1.h>
+#include <usual/crypto/digest.h>
+#include <usual/cxalloc.h>
 
 static const char *mkhex(const uint8_t *src, int len)
 {
@@ -23,33 +25,44 @@ static const char *mkhex(const uint8_t *src, int len)
 	return buf;
 }
 
+static const char *run_hash(const char *str, const struct DigestInfo *impl)
+{
+	struct DigestContext *ctx;
+	uint8_t res[512];
+	uint8_t res2[512];
+	int i, len = strlen(str), step;
+	int reslen;
+
+	ctx = digest_new(impl, USUAL_ALLOC);
+	if (!ctx)
+		return "NOMEM";
+	reslen = digest_result_len(ctx);
+
+	digest_update(ctx, str, len);
+	digest_final(ctx, res);
+
+	digest_reset(ctx);
+	step = 3;
+	for (i = 0; i < len; i += step)
+		digest_update(ctx, str+i,
+			      (i + step <= len) ? (step) : (len - i));
+	digest_final(ctx, res2);
+
+	digest_free(ctx);
+
+	if (memcmp(res, res2, reslen) != 0)
+		return "FAIL";
+	
+	return mkhex(res, reslen);
+}
+
 /*
  * MD5
  */
 
 static const char *run_md5(const char *str)
 {
-	struct md5_ctx ctx[1];
-	uint8_t res[MD5_DIGEST_LENGTH];
-	uint8_t res2[MD5_DIGEST_LENGTH];
-	int i, len = strlen(str), step;
-
-	md5_reset(ctx);
-	md5_update(ctx, str, len);
-	md5_final(ctx, res);
-
-	md5_reset(ctx);
-	step = 3;
-	for (i = 0; i < len; i += step)
-		md5_update(ctx, str+i,
-			   (i + step <= len)
-			   ? (step) : (len - i));
-	md5_final(ctx, res2);
-
-	if (memcmp(res, res2, MD5_DIGEST_LENGTH) != 0)
-		return "FAIL";
-	
-	return mkhex(res, MD5_DIGEST_LENGTH);
+	return run_hash(str, digest_MD5());
 }
 
 static void test_md5(void *ptr)
@@ -70,27 +83,7 @@ end:;
 
 static const char *run_sha1(const char *str)
 {
-	struct sha1_ctx ctx[1];
-	uint8_t res[SHA1_DIGEST_LENGTH];
-	uint8_t res2[SHA1_DIGEST_LENGTH];
-	int i, len = strlen(str), step;
-
-	sha1_reset(ctx);
-	sha1_update(ctx, str, len);
-	sha1_final(ctx, res);
-
-	sha1_reset(ctx);
-	step = 3;
-	for (i = 0; i < len; i += step)
-		sha1_update(ctx, str+i,
-			    (i + step <= len)
-			    ? (step) : (len - i));
-	sha1_final(ctx, res2);
-
-	if (memcmp(res, res2, SHA1_DIGEST_LENGTH) != 0)
-		return "FAIL";
-
-	return mkhex(res, SHA1_DIGEST_LENGTH);
+	return run_hash(str, digest_SHA1());
 }
 
 static void test_sha1(void *ptr)
@@ -110,31 +103,27 @@ end:;
  * HMAC
  */
 
+static const char *run_hmac(const char *key, const char *str, const struct DigestInfo *impl)
+{
+	struct HMAC *ctx;
+	uint8_t res[512];
+	int len = strlen(str);
+	int reslen;
+
+	ctx = hmac_new(impl, key, strlen(key), USUAL_ALLOC);
+	if (!ctx)
+		return "NOMEM";
+	reslen = hmac_result_len(ctx);
+
+	hmac_update(ctx, str, len);
+	hmac_final(ctx, res);
+
+	return mkhex(res, reslen);
+}
+
 static const char *run_hmac_sha1(const char *key, const char *str)
 {
-	struct hmac_sha1_ctx ctx[1];
-	uint8_t monolithic_res[SHA1_DIGEST_LENGTH];
-	uint8_t incremental_res[SHA1_DIGEST_LENGTH];
-	int i, len = strlen(str), step;
-
-	/* Compute HMAC all at once */
-	hmac_sha1_reset(ctx, (void *) key, strlen(key));
-	hmac_sha1_update(ctx, str, len);
-	hmac_sha1_final(ctx, monolithic_res);
-
-	/* Compute HMAC incrementally */
-	hmac_sha1_reset(ctx, (void *) key, strlen(key));
-	step = 3;
-	for (i = 0; i < len; i += step)
-		hmac_sha1_update(ctx, str+i,
-					(i + step <= len)
-					? (step) : (len - i));
-	hmac_sha1_final(ctx, incremental_res);
-
-	if (memcmp(monolithic_res, incremental_res, SHA1_DIGEST_LENGTH) != 0)
-		return "FAIL";
-
-	return mkhex(monolithic_res, SHA1_DIGEST_LENGTH);
+	return run_hmac(key, str, digest_SHA1());
 }
 
 static void test_hmac(void *ptr)
