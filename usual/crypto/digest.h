@@ -94,5 +94,17 @@ const struct DigestInfo *digest_MD5(void);
 /** SHA1 message digest */
 const struct DigestInfo *digest_SHA1(void);
 
+/** SHA224 message digest */
+const struct DigestInfo *digest_SHA224(void);
+
+/** SHA256 message digest */
+const struct DigestInfo *digest_SHA256(void);
+
+/** SHA384 message digest */
+const struct DigestInfo *digest_SHA384(void);
+
+/** SHA512 message digest */
+const struct DigestInfo *digest_SHA512(void);
+
 #endif
 

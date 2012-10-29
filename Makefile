@@ -22,6 +22,8 @@ libusual_la_SOURCES = usual/config.h.in \
 	usual/crypto/hmac.h usual/crypto/hmac.c \
 	usual/crypto/md5.h usual/crypto/md5.c \
 	usual/crypto/sha1.h usual/crypto/sha1.c \
+	usual/crypto/sha256.h usual/crypto/sha256.c \
+	usual/crypto/sha512.h usual/crypto/sha512.c \
 	usual/ctype.h \
 	usual/cxalloc.h usual/cxalloc.c \
 	usual/cxextra.h usual/cxextra.c \

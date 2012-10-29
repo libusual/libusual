@@ -67,6 +67,8 @@
  * <tr><td>  <usual/crypto/hmac.h>   </td><td>  HMAC with digest </td></tr>
  * <tr><td>  <usual/crypto/md5.h>    </td><td>  MD5 hash  </td></tr>
  * <tr><td>  <usual/crypto/sha1.h>   </td><td>  SHA1 hash  </td></tr>
+ * <tr><td>  <usual/crypto/sha256.h>   </td><td>  SHA256/224 hashes  </td></tr>
+ * <tr><td>  <usual/crypto/sha512.h>   </td><td>  SHA512/384 hashes  </td></tr>
  * <tr><th colspan=2>  Memory Allocation  </th></tr>
  * <tr><td>  <usual/cxalloc.h>       </td><td>  Context Allocator framework   </td></tr>
  * <tr><td>  <usual/cxextra.h>       </td><td>  Extra allocators   </td></tr>
