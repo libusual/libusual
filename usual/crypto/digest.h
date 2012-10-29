@@ -106,5 +106,20 @@ const struct DigestInfo *digest_SHA384(void);
 /** SHA512 message digest */
 const struct DigestInfo *digest_SHA512(void);
 
+/** Keccak-224 message digest */
+const struct DigestInfo *digest_KECCAK224(void);
+
+/** Keccak-256 message digest */
+const struct DigestInfo *digest_KECCAK256(void);
+
+/** Keccak-384 message digest */
+const struct DigestInfo *digest_KECCAK384(void);
+
+/** Keccak-512 message digest */
+const struct DigestInfo *digest_KECCAK512(void);
+
+/** Keccak in arbitrary output length mode */
+const struct DigestInfo *digest_KECCAK_STREAM(void);
+
 #endif
 
