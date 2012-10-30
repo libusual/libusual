@@ -140,3 +140,9 @@ kwh:
 	| sed '/^#line/d' \
 	> usual/pgutil_kwlookup.h
 
+sizes: all
+	size `find .objs -name '.libs' -prune -o -name '*.o' -print | sort`
+
+%.s: %.c
+	$(CC) -S $(DEFS) $(CFLAGS) $(CPPFLAGS) -I. $< -o - | cleanasm > $@
+
