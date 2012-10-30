@@ -13,7 +13,7 @@ static void test_bswap(void *p)
 {
 	int_check(bswap16(0xff01), 0x01ff);
 	int_check(bswap32(0x01020304), 0x04030201);
-	int_check(bswap64(0x0102030405060708ULL), 0x0807060504030201ULL);
+	ull_check(bswap64(0x0102030405060708ULL), 0x0807060504030201ULL);
 end:;
 }
 
