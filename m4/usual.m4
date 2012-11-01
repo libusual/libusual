@@ -85,22 +85,13 @@ fi
 dnl Check if compiler supports gcc-style dependencies
 AC_MSG_CHECKING([whether compiler supports dependency generation])
 old_CFLAGS="$CFLAGS"
-HAVE_CC_DEPFLAG=no
-DEPFLAG=""
-for flg in '-Wp,-MMD,' '-Wp,-MD,'; do
-  CFLAGS="$flg,conftest.d"
-  AC_COMPILE_IFELSE([AC_LANG_SOURCE([void foo(void){}])],
-     [HAVE_CC_DEPFLAG=yes])
-  if test "$HAVE_CC_DEPFLAG" = "yes"; then
-    DEPFLAG="$flg"
-    break
-  fi
-done
+CFLAGS="$CFLAGS -MD -MP -MT conftest.o -MF conftest.o.d"
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([void foo(void){}])],
+     [HAVE_CC_DEPFLAG=yes], [HAVE_CC_DEPFLAG=no])
 rm -f conftest.d
 CFLAGS="$old_CFLAGS"
 AC_MSG_RESULT([$HAVE_CC_DEPFLAG])
 AC_SUBST(HAVE_CC_DEPFLAG)
-AC_SUBST(DEPFLAG)
 
 dnl Pick good warning flags for gcc
 WFLAGS=""
