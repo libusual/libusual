@@ -906,7 +906,7 @@ endef
 
 # calculate target file name
 # 1-clean, 2-raw, 3-prim
-FinalTargetFile = $(if $(filter PROGRAMS,$(3)$($(1)_EXT)),$(2)$($(1)_EXT),$(2)$(EXEEXT))
+FinalTargetFile = $(if $(filter PROGRAMS,$(3)$($(1)_EXT)),$(2)$(EXEEXT),$(2)$($(1)_EXT))
 
 # 1=cleantgt,2=rawtgt,3=prim,4=dest,5=flags
 define BigTargetBuild
@@ -1388,7 +1388,7 @@ am-debug:
 ## regtests for basic tools
 ##
 
-AM_TESTS = 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+AM_TESTS = 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
 AM_TEST_1 = $(call Eq,a b c,a b c),$(call Eq,,),$(call Eq,a,aa),$(call Eq,a,a a)
 AM_TEST_1_RES = true,true,,
 AM_TEST_2 = $(call Neq,a,aa),$(call Neq,a,a)
@@ -1437,7 +1437,9 @@ AM_TEST_15 = $(call JoinPath,sub/dir,../foo) , \
 	     $(call JoinPath,/foo,../../baz) , \
 	     $(call JoinPath,foo/..,./foo)
 AM_TEST_15_RES = sub/foo , foo , ../foo , sub/foo , /foo , ../../foo , /baz , /baz , foo/../foo
-
+AM_TEST_16_EXT = .foo
+AM_TEST_16 = $(call FinalTargetFile,prog,prog,PROGRAMS) | $(call FinalTargetFile,AM_TEST_16,AM_TEST_16,PROGRAMS)
+AM_TEST_16_RES = prog$(EXEEXT) | AM_TEST_16.foo
 
 AmTest = $(if $(call Eq,$($(1)),$($(2))),@echo '$(1): OK',@echo '$(1): FAIL: $($(1)) != $($(2))')$(NewLine)
 am-test:
