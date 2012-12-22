@@ -17,7 +17,6 @@ libusual_la_SOURCES = usual/config.h.in \
 	usual/bits.h \
 	usual/cbtree.h usual/cbtree.c \
 	usual/cfparser.h usual/cfparser.c \
-	usual/crc32.h usual/crc32.c \
 	usual/crypto/digest.h usual/crypto/digest.c \
 	usual/crypto/hmac.h usual/crypto/hmac.c \
 	usual/crypto/keccak.h usual/crypto/keccak.c \
@@ -34,11 +33,12 @@ libusual_la_SOURCES = usual/config.h.in \
 	usual/event.h usual/event.c \
 	usual/fileutil.h usual/fileutil.c \
 	usual/getopt.h usual/getopt.c \
+	usual/hashing/crc32.h usual/hashing/crc32.c \
+	usual/hashing/lookup3.h usual/hashing/lookup3.c \
 	usual/hashtab-impl.h \
 	usual/heap.h usual/heap.c \
 	usual/list.h usual/list.c \
 	usual/logging.h usual/logging.c \
-	usual/lookup3.h usual/lookup3.c \
 	usual/mbuf.h usual/mbuf.c \
 	usual/mdict.h usual/mdict.c \
 	usual/mempool.h usual/mempool.c \

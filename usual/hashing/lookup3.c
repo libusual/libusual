@@ -8,7 +8,7 @@
  * Compact version of Bob Jenkins' lookup3.c hash.
  */
 
-#include <usual/lookup3.h>
+#include <usual/hashing/lookup3.h>
 
 #include <string.h>
 

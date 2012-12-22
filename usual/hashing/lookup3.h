@@ -3,8 +3,8 @@
  *
  * Jenkins' lookup3 non-cryptographic hash.
  */
-#ifndef _USUAL_LOOKUP3_H_
-#define _USUAL_LOOKUP3_H_
+#ifndef _USUAL_HASHING_LOOKUP3_H_
+#define _USUAL_HASHING_LOOKUP3_H_
 
 #include <usual/base.h>
 

@@ -2,7 +2,7 @@
 #include <usual/base.h>
 #include <usual/cbtree.h>
 #include <usual/cfparser.h>
-#include <usual/crc32.h>
+#include <usual/hashing/crc32.h>
 #include <usual/daemon.h>
 #include <usual/endian.h>
 #include <usual/err.h>
@@ -12,7 +12,7 @@
 #include <usual/heap.h>
 #include <usual/list.h>
 #include <usual/logging.h>
-#include <usual/lookup3.h>
+#include <usual/hashing/lookup3.h>
 #include <usual/mbuf.h>
 #include <usual/crypto/md5.h>
 #include <usual/misc.h>

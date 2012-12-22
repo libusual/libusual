@@ -19,8 +19,8 @@
  *
  * CRC32 checksum.
  */
-#ifndef _USUAL_CRC32_H_
-#define _USUAL_CRC32_H_
+#ifndef _USUAL_HASHING_CRC32_H_
+#define _USUAL_HASHING_CRC32_H_
 
 #include <usual/base.h>
 

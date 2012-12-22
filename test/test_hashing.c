@@ -1,5 +1,5 @@
-#include <usual/crc32.h>
-#include <usual/lookup3.h>
+#include <usual/hashing/crc32.h>
+#include <usual/hashing/lookup3.h>
 
 #include <usual/string.h>
 
