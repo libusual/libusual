@@ -19,15 +19,18 @@ test -n "$1" || exit 0
 
 # return uniq module names, exclude already found ones
 grep_usual() {
-  excl="config"
+  excl='excl["config"]=1'
   for m in $m_done; do
-    excl="$excl|$m"
+    excl="$excl;excl[\"$m\"]=1"
   done
-  excl=`echo $excl | sed 's,/,\\\\/,g'`
   prog='
-/^#include[ \t]*[<"]usual\/('"$excl"')[.]h/  { next; }
-/^#include[ \t]*[<"]usual\// { p1 = index($0, "/"); p2 = index($0,"."); print substr($0, p1+1, p2-p1-1); }
-'
+BEGIN { '"$excl"' }
+/^#include[ \t]*[<"]usual\// {
+  p1 = index($0, "/");
+  p2 = index($0, ".");
+  m = substr($0, p1+1, p2-p1-1);
+  if (!(m in excl)) print m;
+}'
   awk "$prog" "$@" | sort -u
 }
 
