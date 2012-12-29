@@ -170,7 +170,7 @@ AC_CHECK_HEADERS([arpa/inet.h netinet/in.h netinet/tcp.h])
 AC_CHECK_HEADERS([sys/param.h sys/uio.h pwd.h grp.h])
 AC_CHECK_HEADERS([sys/wait.h sys/mman.h syslog.h netdb.h dlfcn.h])
 AC_CHECK_HEADERS([err.h pthread.h endian.h sys/endian.h byteswap.h])
-AC_CHECK_HEADERS([malloc.h regex.h getopt.h])
+AC_CHECK_HEADERS([malloc.h regex.h getopt.h fnmatch.h])
 dnl ucred.h may have prereqs
 AC_CHECK_HEADERS([ucred.h sys/ucred.h], [], [], [
 #ifdef HAVE_SYS_TYPES_H
@@ -231,6 +231,7 @@ AC_CHECK_FUNCS(err errx warn warnx getprogname setprogname)
 AC_CHECK_FUNCS(posix_memalign memalign valloc)
 AC_CHECK_FUNCS(getopt getopt_long getopt_long_only)
 AC_CHECK_FUNCS(fls flsl flsll ffs ffsl ffsll)
+AC_CHECK_FUNCS(fnmatch)
 ### Functions provided only on win32
 AC_CHECK_FUNCS(localtime_r gettimeofday recvmsg sendmsg usleep getrusage)
 ### Functions used by libusual itself

@@ -41,6 +41,7 @@
  * <tr><td>  <usual/socket.h>        </td><td>  Socket compat and helper functions   </td></tr>
  * <tr><td>  <usual/string.h>        </td><td>  String compat and helper functions   </td></tr>
  * <tr><td>  <usual/time.h>          </td><td>  Time compat and helper functions   </td></tr>
+ * <tr><td>  <usual/fnmatch.h>       </td><td>  fnmatch compat   </td></tr>
  * <tr><th colspan=2>  Data Structures  </th></tr>
  * <tr><td>  <usual/aatree.h>        </td><td>  Binary Tree   </td></tr>
  * <tr><td>  <usual/cbtree.h>        </td><td>  Crit-Bit Tree   </td></tr>
