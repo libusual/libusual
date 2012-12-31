@@ -57,7 +57,8 @@ libusual_la_SOURCES = usual/config.h.in \
 	usual/string.h usual/string.c \
 	usual/strpool.h usual/strpool.c \
 	usual/time.h usual/time.c \
-	usual/utf8.h usual/utf8.c
+	usual/utf8.h usual/utf8.c \
+	usual/wchar.h usual/wchar.c
 
 # we want to filter headers, so cannot use usual install method via _HEADERS
 USUAL_HEADERS = $(filter %.h,$(libusual_la_SOURCES) $(nodist_libusual_la_SOURCES))
