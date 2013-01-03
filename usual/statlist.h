@@ -71,7 +71,7 @@ static inline void statlist_remove(struct StatList *list, struct List *item)
 	list_del(item);
 	list->cur_count--;
 
-	//Assert(list->cur_count >= 0);
+	/* Assert(list->cur_count >= 0); */
 }
 
 /** Initialize StatList head */
@@ -87,7 +87,7 @@ static inline void statlist_init(struct StatList *list, const char *name)
 /** return number of elements currently in list */
 static inline int statlist_count(const struct StatList *list)
 {
-	//Assert(list->cur_count > 0 || list_empty(&list->head));
+	/* Assert(list->cur_count > 0 || list_empty(&list->head)); */
 	return list->cur_count;
 }
 
@@ -99,7 +99,7 @@ static inline struct List *statlist_pop(struct StatList *list)
 	if (item)
 		list->cur_count--;
 
-	//Assert(list->cur_count >= 0);
+	/* Assert(list->cur_count >= 0); */
 
 	return item;
 }
