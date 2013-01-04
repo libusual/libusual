@@ -17,6 +17,8 @@ test -f "$top/usual/base.h" || {
 shift
 test -n "$1" || exit 0
 
+test -n "$AWK" || AWK=awk
+
 # return uniq module names, exclude already found ones
 grep_usual() {
   excl='excl["config"]=1'
@@ -31,7 +33,7 @@ BEGIN { '"$excl"' }
   m = substr($0, p1+1, p2-p1-1);
   if (!excl[m]) print m;
 }'
-  awk "$prog" "$@" | sort -u
+  $AWK "$prog" "$@" | sort -u
 }
 
 # return module filename globs
