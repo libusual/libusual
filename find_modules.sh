@@ -29,7 +29,7 @@ BEGIN { '"$excl"' }
   p1 = index($0, "/");
   p2 = index($0, ".");
   m = substr($0, p1+1, p2-p1-1);
-  if (!(m in excl)) print m;
+  if (!excl[m]) print m;
 }'
   awk "$prog" "$@" | sort -u
 }
