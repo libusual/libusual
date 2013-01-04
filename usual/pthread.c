@@ -19,6 +19,7 @@
 
 #include <usual/pthread.h>
 
+#ifndef HAVE_PTHREAD_H
 #ifdef WIN32
 /*
  * basic pthreads for win32.
@@ -90,4 +91,4 @@ int pthread_mutex_unlock(pthread_mutex_t *lock)
 }
 
 #endif /* win32 */
-
+#endif /* !HAVE_PTHREAD_H */
