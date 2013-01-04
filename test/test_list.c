@@ -147,8 +147,10 @@ end:;
 
 struct testcase_t list_tests[] = {
 	{ "sort", test_list_sort },
-	//{ "sort2", test_list_sort2 },
-	//{ "sort3", test_list_sort3 },
+#if 0
+	{ "sort2", test_list_sort2 },
+	{ "sort3", test_list_sort3 },
+#endif
 	END_OF_TESTCASES
 };
 

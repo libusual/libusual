@@ -24,8 +24,6 @@ static void m_log(const char *fmt, ...)
 	va_start(ap, fmt);
 	vsnprintf(logbuf + len, sizeof(logbuf) - len, fmt, ap);
 	va_end(ap);
-
-	//printf("\n%s: delta=%d\n", logbuf + len, delta);
 }
 
 static void *log_alloc(void *ctx, size_t len)
@@ -106,7 +104,7 @@ static void test_cxalloc_tree(void *zzz)
 
 	cx_destroy(cx1);
 
-	//str_check(logbuf, "A(16)R(500)F()");
+	/* str_check(logbuf, "A(16)R(500)F()"); */
 	int_check(delta, 0);
 end:
 	reset();

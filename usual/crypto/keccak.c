@@ -43,8 +43,6 @@
 #include <limits.h>
 #include <string.h>
 
-//#define KECCAK_64BIT
-
 /*
  * Decide whether to use 64- or 32-bit implementation.
  */

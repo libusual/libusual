@@ -43,7 +43,8 @@ struct PgSocket {
 	/* track wait state */
 	enum WType wait_type;
 
-	uint8_t wait_event; // EV_READ / EV_WRITE
+	/* EV_READ / EV_WRITE */
+	uint8_t wait_event;
 
 	/* should connect after sleep */
 	bool reconnect;

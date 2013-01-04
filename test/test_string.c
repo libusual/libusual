@@ -173,7 +173,6 @@ static bool slshow(void *arg, const char *s)
 			return false;
 	}
 	if (!s) s = "NULL";
-	//printf("writing: <%s>\n", s);
 	return mbuf_write(mb, s, strlen(s));
 }
 

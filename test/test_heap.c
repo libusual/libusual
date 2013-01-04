@@ -183,13 +183,12 @@ static int get_next(bool with_stat, bool added[])
 static void test_aatree_random(void *p)
 {
 	bool is_added[RSIZE];
-	int prefer_remove = 0; // 0 - insert, 1 - delete
+	int prefer_remove = 0; /* 0 - insert, 1 - delete */
 	int n;
-	int op; // 0 - insert, 1 - delete
+	int op; /* 0 - insert, 1 - delete */
 	struct AATree tree[1];
 	unsigned long long total = 0;
 
-	//printf("\n\n*** rand test ***\n\n");
 	srandom(123123);
 	memset(is_added, 0, sizeof(is_added));
 
@@ -200,14 +199,12 @@ static void test_aatree_random(void *p)
 			op = r > 5;
 		else
 			op = r > 10;
-		//op = 0;
+		/* op = 0; */
 
 		n = get_next(op, is_added);
 		if (n < 0) {
-			//break;
 			if (prefer_remove == op) {
 				prefer_remove = !prefer_remove;
-				//printf("** toggling remove to %d\n", prefer_remove);
 			}
 			continue;
 		}
@@ -228,7 +225,7 @@ end:
 
 struct testcase_t heap_tests[] = {
 	{ "basic", test_heap_basic },
-	//{ "random", test_aatree_random },
+	/* { "random", test_aatree_random }, */
 	END_OF_TESTCASES
 };
 

@@ -16,7 +16,6 @@
 #include <usual/mbuf.h>
 #include <usual/crypto/md5.h>
 #include <usual/misc.h>
-//#include <usual/pgsocket.h>
 #include <usual/safeio.h>
 #include <usual/shlist.h>
 #include <usual/signal.h>
