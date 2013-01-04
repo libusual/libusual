@@ -24,7 +24,7 @@ wchar_t *mbstr_decode(const char *str, int str_len, int *wlen_p,
 		      wchar_t *wbuf, int wbuf_len, bool allow_invalid)
 {
 	mbstate_t ps;
-	int clen, wcnt;
+	int clen;
 	wchar_t *dst, *w, *wend;
 	const char *s;
 	const char *str_end;
@@ -44,15 +44,17 @@ wchar_t *mbstr_decode(const char *str, int str_len, int *wlen_p,
 			return NULL;
 	}
 
+#ifdef HAVE_MBSNRTOWCS
 	/* try full decode at once */
 	s = str;
 	memset(&ps, 0, sizeof(ps));
-	wcnt = mbsnrtowcs(dst, &s, str_len, wmax, &ps);
-	if (wcnt > 0 && s == NULL) {
+	clen = mbsnrtowcs(dst, &s, str_len, wmax, &ps);
+	if (clen > 0 && s == NULL) {
 		if (wlen_p)
-			*wlen_p = wcnt;
+			*wlen_p = clen;
 		return dst;
 	}
+#endif
 
 	/* full decode failed, decode chars one-by-one */
 	s = str;
