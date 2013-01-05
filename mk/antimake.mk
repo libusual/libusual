@@ -1204,6 +1204,9 @@ am_EMBED_DONE =
 am_TARGETLISTS := $(sort $(am_TARGETLISTS))
 am_EXTRA_TARGETLISTS := $(sort $(am_EXTRA_TARGETLISTS))
 
+# avoid duplicate entries with am_TARGETLISTS
+am_EXTRA_TARGETLISTS := $(filter-out $(am_TARGETLISTS),$(am_EXTRA_TARGETLISTS))
+
 # allow seeing moved lists
 AM_FLAGS += real
 
@@ -1227,6 +1230,7 @@ $(foreach f,$(AM_FEATURES),$(call LoadFeature,$(f)))
 
 
 $(eval $(foreach hook,$(AM_TARGET_HOOKS),$(call ForEachTarget,$(hook),$(am_TARGETLISTS))))
+$(eval $(foreach hook,$(AM_TARGET_HOOKS),$(call ForEachTarget,$(hook),$(am_EXTRA_TARGETLISTS))))
 
 
 ##
