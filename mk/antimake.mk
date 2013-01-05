@@ -983,8 +983,8 @@ $$(eval $$(call VarOverride,$(1),$(call FinalTargetFile,$(1),$(2),$(3))))
 # build and clean by default, unless flagged EXTRA
 $(IFNEQ) ($(4),EXTRA)
 all: build_$(1)
-clean: clean_$(1)
 $(ENDIF)
+clean: clean_$(1)
 
 build_$(1): $$($(1)_SOURCES) $$(nodist_$(1)_SOURCES)
 build_$(1): $$($(1)_DEPENDENCIES)
