@@ -986,8 +986,9 @@ all: build_$(1)
 $(ENDIF)
 clean: clean_$(1)
 
-build_$(1): $$($(1)_SOURCES) $$(nodist_$(1)_SOURCES)
-build_$(1): $$($(1)_DEPENDENCIES)
+# _DEPENDENCIES and nodist_SOURCES must exist before build starts.
+$$(call FixObjs,$$($(1)_OBJS)): $$($(1)_DEPENDENCIES) $$(nodist_$(1)_SOURCES)
+
 build_$(1): $$($(1)_FINAL)
 $$($(1)_FINAL): $$(call FixObjs,$$($(1)_OBJS))
 	$$(Q) $$(call MkDir,$$(dir $$@))
