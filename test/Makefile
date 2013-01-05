@@ -16,22 +16,22 @@ regtest_system_SOURCES = \
 	test_socket.c test_getopt.c test_ctype.c test_fnmatch.c \
 	test_common.h tinytest.h tinytest_macros.h
 
+# build regtest_system against actual library
+regtest_system_LDADD = ../libusual.a
+regtest_system_LDFLAGS =
+regtest_system_CPPFLAGS = -I.. -I.
+
+# build regtest_compat as embedded project
+regtest_compat_EMBED_LIBUSUAL = 1
+regtest_compat_CPPFLAGS := -I.. -I. -DUSUAL_TEST_CONFIG
+regtest_compat_LDFLAGS =
 regtest_compat_SOURCES := $(regtest_system_SOURCES)
 nodist_regtest_compat_SOURCES = test_config.h
 
-regtest_compat_EMBED_LIBUSUAL = 1
-#regtest_system_EMBED_LIBUSUAL = 1
-
-regtest_system_LDADD = ../libusual.a
-regtest_system_LDFLAGS = #-pthread
-
-regtest_system_CPPFLAGS = -I.. -I.
-regtest_compat_CPPFLAGS := $(regtest_system_CPPFLAGS) -DUSUAL_TEST_CONFIG
-regtest_compat_LDFLAGS = #-pthread
-
 EXTRA_DIST = Makefile tinytest_demo.c force_compat.sed test_cfparser.ini
 
-noinst_PROGRAMS = regtest_system regtest_compat
+noinst_PROGRAMS = regtest_system
+EXTRA_PROGRAMS = regtest_compat
 
 include ../build.mk
 
