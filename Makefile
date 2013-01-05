@@ -99,10 +99,12 @@ include build.mk
 # filter headers when installing
 install-local:
 	@$(MKDIR_P) $(DESTDIR)$(includedir)/usual
+	@$(MKDIR_P) $(DESTDIR)$(includedir)/usual/hashing
+	@$(MKDIR_P) $(DESTDIR)$(includedir)/usual/crypto
 	@for hdr in $(USUAL_HEADERS); do \
 		echo Filtering $$hdr; \
 		$(SED) -f mk/safe-headers.sed $$hdr \
-		> $(DESTDIR)$(includedir)/usual/`basename $$hdr`; \
+		> $(DESTDIR)$(includedir)/$$hdr; \
 	done
 
 # Give proper error message
