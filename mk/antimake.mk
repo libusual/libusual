@@ -352,8 +352,11 @@ AM_PRIMARIES = $(AM_BIG_PRIMARIES) $(AM_SMALL_PRIMARIES)
 # distclean does rm -rf on that
 OBJDIR = .objs
 
-# non-configurable
+# extension for objects
 OBJEXT = .o
+
+# extension for static libraries
+LIBEXT = .a
 
 # files that need to be converted to objects
 AM_SRCEXTS = $(foreach lang,$(AM_LANGUAGES),$(AM_LANG_$(lang)_SRCEXTS))
@@ -910,9 +913,20 @@ endef
 ## Rules for big target
 ##
 
+# 1-varname, 2-ifset, 3-ifnotset
+IfSet = $(if $(filter-out undefined,$(flavor $(1))),$(2),$(3))
+
+# 1-clean, 2-raw, 3-prim
+PROGRAMS_Final = $(if $($(1)_EXT),$(2)$($(1)_EXT),$(2)$(EXEEXT))
+# 1-clean, 2-raw, 3-prim
+LIBRARIES_Final = $(if $($(1)_EXT),$(2)$($(1)_EXT),$(patsubst %.a,%$(LIBEXT),$(2)))
+
 # calculate target file name
 # 1-clean, 2-raw, 3-prim
-FinalTargetFile = $(if $(filter PROGRAMS,$(3)$($(1)_EXT)),$(2)$(EXEEXT),$(2)$($(1)_EXT))
+FinalTargetFile = $(call IfSet,$(3)_Final,$(call $(3)_Final,$(1),$(2),$(3)),$(2)$($(1)_EXT))
+
+# 1-objs
+FixObjs = $(patsubst %.a,%$(LIBEXT),$(1))
 
 # 1=cleantgt,2=rawtgt,3=prim,4=dest,5=flags
 define BigTargetBuild
@@ -974,7 +988,7 @@ $(ENDIF)
 build_$(1): $$($(1)_SOURCES) $$(nodist_$(1)_SOURCES)
 build_$(1): $$($(1)_DEPENDENCIES)
 build_$(1): $$($(1)_FINAL)
-$$($(1)_FINAL): $$($(1)_OBJS)
+$$($(1)_FINAL): $$(call FixObjs,$$($(1)_OBJS))
 	$$(Q) $$(call MkDir,$$(dir $$@))
 	$$($(if $(filter LIBRARIES,$(3)),ar_lib,$$($(1)_LINKVAR)))
 
