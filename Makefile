@@ -70,7 +70,6 @@ AM_DESTINATIONS = aclocal
 
 # other files
 dist_pkgdata_SCRIPTS = find_modules.sh
-dist_pkgdata_DATA = Setup.mk
 dist_aclocal_DATA = m4/usual.m4 m4/antimake.m4
 
 # test program for link-test

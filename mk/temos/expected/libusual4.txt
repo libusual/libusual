@@ -88,7 +88,6 @@ inst/share/aclocal
 inst/share/aclocal/antimake.m4
 inst/share/aclocal/usual.m4
 inst/share/libusual
-inst/share/libusual/Setup.mk
 inst/share/libusual/amext-libusual.mk
 inst/share/libusual/amext-modes.mk
 inst/share/libusual/antimake.mk
