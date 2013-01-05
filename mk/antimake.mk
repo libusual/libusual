@@ -939,6 +939,7 @@ $(1)_ALLSRCS := $$($(1)_SOURCES) $$(EXTRA_$(1)_SOURCES) $$(nodist_$(1)_SOURCES) 
 $(1)_OBJEXT := $$(if $$(AM_$(3)_OBJEXT),$$(AM_$(3)_OBJEXT),$$(OBJEXT))
 $(1)_OBJS := $$(call SourceObjsExt,$(1),$$($(1)_OBJEXT), \
 	                           $$($(1)_SOURCES) $$(nodist_$(1)_SOURCES))
+$(1)_OBJS_CLEAN := $$($(1)_OBJS)
 
 # include additional objects, move flags to _LIBS
 $(IFEQ) ($(3),PROGRAMS)
@@ -994,7 +995,7 @@ $$($(1)_FINAL): $$(call FixObjs,$$($(1)_OBJS))
 
 clean_$(1):
 	$$(E) "CLEAN" "$$($(1)_FINAL)"
-	$$(Q) $$($(1)_RM) -- $$($(1)_OBJS) $(if $(call TargetNoDist,$(3),$(5)),$$($(1)_FINAL))
+	$$(Q) $$($(1)_RM) -- $$($(1)_OBJS_CLEAN) $(if $(call TargetNoDist,$(3),$(5)),$$($(1)_FINAL))
 
 DISTCLEANFILES += $$(nodist_$(1)_SOURCES) $$(nodist_EXTRA_$(1)_SOURCES)
 
