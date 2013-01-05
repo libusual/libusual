@@ -353,7 +353,7 @@ AM_PRIMARIES = $(AM_BIG_PRIMARIES) $(AM_SMALL_PRIMARIES)
 OBJDIR = .objs
 
 # non-configurable
-OBJEXT = o
+OBJEXT = .o
 
 # files that need to be converted to objects
 AM_SRCEXTS = $(foreach lang,$(AM_LANGUAGES),$(AM_LANG_$(lang)_SRCEXTS))
@@ -506,7 +506,7 @@ endef
 # 1-tgt, 2-name, 3-srcext
 define LangObjTarget
 $(trace3)
-$$(OBJDIR)/$(1)/%.o $$(OBJDIR)/$(1)/%.lo: %$(3)
+$$(OBJDIR)/$(1)/%$(OBJEXT) $$(OBJDIR)/$(1)/%.lo: %$(3)
 	$$(Q) $$(call MkDir,$$(dir $$@))
 	$$(AM_LANG_$(2)_COMPILE)
 endef
@@ -574,7 +574,7 @@ ShellQuote = '$(subst $(SQuote),'\$(SQuote)',$(1))'
 ReplaceExts = $(foreach ext,$(1),$(patsubst %$(ext),%$(2),$(filter %$(ext),$(3))))
 
 # objs with objdir from source list (1-cleantgt, 2-src list)
-SourceObjs = $(trace1)$(call SourceObjsExt,$(1),.$(OBJEXT),$(2))
+SourceObjs = $(trace1)$(call SourceObjsExt,$(1),$(OBJEXT),$(2))
 
 # objs with objdir from source list
 # 1-cleantgt, 2-objext, 3-srcs list
@@ -922,7 +922,7 @@ AM_ALL_TARGETS += $(1)
 $(1)_ALLSRCS := $$($(1)_SOURCES) $$(EXTRA_$(1)_SOURCES) $$(nodist_$(1)_SOURCES) $$(nodist_EXTRA_$(1)_SOURCES)
 
 # calculate OBJS from SOURCES
-$(1)_OBJEXT := $$(if $$(AM_$(3)_OBJEXT),$$(AM_$(3)_OBJEXT),.$$(OBJEXT))
+$(1)_OBJEXT := $$(if $$(AM_$(3)_OBJEXT),$$(AM_$(3)_OBJEXT),$$(OBJEXT))
 $(1)_OBJS := $$(call SourceObjsExt,$(1),$$($(1)_OBJEXT), \
 	                           $$($(1)_SOURCES) $$(nodist_$(1)_SOURCES))
 
