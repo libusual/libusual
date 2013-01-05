@@ -62,11 +62,6 @@
 
 #define is_word(c) (isalnum(c) || (c) == '_')
 
-#ifndef isblank
-#define isblank usual_isblank
-static int isblank(int c) { return ((c) == ' ' || (c) == '\t'); }
-#endif
-
 struct Op;
 struct ExecCtx;
 struct GMatch;

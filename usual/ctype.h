@@ -38,6 +38,11 @@
 
 #include <ctype.h>
 
+#ifndef isblank
+#define isblank usual_isblank
+static inline int isblank(int c) { return (c == ' ') || (c == '\t'); }
+#endif
+
 #ifndef HAVE_CTYPE_ON_CHAR
 
 #define _WRAP_CTYPE_FN(name) \
