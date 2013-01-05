@@ -36,7 +36,7 @@ First, this is the source file:
 -----------------------------------
 #include <stdio.h>
 #include <string.h>
-#include <usual/crc32.h>
+#include <usual/hashing/crc32.h>
 
 int main(void)
 {
@@ -89,7 +89,7 @@ Here is the source that needs to be linked with libusual:
 .File: prog.c
 [source,c]
 -----------------------------------
-#include <usual/crc32.h>
+#include <usual/hashing/crc32.h>
 #include <stdio.h>
 #include <string.h>
 

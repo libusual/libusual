@@ -41,7 +41,7 @@ First, this is the source file:
 -----------------------------------
 #include <stdio.h>
 #include <string.h>
-#include <usual/crc32.h>
+#include <usual/hashing/crc32.h>
 
 int main(void)
 {

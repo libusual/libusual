@@ -34,7 +34,7 @@ title2 Prepare own code
 msg Here is the source that needs to be linked with libusual:
 
 cat_file prog.c <<"EOF"
-	#include <usual/crc32.h>
+	#include <usual/hashing/crc32.h>
 	#include <stdio.h>
 	#include <string.h>
 

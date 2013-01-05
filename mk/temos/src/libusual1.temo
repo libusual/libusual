@@ -35,7 +35,7 @@ msg First, this is the source file:
 cat_file prog.c <<"EOF"
 	#include <stdio.h>
 	#include <string.h>
-	#include <usual/crc32.h>
+	#include <usual/hashing/crc32.h>
 
 	int main(void)
 	{
