@@ -39,3 +39,7 @@ test_config.h: force_compat.sed ../usual/config.h
 	$(E) "	GEN-COMPAT" $@
 	$(Q) sed -f $^ > $@
 
+clean: clean-local
+
+clean-local:
+	$(Q) $(RM) -r fmod_test
