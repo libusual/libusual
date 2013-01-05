@@ -23,6 +23,8 @@
 
 #ifdef USUAL_TEST_CONFIG
 #include "test_config.h"
+#elif defined(_MSC_VER)
+#include <usual/config_msvc.h>
 #else
 #include <usual/config.h>
 #endif
@@ -34,16 +36,28 @@
 #endif
 
 #include <sys/types.h>
+#ifdef HAVE_SYS_PARAM_H
 #include <sys/param.h>
+#endif
 #include <stddef.h>
 #include <stdint.h>
+#ifdef HAVE_INTTYPES_H
 #include <inttypes.h>
-#include <stdbool.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-#include <unistd.h>
 #include <assert.h>
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+
+#ifdef HAVE_STDBOOL_H
+#include <stdbool.h>
+#else
+/* we really want bool type */
+typedef enum { true=1, false=0 } bool;
+#endif
 
 #ifdef WIN32
 #include <usual/base_win32.h>
@@ -120,7 +134,9 @@
 #define _COMPILER_ICC(ver) (defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= (ver)))
 
 /** Disable padding for structure */
+#ifndef _MSC_VER
 #define _PACKED			__attribute__((packed))
+#endif
 
 /*
  * Make sure __func__ works.

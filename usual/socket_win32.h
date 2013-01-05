@@ -42,14 +42,17 @@ struct msghdr {
 	int           msg_flags;
 };
 
+#ifndef SCM_RIGHTS
+#define SCM_RIGHTS 1
+#endif
+
+#ifndef CMSG_FIRSTHDR
+
 struct cmsghdr {
 	int		cmsg_len;
 	int		cmsg_level;
 	int		cmsg_type;
 };
-
-
-#define SCM_RIGHTS 1
 
 #define CMSG_DATA(cmsg) ((unsigned char *) ((struct cmsghdr *) (cmsg) + 1))
 #define CMSG_ALIGN(len) (((len) + sizeof (size_t) - 1) \
@@ -67,6 +70,8 @@ struct cmsghdr {
 	(struct cmsghdr *)NULL : \
 	(struct cmsghdr *)((u_char *)(cmsg) + CMSG_ALIGN((cmsg)->cmsg_len))))
 #define CMSG_SPACE(len) (CMSG_ALIGN(sizeof(struct cmsghdr))+CMSG_ALIGN(len))
+
+#endif
 
 /*
  * unify WSAGetLastError() with errno.
@@ -210,6 +215,22 @@ struct tcp_keepalive {
 	u_long keepalivetime;
 	u_long keepaliveinterval;
 };
+#endif
+
+/*
+ * Use native poll() if available
+ */
+
+#if !defined(HAVE_POLL) && defined(POLLIN)
+
+#define HAVE_POLL
+#define poll(a,b,c) usual_poll(a,b,c)
+
+static inline int poll(struct pollfd *fds, int nfds, int timeout)
+{
+	return WSAPoll(fds, nfds, timeout);
+}
+
 #endif
 
 #endif

@@ -57,14 +57,14 @@ static void log_free(void *ctx, const void *ptr)
 }
 
 static const struct CxOps log_ops = {
-	.c_alloc = log_alloc,
-	.c_realloc = log_realloc,
-	.c_free = log_free,
+	log_alloc,
+	log_realloc,
+	log_free,
 };
 
 static const struct CxMem log_libc = {
-	.ops = &log_ops,
-	.ctx = (void*)&cx_libc_allocator,
+	&log_ops,
+	(void*)&cx_libc_allocator,
 };
 
 #define log_check(x) str_check(logbuf, x); reset();

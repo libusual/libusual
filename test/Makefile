@@ -20,14 +20,14 @@ regtest_compat_SOURCES := $(regtest_system_SOURCES)
 nodist_regtest_compat_SOURCES = test_config.h
 
 regtest_compat_EMBED_LIBUSUAL = 1
-regtest_system_EMBED_LIBUSUAL = 1
+#regtest_system_EMBED_LIBUSUAL = 1
 
-regtest_system_LDADD = -lanl
-regtest_system_LDFLAGS = -pthread
+regtest_system_LDADD = ../libusual.a
+regtest_system_LDFLAGS = #-pthread
 
 regtest_system_CPPFLAGS = -I.. -I.
 regtest_compat_CPPFLAGS := $(regtest_system_CPPFLAGS) -DUSUAL_TEST_CONFIG
-regtest_compat_LDFLAGS = -pthread
+regtest_compat_LDFLAGS = #-pthread
 
 EXTRA_DIST = Makefile tinytest_demo.c force_compat.sed test_cfparser.ini
 

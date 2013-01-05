@@ -21,9 +21,15 @@
 
 #include <windows.h>
 
+#ifndef ECONNABORTED
 #define ECONNABORTED WSAECONNABORTED
+#endif
+#ifndef EMSGSIZE
 #define EMSGSIZE WSAEMSGSIZE
+#endif
+#ifndef EINPROGRESS
 #define EINPROGRESS WSAEWOULDBLOCK /* WSAEINPROGRESS */
+#endif
 
 #undef EAGAIN
 #define EAGAIN WSAEWOULDBLOCK /* WSAEAGAIN */
@@ -46,6 +52,23 @@
 #define srandom(s) srand(s)
 #define random() rand()
 
+#ifdef _MSC_VER
+
+#define snprintf(fmt, ...) _snprintf(fmt, __VA_ARGS__)
+
+static inline int strcasecmp(const char *a, const char *b)
+{
+	return _stricmp(a, b);
+}
+
+static inline int strncasecmp(const char *a, const char *b, size_t cnt)
+{
+	return _strnicmp(a, b, cnt);
+}
+
+typedef int ssize_t;
+
+#endif
 
 /* getrlimit() */
 #define RLIMIT_NOFILE -1

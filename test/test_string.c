@@ -1,7 +1,9 @@
 
 #include <usual/base.h>
 #include <string.h>
+#ifdef HAVE_LIBGEN_H
 #include <libgen.h>
+#endif
 
 #undef basename
 #undef dirname

@@ -45,12 +45,14 @@ static void test_ptr(void *p)
 end:;
 }
 
+#ifdef _PACKED
 struct packed {
 	char a;
 	int b;
 	char c;
 	short d;
 } _PACKED;
+#endif
 
 static void test_misc(void *_p)
 {
@@ -65,8 +67,10 @@ static void test_misc(void *_p)
 	int_check(ARRAY_NELEM(s_2), 2);
 
 	int_check(strcmp(__func__, "test_misc"), 0);
-
+#ifdef _PACKED
 	int_check(sizeof(struct packed), 8);
+#endif
+
 end:;
 }
 

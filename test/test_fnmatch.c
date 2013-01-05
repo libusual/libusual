@@ -2,6 +2,7 @@
 #include <usual/fnmatch.h>
 
 #include <usual/string.h>
+#include <usual/wchar.h>
 #include "test_common.h"
 
 /*
@@ -52,12 +53,14 @@ static void test_fnmatch_posix(void *p)
 	int_check(0, fnmatch("[*?[][*?[][*?[]", "*?[", 0));
 	int_check(0, fnmatch("[[:alpha:]][![:alpha:]]", "a9", 0));
 	int_check(0, fnmatch("[[:alnum:]][![:alnum:]]", "9-", 0));
+#ifdef iswblank
 	int_check(0, fnmatch("[[:blank:]][![:blank:]]", " -", 0));
+#endif
 	int_check(0, fnmatch("[[:cntrl:]][![:cntrl:]]", "\tx", 0));
 	int_check(0, fnmatch("[[:digit:]][![:digit:]]", "9a", 0));
 	int_check(0, fnmatch("[[:graph:]][![:graph:]]", "a\t", 0));
 	int_check(0, fnmatch("[[:lower:]][![:lower:]]", "aA", 0));
-	int_check(0, fnmatch("[[:print:]][![:print:]]", "a\t", 0));
+	int_check(0, fnmatch("[[:print:]][![:print:]]", "a\n", 0));
 	int_check(0, fnmatch("[[:punct:]][![:punct:]]", ".x", 0));
 	int_check(0, fnmatch("[[:space:]][![:space:]]", " x", 0));
 	int_check(0, fnmatch("[[:upper:]][![:upper:]]", "Ff", 0));

@@ -33,7 +33,7 @@ static void test_rol(void *p)
 
 	/* rol64 */
 	ull_check(rol64(1, 1), 2);
-	ull_check(rol64(1, 63), 0x8000000000000000);
+	ull_check(rol64(1, 63), 0x8000000000000000ULL);
 end:;
 }
 

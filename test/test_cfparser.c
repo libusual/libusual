@@ -108,7 +108,7 @@ static void *get_two(void *top_arg, const char *sect_name)
 
 static const struct CfSect rsects [] = {
 	{ "one", rkeys1 },
-	{ "two", rkeys2, .base_lookup = get_two, },
+	{ "two", rkeys2, get_two, },
 	{ NULL },
 };
 

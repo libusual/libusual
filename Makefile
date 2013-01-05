@@ -17,6 +17,7 @@ libusual_a_SOURCES = usual/config.h.in \
 	usual/bits.h \
 	usual/cbtree.h usual/cbtree.c \
 	usual/cfparser.h usual/cfparser.c \
+	usual/config_msvc.h \
 	usual/crypto/digest.h usual/crypto/digest.c \
 	usual/crypto/hmac.h usual/crypto/hmac.c \
 	usual/crypto/keccak.h usual/crypto/keccak.c \

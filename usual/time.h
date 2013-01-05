@@ -26,7 +26,14 @@
 
 #include <usual/base.h>
 
+#ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
+#endif
+
+#ifdef _WIN32
+#include <winsock2.h>
+#endif
+
 #include <time.h>
 
 /** Type to hold microseconds. */
