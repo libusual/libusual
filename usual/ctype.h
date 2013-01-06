@@ -43,8 +43,7 @@
 static inline int isblank(int c) { return (c == ' ') || (c == '\t'); }
 #endif
 
-#ifndef HAVE_CTYPE_ON_CHAR
-
+/* keep right signature, cast to uchar internally */
 #define _WRAP_CTYPE_FN(name) \
 	static inline int safe_ ## name (int c) { \
 		return name((unsigned char)(c)); \
@@ -53,81 +52,79 @@ static inline int isblank(int c) { return (c == ' ') || (c == '\t'); }
 _WRAP_CTYPE_FN(isalnum)
 #undef isalnum
 /** Safe isalnum */
-#define isalnum(c) safe_isalnum(c)
+#define isalnum safe_isalnum
 
 _WRAP_CTYPE_FN(isalpha)
 #undef isalpha
 /** Safe isalpha */
-#define isalpha(c) safe_isalpha(c)
+#define isalpha safe_isalpha
 
 _WRAP_CTYPE_FN(isascii)
 #undef isascii
 /** Safe isascii */
-#define isascii(c) safe_isascii(c)
+#define isascii safe_isascii
 
 _WRAP_CTYPE_FN(isblank)
 #undef isblank
 /** Safe isblank */
-#define isblank(c) safe_isblank(c)
+#define isblank safe_isblank
 
 _WRAP_CTYPE_FN(iscntrl)
 #undef iscntrl
 /** Safe iscntrl */
-#define iscntrl(c) safe_iscntrl(c)
+#define iscntrl safe_iscntrl
 
 _WRAP_CTYPE_FN(isdigit)
 #undef isdigit
 /** Safe isdigit */
-#define isdigit(c) safe_isdigit(c)
+#define isdigit safe_isdigit
 
 _WRAP_CTYPE_FN(isgraph)
 #undef isgraph
 /** Safe isgraph */
-#define isgraph(c) safe_isgraph(c)
+#define isgraph safe_isgraph
 
 _WRAP_CTYPE_FN(islower)
 #undef islower
 /** Safe islower */
-#define islower(c) safe_islower(c)
+#define islower safe_islower
 
 _WRAP_CTYPE_FN(isprint)
 #undef isprint
 /** Safe isprint */
-#define isprint(c) safe_isprint(c)
+#define isprint safe_isprint
 
 _WRAP_CTYPE_FN(ispunct)
 #undef ispunct
 /** Safe ispunct */
-#define ispunct(c) safe_ispunct(c)
+#define ispunct safe_ispunct
 
 _WRAP_CTYPE_FN(isspace)
 #undef isspace
 /** Safe isspace */
-#define isspace(c) safe_isspace(c)
+#define isspace safe_isspace
 
 _WRAP_CTYPE_FN(isupper)
 #undef isupper
 /** Safe isupper */
-#define isupper(c) safe_isupper(c)
+#define isupper safe_isupper
 
 _WRAP_CTYPE_FN(isxdigit)
 #undef isxdigit
 /** Safe isxdigit */
-#define isxdigit(c) safe_isxdigit(c)
+#define isxdigit safe_isxdigit
 
 _WRAP_CTYPE_FN(tolower)
 #undef tolower
 /** Safe tolower */
-#define tolower(c) safe_tolower(c)
+#define tolower safe_tolower
 
 _WRAP_CTYPE_FN(toupper)
 #undef toupper
 /** Safe toupper */
-#define toupper(c) safe_toupper(c)
+#define toupper safe_toupper
 
 #undef _WRAP_CTYPE_FN
-
-#endif /* HAVE_BROKEN_CTYPE */
 
 #endif /* _USUAL_CTYPE_H_ */
 

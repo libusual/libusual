@@ -182,43 +182,6 @@ AC_CHECK_HEADERS([ucred.h sys/ucred.h], [], [], [
 #endif
 ])
 
-AC_MSG_CHECKING([whether <ctype.h> works on char values])
-_good_ctype=no
-AC_RUN_IFELSE([AC_LANG_SOURCE([
-#include <ctype.h>
-#define W(c) ((signed char)(c))
-int main(void)
-{
-	int c;
-
-	/* if char is unsigned, all is ok */
-	if ((int)(char)255 == (int)255)
-		return 0;
-
-	for (c = 128; c < 256; c++) {
-		if (isalpha(c) != isalpha(W(c))) return 1;
-		if (isalnum(c) != isalnum(W(c))) return 1;
-		if (isascii(c) != isascii(W(c))) return 1;
-		if (isblank(c) != isblank(W(c))) return 1;
-		if (iscntrl(c) != iscntrl(W(c))) return 1;
-		if (isdigit(c) != isdigit(W(c))) return 1;
-		if (islower(c) != islower(W(c))) return 1;
-		if (isprint(c) != isprint(W(c))) return 1;
-		if (ispunct(c) != ispunct(W(c))) return 1;
-		if (isspace(c) != isspace(W(c))) return 1;
-		if (isupper(c) != isupper(W(c))) return 1;
-		if (isxdigit(c) != isxdigit(W(c))) return 1;
-	}
-	return 0;
-}
-])], [_good_ctype=yes], [_good_ctype=no], [_good_ctype=no])
-AC_MSG_RESULT([$_good_ctype])
-if test $_good_ctype = yes; then
-  AC_DEFINE(HAVE_CTYPE_ON_CHAR, [1], [Define if <ctype.h> macros work on char.])
-fi
-
-])
-
 
 dnl
 dnl  AC_USUAL_FUNCTION_CHECK:  Basic functions
