@@ -11,3 +11,4 @@
 /^#define.*GETOPT/s,.*,/* & */,
 /^#define.*CTYPE_ON_CHAR/s,.*,/* & */,
 /^#define.*FNMATCH/s,.*,/* & */,
+/^#define.*MBSNRTOWCS/s,.*,/* & */,

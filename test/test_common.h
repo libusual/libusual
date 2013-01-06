@@ -34,3 +34,4 @@ extern struct testcase_t socket_tests[];
 extern struct testcase_t getopt_tests[];
 extern struct testcase_t ctype_tests[];
 extern struct testcase_t fnmatch_tests[];
+extern struct testcase_t wchar_tests[];
