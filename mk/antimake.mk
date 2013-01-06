@@ -1467,7 +1467,7 @@ AM_TEST_16_EXT = .foo
 AM_TEST_16 = $(call FinalTargetFile,prog,prog,PROGRAMS) | $(call FinalTargetFile,AM_TEST_16,AM_TEST_16,PROGRAMS)
 AM_TEST_16_RES = prog$(EXEEXT) | AM_TEST_16.foo
 
-AmTest = $(if $(call Eq,$($(1)),$($(2))),@echo '$(1): OK',@echo '$(1): FAIL: $($(1)) != $($(2))')$(NewLine)
+AmTest = $(if $(call Eq,$($(1)),$($(2))),@$(call Printf,"$(1): OK\n"),@$(call Printf,"$(subst ",',$(1): FAIL: $($(1)) != $($(2))\n)"))$(NewLine)
 am-test:
 	$(Q) test "$(call Eq,a b c,a b c),$(call Eq,,),$(call Eq,a,aa),$(call Eq,a,a a)" = "true,true,,"
 	$(foreach nr,$(AM_TESTS),$(call AmTest,AM_TEST_$(nr),AM_TEST_$(nr)_RES))
