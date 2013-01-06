@@ -8,7 +8,7 @@ lib_LIBRARIES = libusual.a
 EXTRA_libusual_a_SOURCES = usual/pgsocket.h usual/pgsocket.c
 
 # sources not in tar.gz
-nodist_libusual_a_SOURCES = usual/config.h
+nodist_EXTRA_libusual_a_SOURCES = usual/config.h
 
 # regular source files
 libusual_a_SOURCES = usual/config.h.in \
