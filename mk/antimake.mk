@@ -509,7 +509,7 @@ endef
 define LangObjTarget
 $(trace3)
 $$(OBJDIR)/$(1)/%$(OBJEXT) $$(OBJDIR)/$(1)/%.lo: %$(3)
-	$$(Q) $$(call MkDir,$$(dir $$@))
+	@$$(call MkDir,$$(dir $$@))
 	$$(AM_LANG_$(2)_COMPILE)
 endef
 
@@ -990,7 +990,7 @@ $$(call FixObjs,$$($(1)_OBJS)): $$($(1)_DEPENDENCIES) $$(nodist_$(1)_SOURCES)
 
 build_$(1): $$($(1)_FINAL)
 $$($(1)_FINAL): $$(call FixObjs,$$($(1)_OBJS))
-	$$(Q) $$(call MkDir,$$(dir $$@))
+	@$$(call MkDir,$$(dir $$@))
 	$$($(if $(filter LIBRARIES,$(3)),ar_lib,$$($(1)_LINKVAR)))
 
 clean_$(1):
