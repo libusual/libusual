@@ -21,6 +21,9 @@
 
 #include <windows.h>
 
+#include <io.h>
+#include <process.h>
+
 #ifndef ECONNABORTED
 #define ECONNABORTED WSAECONNABORTED
 #endif
