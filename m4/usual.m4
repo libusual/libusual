@@ -181,6 +181,7 @@ AC_CHECK_HEADERS([ucred.h sys/ucred.h], [], [], [
 #include <sys/param.h>
 #endif
 ])
+])
 
 
 dnl
