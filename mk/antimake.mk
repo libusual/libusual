@@ -1291,8 +1291,9 @@ endif
 define MakeSubDir
 	$(trace1)
 	$(E) "MKDIR" "Create $(call JoinPath,$(SUBLOC),$(1))"
-	$(Q) @$(call MkDir,$(1))
-	$(Q) @echo "include $(call UpDir,$(1))/$(srcdir)/$(1)/Makefile" > $(1)/Makefile
+	$(Q) $(call MkDir,$(1))
+	$(Q) $(call Printf,"include $(call UpDir,$(1))/$(srcdir)/$(1)/Makefile\n") \
+		> $(1)/Makefile
 endef
 
 # 1-dir, 2-tgt
@@ -1359,7 +1360,7 @@ $(AM_DIST_ALL_TGTS):
 .PHONY: am-show-distfiles
 am-show-distfiles:
 	$(foreach dir,$(am_DISTDIRS),@$(MAKE) $(AM_MAKEFLAGS) --no-print-directory -C $(dir) $@ $(NewLine))
-	$(foreach file,$(am_FINAL_DISTFILES),@echo "$(call JoinPath,$(SUBLOC),$(file))" $(NewLine))
+	$(foreach file,$(am_FINAL_DISTFILES),@$(call Printf,"$(call JoinPath,$(SUBLOC),$(file))\n") $(NewLine))
 
 # do dependencies as separate step, in case building outputs anything
 .PHONY: am-check-distfiles
@@ -1372,7 +1373,7 @@ am-check-distfiles: $(am_FINAL_DISTFILES)
 
 # 1=var
 define AmDebugShow
-$(if $($(1)),@echo '$(1) = $($(1))')
+$(if $($(1)),@$(call Printf,"$(1) = $($(1))\n"))
 $(NewLine)
 endef
 
@@ -1380,7 +1381,7 @@ endef
 define AmDebugTarget
 $(trace5)
 $(foreach var,$(AM_DEBUG_TARGET_VARS),$(call AmDebugShow,$(1)_$(var)))
-@echo ""
+@$(call Printf,"\n")
 endef
 
 # func args: 1-var, 2-prim, 3-dest, 4-flags
@@ -1399,14 +1400,14 @@ AM_DEBUG_TARGET_VARS = SOURCES OBJS LINKVAR DEST USUAL_OBJS USUAL_SRCS EXT FINAL
 		       $(AM_TARGET_VARIABLES)
 AM_DEBUG_LANG_VARS = SRCEXTS
 am-debug:
-	@echo ""; echo "==== Global Variables ===="
+	@$(call Printf,"\n==== Global Variables ====\n")
 	$(foreach var,$(AM_DEBUG_VARS),$(call AmDebugShow,$(var)))
-	@echo ""; echo "==== Per-language Variables ===="
+	@$(call Printf,"\n==== Per-language Variables ====\n")
 	$(foreach lg,$(AM_LANGUAGES),$(foreach var,$(AM_DEBUG_LANG_VARS),$(call AmDebugShow,AM_LANG_$(lg)_$(var))))
-	@echo ""; echo "==== Per-target Variables ===="
+	@$(call Printf,"\n==== Per-target Variables ====\n")
 	$(call ForEachTarget,AmDebugTarget,$(am_TARGETLISTS) $(am_EXTRA_TARGETLISTS))
-	@echo ""; echo "==== Active install directories ===="
-	$(foreach dst,$(AM_USED_DESTS),@echo '  $(dst)dir = $($(dst)dir)'$(NewLine))
+	@$(call Printf,"\n==== Active install directories ====\n")
+	$(foreach dst,$(AM_USED_DESTS),@$(call Printf,"  $(dst)dir = $($(dst)dir)\n" $(NewLine)))
 
 
 ##
@@ -1481,43 +1482,43 @@ $(foreach n,$(AmHelpNames),help-$(n)-local):
 help: $(foreach n,$(AmHelpNames),help-$(n) help-$(n)-local)
 
 # 1-var, 2-desc
-AmConf = @$(call Printf,'  %-27s  %s=%s\n',$(call ShellQuote,$(2)) $(call ShellQuote,$(1)) $(call ShellQuote,$($(1))))
+AmConf = @$(call Printf,"  %-27s  %s=%s\n" $(call ShellQuote,$(2)) $(call ShellQuote,$(1)) $(call ShellQuote,$($(1))))
 
 help-targets:
-	@echo ""
-	@echo "Main targets:"
-	@echo "  all                Build all targets (default)"
-	@echo "  install            Install files"
-	@echo "  dist               Create source archive"
-	@echo "  clean              Clean built files"
-	@echo "  distclean          Clean configured files"
-	@echo "  maintainer-clean   Delete anything that can be generated"
+	@$(call Printf,"\n")
+	@$(call Printf,"Main targets:\n")
+	@$(call Printf,"  all                Build all targets (default)\n")
+	@$(call Printf,"  install            Install files\n")
+	@$(call Printf,"  dist               Create source archive\n")
+	@$(call Printf,"  clean              Clean built files\n")
+	@$(call Printf,"  distclean          Clean configured files\n")
+	@$(call Printf,"  maintainer-clean   Delete anything that can be generated\n")
 
 help-standalone:
-	@echo ""
-	@echo "Standalone targets:   (make -f antimake.mk)"
-	@echo "  show-location      Prints full path to antimake.mk (default)"
-	@echo "  show-config        Prints template config.mak.in"
+	@$(call Printf,"\n")
+	@$(call Printf,"Standalone targets:   (make -f antimake.mk)\n")
+	@$(call Printf,"  show-location      Prints full path to antimake.mk (default)\n")
+	@$(call Printf,"  show-config        Prints template config.mak.in\n")
 
 help-internal:
-	@echo ""
-	@echo "Internal targets:"
-	@echo "  am-show-distfiles  Shows files that go into source archive"
-	@echo "  am-debug           Shows variables that affect the build"
-	@echo "  am-test            Regtest for internal functions"
+	@$(call Printf,"\n")
+	@$(call Printf,"Internal targets:\n")
+	@$(call Printf,"  am-show-distfiles  Shows files that go into source archive\n")
+	@$(call Printf,"  am-debug           Shows variables that affect the build\n")
+	@$(call Printf,"  am-test            Regtest for internal functions\n")
 
 help-config:
-	@echo ""
-	@echo "Config variables and their current values:"
+	@$(call Printf,"\n")
+	@$(call Printf,"Config variables and their current values:\n")
 	$(call AmConf,CC,C compiler)
 	$(call AmConf,CFLAGS,C compiler flags)
 	$(call AmConf,CPPFLAGS,C pre-processor flags)
 	$(call AmConf,LDFLAGS,Linker flags)
 
 help-dests:
-	@echo ""
-	@echo "Destinations for install [ prefix=$(prefix) ]:"
-	$(foreach dst,$(AM_USED_DESTS),@echo '  $(dst)dir = $($(dst)dir)'$(NewLine))
+	@$(call Printf,"\n")
+	@$(call Printf,"Destinations for install [ prefix=$(prefix) ]:\n")
+	$(foreach dst,$(AM_USED_DESTS),@$(call Printf,"  $(dst)dir = $($(dst)dir)\n") $(NewLine))
 
 endif # O=empty
 
