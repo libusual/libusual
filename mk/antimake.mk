@@ -463,7 +463,6 @@ endef
 ##
 
 define ar_lib
-	$(Q) $(call MkDir,$(dir $@))
 	$(E) "AR" $@
 	$(Q) $(AM_AR) $@ $^
 	$(E) "RANLIB" $@
