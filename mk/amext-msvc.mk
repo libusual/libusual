@@ -1,6 +1,7 @@
 
 
 SHELL = cmd.exe
+ShellQuote = "$(subst ",\",$(1))"
 
 EXEEXT = .exe
 LIBEXT = .lib
