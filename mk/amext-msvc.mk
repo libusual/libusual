@@ -1,5 +1,4 @@
 
-Printf = printf $(subst %,%%,$(1)) $(2)
 
 SHELL = cmd.exe
 
@@ -9,30 +8,39 @@ OBJEXT = .obj
 
 CC = cl -nologo
 CFLAGS = -O2
-WFLAGS =
 WFLAGS = -W2 -WX
 CPP = $(CC) -E
+
+LDFLAGS =
+LIBS = -lws2_32 -ladvapi32
 
 AR = lib
 ARFLAGS = -nologo -out:$(call vcFixPath,$@)
 
-LDFLAGS = 
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -Fe$(call vcFixPath,$@)
 
-MKDIR_P = mkdir
+Printf = printf $(subst %,%%,$(1)) $(2)
+MKDIR_P = md
 
-MkDir = $(if $(wildcard $(1)),,md $(call vcFixPath,$(1)))
-
-LIBS = -lws2_32 -ladvapi32
+MkDir = if not exist $(1) $(MKDIR_P) $(call vcFixPath,$(1))
 
 vcFixPath = $(subst /,\,$(1))
 vcFixLibs = $(patsubst %.a,%.lib,$(patsubst -l%,%.lib,$(1)))
 vcFixAll = $(call vcFixPath,$(call vcFixLibs,$(1)))
 
-AM_LANG_C_COMPILE = $(COMPILE) -c -Fo$(call vcFixPath,$@) $<
+define AM_LANG_C_COMPILE
+	$(E) "CC" $<
+	$(Q) $(COMPILE) -c -Fo$(call vcFixPath,$@) $<
+endef
 
-LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -Fe$(call vcFixPath,$@)
+define AM_LANG_C_LINK
+	$(E) "CCLD" $@
+	$(Q) $(LINK) $(call vcFixAll,$^ $(AM_LIBS) $(LIBS)) $(AM_LT_RPATH)
+endef
 
-ar_lib = lib -nologo -out:$(call vcFixAll,$@) $^
-AM_LANG_C_LINK = $(LINK) $(call vcFixAll,$^ $(AM_LIBS) $(LIBS)) $(AM_LT_RPATH)
-
+define ar_lib
+	$(Q) $(call MkDir,$(dir $@))
+	$(E) "LIB" $@
+	$(Q) $(AM) $(ARFLAGS) $^
+endef
 
