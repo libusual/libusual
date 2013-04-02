@@ -184,38 +184,87 @@ const char *sa2str(const struct sockaddr *sa, char *dst, int dstlen)
 
 #ifndef HAVE_GETPEEREID
 /*
- * Get other side's uid for UNIX socket.
- *
- * Standardise on getpeereid() from BSDs.
+ * Get other side's uid and git for UNIX socket.
  */
 int getpeereid(int fd, uid_t *uid_p, gid_t *gid_p)
 {
-#ifdef SO_PEERCRED
-	struct ucred cred;
+	pid_t pid;
+	return getpeercreds(fd, uid_p, gid_p, &pid);
+}
+#endif
+
+/*
+ * Get uid, gid and pid of unix socket peer.
+ *
+ * Pid may not be availalbe on some OSes.
+ * It's set to 0 then.
+ */
+int getpeercreds(int fd, uid_t *uid_p, gid_t *gid_p, pid_t *pid_p)
+{
+	/* What a mess */
+
+#if defined(SO_PEERCRED)
+
+#ifdef HAVE_SYS_UCRED_H
+	struct sockpeercred cred;	/* openbsd */
+#else
+	struct ucred cred;		/* linux */
+#endif
 	socklen_t len = sizeof(cred);
 	if (getsockopt(fd, SOL_SOCKET, SO_PEERCRED, &cred, &len) >= 0) {
 		*uid_p = cred.uid;
 		*gid_p = cred.gid;
+		*pid_p = cred.pid;
 		return 0;
 	}
-#else /* !SO_PEERCRED */
-#ifdef HAVE_GETPEERUCRED
+	return -1;
+#elif defined(HAVE_GETPEERUCRED)
+	/* solaris */
 	ucred_t *cred = NULL;
 	if (getpeerucred(fd, &cred) >= 0) {
 		*uid_p = ucred_geteuid(cred);
 		*gid_p = ucred_getegid(cred);
+		*pid_p = ucred_getpid(cred);
 		ucred_free(cred);
 		if ((int)*uid_p == -1 || (int)*gid_p == -1)
 			return -1;
 		return 0;
 	}
-#else
-	errno = ENOSYS;
-#endif /* HAVE_GETPEERUCRED */
-#endif /* !SO_PEERCRED */
 	return -1;
-}
+#elif defined(LOCAL_PEEREID)
+	/* netbsd */
+	struct unpcbid cred;
+	socklen_t len = sizeof(cred);
+	if (getsockopt(fd, 0, LOCAL_PEEREID, &cred, &len) < 0)
+		return -1;
+	*uid_p = cred.unp_euid;
+	*gid_p = cred.unp_egid;
+	*pid_p = cred.unp_pid;
+	return 0;
+#elif defined(HAVE_GETPEEREID)
+	/* generic bsd; no pid */
+	*pid_p = 0;
+	return getpeereid(fd, uid_p, gid_p);
+#elif defined(LOCAL_PEERCRED)
+	/* old freebsd, osx; no pid */
+	struct xucred cred;
+	socklen_t len = sizeof(cred);
+	if (getsockopt(fd, 0, LOCAL_PEERCRED, &cred, &len) < 0)
+		return -1;
+	if (cred.cr_version != XUCRED_VERSION) {
+		errno = EIO;
+		return -1;
+	}
+	*uid_p = cred.cr_uid;
+	*gid_p = cred.cr_gid;
+	*pid_p = 0;
+	return 0;
+#else
+	/* no implementation */
+	errno = ENOSYS;
+	return -1;
 #endif
+}
 
 
 #ifndef HAVE_POLL

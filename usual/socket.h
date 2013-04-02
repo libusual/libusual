@@ -124,6 +124,10 @@ int inet_pton(int af, const char *src, void *dst);
 int getpeereid(int fd, uid_t *uid_p, gid_t *gid_p);
 #endif
 
+#define getpeercreds(a,b,c,d) usual_getpeercreds(a,b,c,d)
+/** Get info of UNIX socket peer */
+int getpeercreds(int fd, uid_t *uid_p, gid_t *gid_p, pid_t *pid_p);
+
 #if !defined(HAVE_POLL)
 #define POLLIN		(1 << 0)
 #define POLLOUT		(1 << 1)
