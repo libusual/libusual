@@ -1216,7 +1216,7 @@ AM_FLAGS += real
 ## Launch target hooks
 ##
 
-amdir = $(dir $(filter %/antimake.mk antimake.mk,$(MAKEFILE_LIST)))
+amdir = $(dir $(realpath $(filter %/antimake.mk antimake.mk,$(MAKEFILE_LIST))))
 
 # 1-feat name
 FeatFile = $(call JoinPath,$(amdir),amext-$(1).mk)
