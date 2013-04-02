@@ -278,6 +278,7 @@ struct LoaderCtx {
 	const struct CfContext *cf;
 	const char *cur_sect;
 	void *top_base;
+	bool got_main_sect;
 };
 
 static bool fill_defaults(struct LoaderCtx *ctx)
@@ -288,6 +289,9 @@ static bool fill_defaults(struct LoaderCtx *ctx)
 	s = find_sect(ctx->cf, ctx->cur_sect);
 	if (!s)
 		goto fail;
+
+	if (s == ctx->cf->sect_list)
+		ctx->got_main_sect = true;
 
 	if (s->section_start) {
 		if (!s->section_start(ctx->top_base, ctx->cur_sect))
@@ -340,6 +344,10 @@ bool cf_load_file(const struct CfContext *cf, const char *fn)
 	ok = parse_ini_file(fn, load_handler, &ctx);
 	if (ctx.cur_sect)
 		free(ctx.cur_sect);
+	if (ok && !ctx.got_main_sect) {
+		log_error("load_init_file: main section missing from config file");
+		return false;
+	}
 	return ok;
 }
 
