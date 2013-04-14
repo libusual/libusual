@@ -67,6 +67,7 @@ libusual_a_SOURCES = usual/config.h.in \
 	usual/statlist.h \
 	usual/string.h usual/string.c \
 	usual/strpool.h usual/strpool.c \
+	usual/talloc.h usual/talloc.c \
 	usual/time.h usual/time.c \
 	usual/utf8.h usual/utf8.c \
 	usual/wchar.h usual/wchar.c

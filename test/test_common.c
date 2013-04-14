@@ -9,6 +9,7 @@ struct testgroup_t groups[] = {
 	{ "aatree/", aatree_tests },
 	{ "bits/", bits_tests },
 	{ "cxalloc/", cxalloc_tests },
+	{ "talloc/", talloc_tests },
 	{ "cbtree/", cbtree_tests },
 	{ "crypto/", crypto_tests },
 	{ "hashing/", hashing_tests },

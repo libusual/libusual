@@ -36,3 +36,5 @@ extern struct testcase_t ctype_tests[];
 extern struct testcase_t fnmatch_tests[];
 extern struct testcase_t wchar_tests[];
 extern struct testcase_t json_tests[];
+extern struct testcase_t talloc_tests[];
+
