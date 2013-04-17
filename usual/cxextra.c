@@ -78,6 +78,20 @@ struct CxPool {
 };
 #define POOL_HDR  ALIGN(sizeof(struct CxPoolSeg))
 
+static struct CxPoolSeg *new_seg(struct CxPool *pool, size_t nsize)
+{
+	struct CxPoolSeg *seg;
+
+	seg = cx_alloc(pool->parent, POOL_HDR + nsize);
+	if (seg == NULL)
+		return NULL;
+	seg->used = 0;
+	seg->size = nsize;
+	seg->prev = pool->last;
+	pool->last = seg;
+	return seg;
+}
+
 static void *pool_alloc(void *ctx, size_t size)
 {
 	struct CxPool *pool = ctx;
@@ -95,13 +109,10 @@ static void *pool_alloc(void *ctx, size_t size)
 		nsize = seg ? (2 * seg->size) : 512;
 		while (nsize < size)
 			nsize *= 2;
-		seg = cx_alloc(pool->parent, POOL_HDR + nsize);
-		if (seg == NULL)
+		seg = new_seg(pool, nsize);
+		if (!seg)
 			return NULL;
 		seg->used = size;
-		seg->size = nsize;
-		seg->prev = pool->last;
-		pool->last = seg;
 		ptr = p_move(seg, POOL_HDR);
 		pool->last_ptr = ptr;
 		return ptr;
@@ -122,7 +133,21 @@ static void pool_free(void *ctx, const void *ptr)
 	pool->last_ptr = NULL;
 }
 
-/* realloc only last item */
+static size_t pool_guess_old_len(struct CxPool *pool, char *ptr)
+{
+	struct CxPoolSeg *seg = pool->last;
+	char *cstart, *cused;
+
+	while (seg) {
+		cstart = p_move(seg, POOL_HDR);
+		cused = cstart + seg->used;
+		if (ptr >= cstart && ptr < cused)
+			return cused - ptr;
+	}
+	return 0;
+}
+
+/* realloc only last item properly, otherwise do new alloc */
 static void *pool_realloc(void *ctx, void *ptr, size_t len)
 {
 	struct CxPool *pool = ctx;
@@ -130,8 +155,16 @@ static void *pool_realloc(void *ctx, void *ptr, size_t len)
 	char *cstart, *cused, *p = ptr;
 	size_t olen;
 
-	if (pool->last_ptr != ptr)
-		return NULL;
+	if (pool->last_ptr != ptr) {
+		olen = pool_guess_old_len(pool, ptr);
+		p = pool_alloc(ctx, len);
+		if (!p)
+			return NULL;
+		if (olen > len)
+			olen = len;
+		memcpy(p, ptr, olen);
+		return p;
+	}
 
 	cstart = p_move(seg, POOL_HDR);
 	cused = cstart + seg->used;
@@ -174,7 +207,7 @@ static const struct CxOps pool_ops = {
  * public functions
  */
 
-CxMem *cx_new_pool(CxMem *parent)
+CxMem *cx_new_pool(CxMem *parent, size_t initial_size)
 {
 	struct CxPool *head;
 
@@ -185,6 +218,9 @@ CxMem *cx_new_pool(CxMem *parent)
 	head->this.ops = &pool_ops;
 	head->this.ctx = head;
 	head->last = NULL;
+	if (initial_size < 1024)
+		initial_size = 1024;
+	new_seg(head, initial_size);
 	return &head->this;
 }
 
