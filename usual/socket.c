@@ -183,14 +183,16 @@ const char *sa2str(const struct sockaddr *sa, char *dst, int dstlen)
 }
 
 #ifndef HAVE_GETPEEREID
+
 /*
- * Get other side's uid and git for UNIX socket.
+ * Get other side's uid and gid for UNIX socket.
  */
 int getpeereid(int fd, uid_t *uid_p, gid_t *gid_p)
 {
 	pid_t pid;
 	return getpeercreds(fd, uid_p, gid_p, &pid);
 }
+
 #endif
 
 /*
@@ -204,14 +206,14 @@ int getpeercreds(int fd, uid_t *uid_p, gid_t *gid_p, pid_t *pid_p)
 	/* What a mess */
 
 #if defined(SO_PEERCRED)
-
-#ifdef HAVE_SYS_UCRED_H
+	/* linux and others */
+#if defined(HAVE_SYS_UCRED_H)
 	struct sockpeercred cred;	/* openbsd */
 #else
 	struct ucred cred;		/* linux */
 #endif
 	socklen_t len = sizeof(cred);
-	if (getsockopt(fd, SOL_SOCKET, SO_PEERCRED, &cred, &len) >= 0) {
+	if (getsockopt(fd, SOL_SOCKET, SO_PEERCRED, &cred, &len) == 0) {
 		*uid_p = cred.uid;
 		*gid_p = cred.gid;
 		*pid_p = cred.pid;
@@ -221,7 +223,7 @@ int getpeercreds(int fd, uid_t *uid_p, gid_t *gid_p, pid_t *pid_p)
 #elif defined(HAVE_GETPEERUCRED)
 	/* solaris */
 	ucred_t *cred = NULL;
-	if (getpeerucred(fd, &cred) >= 0) {
+	if (getpeerucred(fd, &cred) == 0) {
 		*uid_p = ucred_geteuid(cred);
 		*gid_p = ucred_getegid(cred);
 		*pid_p = ucred_getpid(cred);
@@ -235,7 +237,7 @@ int getpeercreds(int fd, uid_t *uid_p, gid_t *gid_p, pid_t *pid_p)
 	/* netbsd */
 	struct unpcbid cred;
 	socklen_t len = sizeof(cred);
-	if (getsockopt(fd, 0, LOCAL_PEEREID, &cred, &len) < 0)
+	if (getsockopt(fd, 0, LOCAL_PEEREID, &cred, &len) != 0)
 		return -1;
 	*uid_p = cred.unp_euid;
 	*gid_p = cred.unp_egid;
@@ -244,15 +246,15 @@ int getpeercreds(int fd, uid_t *uid_p, gid_t *gid_p, pid_t *pid_p)
 #elif defined(HAVE_GETPEEREID)
 	/* generic bsd; no pid */
 	*pid_p = 0;
-	return getpeereid(fd, uid_p, gid_p);
+	return getpeereid(fd, uid_p, gid_p) == 0 ? 0 : -1;
 #elif defined(LOCAL_PEERCRED)
-	/* old freebsd, osx; no pid */
+	/* freebsd, osx, dfly; no pid */
 	struct xucred cred;
 	socklen_t len = sizeof(cred);
-	if (getsockopt(fd, 0, LOCAL_PEERCRED, &cred, &len) < 0)
+	if (getsockopt(fd, 0, LOCAL_PEERCRED, &cred, &len) != 0)
 		return -1;
 	if (cred.cr_version != XUCRED_VERSION) {
-		errno = EIO;
+		errno = EINVAL;
 		return -1;
 	}
 	*uid_p = cred.cr_uid;
