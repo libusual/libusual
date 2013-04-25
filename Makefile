@@ -63,7 +63,7 @@ libusual_a_SOURCES = usual/config.h.in \
 	usual/wchar.h usual/wchar.c
 
 # we want to filter headers, so cannot use usual install method via _HEADERS
-USUAL_HEADERS = $(filter %.h,$(libusual_a_SOURCES) $(nodist_libusual_a_SOURCES))
+USUAL_HEADERS = $(filter %.h,$(libusual_a_SOURCES) $(nodist_EXTRA_libusual_a_SOURCES))
 
 # define aclocal destination
 aclocaldir = ${datarootdir}/aclocal
