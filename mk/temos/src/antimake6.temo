@@ -14,6 +14,7 @@ cat_file autogen.sh <<"EOF"
 	make -f ../../antimake.mk show-config > build.mk.in
 	echo 'include $(abs_top_srcdir)/antimake.mk' >> build.mk.in
 	ln -sf ../../antimake.mk .
+	ln -sf ../../amext-cxx.mk .
 EOF
 
 cat_file configure.ac <<"EOF"
@@ -105,10 +106,11 @@ msg Now fill makefiles
 cat_file Makefile <<"EOF"
 	SUBDIRS = sub
 	EMBED_SUBDIRS = esub
+	AM_FEATURES = cxx
 
 	override WFLAGS = -Wall
 
-	EXTRA_DIST = Makefile antimake.mk $(MAINTAINERCLEANFILES)
+	EXTRA_DIST = Makefile antimake.mk amext-cxx.mk $(MAINTAINERCLEANFILES)
 
 	# clean configured files
 	DISTCLEANFILES = \

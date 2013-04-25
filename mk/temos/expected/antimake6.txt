@@ -13,6 +13,7 @@ Autoconf setup
 make -f ../../antimake.mk show-config > build.mk.in
 echo 'include $(abs_top_srcdir)/antimake.mk' >> build.mk.in
 ln -sf ../../antimake.mk .
+ln -sf ../../amext-cxx.mk .
 -----------------------------------
 .File: configure.ac
 [source,autoconf]
@@ -112,10 +113,11 @@ Now fill makefiles
 -----------------------------------
 SUBDIRS = sub
 EMBED_SUBDIRS = esub
+AM_FEATURES = cxx
 
 override WFLAGS = -Wall
 
-EXTRA_DIST = Makefile antimake.mk $(MAINTAINERCLEANFILES)
+EXTRA_DIST = Makefile antimake.mk amext-cxx.mk $(MAINTAINERCLEANFILES)
 
 # clean configured files
 DISTCLEANFILES = \
@@ -248,9 +250,10 @@ $ make
      CC       esub/prog.c
      CCLD     esub/prog
 $ ls
-Makefile     build.mk	   config.log	  configure	cpptest.cpp  libtool
-antimake.mk  build.mk.in   config.status  configure.ac	esub	     ltmain.sh
-autogen.sh   config.guess  config.sub	  cpptest	install-sh   sub
+Makefile      build.mk	    config.status  cpptest	libtool
+amext-cxx.mk  build.mk.in   config.sub	   cpptest.cpp	ltmain.sh
+antimake.mk   config.guess  configure	   esub		sub
+autogen.sh    config.log    configure.ac   install-sh
 $ ./esub/prog
 esub/prog.c
 func1.c
@@ -272,6 +275,7 @@ $ make dist
 $ tar tzf actest-0.1.tar.gz | sort
 actest-0.1/
 actest-0.1/Makefile
+actest-0.1/amext-cxx.mk
 actest-0.1/antimake.mk
 actest-0.1/build.mk.in
 actest-0.1/config.guess
@@ -320,10 +324,10 @@ make[2]: Nothing to be done for `install'.
 make[1]: Nothing to be done for `install'.
      <--      esub/sub
 $ ls
-Makefile	   build.mk	 config.status	cpptest      libtool
-actest-0.1.tar.gz  build.mk.in	 config.sub	cpptest.cpp  ltmain.sh
-antimake.mk	   config.guess  configure	esub	     sub
-autogen.sh	   config.log	 configure.ac	install-sh
+Makefile	   autogen.sh	 config.log	configure.ac  install-sh
+actest-0.1.tar.gz  build.mk	 config.status	cpptest       libtool
+amext-cxx.mk	   build.mk.in	 config.sub	cpptest.cpp   ltmain.sh
+antimake.mk	   config.guess  configure	esub	      sub
 $ find inst | sort
 find: `inst': No such file or directory
 ---------------------------------
@@ -424,8 +428,8 @@ $ make maintainer-clean
      <--      esub/sub
      MAINTAINERCLEAN maintainer-clean
 $ ls
-Makefile	   antimake.mk	build.mk      cpptest.cpp  sub
-actest-0.1.tar.gz  autogen.sh	configure.ac  esub	   test
+Makefile	   amext-cxx.mk  autogen.sh  configure.ac  esub  test
+actest-0.1.tar.gz  antimake.mk	 build.mk    cpptest.cpp   sub
 ---------------------------------
 
 Done

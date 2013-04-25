@@ -103,10 +103,6 @@ CFLAGS = @CFLAGS@
 DEFS = @DEFS@
 WFLAGS = @WFLAGS@
 
-# C++ language
-CXX = @CXX@
-CXXFLAGS = @CXXFLAGS@
-
 # linking
 LD = @LD@
 LDFLAGS = @LDFLAGS@
@@ -179,15 +175,10 @@ CPPFLAGS ?=
 CFLAGS ?= -O -g
 DEFS ?=
 
-# C++ language
-CXX ?= c++
-CXXFLAGS ?= -O -g
-
 # warning flags are keps separately to allow easy override
 WFLAGS ?= -Wall
 # add them to main flags now
 CFLAGS += $(WFLAGS)
-CXXFLAGS += $(WFLAGS)
 
 # linking
 LD ?= ld
@@ -333,7 +324,7 @@ RM = rm -f
 AM_TARGET_VARIABLES += CFLAGS CPPFLAGS LDFLAGS LIBTOOLFLAGS DEFS LIBS
 
 # list of language (rather compiler) names
-AM_LANGUAGES += C CXX
+AM_LANGUAGES += C
 
 AM_BIG_PRIMARIES += LIBRARIES LTLIBRARIES PROGRAMS
 AM_SMALL_PRIMARIES += HEADERS SCRIPTS DATA MANS
@@ -435,28 +426,6 @@ define AM_LANG_C_LINK
 	$(E) "CCLD" $@
 	$(Q) $(LTLINK) $(LINK) $^ $(AM_LIBS) $(LIBS) $(AM_LT_RPATH)
 endef
-
-
-##
-## Default setup for C++
-##
-
-AM_TARGET_VARIABLES += CXXFLAGS
-
-CXXLD ?= $(CXX)
-CXXCOMPILE ?= $(CXX) $(AM_DEFS) $(DEFS) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
-CXXLINK ?= $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-
-AM_LANG_CXX_SRCEXTS = .cc .cpp cxx
-define AM_LANG_CXX_COMPILE
-	$(E) "CXX" $<
-	$(Q) $(LTCOMPILE) $(CXXCOMPILE) $(OBJDEPS) -c -o $@ $<
-endef
-define AM_LANG_CXX_LINK
-	$(E) "CXXLD" $@
-	$(Q) $(LTLINK) $(CXXLINK) $^ $(AM_LIBS) $(LIBS) $(AM_LT_RPATH)
-endef
-
 
 ##
 ## Various other shortcuts

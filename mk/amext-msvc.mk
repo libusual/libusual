@@ -1,4 +1,10 @@
-
+#
+# Support for MSVC toolchain.
+#
+# Usage:
+# 1. Install coreutils (printf, tail) and make from gnuwin32.
+# 2. Make sure VC env variables are loaded (PATH)
+#
 
 SHELL = cmd.exe
 ShellQuote = "$(subst $$, \$$, $(subst ",\",$(subst \,\\,$(1))))"
