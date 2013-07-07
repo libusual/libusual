@@ -82,10 +82,19 @@ static void init_slab(struct Slab *slab, const char *name, unsigned obj_size,
 	memcpy(slab->name, name, slen);
 	slab->name[slen] = 0;
 
+	/* don't allow too small align, as we want to put pointers into area */
+	if (align < sizeof(long))
+		align = 0;
+
+	/* actual area for one object */
 	if (align == 0)
 		slab->final_size = ALIGN(obj_size);
 	else
 		slab->final_size = CUSTOM_ALIGN(obj_size, align);
+
+	/* allow small structs */
+	if (slab->final_size < sizeof(struct List))
+		slab->final_size = sizeof(struct List);
 
 	slab_list_append(slab);
 }
