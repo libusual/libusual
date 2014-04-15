@@ -70,7 +70,11 @@ bool parse_ini_file(const char *fn, cf_handler_f user_handler, void *arg)
 		return false;
 
 	p = buf;
-	while (*p) {
+	/* 
+	 * if *p is null but inclevel > 0, keep going and fall through to where
+	 * the buffer stack gets popped.
+	 */
+	while (*p || inclevel > 0) {
 		/* space at the start of line - including empty lines */
 		while (*p && isspace(*p)) p++;
 
@@ -91,7 +95,6 @@ bool parse_ini_file(const char *fn, cf_handler_f user_handler, void *arg)
 			/* eat space at end */
 			while (vlen > 0 && isspace(val[vlen - 1]))
 				vlen--;
-			val[vlen] = 0;
 			/*
 			 * val now has the name of the file to be included
 			 * So push the old data on the stack and restart
@@ -101,8 +104,13 @@ bool parse_ini_file(const char *fn, cf_handler_f user_handler, void *arg)
 			include_stack[inclevel].p = p;
 			include_stack[inclevel].fn = lfn;
 			inclevel++;
+
+			o1 = val[vlen];
+			val[vlen] = 0;
 			lfn = strdup(val);
-			log_debug("Include file is %s",lfn);
+			val[vlen] = o1;
+
+			log_debug("Include file (level %d) is %s",inclevel,lfn);
 			buf = load_file(lfn, NULL);
 			if (buf == NULL)
 				goto failed;
@@ -148,7 +156,7 @@ bool parse_ini_file(const char *fn, cf_handler_f user_handler, void *arg)
 			buf = include_stack[inclevel].buf;
 			p = include_stack[inclevel].p;
 			lfn = include_stack[inclevel].fn;
-			log_debug("returned to processing file %s",lfn);
+			log_debug("returned to processing level %d file %s",inclevel,lfn);
 			continue;
 		}
 
@@ -209,7 +217,7 @@ failed:
 	 * empty.
 	 */
 	include_stack[0].fn = lfn;
-	while (inclevel-- >= 0) {
+	while (inclevel-- > 0) {
 		free(include_stack[inclevel].buf);
 		free(include_stack[inclevel].fn);
 	}
