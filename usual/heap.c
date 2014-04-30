@@ -126,8 +126,10 @@ struct Heap *heap_create(heap_is_better_f is_better_cb, heap_save_pos_f save_pos
 
 void heap_destroy(struct Heap *h)
 {
-	cx_free(h->cx, h->data);
-	cx_free(h->cx, h);
+	if (h) {
+		cx_free(h->cx, h->data);
+		cx_free(h->cx, h);
+	}
 }
 
 bool heap_reserve(struct Heap *h, unsigned extra)
