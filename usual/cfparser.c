@@ -29,6 +29,19 @@
 #include <usual/logging.h>
 #include <usual/time.h>
 
+
+
+/* Simple statically sized stack for include files. */
+#define MAX_INCLUDE 10
+static int inclevel = 0;
+typedef struct {
+	char * fn;
+	char * buf;
+	char * p;
+} IncludeStack;
+IncludeStack include_stack[MAX_INCLUDE];
+
+
 /*
  * INI file parser.
  */
@@ -50,15 +63,60 @@ bool parse_ini_file(const char *fn, cf_handler_f user_handler, void *arg)
 	int klen, vlen;
 	char o1, o2;
 	bool ok;
+	char *lfn = (char *)fn;
 
-	buf = load_file(fn, NULL);
+	buf = load_file(lfn, NULL);
 	if (buf == NULL)
 		return false;
 
 	p = buf;
-	while (*p) {
+	/* 
+	 * if *p is null but inclevel > 0, keep going and fall through to where
+	 * the buffer stack gets popped.
+	 */
+	while (*p || inclevel > 0) {
 		/* space at the start of line - including empty lines */
 		while (*p && isspace(*p)) p++;
+
+		/* process include directives */
+		if (strncmp(p,"%include",8) == 0 && p[8] != 0 && isblank(p[8])){
+			if (inclevel >= MAX_INCLUDE) {
+				log_error("include nesting level too deep (%s:%d), stopping loading", lfn, count_lines(buf, p));
+				goto failed;
+			}
+			log_debug("processing include directive");
+			p += 8;
+			while (*p && isblank(*p)) p++;
+			/* now read value */
+			val = p;
+			while (*p && (*p != '\n'))
+				p++;
+			vlen = p - val;
+			/* eat space at end */
+			while (vlen > 0 && isspace(val[vlen - 1]))
+				vlen--;
+			/*
+			 * val now has the name of the file to be included
+			 * So push the old data on the stack and restart
+			 * with the new file.
+			 */
+			include_stack[inclevel].buf = buf;
+			include_stack[inclevel].p = p;
+			include_stack[inclevel].fn = lfn;
+			inclevel++;
+
+			o1 = val[vlen];
+			val[vlen] = 0;
+			lfn = strdup(val);
+			val[vlen] = o1;
+
+			log_debug("Include file (level %d) is %s",inclevel,lfn);
+			buf = load_file(lfn, NULL);
+			if (buf == NULL)
+				goto failed;
+			p = buf;
+			continue;
+		}
 
 		/* skip comment lines */
 		if (*p == '#' || *p == ';') {
@@ -84,7 +142,23 @@ bool parse_ini_file(const char *fn, cf_handler_f user_handler, void *arg)
 
 		/* done? */
 		if (*p == 0)
-			break;
+		{
+			if (inclevel == 0)
+				break;
+			/*
+			 * If inclevel > 0 then we have stuff on the include stack.
+			 * So we pop the stack instead of returning and keep going
+			 * with the popped file.
+			 */
+			free(buf);
+			free(lfn);
+			inclevel--;
+			buf = include_stack[inclevel].buf;
+			p = include_stack[inclevel].p;
+			lfn = include_stack[inclevel].fn;
+			log_debug("returned to processing level %d file %s",inclevel,lfn);
+			continue;
+		}
 
 		/* read key val */
 		key = p;
@@ -135,9 +209,20 @@ bool parse_ini_file(const char *fn, cf_handler_f user_handler, void *arg)
 	return true;
 
 syntax_error:
-	log_error("syntax error in configuration (%s:%d), stopping loading", fn, count_lines(buf, p));
+	log_error("syntax error in configuration (%s:%d), stopping loading", lfn, count_lines(buf, p));
 failed:
-	free(buf);
+	/*
+	 * 0'th fn is actual the one passed in, so instead we free the current lfn,
+	 * which isn't on the stack anywhere. None of this matters if the stack is
+	 * empty.
+	 */
+	include_stack[0].fn = lfn;
+	while (inclevel-- > 0) {
+		free(include_stack[inclevel].buf);
+		free(include_stack[inclevel].fn);
+	}
+	if (buf != NULL)
+		free(buf);
 	return false;
 }
 
