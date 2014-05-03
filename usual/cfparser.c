@@ -29,6 +29,8 @@
 #include <usual/logging.h>
 #include <usual/time.h>
 
+#define MAX_INCLUDE 10
+
 /*
  * INI file parser.
  */
@@ -43,7 +45,7 @@ static int count_lines(const char *s, const char *end)
 	return lineno;
 }
 
-bool parse_ini_file(const char *fn, cf_handler_f user_handler, void *arg)
+static bool parse_ini_file_internal(const char *fn, cf_handler_f user_handler, void *arg, int inclevel)
 {
 	char *buf;
 	char *p, *key, *val;
@@ -59,6 +61,38 @@ bool parse_ini_file(const char *fn, cf_handler_f user_handler, void *arg)
 	while (*p) {
 		/* space at the start of line - including empty lines */
 		while (*p && isspace(*p)) p++;
+
+		if (strncmp(p, "%include", 8) == 0 && p[8] != 0 && isblank(p[8])) {
+			if (inclevel >= MAX_INCLUDE) {
+				log_error("include nesting level too deep (%s:%d), stopping loading",
+					  fn, count_lines(buf, p));
+				goto failed;
+			}
+			p += 8;
+			while (*p && isblank(*p)) p++;
+			/* now read value */
+			val = p;
+			while (*p && (*p != '\n'))
+				p++;
+			vlen = p - val;
+			/* eat space at end */
+			while (vlen > 0 && isspace(val[vlen - 1]))
+				vlen--;
+
+			/*
+			 * val now has the name of the file to be included.
+			 * Process it recursively.
+			 */
+			o1 = val[vlen];
+			val[vlen] = 0;
+			log_debug("processing include: %s", val);
+			ok = parse_ini_file_internal(val, user_handler, arg, inclevel + 1);
+			val[vlen] = o1;
+			if (!ok)
+				goto failed;
+			log_debug("returned to processing file %s", fn);
+			continue;
+		}
 
 		/* skip comment lines */
 		if (*p == '#' || *p == ';') {
@@ -139,6 +173,11 @@ syntax_error:
 failed:
 	free(buf);
 	return false;
+}
+
+bool parse_ini_file(const char *fn, cf_handler_f user_handler, void *arg)
+{
+	return parse_ini_file_internal(fn, user_handler, arg, 0);
 }
 
 /*
