@@ -5,7 +5,7 @@
 
 TEMOS = \
 	antimake1 antimake2 antimake3 antimake4 antimake5 antimake6 \
-	libusual1 libusual3 libusual4 libusual5 libusual6 \
+	libusual1 libusual2 libusual3 libusual4 libusual5 libusual6 \
 
 
 
@@ -49,7 +49,7 @@ qtest: $(OUT)
 output/%.txt: src/%.temo libtemo.sh
 	@mkdir -p output
 	@printf "$< ... "
-	@bash $< > $@ && { cmp -s $@ $(call ExpFile,$<) && echo ok || echo failed; } \
+	@bash $< > $@ 2>&1 && { cmp -s $@ $(call ExpFile,$<) && echo ok || echo failed; } \
 		|| { echo "$< failed:" ; tail $(call OutFile,$<); exit 1; }
 
 html/%.html: output/%.txt

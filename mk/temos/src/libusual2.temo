@@ -49,57 +49,7 @@ cat_file prog.c <<"EOF"
 	}
 EOF
 
-title2 Old way, with plain Make
-
-msg Here is corresponding Makefile:
-
-cat_file Makefile <<"EOF"
-	CC = gcc
-	CFLAGS = -O -g -Wall
-
-	# here we describe our program
-	SRCS = prog.c
-	OBJS = $(SRCS:.c=.o)
-
-	# here we link to libusual
-	USUAL_DIR = ./lib
-	USUAL_LOCAL_SRCS = $(SRCS)
-	CPPFLAGS = $(USUAL_CPPFLAGS)
-	OBJS += $(USUAL_OBJS)
-
-	# this looks what modules are used by files in USUAL_LOCAL_SRCS
-	# and fills the USUAL_OBJS variable based on that
-	include $(USUAL_DIR)/Setup.mk
-
-	all: prog
-
-	prog: $(OBJS)
-		$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) $(LIBS) -o $@
-
-	%.o: %.c
-		$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
-
-	# special rule to build 
-	%.o: $(USUAL_DIR)/usual/%.c
-		$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
-
-	clean:
-		rm -f *.o prog
-EOF
-
-msg Build the project
-run make
-run ls
-run ./prog
-run make clean
-run ls
-
-longmsg <<-"MSG"
-	It's quite complex and that is even without trying to get
-	dependencies rigth.  See next section for preferred way.
-MSG
-
-title2 New way, with Antimake.
+title2 Build with Antimake.
 
 longmsg <<-"MSG"
 	Antimake is build framework on plain GNU Make that reads
@@ -119,6 +69,8 @@ cat_file Makefile <<"EOF"
 
 	# mention that 'prog' wants embedded libusual
 	prog_EMBED_LIBUSUAL = 1
+
+	# Load Antimake plugin that handles libusual embedding
 	AM_FEATURES = libusual
 
 	# launch Antimake
