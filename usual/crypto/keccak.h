@@ -1,5 +1,5 @@
 /*
- * Keccak implementation for SHA3 parameters.
+ * Keccak implementation.
  *
  * Copyright (c) 2012 Marko Kreen
  *
@@ -17,46 +17,13 @@
  */
 
 /** @file
- * Keccak with SHA3 parameters.
+ * Simple API to Keccak1600 permutation + sponge.
  */
 
 #ifndef _USUAL_CRYPTO_KECCAK_H_
 #define _USUAL_CRYPTO_KECCAK_H_
 
 #include <usual/base.h>
-
-/*
- * SHA3 fixed-length output modes.
- */
-
-/** Output length for 224-bit mode (in bytes) */
-#define KECCAK224_DIGEST_LENGTH (224/8)
-/** Output length for 256-bit mode (in bytes) */
-#define KECCAK256_DIGEST_LENGTH (256/8)
-/** Output length for 384-bit mode (in bytes) */
-#define KECCAK384_DIGEST_LENGTH (384/8)
-/** Output length for 512-bit mode (in bytes) */
-#define KECCAK512_DIGEST_LENGTH (512/8)
-
-/** Number of data bytes processed in one loop. */
-#define KECCAK224_BLOCK_SIZE (1152/8)
-/** Number of data bytes processed in one loop. */
-#define KECCAK256_BLOCK_SIZE (1088/8)
-/** Number of data bytes processed in one loop. */
-#define KECCAK384_BLOCK_SIZE (832/8)
-/** Number of data bytes processed in one loop. */
-#define KECCAK512_BLOCK_SIZE (576/8)
-
-/** Number of data bytes processed in one go. */
-#define KECCAK_STREAM_BLOCK_SIZE	(1024/8)
-
-/**
- * Output length for stream mode (in bytes).
- *
- * This means output from single call to keccak_final().
- * It can be called repeatedly to get more output.
- */
-#define KECCAK_STREAM_DIGEST_LENGTH	KECCAK_STREAM_BLOCK_SIZE
 
 /**
  * Keccak state structure for all modes.
@@ -67,47 +34,58 @@ struct KeccakContext {
 		uint64_t state64[25];
 		uint32_t state32[2*25];
 	} u;
-	uint16_t bytes;  /* current number of bytes in buffer */
-	uint16_t rbytes; /* number of bytes in one step */
-	uint16_t obytes; /* output bytes */
-	uint16_t padded; /* is padding added? */
+	uint32_t pos;		/* current byte position in buffer */
+	uint32_t rbytes;	/* rate (= block size) in bytes */
 };
 
-/** SHA3 fixed length output mode.  */
-void keccak224_init(struct KeccakContext *ctx);
-
-/** SHA3 fixed length output mode.  */
-void keccak256_init(struct KeccakContext *ctx);
-
-/** SHA3 fixed length output mode.  */
-void keccak384_init(struct KeccakContext *ctx);
-
-/** SHA3 fixed length output mode.  */
-void keccak512_init(struct KeccakContext *ctx);
-
 /**
- * SHA3 stream mode for Keccak.
+ * Set up state with specified capacity.
  *
- * In stream mode, keccak_final() can be called repeatedly
- * to get output stream of unlimited length.
- *
- * On each call it outputs next 128 bytes (1024 bits).
+ * Returns 1 if successful, 0 if invalid capacity.
  */
-void keccak_stream_init(struct KeccakContext *ctx);
+int keccak_init(struct KeccakContext *ctx, unsigned int capacity);
 
 /**
  * Hash additional data.
  */
-void keccak_update(struct KeccakContext *ctx, const void *data, unsigned int len);
+void keccak_absorb(struct KeccakContext *ctx, const void *data, size_t len);
 
 /**
- * Return final result.
- *
- * Output length depends on mode.  See KECCAK*_DIGEST_LENGTH
- * constants to get length for particular mode.
- *
- * In stream mode, this can be called repeatedly.
+ * Extract bytes from state.
  */
-void keccak_final(struct KeccakContext *ctx, uint8_t *dst);
+void keccak_squeeze(struct KeccakContext *ctx, uint8_t *dst, size_t len);
+
+/**
+ * Extract bytes from state, XOR into data.
+ */
+void keccak_squeeze_xor(struct KeccakContext *ctx, uint8_t *dst, const void *src, size_t len);
+
+/**
+ * XOR data into state and return it.
+ */
+void keccak_encrypt(struct KeccakContext *ctx, uint8_t *dst, const void *src, size_t len);
+
+/**
+ * XOR state with data and return it.
+ */
+void keccak_decrypt(struct KeccakContext *ctx, uint8_t *dst, const void *src, size_t len);
+
+/**
+ * Hash pad suffix.
+ */
+void keccak_pad(struct KeccakContext *ctx, const void *data, size_t len);
+
+/**
+ * Move internal position to start of buffer.
+ *
+ * Useful for PRNG/duplex modes.
+ */
+void keccak_rewind(struct KeccakContext *ctx);
+
+/**
+ * Clear rate bits.
+ */
+void keccak_forget(struct KeccakContext *ctx);
+
 
 #endif

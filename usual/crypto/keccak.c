@@ -37,16 +37,33 @@
  */
 
 #include <usual/crypto/keccak.h>
-#include <usual/crypto/digest.h>
 #include <usual/bits.h>
 #include <usual/endian.h>
+
 #include <limits.h>
 #include <string.h>
+
+/* For SHA3 variant of Keccak */
+#define KECCAK_ROUNDS 24
+
+/*
+ * Enforce minimal code size.  If this is not defined, use
+ * faster unrolled implementation.
+ */
+/* #define KECCAK_SMALL */
+
+#ifdef KECCAK_SMALL
+#define KECCAK_64BIT
+#endif
 
 /*
  * Decide whether to use 64- or 32-bit implementation.
  */
+
 #if !defined(KECCAK_64BIT) && !defined(KECCAK_32BIT)
+#if !defined(LONG_MAX) && !defined(UINTPTR_MAX)
+#error "Need LONG_MAX & UINTPTR_MAX"
+#endif
 /* If neither is defined, try to autodetect */
 #if (LONG_MAX > 0xFFFFFFFF) || (UINTPTR_MAX > 0xFFFFFFFF)
 /* use 64-bit implementation if 'long' or 'uintptr_t' is 64-bit */
@@ -56,10 +73,6 @@
 #define KECCAK_32BIT
 #endif
 #endif
-
-/* For SHA3 variant of Keccak */
-#define KECCAK_ROUNDS 24
-
 
 #ifdef KECCAK_64BIT
 
@@ -82,6 +95,69 @@ static const uint64_t RoundConstants64[KECCAK_ROUNDS] = {
 	UINT64_C(0x8000000080008081), UINT64_C(0x8000000000008080),
 	UINT64_C(0x0000000080000001), UINT64_C(0x8000000080008008),
 };
+
+#ifdef KECCAK_SMALL
+
+/*
+ * Minimal code implementation
+ */
+
+static const uint8_t RhoRot[24] = {
+	1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 2, 14, 27, 41, 56, 8, 25, 43, 62, 18, 39, 61, 20, 44
+};
+
+static const uint8_t PiLane[24] = {
+	10, 7, 11, 17, 18, 3, 5, 16, 8, 21, 24, 4, 15, 23, 19, 13, 12, 2, 20, 14, 22, 9, 6, 1
+};
+
+static void keccak_f(struct KeccakContext *ctx)
+{
+	int i, j;
+	uint64_t *A = ctx->u.state64;
+	uint64_t tmpbuf[5 + 2], *tmp = tmpbuf + 1;
+	uint64_t d, c1, c2;
+
+	for (j = 0; j < KECCAK_ROUNDS; j++) {
+		/* Theta step */
+		for (i = 0; i < 5; i++)
+			tmp[i] = A[0*5 + i] ^ A[1*5 + i] ^ A[2*5 + i] ^ A[3*5 + i] ^ A[4*5 + i];
+		tmpbuf[0] = tmp[4];
+		tmpbuf[6] = tmp[0];
+		for (i = 0; i < 5; i++) {
+			d = tmp[i-1] ^ rol64(tmp[i+1], 1);
+			A[0 + i] ^= d;
+			A[5 + i] ^= d;
+			A[10 + i] ^= d;
+			A[15 + i] ^= d;
+			A[20 + i] ^= d;
+		}
+
+		/* Rho + Pi step */
+		c1 = A[PiLane[23]];
+		for (i = 0; i < 24; i++) {
+			c2 = A[PiLane[i]];
+			A[PiLane[i]] = rol64(c1, RhoRot[i]);
+			c1 = c2;
+		}
+
+		/* Chi step */
+		for (i = 0; i < 25; ) {
+			tmp[0] = A[i+0];
+			tmp[1] = A[i+1];
+
+			A[i] ^= ~A[i+1] & A[i+2]; i++;
+			A[i] ^= ~A[i+1] & A[i+2]; i++;
+			A[i] ^= ~A[i+1] & A[i+2]; i++;
+			A[i] ^= ~A[i+1] & tmp[0]; i++;
+			A[i] ^= ~tmp[0] & tmp[1]; i++;
+		}
+
+		/* Iota step */
+		A[0] ^= RoundConstants64[j];
+	}
+}
+
+#else /* !KECCAK_SMALL - fast 64-bit */
 
 static void keccak_f(struct KeccakContext *ctx)
 {
@@ -389,14 +465,16 @@ static void keccak_f(struct KeccakContext *ctx)
 	}
 }
 
+#endif /* !KECCAK_SMALL */
+
 static inline void xor_lane(struct KeccakContext *ctx, int lane, uint64_t val)
 {
 	ctx->u.state64[lane] ^= val;
 }
 
-static void extract(uint8_t *dst, const struct KeccakContext *ctx, int laneCount)
+static void extract(uint8_t *dst, const struct KeccakContext *ctx, int startLane, int laneCount)
 {
-	const uint64_t *src = ctx->u.state64;
+	const uint64_t *src = ctx->u.state64 + startLane;
 
 	while (laneCount--) {
 		le64enc(dst, *src++);
@@ -1077,9 +1155,9 @@ static void xor_lane(struct KeccakContext *ctx, int lane, uint64_t val)
 	dst[1] ^= (x0 >> 16) | (x1 & 0xFFFF0000);
 }
 
-static void extract(uint8_t *dst, const struct KeccakContext *ctx, int laneCount)
+static void extract(uint8_t *dst, const struct KeccakContext *ctx, int startLane, int laneCount)
 {
-	const uint32_t *src = ctx->u.state32;
+	const uint32_t *src = ctx->u.state32 + startLane * 2;
 	uint32_t t, x0, x1;
 
 	while (laneCount--) {
@@ -1117,10 +1195,10 @@ static void xor_byte(struct KeccakContext *ctx, int nbyte, uint8_t val)
 	xor_lane(ctx, o, (uint64_t)(val) << s);
 }
 
-static void add_bytes(struct KeccakContext *ctx, const uint8_t *p, unsigned int len)
+static void add_bytes(struct KeccakContext *ctx, const uint8_t *p, unsigned int ofs, unsigned int len)
 {
 	uint64_t w;
-	unsigned int m = ctx->bytes % 8;
+	unsigned int m = ofs % 8;
 
 	/* partial word */
 	if (m) {
@@ -1128,7 +1206,7 @@ static void add_bytes(struct KeccakContext *ctx, const uint8_t *p, unsigned int 
 		if (m > len)
 			m = len;
 		while (m--) {
-			xor_byte(ctx, ctx->bytes++, *p++);
+			xor_byte(ctx, ofs++, *p++);
 			len--;
 		}
 	}
@@ -1136,161 +1214,204 @@ static void add_bytes(struct KeccakContext *ctx, const uint8_t *p, unsigned int 
 	/* full words */
 	while (len >= 8) {
 		w = le64dec(p);
-		xor_lane(ctx, ctx->bytes / 8, w);
-		ctx->bytes += 8;
+		xor_lane(ctx, ofs / 8, w);
+		ofs += 8;
 		p += 8;
 		len -= 8;
 	}
 
 	/* partial word */
 	while (len--)
-		xor_byte(ctx, ctx->bytes++, *p++);
+		xor_byte(ctx, ofs++, *p++);
 }
 
-static void reset(struct KeccakContext *ctx, int rbytes, int obytes)
+static void extract_bytes(struct KeccakContext *ctx, uint8_t *dst, unsigned int ofs, unsigned int count)
 {
-	memset(ctx, 0, sizeof(struct KeccakContext));
-	ctx->rbytes = rbytes;
-	ctx->obytes = obytes;
+	uint8_t lanebuf[8];
+	unsigned int n, avail;
+
+	if (ofs % 8 != 0 || count < 8) {
+		avail = 8 - ofs % 8;
+		n = (avail > count) ? count : avail;
+		extract(lanebuf, ctx, ofs/8, 1);
+		memcpy(dst, lanebuf + ofs%8, n);
+		dst += n;
+		ofs += n;
+		count -= n;
+	}
+
+	if (count > 8) {
+		n = count / 8;
+		extract(dst, ctx, ofs/8, n);
+		dst += n*8;
+		ofs += n*8;
+		count -= n*8;
+	}
+
+	if (count > 0) {
+		extract(lanebuf, ctx, ofs/8, 1);
+		memcpy(dst, lanebuf, count);
+	}
+
+	memset(lanebuf, 0, sizeof(lanebuf));
+}
+
+static inline void permute_if_needed(struct KeccakContext *ctx)
+{
+	if (ctx->pos == ctx->rbytes) {
+		keccak_f(ctx);
+		ctx->pos = 0;
+	}
 }
 
 /*
  * Public API
  */
 
-void keccak224_init(struct KeccakContext *ctx)
+int keccak_init(struct KeccakContext *ctx, unsigned int capacity)
 {
-	reset(ctx, KECCAK224_BLOCK_SIZE, KECCAK224_DIGEST_LENGTH);
+	if (capacity % 8 != 0 || capacity < 8 || capacity > (1600 - 8))
+		return 0;
+	memset(ctx, 0, sizeof(struct KeccakContext));
+	ctx->rbytes = (1600 - capacity) / 8;
+	return 1;
 }
 
-void keccak256_init(struct KeccakContext *ctx)
+void keccak_absorb(struct KeccakContext *ctx, const void *data, size_t len)
 {
-	reset(ctx, KECCAK256_BLOCK_SIZE, KECCAK256_DIGEST_LENGTH);
-}
-
-void keccak384_init(struct KeccakContext *ctx)
-{
-	reset(ctx, KECCAK384_BLOCK_SIZE, KECCAK384_DIGEST_LENGTH);
-}
-
-void keccak512_init(struct KeccakContext *ctx)
-{
-	reset(ctx, KECCAK512_BLOCK_SIZE, KECCAK512_DIGEST_LENGTH);
-}
-
-void keccak_stream_init(struct KeccakContext *ctx)
-{
-	reset(ctx, KECCAK_STREAM_BLOCK_SIZE, KECCAK_STREAM_DIGEST_LENGTH);
-}
-
-void keccak_update(struct KeccakContext *ctx, const void *data, unsigned int len)
-{
-	unsigned int n;
-	const uint8_t *ptr = data;
+	unsigned int n, avail;
+	const uint8_t *src = data;
 
 	while (len > 0) {
-		n = ctx->rbytes - ctx->bytes;
-		if (n > len)
-			n = len;
-		add_bytes(ctx, ptr, n);
-		ptr += n;
+		avail = ctx->rbytes - ctx->pos;
+		n = (len > avail) ? avail : len;
+
+		add_bytes(ctx, src, ctx->pos, n);
+
+		src += n;
+		len -= n;
+		ctx->pos += n;
+
+		permute_if_needed(ctx);
+	}
+}
+
+void keccak_squeeze(struct KeccakContext *ctx, uint8_t *dst, size_t len)
+{
+	unsigned int avail, n;
+
+	while (len > 0) {
+		avail = ctx->rbytes - ctx->pos;
+		n = (len > avail) ? avail : len;
+
+		extract_bytes(ctx, dst, ctx->pos, n);
+
+		ctx->pos += n;
+		dst += n;
 		len -= n;
 
-		if (ctx->bytes == ctx->rbytes) {
-			keccak_f(ctx);
-			ctx->bytes = 0;
+		permute_if_needed(ctx);
+	}
+}
+
+void keccak_squeeze_xor(struct KeccakContext *ctx, uint8_t *dst, const void *data, size_t len)
+{
+	const uint8_t *src = data;
+	unsigned int n, avail, i;
+
+	while (len > 0) {
+		avail = ctx->rbytes - ctx->pos;
+		n = (len > avail) ? avail : len;
+
+		extract_bytes(ctx, dst, ctx->pos, n);
+		for (i = 0; i < n; i++)
+			dst[i] ^= src[i];
+
+		ctx->pos += n;
+		src += n;
+		dst += n;
+		len -= n;
+
+		permute_if_needed(ctx);
+	}
+}
+
+void keccak_encrypt(struct KeccakContext *ctx, uint8_t *dst, const void *data, size_t len)
+{
+	const uint8_t *src = data;
+	unsigned int n, avail;
+
+	while (len > 0) {
+		avail = ctx->rbytes - ctx->pos;
+		n = (len > avail) ? avail : len;
+
+		add_bytes(ctx, src, ctx->pos, n);
+		extract_bytes(ctx, dst, ctx->pos, n);
+
+		ctx->pos += n;
+		src += n;
+		dst += n;
+		len -= n;
+
+		permute_if_needed(ctx);
+	}
+}
+
+void keccak_decrypt(struct KeccakContext *ctx, uint8_t *dst, const void *data, size_t len)
+{
+	const uint8_t *src = data;
+	unsigned int n, avail, i;
+
+	while (len > 0) {
+		avail = ctx->rbytes - ctx->pos;
+		n = (len > avail) ? avail : len;
+
+		extract_bytes(ctx, dst, ctx->pos, n);
+		for (i = 0; i < n; i++)
+			dst[i] ^= src[i];
+		add_bytes(ctx, dst, ctx->pos, n);
+
+		ctx->pos += n;
+		src += n;
+		dst += n;
+		len -= n;
+
+		permute_if_needed(ctx);
+	}
+}
+
+void keccak_pad(struct KeccakContext *ctx, const void *pad, size_t len)
+{
+	const uint8_t *src = pad;
+
+	if (len > 0) {
+		if (len > 1) {
+			keccak_absorb(ctx, src, len - 1);
+			src += len - 1;
 		}
-	}
-}
-
-void keccak_final(struct KeccakContext *ctx, uint8_t *dst)
-{
-	if (!ctx->padded) {
-		/* 2-bit padding, assumes bytes < rbytes */
-		xor_byte(ctx, ctx->bytes, 0x01);
+		xor_byte(ctx, ctx->pos, src[0]);
 		xor_byte(ctx, ctx->rbytes - 1, 0x80);
-		ctx->padded = 1;
 	}
-
 	keccak_f(ctx);
+	ctx->pos = 0;
+}
 
-	if (ctx->obytes == KECCAK224_DIGEST_LENGTH) {
-		/* 224-bit result uses partial words */
-		uint8_t buf[KECCAK256_DIGEST_LENGTH];
-		extract(buf, ctx, KECCAK256_DIGEST_LENGTH / 8);
-		memcpy(dst, buf, KECCAK224_DIGEST_LENGTH);
+void keccak_rewind(struct KeccakContext *ctx)
+{
+	ctx->pos = 0;
+}
+
+void keccak_forget(struct KeccakContext *ctx)
+{
+	unsigned int rem = ctx->rbytes % 8;
+	uint8_t buf[8];
+
+	memset(ctx->u.state32, 0, ctx->rbytes - rem);
+	if (rem) {
+		extract_bytes(ctx, buf, ctx->rbytes - rem, rem);
+		add_bytes(ctx, buf, ctx->rbytes - rem, rem);
 		memset(buf, 0, sizeof(buf));
-	} else {
-		extract(dst, ctx, ctx->obytes / 8);
 	}
-}
-
-/*
- * DigestInfo
- */
-
-const struct DigestInfo *digest_KECCAK224(void)
-{
-	static const struct DigestInfo info = {
-		(DigestInitFunc *)keccak224_init,
-		(DigestUpdateFunc *)keccak_update,
-		(DigestFinalFunc *)keccak_final,
-		sizeof(struct KeccakContext),
-		KECCAK224_DIGEST_LENGTH,
-		KECCAK224_BLOCK_SIZE
-	};
-	return &info;
-}
-
-const struct DigestInfo *digest_KECCAK256(void)
-{
-	static const struct DigestInfo info = {
-		(DigestInitFunc *)keccak256_init,
-		(DigestUpdateFunc *)keccak_update,
-		(DigestFinalFunc *)keccak_final,
-		sizeof(struct KeccakContext),
-		KECCAK256_DIGEST_LENGTH,
-		KECCAK256_BLOCK_SIZE
-	};
-	return &info;
-}
-
-const struct DigestInfo *digest_KECCAK384(void)
-{
-	static const struct DigestInfo info = {
-		(DigestInitFunc *)keccak384_init,
-		(DigestUpdateFunc *)keccak_update,
-		(DigestFinalFunc *)keccak_final,
-		sizeof(struct KeccakContext),
-		KECCAK384_DIGEST_LENGTH,
-		KECCAK384_BLOCK_SIZE
-	};
-	return &info;
-}
-
-const struct DigestInfo *digest_KECCAK512(void)
-{
-	static const struct DigestInfo info = {
-		(DigestInitFunc *)keccak512_init,
-		(DigestUpdateFunc *)keccak_update,
-		(DigestFinalFunc *)keccak_final,
-		sizeof(struct KeccakContext),
-		KECCAK512_DIGEST_LENGTH,
-		KECCAK512_BLOCK_SIZE
-	};
-	return &info;
-}
-
-const struct DigestInfo *digest_KECCAK_STREAM(void)
-{
-	static const struct DigestInfo info = {
-		(DigestInitFunc *)keccak_stream_init,
-		(DigestUpdateFunc *)keccak_update,
-		(DigestFinalFunc *)keccak_final,
-		sizeof(struct KeccakContext),
-		KECCAK_STREAM_DIGEST_LENGTH,
-		KECCAK_STREAM_BLOCK_SIZE
-	};
-	return &info;
+	ctx->pos = 0;
 }
 
