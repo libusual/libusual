@@ -39,6 +39,8 @@ extern CxMem cx_libc_nofail;
  */
 CxMem *cx_new_pool(CxMem *parent, size_t initial_size);
 
+CxMem *cx_new_pool_from_area(CxMem *parent, void *buf, size_t size, bool allow_free);
+
 /**
  * Creates allocator that remebers all allocations done
  * under it and allows all of it to be freed together.

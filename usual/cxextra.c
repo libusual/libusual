@@ -75,6 +75,9 @@ struct CxPool {
 	const struct CxMem *parent;
 	struct CxPoolSeg *last;
 	void *last_ptr;
+	bool allow_free_first;
+
+	struct CxPoolSeg first_seg;
 };
 #define POOL_HDR  ALIGN(sizeof(struct CxPoolSeg))
 
@@ -143,6 +146,7 @@ static size_t pool_guess_old_len(struct CxPool *pool, char *ptr)
 		cused = cstart + seg->used;
 		if (ptr >= cstart && ptr < cused)
 			return cused - ptr;
+		seg = seg->prev;
 	}
 	return 0;
 }
@@ -185,15 +189,18 @@ static void *pool_realloc(void *ctx, void *ptr, size_t len)
 static void pool_destroy(void *ctx)
 {
 	struct CxPool *pool = ctx;
-	struct CxPoolSeg *cur, *tmp;
+	struct CxPoolSeg *cur, *prev;
 	if (!pool)
 		return;
 	for (cur = pool->last; cur; ) {
-		tmp = cur->prev;
+		prev = cur->prev;
+		if (!prev)
+			break;
 		cx_free(pool->parent, cur);
-		cur = tmp;
+		cur = prev;
 	}
-	cx_free(pool->parent, pool);
+	if (pool->allow_free_first)
+		cx_free(pool->parent, pool);
 }
 
 static const struct CxOps pool_ops = {
@@ -207,21 +214,43 @@ static const struct CxOps pool_ops = {
  * public functions
  */
 
-CxMem *cx_new_pool(CxMem *parent, size_t initial_size)
+CxMem *cx_new_pool_from_area(CxMem *parent, void *buf, size_t size, bool allow_free)
 {
 	struct CxPool *head;
 
-	head = cx_alloc(parent, sizeof(*head));
-	if (!head)
+	if (size < sizeof(struct CxPool))
 		return NULL;
+
+	head = buf;
+
 	head->parent = parent;
 	head->this.ops = &pool_ops;
 	head->this.ctx = head;
-	head->last = NULL;
+	head->last = &head->first_seg;
+	head->allow_free_first = allow_free;
+
+	head->first_seg.prev = NULL;
+	head->first_seg.size = size - sizeof(struct CxPool);
+	head->first_seg.used = 0;
+
+	return &head->this;
+}
+
+CxMem *cx_new_pool(CxMem *parent, size_t initial_size)
+{
+	void *area;
+	size_t size;
+
 	if (initial_size < 1024)
 		initial_size = 1024;
-	new_seg(head, initial_size);
-	return &head->this;
+
+	size = sizeof(struct CxPool) + initial_size;
+
+	area = cx_alloc(parent, size);
+	if (!area)
+		return NULL;
+
+	return cx_new_pool_from_area(parent, area, size, true);
 }
 
 /*
