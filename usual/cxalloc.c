@@ -29,11 +29,15 @@ void *cx_alloc(CxMem *cx, size_t len)
 {
 	if (!len)
 		return NULL;
+	if (!cx)
+		cx = USUAL_ALLOC;
 	return cx->ops->c_alloc(cx->ctx, len);
 }
 
 void *cx_realloc(CxMem *cx, void *ptr, size_t len)
 {
+	if (!cx)
+		cx = USUAL_ALLOC;
 	if (!ptr)
 		return cx_alloc(cx, len);
 	if (!len) {
@@ -45,6 +49,8 @@ void *cx_realloc(CxMem *cx, void *ptr, size_t len)
 
 void cx_free(CxMem *cx, const void *ptr)
 {
+	if (!cx)
+		cx = USUAL_ALLOC;
 	if (ptr)
 		cx->ops->c_free(cx->ctx, ptr);
 }
