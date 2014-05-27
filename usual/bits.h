@@ -143,5 +143,65 @@ static inline int ffsll(long long x) { _FFS(ll, long long); }
 #endif
 #undef _FFS
 
+/*
+ * Multiply and check overflow.
+ */
+
+#define _USUAL_MUL_SAFE_(type, max)	\
+	type unsafe = (type)(1) << (sizeof(type) * 8/2); /* sqrt(max+1) */ \
+	if (a < unsafe && b < unsafe)	\
+		goto safe;		\
+	if (!a || !b)			\
+		goto safe;		\
+	if ((max / a) >= b)		\
+		return false;		\
+   safe:				\
+	*res_p = a * b;			\
+	return true;
+
+/** Multiply with overflow check for 'unsigned int' */
+static inline bool safe_mul_uint(unsigned int *res_p, unsigned int a, unsigned int b)
+{
+	_USUAL_MUL_SAFE_(unsigned int, UINT_MAX);
+}
+
+/** Multiply with overflow check for 'unsigned long' */
+static inline bool safe_mul_ulong(unsigned long *res_p, unsigned long a, unsigned long b)
+{
+	_USUAL_MUL_SAFE_(unsigned long, ULONG_MAX);
+}
+
+/** Multiply with overflow check for 'uint8_t' */
+static inline bool safe_mul_uint8(uint8_t *res_p, uint8_t a, uint8_t b)
+{
+	_USUAL_MUL_SAFE_(uint8_t, UINT8_MAX);
+}
+
+/** Multiply with overflow check for 'uint16_t' */
+static inline bool safe_mul_uint16(uint16_t *res_p, uint16_t a, uint16_t b)
+{
+	_USUAL_MUL_SAFE_(uint16_t, UINT16_MAX);
+}
+
+/** Multiply with overflow check for 'uint32_t' */
+static inline bool safe_mul_uint32(uint32_t *res_p, uint32_t a, uint32_t b)
+{
+	_USUAL_MUL_SAFE_(uint32_t, UINT32_MAX);
+}
+
+/** Multiply with overflow check for 'uint64_t' */
+static inline bool safe_mul_uint64(uint64_t *res_p, uint64_t a, uint64_t b)
+{
+	_USUAL_MUL_SAFE_(uint64_t, UINT64_MAX);
+}
+
+/** Multiply with overflow check for 'size_t' */
+static inline bool safe_mul_size(size_t *res_p, size_t a, size_t b)
+{
+	_USUAL_MUL_SAFE_(size_t, SIZE_MAX);
+}
+
+#undef _USUAL_MUL_SAFE_
+
 #endif
 
