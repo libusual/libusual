@@ -122,6 +122,17 @@ fi
 AC_SUBST(WFLAGS)
 
 AC_PROG_INSTALL
+
+dnl Convert relative path to absolute path.
+case "$ac_install_sh" in
+./*)  ac_install_sh="`pwd`/${ac_install_sh}" ;;
+../*) ac_install_sh="`pwd`/${ac_install_sh}" ;;
+esac
+case "$INSTALL" in
+./*)  INSTALL="`pwd`/${INSTALL}" ;;
+../*) INSTALL="`pwd`/${INSTALL}" ;;
+esac
+
 AC_PROG_LN_S
 AC_PROG_EGREP
 AC_PROG_AWK
