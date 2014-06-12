@@ -260,7 +260,7 @@ struct event_base *event_base_new(void)
 		return NULL;
 
 	/* initialize timeout and fd areas */
-	base->timeout_heap = heap_create(ev_is_better, ev_save_pos, USUAL_ALLOC);
+	base->timeout_heap = heap_create(ev_is_better, ev_save_pos, NULL);
 	if (!base->timeout_heap) {
 		free(base);
 		return NULL;

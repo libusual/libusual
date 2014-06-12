@@ -16,7 +16,7 @@ static void test_mdict(void *p)
 	struct MBuf buf;
 	const char *s;
 
-	d = mdict_new(USUAL_ALLOC);
+	d = mdict_new(NULL);
 	str_check(xget(d, "key"), "NULL");
 	int_check(mdict_put(d, "key", "val"), 1);
 	int_check(mdict_put(d, "key2", "foo"), 1);
@@ -39,7 +39,7 @@ static void test_mdict(void *p)
 
 	mdict_free(d);
 
-	d = mdict_new(USUAL_ALLOC);
+	d = mdict_new(NULL);
 	s = "key=val&key2=&key3";
 	int_check(mdict_urldecode(d, s, strlen(s)), 1);
 	str_check(xget(d, "key"), "val");

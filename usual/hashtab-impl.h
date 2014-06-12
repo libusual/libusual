@@ -247,7 +247,7 @@ static inline void _hashtab_example(void)
 	unsigned nitem, nlink;
 	struct HashTab *h, *h2;
 	
-	h = hashtab_create(1024, NULL, USUAL_ALLOC);
+	h = hashtab_create(1024, NULL, NULL);
 	hashtab_lookup(h, 123, true, NULL);
 	hashtab_stats(h, &nitem, &nlink);
 	h2 = hashtab_copy(h, 2048);

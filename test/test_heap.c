@@ -129,7 +129,7 @@ static void test_heap_basic(void *p)
 	struct Heap *heap;
 	int i;
 
-	heap = heap_create(heap_is_better, my_save_pos, USUAL_ALLOC);
+	heap = heap_create(heap_is_better, my_save_pos, NULL);
 
 	str_check(my_remove(heap, 0), "NEXIST");
 	str_check(my_insert(heap, 0), "OK");

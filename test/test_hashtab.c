@@ -98,7 +98,7 @@ static void test_hash_basic(void *p)
 	struct HashTab *htab;
 	int i;
 
-	htab = hashtab_create(cf_size, mycmp, USUAL_ALLOC);
+	htab = hashtab_create(cf_size, mycmp, NULL);
 
 	for (i = 0; i < cf_cnt; i++) {
 		int n = i + cf_ofs;

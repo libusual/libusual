@@ -118,7 +118,7 @@ end:;
 
 static char *aparse(const char *src)
 {
-	struct StrList *sl = pg_parse_array(src, USUAL_ALLOC);
+	struct StrList *sl = pg_parse_array(src, NULL);
 	static char buf[1024];
 	char *dst = buf;
 	const char *s;

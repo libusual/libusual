@@ -41,7 +41,7 @@ int main(void)
 	static_assert(sizeof(int) >= 4, "unsupported int size");
 
 	aatree_init(&aatree, NULL, NULL);
-	cbtree = cbtree_create(NULL, NULL, NULL, USUAL_ALLOC);
+	cbtree = cbtree_create(NULL, NULL, NULL, NULL);
 	cbtree_destroy(cbtree);
 	daemonize(NULL, false);
 	hash_lookup3("foo", 3);

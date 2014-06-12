@@ -10,11 +10,11 @@ static void test_strpool(void *p)
 	struct StrPool *pool;
 	struct PStr *s;
 
-	pool = strpool_create(USUAL_ALLOC);
+	pool = strpool_create(NULL);
 	tt_assert(pool);
 	strpool_free(pool);
 
-	pool = strpool_create(USUAL_ALLOC);
+	pool = strpool_create(NULL);
 	tt_assert(pool);
 	int_check(strpool_total(pool), 0);
 
@@ -42,7 +42,7 @@ static void test_strpool(void *p)
 	strpool_free(pool);
 
 	/* free strc with strings */
-	pool = strpool_create(USUAL_ALLOC);
+	pool = strpool_create(NULL);
 	tt_assert(pool);
 	s = strpool_get(pool, "foo", -1);
 	s = strpool_get(pool, "bar", 3);

@@ -82,7 +82,7 @@ static void test_cbtree_basic(void *p)
 	struct CBTree *tree;
 	int i;
 
-	tree = cbtree_create(my_getkey, my_node_free, NULL, USUAL_ALLOC);
+	tree = cbtree_create(my_getkey, my_node_free, NULL, NULL);
 
 	str_check(my_search(tree, 1), "not found");
 
@@ -138,7 +138,7 @@ static void test_cbtree_random(void *p)
 	srandom(123123);
 	memset(is_added, 0, sizeof(is_added));
 
-	tree = cbtree_create(my_getkey, my_node_free, NULL, USUAL_ALLOC);
+	tree = cbtree_create(my_getkey, my_node_free, NULL, NULL);
 
 	while (total < 20000) {
 		int r = random() & 15;

@@ -90,7 +90,7 @@ static const char *run_hash(const char *str, const char *hexstr, const struct Di
 		len = strlen(str);
 	}
 
-	ctx = digest_new(impl, USUAL_ALLOC);
+	ctx = digest_new(impl, NULL);
 	if (!ctx)
 		return "NOMEM";
 	reslen = digest_result_len(ctx);
@@ -389,7 +389,7 @@ static const char *run_variable(const char *hex, const struct DigestInfo *mdinfo
 	len = strlen(hex) / 2;
 	buf = fromhex(hex, len);
 
-	ctx = digest_new(mdinfo, USUAL_ALLOC);
+	ctx = digest_new(mdinfo, NULL);
 	if (!ctx)
 		return "NOMEM";
 	digest_update(ctx, buf, len);
@@ -469,7 +469,7 @@ static const char *run_hmac(const char *key, const char *str, const struct Diges
 	int len = strlen(str);
 	int reslen;
 
-	ctx = hmac_new(impl, key, strlen(key), USUAL_ALLOC);
+	ctx = hmac_new(impl, key, strlen(key), NULL);
 	if (!ctx)
 		return "NOMEM";
 	reslen = hmac_result_len(ctx);

@@ -195,7 +195,7 @@ static void test_strlist(void *p)
 {
 	struct StrList *sl = NULL;
 	const char *s;
-	sl = strlist_new(USUAL_ALLOC);
+	sl = strlist_new(NULL);
 	str_check(lshow(sl), "");
 	strlist_append(sl, "1");
 	str_check(lshow(sl), "1");
@@ -220,7 +220,7 @@ static bool sl_add(void *arg, const char *s)
 static const char *wlist(const char *s)
 {
 	const char *res = "FAIL";
-	struct StrList *sl = strlist_new(USUAL_ALLOC);
+	struct StrList *sl = strlist_new(NULL);
 	bool ok = parse_word_list(s, sl_add, sl);
 	if (ok) {
 		if (strlist_empty(sl))
