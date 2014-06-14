@@ -17,6 +17,7 @@
  */
 
 #include <usual/utf8.h>
+#include <usual/err.h>
 
 #define u8head(c, mask)	(((c) & (mask | (mask >> 1))) == mask)
 #define u8tail(c)	u8head(c, 0x80)
@@ -136,5 +137,84 @@ int utf8_seq_size(unsigned char b)
 	if (b < 0xF0) return 3;
 	if (b < 0xF5) return 4;
 	return 0;
+}
+
+/*
+ *     7f: c1bf (+1)
+ *     80: c280
+ *    7ff: dfbf
+ *    7ff: e09fbf (+1)
+ *    800: e0a080
+ *   ffff: efbfbf
+ *   ffff: f08fbfbf (+1)
+ *  10000: f0908080
+ * 10ffff: f48fbfbf
+ */
+int utf8_validate_seq(const char *src, const char *srcend)
+{
+	const unsigned char *u = (unsigned char *)src;
+	const unsigned char *uend = (unsigned char *)srcend;
+
+	if (u[0] < 0x80) { /* ascii */
+		if (u[0] == 0)
+			goto invalid;
+		return 1;
+	} else if (u[0] < 0xC2) { /* tail byte as first byte */
+		goto invalid;
+	} else if (u[0] < 0xE0) { /* 1 tail byte */
+		if (u + 2 > uend)
+			goto invalid;
+
+		if ((u[1] & 0xC0) != 0x80)
+			goto invalid;
+		return 2;
+	} else if (u[0] < 0xF0) { /* 2 tail bytes */
+		if (u + 3 > uend)
+			goto invalid;
+		if (u[0] == 0xE0 && u[1] < 0xA0)
+			goto invalid;
+		if (u[0] == 0xED && u[1] >= 0xA0)
+			goto invalid;
+		if ((u[1] & 0xC0) != 0x80)
+			goto invalid;
+		if ((u[2] & 0xC0) != 0x80)
+			goto invalid;
+		return 3;
+	} else if (u[0] < 0xF5) { /* 3-tail bytes */
+		if (u + 4 > uend)
+			goto invalid;
+		if (u[0] == 0xF0 && u[1] < 0x90)
+			goto invalid;
+		if (u[0] == 0xF4 && u[1] > 0x8F)
+			goto invalid;
+
+		if ((u[1] & 0xC0) != 0x80)
+			goto invalid;
+		if ((u[2] & 0xC0) != 0x80)
+			goto invalid;
+		if ((u[3] & 0xC0) != 0x80)
+			goto invalid;
+		return 4;
+	}
+invalid:
+	return 0;
+}
+
+bool utf8_validate_string(const char *src, const char *end)
+{
+	unsigned int n;
+	while (src < end) {
+		if (*src & 0x80) {
+			n = utf8_validate_seq(src, end);
+			if (n == 0)
+				return false;
+			src += n;
+		} else if (*src == '\0') {
+			return false;
+		} else {
+			src++;
+		}
+	}
+	return true;
 }
 

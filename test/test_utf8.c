@@ -34,6 +34,24 @@ static int uget4(int a, int b, int c, int d)
 	return utf8_get_char(&p, buf + 4);
 }
 
+static const char *mkseq(uint32_t c, int n)
+{
+	static char buf[8];
+	static const uint8_t prefix[] = { 0, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC };
+	int i;
+	for (i = n - 1; i > 0; i--) {
+		buf[i] = (c & 0x3F) | 0x80;
+		c >>= 6;
+	}
+	buf[0] = prefix[n-1] | c;
+	return buf;
+}
+
+static int readseq(uint32_t c, int n)
+{
+	const char *p = mkseq(c, n);
+	return utf8_get_char(&p, p + n);
+}
 
 static void test_utf8_char_size(void *p)
 {
@@ -87,6 +105,26 @@ static void test_utf8_get_char(void *p)
 	int_check(uget1(0xC2), -0xC2);
 	int_check(uget2(0xE2, 0x82), -0xE2);
 	int_check(uget3(0xF0, 0xA4, 0xAD), -0xF0);
+
+	/* good boundaries */
+	int_check(readseq(0x7f, 1), 0x7f);
+	int_check(readseq(0x80, 2), 0x80);
+	int_check(readseq(0x7ff, 2), 0x7ff);
+	int_check(readseq(0x800, 3), 0x800);
+	int_check(readseq(0xffff, 3), 0xffff);
+	int_check(readseq(0x10000, 4), 0x10000);
+	int_check(readseq(0x10ffff, 4), 0x10ffff);
+	int_check(readseq(0xd7ff, 3), 0xd7ff);
+	int_check(readseq(0xe000, 3), 0xe000);
+
+	/* bad boundaries */
+	int_check(readseq(0x7f, 2), -193);
+	int_check(readseq(0x7ff, 3), -224);
+	int_check(readseq(0xffff, 4), -240);
+	int_check(readseq(0x110000, 4), -244);
+	int_check(readseq(0x10ffff, 5), -248);
+	int_check(readseq(0xd800, 3), -237);
+	int_check(readseq(0xdfff, 3), -237);
 end:;
 }
 
@@ -140,6 +178,36 @@ static void test_utf8_put_char(void *p)
 end:;
 }
 
+static int validseq(uint32_t c, int n)
+{
+	const char *p = mkseq(c, n);
+	return utf8_validate_seq(p, p + n);
+}
+
+static void test_utf8_validate_seq(void *p)
+{
+	/* good boundaries */
+	int_check(validseq(0x7f, 1), 1);
+	int_check(validseq(0x80, 2), 2);
+	int_check(validseq(0x7ff, 2), 2);
+	int_check(validseq(0x800, 3), 3);
+	int_check(validseq(0xffff, 3), 3);
+	int_check(validseq(0x10000, 4), 4);
+	int_check(validseq(0x10ffff, 4), 4);
+	int_check(validseq(0xd7ff, 3), 3);
+	int_check(validseq(0xe000, 3), 3);
+
+	/* bad boundaries */
+	int_check(validseq(0x7f, 2), 0);
+	int_check(validseq(0x7ff, 3), 0);
+	int_check(validseq(0xffff, 4), 0);
+	int_check(validseq(0x110000, 4), 0);
+	int_check(validseq(0x10ffff, 5), 0);
+	int_check(validseq(0xd800, 3), 0);
+	int_check(validseq(0xdfff, 3), 0);
+end:;
+}
+
 /*
  * Describe
  */
@@ -149,6 +217,7 @@ struct testcase_t utf8_tests[] = {
 	{ "utf8_seq_size", test_utf8_seq_size },
 	{ "utf8_get_char", test_utf8_get_char },
 	{ "utf8_put_char", test_utf8_put_char },
+	{ "utf8_validate_seq", test_utf8_validate_seq },
 	END_OF_TESTCASES
 };
 

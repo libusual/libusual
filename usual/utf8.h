@@ -53,5 +53,10 @@ int utf8_char_size(unsigned int c);
 /** Return UTF8 seq length based on first byte */
 int utf8_seq_size(unsigned char c);
 
+/** Return sequence length if all bytes are valid, 0 otherwise. */
+int utf8_validate_seq(const char *src, const char *srcend);
+
+bool utf8_validate_string(const char *src, const char *end);
+
 #endif
 
