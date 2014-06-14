@@ -23,6 +23,7 @@ struct testgroup_t groups[] = {
 	{ "shlist/", shlist_tests },
 	{ "utf8/", utf8_tests },
 	{ "strpool/", strpool_tests },
+	{ "json/", json_tests },
 	{ "pgutil/", pgutil_tests },
 	{ "regex/", regex_tests },
 	{ "socket/", socket_tests },

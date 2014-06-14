@@ -48,6 +48,7 @@ libusual_a_SOURCES = usual/config.h.in \
 	usual/hashing/xxhash.h usual/hashing/xxhash.c \
 	usual/hashtab-impl.h \
 	usual/heap.h usual/heap.c \
+	usual/json.h usual/json.c \
 	usual/list.h usual/list.c \
 	usual/logging.h usual/logging.c \
 	usual/mbuf.h usual/mbuf.c \
