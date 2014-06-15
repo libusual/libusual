@@ -2,6 +2,7 @@
 #include <usual/time.h>
 #include <usual/string.h>
 #include <usual/logging.h>
+#include <usual/fileutil.h>
 
 #include "test_common.h"
 
@@ -117,10 +118,14 @@ static struct CfContext cfdesc2 = { rsects, &cf1 };
 static void test_rel(void *ptr)
 {
 	char buf[128];
+	const char *fn = "test_cfparser.ini";
 
 	cleanup();
 
-	int_check(1, cf_load_file(&cfdesc2, "test_cfparser.ini"));
+	if (file_size(fn) < 0)
+		fn = "test/test_cfparser.ini";
+
+	int_check(1, cf_load_file(&cfdesc2, fn));
 
 	str_check(cf1.str1, "val1");
 	tt_assert(cf1.def1 == NULL);
