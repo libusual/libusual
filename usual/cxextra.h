@@ -37,9 +37,9 @@ extern CxMem cx_libc_nofail;
  * realloc(), free() are partially supported for the last
  * objec only.
  */
-CxMem *cx_new_pool(CxMem *parent, size_t initial_size);
+CxMem *cx_new_pool(CxMem *parent, size_t initial_size, unsigned int align);
 
-CxMem *cx_new_pool_from_area(CxMem *parent, void *buf, size_t size, bool allow_free);
+CxMem *cx_new_pool_from_area(CxMem *parent, void *buf, size_t size, bool allow_free, unsigned int align);
 
 /**
  * Creates allocator that remebers all allocations done

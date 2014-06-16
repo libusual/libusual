@@ -5,6 +5,7 @@
 
 #include <usual/cxextra.h>
 #include <usual/list.h>
+#include <usual/bits.h>
 
 #include <string.h>
 
@@ -66,15 +67,17 @@ const struct CxMem cx_libc_nofail = {
 
 struct CxPoolSeg {
 	struct CxPoolSeg *prev;
-	unsigned size;
-	unsigned used;
+	unsigned char *seg_start;
+	unsigned char *seg_pos;
+	unsigned char *seg_end;
 };
 
 struct CxPool {
 	struct CxMem this;
 	const struct CxMem *parent;
 	struct CxPoolSeg *last;
-	void *last_ptr;
+	unsigned char *last_ptr;
+	unsigned int align;
 	bool allow_free_first;
 
 	struct CxPoolSeg first_seg;
@@ -84,14 +87,19 @@ struct CxPool {
 static struct CxPoolSeg *new_seg(struct CxPool *pool, size_t nsize)
 {
 	struct CxPoolSeg *seg;
+	unsigned char *ptr;
+	size_t alloc = POOL_HDR + nsize;
 
-	seg = cx_alloc(pool->parent, POOL_HDR + nsize);
+	seg = cx_alloc(pool->parent, alloc);
 	if (seg == NULL)
 		return NULL;
-	seg->used = 0;
-	seg->size = nsize;
+	ptr = (unsigned char *)seg;
+	seg->seg_start = (void *)CUSTOM_ALIGN(ptr + POOL_HDR, pool->align);
+	seg->seg_pos = seg->seg_start;
+	seg->seg_end = (unsigned char *)seg + alloc;
 	seg->prev = pool->last;
 	pool->last = seg;
+	pool->last_ptr = NULL;
 	return seg;
 }
 
@@ -102,21 +110,21 @@ static void *pool_alloc(void *ctx, size_t size)
 	void *ptr;
 	unsigned nsize;
 
-	size = ALIGN(size);
-	if (seg && seg->used + size <= seg->size) {
-		ptr = p_move(seg, POOL_HDR + seg->used);
-		seg->used += size;
+	size = CUSTOM_ALIGN(size, pool->align);
+	if (seg && seg->seg_pos + size <= seg->seg_end) {
+		ptr = seg->seg_pos;
+		seg->seg_pos += size;
 		pool->last_ptr = ptr;
 		return ptr;
 	} else {
-		nsize = seg ? (2 * seg->size) : 512;
+		nsize = seg ? (2 * (seg->seg_end - seg->seg_start)) : 512;
 		while (nsize < size)
 			nsize *= 2;
 		seg = new_seg(pool, nsize);
 		if (!seg)
 			return NULL;
-		seg->used = size;
-		ptr = p_move(seg, POOL_HDR);
+		ptr = seg->seg_pos;
+		seg->seg_pos += size;
 		pool->last_ptr = ptr;
 		return ptr;
 	}
@@ -127,25 +135,22 @@ static void pool_free(void *ctx, const void *ptr)
 {
 	struct CxPool *pool = ctx;
 	struct CxPoolSeg *cur = pool->last;
-	const char *cstart;
 
 	if (pool->last_ptr != ptr)
 		return;
-	cstart = p_move(cur, POOL_HDR);
-	cur->used = (char *)ptr - cstart;
+	cur->seg_pos = (void *)ptr;
 	pool->last_ptr = NULL;
 }
 
-static size_t pool_guess_old_len(struct CxPool *pool, char *ptr)
+static size_t pool_guess_old_len(struct CxPool *pool, unsigned char *ptr)
 {
 	struct CxPoolSeg *seg = pool->last;
-	char *cstart, *cused;
+	unsigned char *cstart;
 
 	while (seg) {
-		cstart = p_move(seg, POOL_HDR);
-		cused = cstart + seg->used;
-		if (ptr >= cstart && ptr < cused)
-			return cused - ptr;
+		cstart = (void *)CUSTOM_ALIGN((seg + 1), pool->align);
+		if (ptr >= cstart && ptr < seg->seg_pos)
+			return seg->seg_pos - ptr;
 		seg = seg->prev;
 	}
 	return 0;
@@ -156,7 +161,7 @@ static void *pool_realloc(void *ctx, void *ptr, size_t len)
 {
 	struct CxPool *pool = ctx;
 	struct CxPoolSeg *seg = pool->last;
-	char *cstart, *cused, *p = ptr;
+	unsigned char *p = ptr;
 	size_t olen;
 
 	if (pool->last_ptr != ptr) {
@@ -170,12 +175,9 @@ static void *pool_realloc(void *ctx, void *ptr, size_t len)
 		return p;
 	}
 
-	cstart = p_move(seg, POOL_HDR);
-	cused = cstart + seg->used;
-
-	olen = cused - p;
-	if (seg->used - olen + len <= seg->size) {
-		seg->used = p + len - cstart;
+	olen = seg->seg_pos - p;
+	if (seg->seg_pos - olen + len <= seg->seg_end) {
+		seg->seg_pos = p + len;
 		return p;
 	} else {
 		p = pool_alloc(ctx, len);
@@ -214,29 +216,35 @@ static const struct CxOps pool_ops = {
  * public functions
  */
 
-CxMem *cx_new_pool_from_area(CxMem *parent, void *buf, size_t size, bool allow_free)
+CxMem *cx_new_pool_from_area(CxMem *parent, void *buf, size_t size, bool allow_free, unsigned int align)
 {
 	struct CxPool *head;
 
 	if (size < sizeof(struct CxPool))
 		return NULL;
+	if (align == 0)
+		align = 8;
+	else if (!is_power_of_2(align))
+		return NULL;
 
 	head = buf;
+	memset(head, 0, sizeof(struct CxPool));
 
 	head->parent = parent;
 	head->this.ops = &pool_ops;
 	head->this.ctx = head;
 	head->last = &head->first_seg;
 	head->allow_free_first = allow_free;
+	head->align = align;
 
-	head->first_seg.prev = NULL;
-	head->first_seg.size = size - sizeof(struct CxPool);
-	head->first_seg.used = 0;
+	head->first_seg.seg_start = (void *)CUSTOM_ALIGN(head + 1, align);
+	head->first_seg.seg_pos = head->first_seg.seg_start;
+	head->first_seg.seg_end = (unsigned char *)head + size;
 
 	return &head->this;
 }
 
-CxMem *cx_new_pool(CxMem *parent, size_t initial_size)
+CxMem *cx_new_pool(CxMem *parent, size_t initial_size, unsigned int align)
 {
 	void *area;
 	size_t size;
@@ -250,7 +258,7 @@ CxMem *cx_new_pool(CxMem *parent, size_t initial_size)
 	if (!area)
 		return NULL;
 
-	return cx_new_pool_from_area(parent, area, size, true);
+	return cx_new_pool_from_area(parent, area, size, true, align);
 }
 
 /*
