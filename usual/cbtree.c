@@ -231,7 +231,7 @@ bool cbtree_insert(struct CBTree *tree, void *obj)
 	/* first differing bit is the target position */
 	newbit = find_crit_bit(key, klen, old_key, old_klen);
 	if (newbit == SAME_KEY)
-		return true;
+		return false;
 	return insert_at(tree, newbit, key, klen, obj);
 }
 
