@@ -156,3 +156,6 @@ sizes: all
 %.s: %.c
 	$(CC) -S $(DEFS) $(CFLAGS) $(CPPFLAGS) -I. $< -o - | cleanasm > $@
 
+.PHONY: tags
+tags:
+	ctags $(libusual_a_SOURCES)
