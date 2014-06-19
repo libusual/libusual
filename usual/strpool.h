@@ -37,10 +37,10 @@ struct StrPool;
 struct PStr {
 	/** Parent pool */
 	struct StrPool *pool;
+	/** String length */
+	size_t len;
 	/** Reference count */
 	int refcnt;
-	/** String length */
-	int len;
 	/** Zero-terminated value */
 	char str[FLEX_ARRAY];
 };
@@ -52,7 +52,7 @@ struct StrPool *strpool_create(CxMem *ca);
 void strpool_free(struct StrPool *sp);
 
 /** Return either existing or new PStr for given value */
-struct PStr *strpool_get(struct StrPool *sp, const char *str, int len);
+struct PStr *strpool_get(struct StrPool *sp, const char *str, ssize_t len);
 
 /** Increase reference count for existing PStr */
 void strpool_incref(struct PStr *str);

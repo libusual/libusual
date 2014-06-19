@@ -31,7 +31,7 @@ struct StrPool {
 };
 
 /* pass key info to cbtree */
-static unsigned get_key(void *ctx, void *obj, const void **dst_p)
+static size_t get_key(void *ctx, void *obj, const void **dst_p)
 {
 	struct PStr *s = obj;
 	*dst_p = s->str;
@@ -84,7 +84,7 @@ int strpool_total(struct StrPool *sp)
 }
 
 /* get new reference to str */
-struct PStr *strpool_get(struct StrPool *sp, const char *str, int len)
+struct PStr *strpool_get(struct StrPool *sp, const char *str, ssize_t len)
 {
 	struct PStr *cstr;
 	bool ok;

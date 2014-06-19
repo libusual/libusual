@@ -24,7 +24,7 @@
 #include <usual/cxalloc.h>
 
 /** returns length of the key */
-typedef unsigned int	(*cbtree_getkey_func)(void *ctx, void *obj, const void **dst_p);
+typedef size_t		(*cbtree_getkey_func)(void *ctx, void *obj, const void **dst_p);
 /** walk over tree */
 typedef bool		(*cbtree_walker_func)(void *ctx, void *obj);
 
@@ -57,14 +57,14 @@ bool cbtree_insert(struct CBTree *tree, void *obj) _MUSTCHECK;
  *
  * @returns   true if key was found, false otherwise.
  */
-bool cbtree_delete(struct CBTree *tree, const void *key, unsigned klen);
+bool cbtree_delete(struct CBTree *tree, const void *key, size_t klen);
 
 /**
  * Lookup a key.
  *
  * @returns object pointer if found, NULL ohterwise
  */
-void *cbtree_lookup(struct CBTree *tree, const void *key, unsigned klen);
+void *cbtree_lookup(struct CBTree *tree, const void *key, size_t klen);
 
 /** Walk over tree */
 bool cbtree_walk(struct CBTree *tree, cbtree_walker_func cb_func, void *cb_arg);

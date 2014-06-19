@@ -11,7 +11,7 @@ struct MyNode {
 	int len;
 };
 
-static unsigned int my_getkey(void *ctx, void *obj, const void **dst_p)
+static size_t my_getkey(void *ctx, void *obj, const void **dst_p)
 {
 	struct MyNode *node = obj;
 	*dst_p = node->str;

@@ -20,7 +20,7 @@ struct MDictElem {
 };
 
 /* hook for CBTree */
-static unsigned int mdict_getkey(void *ctx, void *obj, const void **dst_p)
+static size_t mdict_getkey(void *ctx, void *obj, const void **dst_p)
 {
 	struct MDictElem *el = obj;
 	*dst_p = mbuf_data(&el->key);
