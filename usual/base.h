@@ -16,7 +16,7 @@
  * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- */ 
+ */
 
 #ifndef _USUAL_BASE_H_
 #define _USUAL_BASE_H_
@@ -96,7 +96,15 @@ typedef enum { true=1, false=0 } bool;
 /** number of elements in array */
 #define ARRAY_NELEM(a)	(sizeof(a) / sizeof((a)[0]))
 
-/* how to specify array with unknown length */
+/**
+ * Compat helper to specify array with unknown length.
+ *
+ * Usage:
+ *
+ * @code
+ * char flex_string[FLEX_ARRAY];
+ * @endcode
+ */
 #if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L)
 #define FLEX_ARRAY
 #elif defined(__GNUC__) && (__GNUC__ >= 3)
@@ -121,17 +129,63 @@ typedef enum { true=1, false=0 } bool;
 #define CONCAT4(a, b, c, d)    _CONCAT4_(a, b, c, d)
 #define _CONCAT4_(a, b, c, d)  a ## b ## c ## d
 
+/** Pre-processor macro for current function name.  */
+#ifndef HAVE_FUNCNAME__FUNC
+#define __func__ __FUNCTION__
+#endif
+
 /**
- * @name Compiler attributes.
+ * @name Compiler checks, mainly for internal usage.
+ *
+ * @{
  */
 
-/* Compiler detection for internal usage.  */
+/** Pre-processor macro to check if compiler is GCC with high enough version */
 #define _COMPILER_GNUC(maj,min) (defined(__GNUC__) && \
 	  ((__GNUC__ > (maj)) || (__GNUC__ == (maj) && __GNUC_MINOR__ >= (min))))
+/** Pre-processor macro to check if compiler is CLANG with high enough version */
 #define _COMPILER_CLANG(maj,min) (defined(__clang__) && \
 	   ((__clang_major__ > (maj)) || (__clang_major__ == (maj) && __clang_minor__ >= (min))))
+/** Pre-processor macro to check if compiler is Visual C with high enough version */
 #define _COMPILER_MSC(ver) (defined(_MSC_VER) && (_MSC_VER >= (ver)))
+/** Pre-processor macro to check if compiler is Intel CC with high enough version */
 #define _COMPILER_ICC(ver) (defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= (ver)))
+
+/*
+ * clang compat
+ *
+ * They work only if the compiler is clang,
+ * return 0 otherwise.
+ */
+
+#ifndef __has_builtin
+#define __has_builtin(x) (0)
+#endif
+#ifndef __has_feature
+#define __has_feature(x) (0)
+#endif
+#ifndef __has_extension
+#define __has_extension(x) __has_feature(x)
+#endif
+#ifndef __has_attribute
+#define __has_attribute(x) (0)
+#endif
+
+/*
+ * clang macros that cannot be defined here:
+ * __is_identifier
+ * __has_include
+ * __has_include_next
+ * __has_warning
+ */
+
+/**
+ * @}
+ *
+ * @name Function/struct attributes.
+ *
+ * @{
+ */
 
 /** Disable padding for structure */
 #ifndef _MSC_VER
@@ -139,51 +193,70 @@ typedef enum { true=1, false=0 } bool;
 #endif
 
 /*
- * Make sure __func__ works.
- */
-#ifndef HAVE_FUNCNAME__FUNC
-#define __func__ __FUNCTION__
-#endif
-
-/*
  * make compiler do something useful
  */
 
-#ifndef _MUSTCHECK
-#if defined(__GNUC__) && (__GNUC__ >= 4)
-
 /** Show warning if function result is not used */
-#define _MUSTCHECK              __attribute__((warn_unused_result))
-/** Show warning if used */
-#define _DEPRECATED             __attribute__((deprecated))
-/** Check printf-style format and arg sanity */
-#define _PRINTF(fmtpos, argpos) __attribute__((format(printf, fmtpos, argpos)))
-/** Function returns new pointer */
-#define _MALLOC                 __attribute__((malloc))
-/** Disable 'unused' warning for function/argument. */
-#define _UNUSED                 __attribute__((unused))
-/** Do not inline function. */
-#define _NOINLINE               __attribute__((noinline))
-/** Indicates that function never returns */
-#define _NORETURN               __attribute__((noreturn))
-
-/* compiler hints - those do not seem to work well */
-#define unlikely(x) __builtin_expect(!!(x), 0)
-#define likely(x) __builtin_expect(!!(x), 1)
-
-#else /* non gcc */
-
+#if _COMPILER_GNUC(4,0) || __has_attribute(warn_unused_result)
+#define _MUSTCHECK __attribute__((warn_unused_result))
+#else
 #define _MUSTCHECK
-#define _DEPRECATED
-#define _PRINTF(x,y)
-#define _MALLOC
-#define _UNUSED
-#define _NOINLINE
-#define _NORETURN
-#define unlikely(x) x
-#define likely(x) x
-
 #endif
+
+/** Show warning if used */
+#if _COMPILER_GNUC(4,0) || __has_attribute(deprecated)
+#define _DEPRECATED __attribute__((deprecated))
+#else
+#define _DEPRECATED
+#endif
+
+/** Check printf-style format and arg sanity */
+#if _COMPILER_GNUC(4,0) || __has_attribute(printf)
+#define _PRINTF(fmtpos, argpos) __attribute__((format(printf, fmtpos, argpos)))
+#else
+#define _PRINTF(fmtpos, argpos)
+#endif
+
+/** Function returns new pointer */
+#if _COMPILER_GNUC(4,0) || __has_attribute(malloc)
+#define _MALLOC __attribute__((malloc))
+#else
+#define _MALLOC
+#endif
+
+/** Disable 'unused' warning for function/argument. */
+#if _COMPILER_GNUC(4,0) || __has_attribute(unused)
+#define _UNUSED __attribute__((unused))
+#else
+#define _UNUSED
+#endif
+
+/** Do not inline function. */
+#if _COMPILER_GNUC(4,0) || __has_attribute(noinline)
+#define _NOINLINE __attribute__((noinline))
+#else
+#define _NOINLINE
+#endif
+
+/** Indicates that function never returns */
+#if _COMPILER_GNUC(4,0) || __has_attribute(noreturn)
+#define _NORETURN __attribute__((noreturn))
+#else
+#define _NORETURN
+#endif
+
+/** Hint for compiler that expression (x) is likely to be true */
+#if _COMPILER_GNUC(4,0) || __has_builtin(__builtin_expect)
+#define likely(x) __builtin_expect(!!(x), 1)
+#else
+#define likely(x) (x)
+#endif
+
+/** Hint for compiler that expression (x) is likely to be false */
+#if _COMPILER_GNUC(4,0) || __has_builtin(__builtin_expect)
+#define unlikely(x) __builtin_expect(!!(x), 0)
+#else
+#define unlikely(x) (x)
 #endif
 
 /* @} */
@@ -198,7 +271,7 @@ typedef enum { true=1, false=0 } bool;
  * It can be used in either global or function scope.
  */
 #ifndef static_assert
-#if _COMPILER_GNUC(4,6) || _COMPILER_CLANG(3,0) || _COMPILER_MSC(1600)
+#if _COMPILER_GNUC(4,6) || _COMPILER_MSC(1600) || __has_feature(c_static_assert)
 /* Version for new compilers */
 #define static_assert(expr, msg) _Static_assert(expr, msg)
 #else
