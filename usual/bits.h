@@ -31,7 +31,7 @@
 #include <string.h>
 
 /** Checks if integer has only one bit set */
-static inline int is_power_of_2(int n)
+static inline bool is_power_of_2(unsigned int n)
 {
 	return (n > 0) && !(n & (n - 1));
 }
@@ -73,11 +73,18 @@ static inline uint64_t ror64(uint64_t v, int s) { return rol64(v, 64 - s); }
  *   find MSB bit set, 1-based ofs, 0 if arg == 0
  */
 
-#if defined(__GNUC__) && (__GNUC__ >= 4)
-#define _FLS(sfx, type) \
+#undef fls
+#undef flsl
+#undef flsll
+#define fls(x) usual_fls(x)
+#define flsl(x) usual_flsl(x)
+#define flsll(x) usual_flsll(x)
+
+#if _COMPILER_GNUC(4,0) || __has_builtin(__builtin_clzll)
+#define _USUAL_FLS_(sfx, type) \
 	return (x == 0) ? 0 : ((8*sizeof(type)) - __builtin_clz ## sfx(x))
 #else
-#define _FLS(sfx, type) \
+#define _USUAL_FLS_(sfx, type) \
 	unsigned type u = x; \
 	unsigned int bit; \
 	if (x == 0) return 0; \
@@ -86,22 +93,25 @@ static inline uint64_t ror64(uint64_t v, int s) { return rol64(v, 64 - s); }
 	return bit
 #endif
 
-#ifndef HAVE_FLS
-#define fls(x) usual_fls(x)
-/** Compat: Find last (MSB) set bit, 1-based ofs, 0 if arg == 0 */
-static inline int fls(int x) { _FLS(, int); }
-#endif
-#ifndef HAVE_FLSL
-#define flsl(x) usual_flsl(x)
-/** Compat: Find last (MSB) set bit, 1-based ofs, 0 if arg == 0 */
-static inline int flsl(long x) { _FLS(l, long); }
-#endif
-#ifndef HAVE_FLSLL
-#define flsll(x) usual_flsll(x)
-/** Compat: Find last (MSB) set bit, 1-based ofs, 0 if arg == 0 */
-static inline int flsll(long long x) { _FLS(ll, long long); }
-#endif
-#undef _FLS
+/** Find last (highest) set bit, 1-based offset, 0 if arg == 0 */
+static inline int fls(int x)
+{
+	_USUAL_FLS_(, int);
+}
+
+/** Find last (highest) set bit, 1-based offset, 0 if arg == 0 */
+static inline int flsl(long x)
+{
+	_USUAL_FLS_(l, long);
+}
+
+/** Find last (highest) set bit, 1-based offset, 0 if arg == 0 */
+static inline int flsll(long long x)
+{
+	_USUAL_FLS_(ll, long long);
+}
+
+#undef _USUAL_FLS_
 
 /*
  * ffs(int)
@@ -111,37 +121,45 @@ static inline int flsll(long long x) { _FLS(ll, long long); }
  *   find LSB bit set, 1-based ofs, 0 if arg == 0
  */
 
-#if defined(__GNUC__) && (__GNUC__ >= 4)
-#define _FFS(sfx, type) \
+#undef ffs
+#undef ffsl
+#undef ffsll
+#define ffs(x) usual_ffs(x)
+#define ffsl(x) usual_ffsl(x)
+#define ffsll(x) usual_ffsll(x)
+
+#if _COMPILER_GNUC(4,0) || __has_builtin(__builtin_ffsll)
+#define _USUAL_FFS_(sfx, type) \
 	return __builtin_ffs ## sfx((unsigned type)(x))
 #else
-#define _FFS(sfx, type) \
+#define _USUAL_FFS_(sfx, type) \
 	unsigned int bit; \
 	unsigned type u = x; \
 	if (!x) return 0; \
 	/* count from smallest bit, assuming small values */ \
-	for (bit = 1; !(u & 1); bit++) { \
-		u >>= 1; \
-	} \
+	for (bit = 1; !(u & 1); bit++) u >>= 1; \
 	return bit
 #endif
 
-#ifndef HAVE_FFS
-#define ffs(x) usual_ffs(x)
-/** Compat: Find first (LSB) set bit, 1-based ofs, 0 if arg == 0 */
-static inline int ffs(int x) { _FFS(, int); }
-#endif
-#ifndef HAVE_FFSL
-#define ffsl(x) usual_ffsl(x)
-/** Compat: Find first (LSB) set bit, 1-based ofs, 0 if arg == 0 */
-static inline int ffsl(long x) { _FFS(l, long); }
-#endif
-#ifndef HAVE_FFSLL
-#define ffsll(x) usual_ffsll(x)
-/** Compat: Find first (LSB) set bit, 1-based ofs, 0 if arg == 0 */
-static inline int ffsll(long long x) { _FFS(ll, long long); }
-#endif
-#undef _FFS
+/** Find first (lowest) set bit, 1-based ofs, 0 if arg == 0 */
+static inline int ffs(int x)
+{
+	_USUAL_FFS_(, int);
+}
+
+/** Find first (lowest) set bit, 1-based ofs, 0 if arg == 0 */
+static inline int ffsl(long x)
+{
+	_USUAL_FFS_(l, long);
+}
+
+/** Find first (lowest) set bit, 1-based ofs, 0 if arg == 0 */
+static inline int ffsll(long long x)
+{
+	_USUAL_FFS_(ll, long long);
+}
+
+#undef _USUAL_FFS_
 
 /*
  * Multiply and check overflow.
