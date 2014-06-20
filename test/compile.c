@@ -26,7 +26,7 @@
 #include <usual/time.h>
 #include <usual/utf8.h>
 
-static inline bool heap_is_better(const void *a, const void *b)
+static bool heap_is_better(const void *a, const void *b)
 {
 	return 1;
 }
@@ -36,10 +36,12 @@ int main(void)
 	struct AATree aatree;
 	struct CBTree *cbtree;
 	struct md5_ctx md5;
+	struct Heap *heap;
 	char buf[128];
 
 	static_assert(sizeof(int) >= 4, "unsupported int size");
 
+	heap = heap_create(heap_is_better, NULL, NULL);
 	aatree_init(&aatree, NULL, NULL);
 	cbtree = cbtree_create(NULL, NULL, NULL, NULL);
 	cbtree_destroy(cbtree);
