@@ -13,6 +13,7 @@ static void reset(void)
 	logbuf[0] = 0;
 }
 
+_PRINTF(1,2)
 static void m_log(const char *fmt, ...)
 {
 	size_t len = strlen(logbuf);
