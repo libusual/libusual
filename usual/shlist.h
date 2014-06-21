@@ -28,30 +28,51 @@
 
 #include <usual/base.h>
 
-/** List node/head.  Uses offsets from head instead of direct pointers. */
+/* clang: pointers are hard */
+#if defined(__clang__)
+#define __shlist_clang_workaround__ volatile
+#else
+#define __shlist_clang_workaround__
+#endif
+
+/** List node/head.  Uses offsets from current node instead of direct pointers. */
 struct SHList {
-	/** Offset to next elem */
-	uintptr_t next;
-	/** Offset from next elem */
-	uintptr_t prev;
+	ptrdiff_t next;
+	ptrdiff_t prev;
 };
 
 /*
  * Calculate offset relative to base.
  *
  * Instead of using some third pointer (eg. shmem start) as base,
- * we use list itself as base.  This results in simpler APi
- * and also means that empty list appears as zero-filled.
+ * we use node itself as base.  This results in simpler APi
+ * and also means that empty node appears as zero-filled.
  */
 
-static inline uintptr_t _ptr2sh(const void *base, const void *ptr)
+/** Get next element in list */
+static inline struct SHList *shlist_get_next(const struct SHList *node)
 {
-	return (uintptr_t)((char *)ptr - (char *)base);
+	char *p = (char *)node + node->next;
+	return (struct SHList *)p;
 }
 
-static inline void *_sh2ptr(const void *base, uintptr_t sh)
+/** Get prev element in list */
+static inline struct SHList *shlist_get_prev(const struct SHList *node)
 {
-	return (void *)((char *)base + sh);
+	char *p = (char *)node + node->prev;
+	return (struct SHList *)p;
+}
+
+static inline void _shlist_set_next(__shlist_clang_workaround__
+				    struct SHList *node, const struct SHList *next)
+{
+	node->next = (char *)next - (char *)node;
+}
+
+static inline void _shlist_set_prev(__shlist_clang_workaround__
+				    struct SHList *node, const struct SHList *prev)
+{
+	node->prev = (char *)prev - (char *)node;
 }
 
 /*
@@ -61,38 +82,40 @@ static inline void *_sh2ptr(const void *base, uintptr_t sh)
 /** Initialize list head */
 static inline void shlist_init(struct SHList *list)
 {
-	list->next = _ptr2sh(list, list);
-	list->prev = _ptr2sh(list, list);
+	list->next = 0;
+	list->prev = 0;
 }
 
 /** Insert as last element */
-static inline void shlist_append(struct SHList *list, struct SHList *item)
+static inline void shlist_append(struct SHList *list, struct SHList *node)
 {
-	struct SHList *last = _sh2ptr(list, list->prev);
-	item->next = _ptr2sh(list, list);
-	item->prev = _ptr2sh(list, last);
-	list->prev = _ptr2sh(list, item);
-	last->next = _ptr2sh(list, item);
+	struct SHList *last;
+	last = shlist_get_prev(list);
+	_shlist_set_next(node, list);
+	_shlist_set_prev(node, last);
+	_shlist_set_next(last, node);
+	_shlist_set_prev(list, node);
 }
 
 /** Insert as first element */
-static inline void shlist_prepend(struct SHList *list, struct SHList *item)
+static inline void shlist_prepend(struct SHList *list, struct SHList *node)
 {
-	struct SHList *first = _sh2ptr(list, list->next);
-	item->next = _ptr2sh(list, first);
-	item->prev = _ptr2sh(list, list);
-	list->next = _ptr2sh(list, item);
-	first->prev = _ptr2sh(list, item);
+	struct SHList *first;
+	first = shlist_get_next(list);
+	_shlist_set_next(node, first);
+	_shlist_set_prev(node, list);
+	_shlist_set_next(list, node);
+	_shlist_set_prev(first, node);
 }
 
-/** Remove an item */
-static inline void shlist_remove(struct SHList *list, struct SHList *item)
+/** Remove an node */
+static inline void shlist_remove(struct SHList *node)
 {
-	struct SHList *next = _sh2ptr(list, item->next);
-	struct SHList *prev = _sh2ptr(list, item->prev);
-	prev->next = item->next;
-	next->prev = item->prev;
-	item->next = item->prev = 0; /*  _ptr2sh(list, item) does not make sense here; */
+	struct SHList *next = shlist_get_next(node);
+	struct SHList *prev = shlist_get_prev(node);
+	_shlist_set_prev(next, prev);
+	_shlist_set_next(prev, next);
+	shlist_init(node);
 }
 
 /** No elements? */
@@ -101,22 +124,12 @@ static inline bool shlist_empty(const struct SHList *list)
 	return list->next == 0;
 }
 
-static inline struct SHList *shlist_next(const struct SHList *list, const struct SHList *elem)
-{
-	return _sh2ptr(list, elem->next);
-}
-
-static inline struct SHList *shlist_prev(const struct SHList *list, const struct SHList *elem)
-{
-	return _sh2ptr(list, elem->prev);
-}
-
 /** Return first elem */
 static inline struct SHList *shlist_first(const struct SHList *list)
 {
 	if (shlist_empty(list))
 		return NULL;
-	return _sh2ptr(list, list->next);
+	return shlist_get_next(list);
 }
 
 /** Return last elem */
@@ -124,16 +137,16 @@ static inline struct SHList *shlist_last(const struct SHList *list)
 {
 	if (shlist_empty(list))
 		return NULL;
-	return _sh2ptr(list, list->prev);
+	return shlist_get_prev(list);
 }
 
 /** Remove first elem */
 static inline struct SHList *shlist_pop(struct SHList *list)
 {
-	struct SHList *item = shlist_first(list);
-	if (item)
-		shlist_remove(list, item);
-	return item;
+	struct SHList *node = shlist_first(list);
+	if (node)
+		shlist_remove(node);
+	return node;
 }
 
 /** Remove and return specific type of elem */
@@ -141,17 +154,16 @@ static inline struct SHList *shlist_pop(struct SHList *list)
 	shlist_empty(list) ? NULL : container_of(shlist_pop(list), type, field))
 
 /** Loop over list */
-#define shlist_for_each(item, list) \
-	for ((item) = _sh2ptr((list), (list)->next); \
-	     (item) != (list); \
-	     (item) = _sh2ptr((list), (item)->next))
+#define shlist_for_each(node, list) \
+	for ((node) = shlist_get_next(list); \
+	     (node) != (list); \
+	     (node) = shlist_get_next(node))
 
-/** Loop over list and allow removing item */
-#define shlist_for_each_safe(item, list, tmp) \
-	for ((item) = _sh2ptr((list), (list)->next), \
-	      (tmp) = _sh2ptr((list), (item)->next); \
-	     (item) != (list); \
-	     (item) = (tmp), (tmp) = _sh2ptr((list), (tmp)->next))
+/** Loop over list and allow removing node */
+#define shlist_for_each_safe(node, list, tmp) \
+	for ((node) = shlist_get_next(list), (tmp) = shlist_get_next(node); \
+	     (node) != (list); \
+	     (node) = (tmp), (tmp) = shlist_get_next(node))
 
 
 #endif

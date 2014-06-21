@@ -26,27 +26,27 @@ static struct MyNode *new_node(int v)
 	return n;
 }
 
-static const char *check_list(const struct SHList *list)
+static const char *check_list(struct SHList *list)
 {
-	const struct SHList *old, *cur;
+	struct SHList *old, *cur;
 
 	old = NULL;
-	for (cur = shlist_next(list, list); cur != list; cur = shlist_next(list, cur)) {
+	for (cur = shlist_get_next(list); cur != list; cur = shlist_get_next(cur)) {
 		if (old) {
-			if (shlist_prev(list, cur) != old)
+			if (shlist_get_prev(cur) != old)
 				return "FAIL 1";
 		} else {
-			if (shlist_prev(list, cur) != list)
+			if (shlist_get_prev(cur) != list)
 				return "FAIL 2";
 		}
 		old = cur;
 	}
-	if (shlist_prev(list, list) != ((old) ? old : list))
+	if (shlist_get_prev(list) != ((old) ? old : list))
 		return "FAIL 3";
 	return "OK";
 }
 
-static const char *xshow(const struct SHList *list)
+static const char *xshow(struct SHList *list)
 {
 	static char res[1024];
 	struct SHList *el;
@@ -58,8 +58,8 @@ static const char *xshow(const struct SHList *list)
 	res[0] = 0;
 	shlist_for_each(el, list) {
 		if (res[0])
-			strcat(res, ",");
-		strcat(res, xval(el));
+			strlcat(res, ",", sizeof(res));
+		strlcat(res, xval(el), sizeof(res));
 	}
 	return res;
 }
@@ -89,7 +89,7 @@ static const char *xdel(struct SHList *list, int v)
 	shlist_for_each_safe(el, list, tmp) {
 		n = container_of(el, struct MyNode, node);
 		if (strcmp(buf, n->val) == 0) {
-			shlist_remove(list, el);
+			shlist_remove(el);
 			free(n);
 		}
 	}
@@ -101,6 +101,7 @@ static const char *xdel(struct SHList *list, int v)
 static void test_shlist(void *p)
 {
 	struct SHList rlist, *list = &rlist;
+
 	shlist_init(list);
 	str_check(check_list(list), "OK");
 	str_check(xadd(list, 2), "2");
@@ -111,18 +112,18 @@ static void test_shlist(void *p)
 
 	{
 		struct MyNode *n;
+		struct SHList *el;
 		str_check(xadd1(list, 0), "0,1,2,3,4");
-		n = shlist_pop_type(list, struct MyNode, node);
+		el = shlist_pop(list);
+		n = container_of(el, struct MyNode, node);
 		str_check(n->val, "0");
 		free(n);
 	}
 
 	{
 		struct MyNode *n;
-		struct SHList *el;
 		str_check(xadd1(list, 0), "0,1,2,3,4");
-		el = shlist_pop(list);
-		n = container_of(el, struct MyNode, node);
+		n = shlist_pop_type(list, struct MyNode, node);
 		str_check(n->val, "0");
 		free(n);
 	}
@@ -141,7 +142,25 @@ static void test_shlist(void *p)
 end:;
 }
 
+static void test_shlist_remove(void *p)
+{
+	static struct SHList xlist, xnode;
+	struct SHList *list = &xlist;
+	struct SHList *node = &xnode;
+
+	shlist_init(list);
+	tt_assert(shlist_empty(list));
+	shlist_append(list, node);
+	tt_assert(!shlist_empty(list));
+	tt_assert(!shlist_empty(list));
+	shlist_remove(node);
+	tt_assert(shlist_empty(node));
+	tt_assert(shlist_empty(list));
+end:;
+}
+
 struct testcase_t shlist_tests[] = {
+	{ "remove", test_shlist_remove },
 	{ "basic", test_shlist },
 	END_OF_TESTCASES
 };
