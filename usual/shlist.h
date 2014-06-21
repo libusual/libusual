@@ -98,7 +98,7 @@ static inline void shlist_remove(struct SHList *list, struct SHList *item)
 /** No elements? */
 static inline bool shlist_empty(const struct SHList *list)
 {
-	return list->next == list->prev;
+	return list->next == 0;
 }
 
 static inline struct SHList *shlist_next(const struct SHList *list, const struct SHList *elem)
