@@ -21,6 +21,7 @@
 #include <usual/mbuf.h>
 #include <usual/statlist.h>
 #include <usual/ctype.h>
+#include <usual/bytemap.h>
 
 #include <errno.h>
 
@@ -221,6 +222,31 @@ void *memrchr(const void *s, int c, size_t n)
 }
 #endif
 
+#ifndef HAVE_MEMMEM
+void *memmem(const void *haystack, size_t hlen, const void *needle, size_t nlen)
+{
+	const uint8_t *s = haystack;
+	const uint8_t *q = needle;
+	const uint8_t *s2;
+	size_t i;
+
+	if (nlen == 0)
+		return (void *)haystack;
+	if (nlen > hlen)
+		return NULL;
+	s2 = memchr(haystack, *q, hlen);
+	if (!s2 || nlen == 1)
+		return (void *)s2;
+	for (i = s2 - s; i <= hlen - nlen; i++) {
+		if (s[i] == q[0] && s[i+1] == q[1]) {
+			if (memcmp(s + i + 2, q + 2, nlen - 2) == 0)
+				return (void *)(s + i);
+		}
+	}
+	return NULL;
+}
+#endif
+
 #ifndef HAVE_BASENAME
 const char *basename(const char *path)
 {
@@ -319,4 +345,61 @@ const char *usual_strerror_r(int e, char *dst, size_t dstlen)
 	return dst;
 }
 
+void *mempbrk(const void *data, size_t dlen, const void *find, size_t flen)
+{
+	const uint8_t *s = data;
+	const uint8_t *fb = find;
+	size_t i;
+	struct Bitmap256 bmap;
+
+	if (flen == 0)
+		return NULL;
+	if (flen == 1)
+		return memchr(data, fb[0], dlen);
+
+	bitmap256_init(&bmap);
+	for (i = 0; i < flen; i++)
+		bitmap256_set(&bmap, fb[i]);
+	for (i = 0; i < dlen; i++) {
+		if (bitmap256_is_set(&bmap, s[i]))
+			return (void *)(s + i);
+	}
+	return NULL;
+}
+
+size_t memspn(const void *data, size_t dlen, const void *accept, size_t alen)
+{
+	const uint8_t *s = data;
+	const uint8_t *fb = accept;
+	size_t i;
+	struct Bitmap256 bmap;
+
+	if (alen == 0)
+		return 0;
+	if (alen == 1) {
+		for (i = 0; i < dlen; i++)
+			if (s[i] != fb[0])
+				break;
+		return i;
+	}
+
+	bitmap256_init(&bmap);
+	for (i = 0; i < alen; i++)
+		bitmap256_set(&bmap, fb[i]);
+	for (i = 0; i < dlen; i++) {
+		if (!bitmap256_is_set(&bmap, s[i]))
+			break;
+	}
+	return i;
+}
+
+size_t memcspn(const void *data, size_t dlen, const void *reject, size_t rlen)
+{
+	const void *p;
+
+	p = mempbrk(data, dlen, reject, rlen);
+	if (p != NULL)
+		return (char *)p - (char *)data;
+	return dlen;
+}
 
