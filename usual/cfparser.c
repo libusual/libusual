@@ -18,8 +18,6 @@
 
 #include <usual/cfparser.h>
 
-#include <string.h>
-
 #ifdef HAVE_PWD_H
 #include <pwd.h>
 #endif
@@ -28,6 +26,7 @@
 #include <usual/fileutil.h>
 #include <usual/logging.h>
 #include <usual/time.h>
+#include <usual/string.h>
 
 #define MAX_INCLUDE 10
 
@@ -512,7 +511,7 @@ static double parse_time(const char *value)
 	char *endp = NULL;
 
 	errno = 0;
-	v = strtod(value, &endp);
+	v = strtod_dot(value, &endp);
 	if (errno)
 		return -1;
 	if (*endp || endp == value || v < 0) {

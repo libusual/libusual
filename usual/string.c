@@ -24,6 +24,10 @@
 #include <usual/bytemap.h>
 
 #include <errno.h>
+#include <locale.h>
+#ifdef HAVE_LANGINFO_H
+#include <langinfo.h>
+#endif
 
 /*
  * Dynamic list of strings.
@@ -401,5 +405,106 @@ size_t memcspn(const void *data, size_t dlen, const void *reject, size_t rlen)
 	if (p != NULL)
 		return (char *)p - (char *)data;
 	return dlen;
+}
+
+double strtod_dot(const char *s, char **tokend)
+{
+	const char *dp;
+	char buf[128];
+	char *dst, *tmp, *end, *dot = NULL;
+	unsigned int i, dplen;
+	double res;
+
+	/* check if locale is sane */
+#ifdef HAVE_NL_LANGINFO
+	dp = nl_langinfo(RADIXCHAR);
+#else
+	dp = localeconv()->decimal_point;
+#endif
+	if (memcmp(dp, ".", 2) == 0)
+		return strtod(s, tokend);
+
+	/* try to use proper api */
+#ifdef HAVE_STRTOD_L
+	{
+		static locale_t c_locale = NULL;
+		if (!c_locale)
+			c_locale = newlocale(LC_ALL_MASK, "C", NULL);
+		if (c_locale)
+			return strtod_l(s, tokend, c_locale);
+	}
+#endif
+
+	while (*s && isspace(*s))
+		s++;
+
+	dot = NULL;
+	dst = buf;
+	end = buf + sizeof(buf) - 5;
+	dplen = dp[1] ? strlen(dp) : 1;
+	for (i = 0; s[i]; i++) {
+		if (s[i] >= '0' && s[i] <= '9') {
+			*dst++ = s[i];
+		} else if (s[i] == '.') {
+			dot = dst;
+			memcpy(dst, dp, dplen);
+			dst += dplen;
+		} else if (s[i] == '-' || s[i] == '+' || s[i] == 'e' || s[i] == 'E') {
+			*dst++ = s[i];
+		} else {
+			break;
+		}
+
+		if (dst >= end) {
+			errno = ERANGE;
+			return 0;
+		}
+	}
+	*dst = '\0';
+
+	if (!dot)
+		return strtod(s, tokend);
+
+	tmp = NULL;
+	res = strtod(buf, &tmp);
+	if (tmp && tokend) {
+		*tokend = (char *)s + (tmp - buf);
+		if (dot && tmp > dot && dplen > 1)
+			*tokend -= (dplen - 1);
+	}
+	return res;
+}
+
+
+ssize_t dtostr_dot(char *buf, size_t buflen, double val)
+{
+	const char *dp;
+	ssize_t len, dplen;
+	char *p;
+
+	/* render with max precision */
+	len = snprintf(buf, buflen, "%.17g", val);
+	if (len >= (ssize_t)buflen || len < 0)
+		return len;
+
+	/* check if locale is sane */
+#ifdef HAVE_NL_LANGINFO
+	dp = nl_langinfo(RADIXCHAR);
+#else
+	dp = localeconv()->decimal_point;
+#endif
+	if (memcmp(dp, ".", 2) == 0)
+		return len;
+
+	dplen = dp[1] ? strlen(dp) : 1;
+	p = memchr(buf, dp[0], len);
+	if (p) {
+		*p = '.';
+		if (dp[1]) {
+			memmove(p + 1, p + dplen, strlen(p + dplen) + 1);
+			len -= dplen - 1;
+		}
+	}
+	return len;
 }
 

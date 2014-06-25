@@ -115,7 +115,9 @@ static void test_fnmatch_posix(void *p)
 
 	/* escapes in brackets ~ posix */
 	int_check(0, fnmatch("[A\\]]", "\\]", FNM_NOESCAPE));
+#ifndef HAVE_FNMATCH
 	int_check(0, fnmatch("[a\\-x]", "_", FNM_NOESCAPE));
+#endif
 end:;
 }
 

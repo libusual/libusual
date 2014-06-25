@@ -337,6 +337,21 @@ static void test_memspn(void *z)
 end:;
 }
 
+static void test_s2d_dot(void *p)
+{
+	char buf[128];
+	double val;
+	char *end;
+
+	memset(buf, 0, sizeof(buf));
+	dtostr_dot(buf, sizeof(buf), 1.5);
+	str_check(buf, "1.5");
+	val = strtod_dot(buf, &end);
+	tt_assert(val == 1.5);
+	tt_assert(*end == 0);
+end:;
+}
+
 /*
  * Describe
  */
@@ -354,6 +369,7 @@ struct testcase_t string_tests[] = {
 	{ "dirname", test_dirname },
 	{ "strlist", test_strlist },
 	{ "parse_wordlist", test_wlist },
+	{ "str2double_dot", test_s2d_dot },
 	END_OF_TESTCASES
 };
 

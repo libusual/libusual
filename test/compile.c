@@ -42,6 +42,7 @@ int main(void)
 	static_assert(sizeof(int) >= 4, "unsupported int size");
 
 	heap = heap_create(heap_is_better, NULL, NULL);
+	heap_top(heap);
 	aatree_init(&aatree, NULL, NULL);
 	cbtree = cbtree_create(NULL, NULL, NULL, NULL);
 	cbtree_destroy(cbtree);

@@ -2,6 +2,8 @@
 
 #include "test_common.h"
 
+#include <locale.h>
+
 struct testgroup_t groups[] = {
 	{ "base/", base_tests },
 	{ "aatree/", aatree_tests },
@@ -35,6 +37,8 @@ struct testgroup_t groups[] = {
 
 int main(int argc, const char *argv[])
 {
+	if (getenv("USE_LOCALE"))
+		setlocale(LC_ALL, "");
 	return tinytest_main(argc, argv, groups);
 }
 

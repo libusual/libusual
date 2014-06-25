@@ -117,5 +117,12 @@ const char *usual_strerror_r(int e, char *dst, size_t dstlen);
 /** Compat: Provide GNU-style API: const char *strerror_r(int e, char *dst, size_t dstlen)  */
 #define strerror_r(a,b,c) usual_strerror_r(a,b,c)
 
+/** strtod() that uses '.' as decimal separator */
+double strtod_dot(const char *s, char **tokend);
+
+/** Convert double to string with '.' as decimal separator */
+ssize_t dtostr_dot(char *buf, size_t buflen, double val);
+
+
 #endif
 
