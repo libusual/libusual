@@ -41,6 +41,17 @@
 #include <byteswap.h>
 #endif
 
+/*
+ * Is unaligned access to integers OK?  Does not apply to floats.
+ *
+ * OK: x86, amd64, arm >= v6, ppc
+ */
+#if defined(__amd64__) || defined(__i386__) || defined(__ppc__) || defined(__ppc64__) \
+	|| defined(__ARM_FEATURE_UNALIGNED) \
+	|| defined(_M_IX86) || defined(_M_X64) || defined(_M_PPC) \
+	|| (defined(_M_ARM) && _M_ARM >= 6)
+#define WORDS_UNALIGNED_ACCESS_OK
+#endif
 
 /*
  * Ignore OS defines, as they may define only some subset of functions.
