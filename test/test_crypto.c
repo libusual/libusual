@@ -1,8 +1,7 @@
 
 #include <usual/string.h>
 
-#include "tinytest.h"
-#include "tinytest_macros.h"
+#include "test_common.h"
 
 #define str_check(a, b) tt_str_op(a, ==, b)
 
@@ -19,6 +18,9 @@
 #include <usual/crypto/sha512.h>
 #include <usual/crypto/sha3.h>
 #include <usual/crypto/digest.h>
+#include <usual/crypto/keccak_prng.h>
+#include <usual/crypto/chacha.h>
+#include <usual/crypto/csrandom.h>
 #include <usual/cxalloc.h>
 
 static const char *mkhex(const uint8_t *src, int len)
@@ -510,6 +512,226 @@ end:;
 }
 
 /*
+ * keccak_prng
+ */
+
+static void test_keccak_prng(void *z)
+{
+	struct KeccakPRNG state;
+	const char *ent = "The quick brown fox jumps over the lazy dog.";
+	const char *ent2 = "More entropy.";
+	uint8_t buf[32];
+	int i;
+
+	tt_assert(keccak_prng_init(&state, 1) == false);
+	tt_assert(keccak_prng_init(&state, 1024) == true);
+	tt_assert(keccak_prng_extract(&state, buf, 32) == false);
+
+	keccak_prng_add_data(&state, ent, strlen(ent));
+
+	tt_assert(keccak_prng_extract(&state, buf, 32) == true);
+	str_check(mkhex(buf, 32), "ab7192d2b11f51c7dd744e7b3441febf397ca07bf812cceae122ca4ded638788");
+
+	if (1) {
+		tt_assert(keccak_prng_extract(&state, buf, 32) == true);
+	} else {
+		for (i = 0; i < 32; i++) {
+			tt_assert(keccak_prng_extract(&state, buf+i, 1) == true);
+		}
+	}
+	str_check(mkhex(buf, 32), "9064f8db9230f173f6d1ab6e24b6e50f065b039f799f5592360a6558eb52d760");
+
+	tt_assert(keccak_prng_extract(&state, buf, 32) == true);
+	str_check(mkhex(buf, 32), "7ca34f68abb61bbd1821c0a499599426031a56c495b3cf91b84cacafb9be816b");
+
+	tt_assert(keccak_prng_extract(&state, buf, 32) == true);
+	str_check(mkhex(buf, 32), "e7afb50b3a1c80f654ba212be0ad8a4be8f6a476bfcc66b9401fe65924bd547d");
+
+	keccak_prng_add_data(&state, ent2, strlen(ent2));
+
+	tt_assert(keccak_prng_extract(&state, buf, 32) == true);
+	str_check(mkhex(buf, 32), "ec9f73358469f4b7fea10dfb7dfaa768f573089b8e00507ec3a1fdfb2e60b35d");
+end:;
+}
+
+/*
+ * chacha.
+ */
+
+static const char *run_chacha(const char *key, const char *iv, uint32_t c1, uint32_t c2)
+{
+	int klen = strlen(key) / 2;
+	void *kb, *ivb;
+	struct ChaCha ctx;
+	uint8_t output[128];
+
+	if (klen != 32 && klen != 16)
+		return "KeyError";
+	if (strlen(iv) != 8*2)
+		return "IvError";
+
+	kb = fromhex(key, klen);
+	if (klen == 32) {
+		chacha_set_key_256(&ctx, kb);
+	} else {
+		chacha_set_key_128(&ctx, kb);
+	}
+	free(kb);
+
+	ivb = fromhex(iv, 8);
+	chacha_set_nonce(&ctx, c1, c2, ivb);
+	free(ivb);
+
+	if (1) {
+		static unsigned int blkver = 0;
+		static const int blklens[] = {128, 1, 7, 11, 66};
+		int blk = blklens[blkver++];
+		int n, need = sizeof(output);
+		uint8_t *dst = output;
+		if (blkver >= ARRAY_NELEM(blklens)) blkver = 0;
+		while (need > 0) {
+			n = (need > blk) ? blk : need;
+			chacha_keystream(&ctx, dst, n);
+			dst += n;
+			need -= n;
+		}
+	} else {
+		chacha_keystream(&ctx, output, sizeof(output));
+	}
+
+	return mkhex(output, sizeof(output));
+}
+
+/* https://tools.ietf.org/html/draft-strombergson-chacha-test-vectors-01 */
+static void test_chacha(void *z)
+{
+	/* TC1: All zero key and IV. */
+	str_check(run_chacha("00000000000000000000000000000000", "0000000000000000", 0, 0),
+		"89670952608364fd00b2f90936f031c8e756e15dba04b8493d00429259b20f46cc04f111246b6c2ce066be3bfb32d9aa0fddfbc12123d4b9e44f34dca05a103f"
+		"6cd135c2878c832b5896b134f6142a9d4d8d0d8f1026d20a0a81512cbce6e9758a7143d021978022a384141a80cea3062f41f67a752e66ad3411984c787e30ad");
+	str_check(run_chacha("0000000000000000000000000000000000000000000000000000000000000000", "0000000000000000", 0, 0),
+		"76b8e0ada0f13d90405d6ae55386bd28bdd219b8a08ded1aa836efcc8b770dc7da41597c5157488d7724e03fb8d84a376a43b8f41518a11cc387b669b2ee6586"
+		"9f07e7be5551387a98ba977c732d080dcb0f29a048e3656912c6533e32ee7aed29b721769ce64e43d57133b074d839d531ed1f28510afb45ace10a1f4b794d6f");
+
+	/* TC2: Single bit in key set. All zero IV. */
+	str_check(run_chacha("01000000000000000000000000000000", "0000000000000000", 0, 0),
+		"ae56060d04f5b597897ff2af1388dbceff5a2a4920335dc17a3cb1b1b10fbe70ece8f4864d8c7cdf0076453a8291c7dbeb3aa9c9d10e8ca36be4449376ed7c42"
+		"fc3d471c34a36fbbf616bc0a0e7c523030d944f43ec3e78dd6a12466547cb4f7b3cebd0a5005e762e562d1375b7ac44593a991b85d1a60fba2035dfaa2a642d5");
+	str_check(run_chacha("0100000000000000000000000000000000000000000000000000000000000000", "0000000000000000", 0, 0),
+		"c5d30a7ce1ec119378c84f487d775a8542f13ece238a9455e8229e888de85bbd29eb63d0a17a5b999b52da22be4023eb07620a54f6fa6ad8737b71eb0464dac0"
+		"10f656e6d1fd55053e50c4875c9930a33f6d0263bd14dfd6ab8c70521c19338b2308b95cf8d0bb7d202d2102780ea3528f1cb48560f76b20f382b942500fceac");
+
+	/* TC3: Single bit in IV set. All zero key. */
+	str_check(run_chacha("00000000000000000000000000000000", "0100000000000000", 0, 0),
+		"1663879eb3f2c9949e2388caa343d361bb132771245ae6d027ca9cb010dc1fa7178dc41f8278bc1f64b3f12769a24097f40d63a86366bdb36ac08abe60c07fe8"
+		"b057375c89144408cc744624f69f7f4ccbd93366c92fc4dfcada65f1b959d8c64dfc50de711fb46416c2553cc60f21bbfd006491cb17888b4fb3521c4fdd8745");
+	str_check(run_chacha("0000000000000000000000000000000000000000000000000000000000000000", "0100000000000000", 0, 0),
+		"ef3fdfd6c61578fbf5cf35bd3dd33b8009631634d21e42ac33960bd138e50d32111e4caf237ee53ca8ad6426194a88545ddc497a0b466e7d6bbdb0041b2f586b"
+		"5305e5e44aff19b235936144675efbe4409eb7e8e5f1430f5f5836aeb49bb5328b017c4b9dc11f8a03863fa803dc71d5726b2b6b31aa32708afe5af1d6b69058");
+
+	/* TC4: All bits in key and IV are set. */
+	str_check(run_chacha("ffffffffffffffffffffffffffffffff", "ffffffffffffffff", 0, 0),
+		"992947c3966126a0e660a3e95db048de091fb9e0185b1e41e41015bb7ee50150399e4760b262f9d53f26d8dd19e56f5c506ae0c3619fa67fb0c408106d0203ee"
+		"40ea3cfa61fa32a2fda8d1238a2135d9d4178775240f99007064a6a7f0c731b67c227c52ef796b6bed9f9059ba0614bcf6dd6e38917f3b150e576375be50ed67");
+	str_check(run_chacha("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "ffffffffffffffff", 0, 0),
+		"d9bf3f6bce6ed0b54254557767fb57443dd4778911b606055c39cc25e674b8363feabc57fde54f790c52c8ae43240b79d49042b777bfd6cb80e931270b7f50eb"
+		"5bac2acd86a836c5dc98c116c1217ec31d3a63a9451319f097f3b4d6dab0778719477d24d24b403a12241d7cca064f790f1d51ccaff6b1667d4bbca1958c4306");
+
+	/* TC5: Every even bit set in key and IV. */
+	str_check(run_chacha("55555555555555555555555555555555", "5555555555555555", 0, 0),
+		"357d7d94f966778f5815a2051dcb04133b26b0ead9f57dd09927837bc3067e4b6bf299ad81f7f50c8da83c7810bfc17bb6f4813ab6c326957045fd3fd5e19915"
+		"ec744a6b9bf8cbdcb36d8b6a5499c68a08ef7be6cc1e93f2f5bcd2cad4e47c18a3e5d94b5666382c6d130d822dd56aacb0f8195278e7b292495f09868ddf12cc");
+	str_check(run_chacha("5555555555555555555555555555555555555555555555555555555555555555", "5555555555555555", 0, 0),
+		"bea9411aa453c5434a5ae8c92862f564396855a9ea6e22d6d3b50ae1b3663311a4a3606c671d605ce16c3aece8e61ea145c59775017bee2fa6f88afc758069f7"
+		"e0b8f676e644216f4d2a3422d7fa36c6c4931aca950e9da42788e6d0b6d1cd838ef652e97b145b14871eae6c6804c7004db5ac2fce4c68c726d004b10fcaba86");
+
+	/* TC6: Every odd bit set in key and IV. */
+	str_check(run_chacha("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "aaaaaaaaaaaaaaaa", 0, 0),
+		"fc79acbd58526103862776aab20f3b7d8d3149b2fab65766299316b6e5b16684de5de548c1b7d083efd9e3052319e0c6254141da04a6586df800f64d46b01c87"
+		"1f05bc67e07628ebe6f6865a2177e0b66a558aa7cc1e8ff1a98d27f7071f8335efce4537bb0ef7b573b32f32765f29007da53bba62e7a44d006f41eb28fe15d6");
+	str_check(run_chacha("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "aaaaaaaaaaaaaaaa", 0, 0),
+		"9aa2a9f656efde5aa7591c5fed4b35aea2895dec7cb4543b9e9f21f5e7bcbcf3c43c748a970888f8248393a09d43e0b7e164bc4d0b0fb240a2d72115c4808906"
+		"72184489440545d021d97ef6b693dfe5b2c132d47e6f041c9063651f96b623e62a11999a23b6f7c461b2153026ad5e866a2e597ed07b8401dec63a0934c6b2a9");
+
+	/* TC7: Sequence patterns in key and IV. */
+	str_check(run_chacha("00112233445566778899aabbccddeeff", "0f1e2d3c4b5a6978", 0, 0),
+		"d1abf630467eb4f67f1cfb47cd626aae8afedbbe4ff8fc5fe9cfae307e74ed451f1404425ad2b54569d5f18148939971abb8fafc88ce4ac7fe1c3d1f7a1eb7ca"
+		"e76ca87b61a9713541497760dd9ae059350cad0dcedfaa80a883119a1a6f987fd1ce91fd8ee0828034b411200a9745a285554475d12afc04887fef3516d12a2c");
+	str_check(run_chacha("00112233445566778899aabbccddeeffffeeddccbbaa99887766554433221100", "0f1e2d3c4b5a6978", 0, 0),
+		"9fadf409c00811d00431d67efbd88fba59218d5d6708b1d685863fabbb0e961eea480fd6fb532bfd494b2151015057423ab60a63fe4f55f7a212e2167ccab931"
+		"fbfd29cf7bc1d279eddf25dd316bb8843d6edee0bd1ef121d12fa17cbc2c574cccab5e275167b08bd686f8a09df87ec3ffb35361b94ebfa13fec0e4889d18da5");
+
+	/* TC8: Random Key */
+	str_check(run_chacha("c46ec1b18ce8a878725a37e780dfb735", "1ada31d5cf688221", 0, 0),
+		"826abdd84460e2e9349f0ef4af5b179b426e4b2d109a9c5bb44000ae51bea90a496beeef62a76850ff3f0402c4ddc99f6db07f151c1c0dfac2e56565d6289625"
+		"5b23132e7b469c7bfb88fa95d44ca5ae3e45e848a4108e98bad7a9eb15512784a6a9e6e591dce674120acaf9040ff50ff3ac30ccfb5e14204f5e4268b90a8804");
+	str_check(run_chacha("c46ec1b18ce8a878725a37e780dfb7351f68ed2e194c79fbc6aebee1a667975d", "1ada31d5cf688221", 0, 0),
+		"f63a89b75c2271f9368816542ba52f06ed49241792302b00b5e8f80ae9a473afc25b218f519af0fdd406362e8d69de7f54c604a6e00f353f110f771bdca8ab92"
+		"e5fbc34e60a1d9a9db17345b0a402736853bf910b060bdf1f897b6290f01d138ae2c4c90225ba9ea14d518f55929dea098ca7a6ccfe61227053c84e49a4a3332");
+
+	/* Counter overflow */
+	str_check(run_chacha("c46ec1b18ce8a878725a37e780dfb735", "1ada31d5cf688221", 0xFFFFFFFF, 0),
+		"9220e40c9fa71e1e210b216b5f1c829e73d31c6891447084d5c5bc29db812ec2f4c64a594214a3437cb04548f9a1c4839f03405f1e2b5db69d9df11474a4610c"
+		"60f15b0e01460b61d8ac73cac1de084c741c157fb75d52719ed98a62bcada8187041035178a1845b164f0d82b4fc20a6ad1668d3177fac688cb08d3df75281fe");
+	str_check(run_chacha("c46ec1b18ce8a878725a37e780dfb7351f68ed2e194c79fbc6aebee1a667975d", "1ada31d5cf688221", 0xFFFFFFFF, 0xFFFFFFFF),
+		"489b569d1a0649a3185f04dfda7cbb688503f3485ea0754e7a9c17452e0f6a123a1e24d4313d79c9bf7c4fd714211dca39c1717f29b7d137158b7f620bdcb759"
+		"f63a89b75c2271f9368816542ba52f06ed49241792302b00b5e8f80ae9a473afc25b218f519af0fdd406362e8d69de7f54c604a6e00f353f110f771bdca8ab92");
+end:;
+}
+
+/*
+ * csrandom.
+ */
+
+static uint32_t calc_lim(uint32_t val)
+{
+	uint32_t mod, lim;
+
+	/* mod = 2**32 % x = (2**32 - x) % x */
+	mod = -val % val;
+
+	/* wait for value in range [0 .. 2**32 - mod ) */
+	lim = -mod;
+
+	return lim;
+}
+
+static void test_csrandom(void *z)
+{
+	uint32_t half, v, lim, i, v2;
+
+	half = 1 << 31;
+	for (v = 2; v < 1024; v++) {
+		lim = calc_lim(v);
+		int_check(lim % v, 0);
+		tt_assert(lim >= v || lim == 0);
+	}
+
+	for (v = half - 1024; v < half + 1024; v++) {
+		lim = calc_lim(v);
+		int_check(lim % v, 0);
+		tt_assert(lim >= v || lim == 0);
+	}
+
+	for (v = 0xFFFFFF00U; v != 0; v++) {
+		lim = calc_lim(v);
+		int_check(lim % v, 0);
+		tt_assert(lim >= v);
+	}
+
+	lim = 0;
+	v = csrandom();
+	for (i = 0; i < 100; i++) {
+		v2 = csrandom();
+		if (v == v2)
+			lim++;
+		v = v2;
+	}
+	tt_assert(lim < 10);
+end:;
+}
+
+/*
  * Launcher.
  */
 
@@ -527,6 +749,9 @@ struct testcase_t crypto_tests[] = {
 	{ "shake128", test_shake128 },
 	{ "shake256", test_shake256 },
 	{ "hmac", test_hmac },
+	{ "keccak_prng", test_keccak_prng },
+	{ "chacha", test_chacha },
+	{ "csrandom", test_csrandom },
 	END_OF_TESTCASES
 };
 

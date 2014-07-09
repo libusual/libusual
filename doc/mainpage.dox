@@ -70,6 +70,7 @@
  * <tr><td>  <usual/hashing/spooky.h>       </td><td>  Jenkins' SpookyHash for 64-bit CPUs  </td></tr>
  * <tr><td>  <usual/hashing/xxhash.h>       </td><td>  XXHash for 32-bit CPUs  </td></tr>
  * <tr><th colspan=2>  Cryptography  </th></tr>
+ * <tr><td>  <usual/crypto/csrandom.h> </td><td>  Cryptographically Secure Randomness </td></tr>
  * <tr><td>  <usual/crypto/digest.h> </td><td>  Common API for cryptographic message digests </td></tr>
  * <tr><td>  <usual/crypto/hmac.h>   </td><td>  HMAC with digest </td></tr>
  * <tr><td>  <usual/crypto/md5.h>    </td><td>  MD5 hash  </td></tr>
@@ -78,6 +79,7 @@
  * <tr><td>  <usual/crypto/sha512.h> </td><td>  SHA512/384 hashes  </td></tr>
  * <tr><td>  <usual/crypto/sha3.h>   </td><td>  SHA3/SHAKE hashes  </td></tr>
  * <tr><td>  <usual/crypto/keccak.h> </td><td>  Keccak sponge API  </td></tr>
+ * <tr><td>  <usual/crypto/keccak_prng.h> </td><td>  PRNG based on Keccak  </td></tr>
  * <tr><th colspan=2>  Memory Allocation  </th></tr>
  * <tr><td>  <usual/cxalloc.h>       </td><td>  Context Allocator framework   </td></tr>
  * <tr><td>  <usual/cxextra.h>       </td><td>  Extra allocators   </td></tr>

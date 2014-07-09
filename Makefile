@@ -18,9 +18,13 @@ libusual_a_SOURCES = usual/config.h.in \
 	usual/cbtree.h usual/cbtree.c \
 	usual/cfparser.h usual/cfparser.c \
 	usual/config_msvc.h \
+	usual/crypto/chacha.h usual/crypto/chacha.c \
+	usual/crypto/csrandom.h usual/crypto/csrandom.c \
 	usual/crypto/digest.h usual/crypto/digest.c \
+	usual/crypto/entropy.h usual/crypto/entropy.c \
 	usual/crypto/hmac.h usual/crypto/hmac.c \
 	usual/crypto/keccak.h usual/crypto/keccak.c \
+	usual/crypto/keccak_prng.h usual/crypto/keccak_prng.c \
 	usual/crypto/md5.h usual/crypto/md5.c \
 	usual/crypto/sha1.h usual/crypto/sha1.c \
 	usual/crypto/sha256.h usual/crypto/sha256.c \

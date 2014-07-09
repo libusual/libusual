@@ -12,3 +12,5 @@
 /^#define.*CTYPE_ON_CHAR/s,.*,/* & */,
 /^#define.*FNMATCH/s,.*,/* & */,
 /^#define.*MBSNRTOWCS/s,.*,/* & */,
+/^#define.*GETENTROPY/s,.*,/* & */,
+/^#define.*ARC4RANDOM/s,.*,/* & */,
