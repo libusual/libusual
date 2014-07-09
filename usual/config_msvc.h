@@ -56,14 +56,10 @@
 
 /* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
    significant byte first (like Motorola and SPARC, unlike Intel). */
-#if defined AC_APPLE_UNIVERSAL_BUILD
-# if defined __BIG_ENDIAN__
-#  define WORDS_BIGENDIAN 1
-# endif
-#else
-# ifndef WORDS_BIGENDIAN
+#if defined(_M_IX86) || defined(_M_X64)
 /* #  undef WORDS_BIGENDIAN */
-# endif
+#else
+#error "Unsupported MSVC target CPU"
 #endif
 
 /* Define to `int' if <sys/types.h> doesn't define. */
