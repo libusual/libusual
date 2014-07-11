@@ -251,6 +251,26 @@ void *memmem(const void *haystack, size_t hlen, const void *needle, size_t nlen)
 }
 #endif
 
+#ifndef HAVE_EXPLICIT_BZERO
+
+/* avoid link-time optimization */
+#if defined(__GNUC__x) || __has_attribute(weak)
+void __explicit_bzero_hack(void *, size_t);
+__attribute__((weak)) void __explicit_bzero_hack(void *buf, size_t len) { }
+#else
+typedef void (*__explicit_bzero_cb_t)(void *, size_t);
+static void __explicit_bzero_hack_cb(void *buf, size_t len) { }
+static volatile __explicit_bzero_cb_t __explicit_bzero_hack = __explicit_bzero_hack_cb;
+#endif
+
+void explicit_bzero(void *buf, size_t len)
+{
+	memset(buf, 0, len);
+	__explicit_bzero_hack(buf, len);
+}
+
+#endif
+
 #ifndef HAVE_BASENAME
 const char *basename(const char *path)
 {

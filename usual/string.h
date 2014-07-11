@@ -103,6 +103,13 @@ const char *basename(const char *path);
 const char *dirname(const char *path);
 #endif
 
+#ifndef HAVE_EXPLICIT_BZERO
+#undef explicit_bzero
+#define explicit_bzero(a,b) usual_explicit_bzero(a,b)
+/** Definitely clear memory */
+void explicit_bzero(void *buf, size_t len);
+#endif
+
 /*
  * strerror, strerror_r
  */
