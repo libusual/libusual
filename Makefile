@@ -38,7 +38,10 @@ libusual_a_SOURCES = usual/config.h.in \
 	usual/getopt.h usual/getopt.c \
 	usual/hashing/crc32.h usual/hashing/crc32.c \
 	usual/hashing/lookup3.h usual/hashing/lookup3.c \
+	usual/hashing/memhash.h usual/hashing/memhash.c \
 	usual/hashing/siphash.h usual/hashing/siphash.c \
+	usual/hashing/spooky.h usual/hashing/spooky.c \
+	usual/hashing/xxhash.h usual/hashing/xxhash.c \
 	usual/hashtab-impl.h \
 	usual/heap.h usual/heap.c \
 	usual/list.h usual/list.c \
