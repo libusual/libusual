@@ -90,5 +90,19 @@ int pthread_mutex_unlock(pthread_mutex_t *lock)
 	return 0;
 }
 
+typedef void (*once_posix_cb_t)(void);
+
+static BOOL once_wrapper(PINIT_ONCE once, void *arg, void **ctx)
+{
+	once_posix_cb_t cb = arg;
+	arg();
+	return TRUE;
+}
+
+int pthread_once(pthread_once_t *once, void (*once_func)(void))
+{
+	return InitOnceExecuteOnce(once, once_wrapper, once_func, NULL) ? 0 : -1;
+}
+
 #endif /* win32 */
 #endif /* !HAVE_PTHREAD_H */

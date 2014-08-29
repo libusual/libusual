@@ -36,6 +36,7 @@
 #define pthread_mutex_lock(a)		compat_pthread_mutex_lock(a)
 #define pthread_mutex_unlock(a)		compat_pthread_mutex_unlock(a)
 #define pthread_join(a,b)		compat_pthread_join(a,b)
+#define pthread_once(a,b)		compat_pthread_once(a,b)
 
 typedef HANDLE pthread_t;
 typedef HANDLE pthread_mutex_t;
@@ -47,6 +48,10 @@ int pthread_mutex_destroy(pthread_mutex_t *lock);
 int pthread_mutex_lock(pthread_mutex_t *lock);
 int pthread_mutex_unlock(pthread_mutex_t *lock);
 int pthread_join(pthread_t *t, void **ret);
+
+#define PTHREAD_ONCE_INIT INIT_ONCE_STATIC_INIT
+typedef INIT_ONCE pthread_once_t;
+int pthread_once(pthread_once_t *once, void (*once_func)(void));
 
 #endif /* WIN32 */
 
