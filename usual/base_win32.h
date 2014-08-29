@@ -19,6 +19,7 @@
 #ifndef _USUAL_BASE_WIN32_H_
 #define _USUAL_BASE_WIN32_H_
 
+#include <winsock2.h>
 #include <windows.h>
 
 #include <io.h>

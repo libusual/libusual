@@ -253,6 +253,15 @@ void *memmem(const void *haystack, size_t hlen, const void *needle, size_t nlen)
 
 #ifndef HAVE_EXPLICIT_BZERO
 
+#if defined(_WIN32) && defined(SecureZeroMemory)
+
+void explicit_bzero(void *buf, size_t len)
+{
+	SecureZeroMemory(buf, len);
+}
+
+#else /* non-win32 */
+
 /* avoid link-time optimization */
 #if defined(__GNUC__x) || __has_attribute(weak)
 void __explicit_bzero_hack(void *, size_t);
@@ -270,6 +279,7 @@ void explicit_bzero(void *buf, size_t len)
 }
 
 #endif
+#endif /* !_WIN32 */
 
 #ifndef HAVE_BASENAME
 const char *basename(const char *path)
