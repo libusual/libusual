@@ -25,43 +25,57 @@
 #include <usual/endian.h>
 #include <usual/bits.h>
 
-/* ChaCha rounds: 8, 12, 20 */
-#define CHACHA_ROUNDS	20
+#define CHACHA_ROUNDS 20
 
-/* mix 4 values */
-#define QUARTERROUND(a, b, c, d) \
+#define QUARTERROUND(in, out, a, b, c, d) \
 	do { \
-		a += b;  d ^= a;  d = rol32(d, 16); \
-		c += d;  b ^= c;  b = rol32(b, 12); \
-		a += b;  d ^= a;  d = rol32(d, 8); \
-		c += d;  b ^= c;  b = rol32(b, 7); \
+		out[a] = in[a] + in[b];    out[d] = rol32(in[d] ^ out[a], 16); \
+		out[c] = in[c] + out[d];   out[b] = rol32(in[b] ^ out[c], 12); \
+		out[a] = out[a] + out[b];  out[d] = rol32(out[d] ^ out[a], 8); \
+		out[c] = out[c] + out[d];  out[b] = rol32(out[b] ^ out[c], 7); \
 	} while (0)
 
-/* mix full state.  must not be inlined */
+#define OUTPUT(a,b,c,d) \
+	do { \
+		output[a] = htole32(x[a] + input[a]); \
+		output[b] = htole32(x[b] + input[b]); \
+		output[c] = htole32(x[c] + input[c]); \
+		output[d] = htole32(x[d] + input[d]); \
+	} while (0)
+
+/* mix full state.  needs 2 call sites to avoid inlining  */
 static void chacha_mix(struct ChaCha *ctx)
 {
+	const uint32_t *input = ctx->state;
 	uint32_t *output = ctx->u.output32;
 	int i;
 	uint32_t x[16];
 
-	memcpy(x, ctx->state, CHACHA_BLOCK_SIZE);
+	/* first "column" round */
+	QUARTERROUND(input, x, 0, 4, 8, 12);
+	QUARTERROUND(input, x, 1, 5, 9, 13);
+	QUARTERROUND(input, x, 2, 6, 10, 14);
+	QUARTERROUND(input, x, 3, 7, 11, 15);
 
-	for (i = 0; i < CHACHA_ROUNDS/2; i++) {
-		/* column round */
-		QUARTERROUND(x[0], x[4], x[ 8], x[12]);
-		QUARTERROUND(x[1], x[5], x[ 9], x[13]);
-		QUARTERROUND(x[2], x[6], x[10], x[14]);
-		QUARTERROUND(x[3], x[7], x[11], x[15]);
+	for (i = 0; i < CHACHA_ROUNDS/2 - 1; i++) {
+		/* "diagonal" round */
+		QUARTERROUND(x, x, 0, 5, 10, 15);
+		QUARTERROUND(x, x, 1, 6, 11, 12);
+		QUARTERROUND(x, x, 2, 7, 8, 13);
+		QUARTERROUND(x, x, 3, 4, 9, 14);
 
-		/* diagonal round */
-		QUARTERROUND(x[0], x[5] ,x[10], x[15]);
-		QUARTERROUND(x[1], x[6], x[11], x[12]);
-		QUARTERROUND(x[2], x[7], x[ 8], x[13]);
-		QUARTERROUND(x[3], x[4], x[ 9], x[14]);
+		/* "column" round */
+		QUARTERROUND(x, x, 0, 4, 8, 12);
+		QUARTERROUND(x, x, 1, 5, 9, 13);
+		QUARTERROUND(x, x, 2, 6, 10, 14);
+		QUARTERROUND(x, x, 3, 7, 11, 15);
 	}
 
-	for (i = 0; i < 16; i++)
-		output[i] = htole32(x[i] + ctx->state[i]);
+	/* last "diagonal" round */
+	QUARTERROUND(x, x, 0, 5, 10, 15); OUTPUT(0, 5, 10, 15);
+	QUARTERROUND(x, x, 1, 6, 11, 12); OUTPUT(1, 6, 11, 12);
+	QUARTERROUND(x, x, 2, 7, 8, 13);  OUTPUT(2, 7, 8, 13);
+	QUARTERROUND(x, x, 3, 4, 9, 14);  OUTPUT(3, 4, 9, 14);
 
 	ctx->pos = 0;
 
