@@ -260,6 +260,13 @@ void explicit_bzero(void *buf, size_t len)
 	SecureZeroMemory(buf, len);
 }
 
+#elif defined(HAVE_MEMSET_S)
+
+void explicit_bzero(void *buf, size_t len)
+{
+	memset_s(buf, len, 0, len);
+}
+
 #else /* non-win32 */
 
 /* avoid link-time optimization */

@@ -205,7 +205,7 @@ dnl AC_CHECK_FUNCS(basename dirname) # unstable, provide always
 AC_CHECK_FUNCS(strlcpy strlcat memmem getpeereid sigaction sigqueue)
 AC_CHECK_FUNCS(inet_ntop inet_pton poll getline memrchr regcomp)
 AC_CHECK_FUNCS(err errx warn warnx getprogname setprogname)
-AC_CHECK_FUNCS(posix_memalign memalign valloc explicit_bzero)
+AC_CHECK_FUNCS(posix_memalign memalign valloc explicit_bzero memset_s)
 AC_CHECK_FUNCS(getopt getopt_long getopt_long_only)
 AC_CHECK_FUNCS(fls flsl flsll ffs ffsl ffsll)
 AC_CHECK_FUNCS(fnmatch mbsnrtowcs nl_langinfo strtod_l)
