@@ -315,11 +315,7 @@ static int op_count_full(struct ParseCtx *ctx, const char **re)
 	}
 
 	/* bad fmt, decide between error codes */
-	for (a = 0; end[a] && a < 5; a++) {
-		if (end[a] == '}')
-			return REG_BADBR;
-	}
-	return REG_EBRACE;
+	return strchr(end, '}') ? REG_BADBR : REG_EBRACE;
 
 done:
 	ctx->last_elem->mincnt = a;
