@@ -49,9 +49,11 @@ int pthread_mutex_lock(pthread_mutex_t *lock);
 int pthread_mutex_unlock(pthread_mutex_t *lock);
 int pthread_join(pthread_t *t, void **ret);
 
+#ifdef INIT_ONCE_STATIC_INIT
 #define PTHREAD_ONCE_INIT INIT_ONCE_STATIC_INIT
 typedef INIT_ONCE pthread_once_t;
 int pthread_once(pthread_once_t *once, void (*once_func)(void));
+#endif
 
 #endif /* WIN32 */
 
