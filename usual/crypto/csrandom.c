@@ -20,7 +20,6 @@
 #include <usual/crypto/entropy.h>
 #include <usual/err.h>
 #include <usual/string.h>
-#include <usual/pthread.h>
 
 #include <usual/crypto/keccak_prng.h>
 #include <usual/crypto/chacha.h>
@@ -109,64 +108,10 @@ static void impl_extract(void *buf, size_t nbytes)
  * Locking
  */
 
-static pthread_once_t once_init = PTHREAD_ONCE_INIT;
-static pthread_mutex_t prng_mutex;
+static pid_t last_pid = -1;
 
-static pid_t last_pid;
-static int first_init_done;
-
-
-#ifdef HAVE_PTHREAD_ATFORK
-static void atfork_child(void)
-{
-	pthread_once_t tmp = PTHREAD_ONCE_INIT;
-	memcpy(&once_init, &tmp, sizeof(tmp));
-	last_pid = -1;
-}
-#endif
-
-static void setup_locking(void)
-{
-	int err;
-	char buf[128];
-
-	last_pid = -1;
-
-	/* reset lock */
-	memset(&prng_mutex, 0, sizeof(prng_mutex));
-	err = pthread_mutex_init(&prng_mutex, NULL);
-	if (err != 0)
-		errx(1, "csrandom lock init failed: %s", strerror_r(err, buf, sizeof(buf)));
-
-	/* do the rest really only once */
-	if (first_init_done)
-		return;
-	first_init_done = true;
-
-#ifdef HAVE_PTHREAD_ATFORK
-	pthread_atfork(NULL, NULL, atfork_child);
-#endif
-}
-
-static void prng_lock(void)
-{
-	int err;
-	char buf[128];
-
-	err = pthread_mutex_lock(&prng_mutex);
-	if (err != 0)
-		errx(1, "csrandom lock failed: %s", strerror_r(err, buf, sizeof(buf)));
-}
-
-static void prng_unlock(void)
-{
-	int err;
-	char buf[128];
-
-	err = pthread_mutex_unlock(&prng_mutex);
-	if (err != 0)
-		errx(1, "csrandom unlock failed: %s", strerror_r(err, buf, sizeof(buf)));
-}
+static void prng_lock(void) { }
+static void prng_unlock(void) { }
 
 /*
  * Make sure state is initialized.
@@ -176,8 +121,6 @@ static void prng_check_and_lock(void)
 {
 	bool reseed = false;
 	pid_t new_pid;
-
-	pthread_once(&once_init, setup_locking);
 
 	prng_lock();
 
