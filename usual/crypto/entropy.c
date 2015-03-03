@@ -43,7 +43,7 @@ int getentropy(void *dst, size_t len)
 {
 	uint8_t *d = dst;
 	unsigned int val, n;
-	errno_t err;
+	int err;
 
 	while (len > 0) {
 		err = rand_s(&val);
