@@ -16,8 +16,6 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#define _CRT_RAND_S
-
 #include <usual/crypto/entropy.h>
 #include <usual/err.h>
 #include <usual/string.h>
@@ -36,25 +34,20 @@
  * It's possible to get entropy via:
  * - CryptGenRandom.  Uses RtlGenRandom, requires CryptoAPI.
  * - rand_s().  Uses RtlGenRandom,  Requires VS2005 CRT, WindowsXP+.
- * - RtlGenRandom().  Internal func, no public definition.
+ *   Missing in mingw32, exists in mingw64.
+ * - RtlGenRandom().  Internal func, no proper public definition.
+ *   There is broken def in <ntsecapi.h> that does not have NTAPI.
  */
+
+#define RtlGenRandom SystemFunction036
+BOOLEAN WINAPI RtlGenRandom(PVOID buf, ULONG buflen);
 
 int getentropy(void *dst, size_t len)
 {
-	uint8_t *d = dst;
-	unsigned int val, n;
-	int err;
-
-	while (len > 0) {
-		err = rand_s(&val);
-		if (err != 0)
-			return -1;
-		n = (len > sizeof(val)) ? sizeof(val) : len;
-		memcpy(d, &val, n);
-		d += n;
-	}
-	explicit_bzero(&val, sizeof(val));
-	return 0;
+	if (RtlGenRandom(dst, len))
+		return len;
+	errno = EIO;
+	return -1;
 }
 
 #elif defined(HAVE_GETRANDOM)

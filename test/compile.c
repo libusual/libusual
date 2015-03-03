@@ -15,6 +15,7 @@
 #include <usual/hashing/lookup3.h>
 #include <usual/mbuf.h>
 #include <usual/crypto/md5.h>
+#include <usual/crypto/csrandom.h>
 #include <usual/misc.h>
 #include <usual/safeio.h>
 #include <usual/shlist.h>
@@ -58,6 +59,7 @@ int main(void)
 	strlcpy(buf, "foo", sizeof(buf));
 	printf("xmalloc: %p\n", xmalloc(128));
 	if (0) die("0");
+	csrandom();
 	return 0;
 }
 
