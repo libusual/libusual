@@ -62,7 +62,7 @@ int getentropy(void *dst, size_t len)
 	if (res < 0)
 		return -1;
 	if (res == len)
-		return res;
+		return 0;
 eio:
 	errno = EIO;
 	return -1;
