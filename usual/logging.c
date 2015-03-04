@@ -43,7 +43,7 @@
 #define LOG_PID 0
 #define LOG_DAEMON 0
 
-#define openlog(a,b,c)
+static inline void openlog(const char *ident, int opt, int fac) {}
 #define syslog win32_eventlog
 #define closelog()
 static void win32_eventlog(int level, const char *fmt, ...);
