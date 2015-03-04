@@ -37,17 +37,27 @@
  *   Missing in mingw32, exists in mingw64.
  * - RtlGenRandom().  Internal func, no proper public definition.
  *   There is broken def in <ntsecapi.h> that does not have NTAPI.
+ *   Need to link or load from advapi32.dll.
  */
 
-#define RtlGenRandom SystemFunction036
-BOOLEAN WINAPI RtlGenRandom(PVOID buf, ULONG buflen);
+typedef BOOLEAN APIENTRY (*rtlgenrandom_t)(void *, ULONG);
 
 int getentropy(void *dst, size_t len)
 {
-	if (RtlGenRandom(dst, len))
-		return len;
-	errno = EIO;
-	return -1;
+	HMODULE lib;
+	rtlgenrandom_t fn;
+	int res = -1;
+
+	lib = LoadLibrary("advapi32.dll");
+	if (lib) {
+		fn = (rtlgenrandom_t)GetProcAddress(lib, "SystemFunction036");
+		if (fn && fn(dst, len))
+			res = 0;
+		FreeLibrary(lib);
+	}
+	if (res < 0)
+		errno = EIO;
+	return res;
 }
 
 #elif defined(HAVE_GETRANDOM)
