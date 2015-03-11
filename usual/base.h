@@ -324,5 +324,15 @@ static inline void *zmalloc(size_t len)
 int posix_memalign(void **ptr_p, size_t align, size_t len);
 #endif
 
+#ifndef HAVE_REALLOCARRAY
+#define reallocarray(a,b,c) usual_reallocarray(a,b,c)
+
+/**
+ * Same as realloc(), but safely calculates total size.
+ */
+void *reallocarray(void *p, size_t count, size_t size);
+
+#endif
+
 #endif
 

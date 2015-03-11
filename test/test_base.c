@@ -74,9 +74,18 @@ static void test_misc(void *_p)
 end:;
 }
 
+static void test_reallocarray(void *_p)
+{
+	void *p;
+	p = reallocarray(NULL, 1, 1); tt_assert(p); free(p);
+	p = reallocarray(NULL, LLONG_MAX, LLONG_MAX); tt_assert(p == NULL);
+end:;
+}
+
 struct testcase_t base_tests[] = {
 	{ "ptr", test_ptr },
 	{ "misc", test_misc },
+	{ "reallocarray", test_reallocarray },
 	END_OF_TESTCASES
 };
 

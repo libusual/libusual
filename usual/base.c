@@ -17,6 +17,7 @@
  */
 
 #include <usual/base.h>
+#include <usual/bits.h>
 
 #if defined(HAVE_MALLOC_H) && defined(__darwin__)
 #include <malloc.h>
@@ -49,5 +50,19 @@ int posix_memalign(void **ptr_p, size_t align, size_t len)
 	errno = old_errno;
 	return ret;
 }
+#endif
+
+#ifndef HAVE_REALLOCARRAY
+
+void *reallocarray(void *p, size_t count, size_t size)
+{
+	size_t total;
+	if (!safe_mul_size(&total, count, size)) {
+		errno = ENOMEM;
+		return NULL;
+	}
+	return realloc(p, total);
+}
+
 #endif
 
