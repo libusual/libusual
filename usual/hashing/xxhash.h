@@ -34,7 +34,7 @@
 /**
  * @file
  *
- * xxHash - fast hash on 32-bit cpu's.
+ * xxHash - fast hash for 32-bit cpu's.
  */
 
 #ifndef _USUAL_HASHING_XXHASH_H_

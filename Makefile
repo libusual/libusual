@@ -168,3 +168,10 @@ sizes: all
 .PHONY: tags
 tags:
 	ctags $(libusual_a_SOURCES)
+
+.PHONY: nodoc
+nodoc:
+	@for hdr in `find usual -name '*.h'`; do \
+	  grep -q "$$hdr" doc/mainpage.dox || echo "$$hdr" ; \
+	done
+

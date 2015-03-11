@@ -16,17 +16,32 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+/**
+ * @file
+ *
+ * SHA512 and SHA384 cryptographic hashes.
+ */
+
 #ifndef _USUAL_CRYPTO_SHA512_H_
 #define _USUAL_CRYPTO_SHA512_H_
 
 #include <usual/base.h>
 
+/** SHA384 block size in bytes */
 #define SHA384_BLOCK_SIZE (16*8)
+
+/** SHA512 block size in bytes */
 #define SHA512_BLOCK_SIZE (16*8)
 
+/** SHA384 result length in bytes */
 #define SHA384_DIGEST_LENGTH (384/8)
+
+/** SHA512 result length in bytes */
 #define SHA512_DIGEST_LENGTH (512/8)
 
+/**
+ * State structure for both SHA512 and SHA384.
+ */
 struct sha512_ctx {
 	union {
 		uint64_t words[16];
@@ -36,12 +51,22 @@ struct sha512_ctx {
 	uint64_t nbytes;
 };
 
+/** Initialize structure for SHA512 */
 void sha512_reset(struct sha512_ctx *ctx);
+
+/** Process more data */
 void sha512_update(struct sha512_ctx *ctx, const void *data, unsigned int len);
+
+/** Calculate final result */
 void sha512_final(struct sha512_ctx *ctx, uint8_t *dst);
 
+/** Initialize structure for SHA384 */
 void sha384_reset(struct sha512_ctx *ctx);
+
+/** Process more data */
 void sha384_update(struct sha512_ctx *ctx, const void *data, unsigned int len);
+
+/** Calculate final result */
 void sha384_final(struct sha512_ctx *ctx, uint8_t *dst);
 
 #endif

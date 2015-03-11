@@ -1,5 +1,5 @@
 /*
- * Random win32 compat.
+ * String utilities.
  *
  * Copyright (c) 2009  Marko Kreen
  *
