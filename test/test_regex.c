@@ -15,7 +15,8 @@ static const char *b_rx(const char *regex, const char *str, int flags)
 	static char buf[512];
 	regex_t rx;
 	regmatch_t matches[NMATCH];
-	int nmatch, err, i;
+	unsigned int nmatch, i;
+	int err;
 	char *dst = buf;
 
 	memset(&rx, 0, sizeof(rx));

@@ -170,8 +170,8 @@ void log_generic(enum LogLevel level, void *ctx, const char *fmt, ...)
 
 	/* replace '\n' in message with '\n\t', strip trailing whitespace */
 	if (strchr(msg, '\n')) {
-		char *dst = buf2, *end = buf2 + sizeof(buf2) - 2;
-		for (; *msg && dst < end; msg++) {
+		char *dst = buf2;
+		for (; *msg && dst - buf < (int)sizeof(buf2) - 2; msg++) {
 			*dst++ = *msg;
 			if (*msg == '\n')
 				*dst++ = '\t';
