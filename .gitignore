@@ -20,3 +20,7 @@ build.mk
 .objs
 .libs
 .deps
+install-sh
+tmp
+tags
+
