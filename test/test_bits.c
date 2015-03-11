@@ -117,6 +117,71 @@ end:;
 
 
 /*
+ * safe mul
+ */
+
+static void test_safe_mul(void *p)
+{
+	uint8_t v8;
+	uint16_t v16;
+	uint32_t v32;
+	uint64_t v64;
+	unsigned int i;
+	unsigned long l;
+	size_t s;
+
+	tt_assert(safe_mul_uint8(&v8, 1, 1)); tt_assert(v8 == 1);
+	tt_assert(safe_mul_uint8(&v8, 15, 15)); tt_assert(v8 == 15*15);
+	tt_assert(!safe_mul_uint8(&v8, 16, 16)); tt_assert(v8 == 15 * 15);
+	tt_assert(safe_mul_uint8(&v8, 255, 1)); tt_assert(v8 == 255); v8 = 0;
+	tt_assert(safe_mul_uint8(&v8, 1, 255)); tt_assert(v8 == 255);
+	tt_assert(safe_mul_uint8(&v8, 256/4, 3)); tt_assert(v8 == 3*256/4); v8 = 0;
+	tt_assert(safe_mul_uint8(&v8, 3, 256/4)); tt_assert(v8 == 3*256/4);
+	tt_assert(!safe_mul_uint8(&v8, 256/4, 5));
+	tt_assert(!safe_mul_uint8(&v8, 5, 256/4));
+	tt_assert(safe_mul_uint8(&v8, 0, 255)); tt_assert(v8 == 0);
+
+	tt_assert(safe_mul_uint16(&v16, 1, 1)); tt_assert(v16 == 1);
+	tt_assert(safe_mul_uint16(&v16, UINT8_MAX, UINT8_MAX)); tt_assert(v16 == (1U * UINT8_MAX * UINT8_MAX));
+	tt_assert(!safe_mul_uint16(&v16, UINT8_MAX+1, UINT8_MAX+1)); tt_assert(v16 == (1U * UINT8_MAX * UINT8_MAX));
+	tt_assert(safe_mul_uint16(&v16, UINT16_MAX, 1)); tt_assert(v16 == UINT16_MAX); v16 = 0;
+	tt_assert(safe_mul_uint16(&v16, 1, UINT16_MAX)); tt_assert(v16 == UINT16_MAX);
+	tt_assert(safe_mul_uint16(&v16, (1<<16)/4, 3)); tt_assert(v16 == 3U * (1<<16)/4); v16 = 0;
+	tt_assert(safe_mul_uint16(&v16, 3, (1<<16)/4)); tt_assert(v16 == 3U * (1<<16)/4);
+	tt_assert(!safe_mul_uint16(&v16, (1<<16)/4, 5));
+	tt_assert(!safe_mul_uint16(&v16, 5, (1<<16)/4));
+	tt_assert(safe_mul_uint16(&v16, UINT16_MAX, 0)); tt_assert(v16 == 0);
+
+	tt_assert(safe_mul_uint32(&v32, 1, 1)); tt_assert(v32 == 1);
+	tt_assert(safe_mul_uint32(&v32, UINT16_MAX, UINT16_MAX)); tt_assert(v32 == (1U * UINT16_MAX * UINT16_MAX));
+	tt_assert(!safe_mul_uint32(&v32, UINT16_MAX+1, UINT16_MAX+1)); tt_assert(v32 == (1U * UINT16_MAX * UINT16_MAX));
+	tt_assert(safe_mul_uint32(&v32, UINT32_MAX, 1)); tt_assert(v32 == UINT32_MAX); v32 = 0;
+	tt_assert(safe_mul_uint32(&v32, 1, UINT32_MAX)); tt_assert(v32 == UINT32_MAX);
+	tt_assert(safe_mul_uint32(&v32, (1ULL<<32)/4, 3)); tt_assert(v32 == 3 * (1ULL<<32)/4); v32 = 0;
+	tt_assert(safe_mul_uint32(&v32, 3, (1ULL<<32)/4)); tt_assert(v32 == 3 * (1ULL<<32)/4);
+	tt_assert(!safe_mul_uint32(&v32, (1ULL<<32)/4, 5));
+	tt_assert(!safe_mul_uint32(&v32, 5, (1ULL<<32)/4));
+	tt_assert(safe_mul_uint32(&v32, 0, UINT32_MAX)); tt_assert(v32 == 0);
+
+	tt_assert(safe_mul_uint64(&v64, 1, 1)); tt_assert(v64 == 1);
+	tt_assert(safe_mul_uint64(&v64, UINT32_MAX, UINT32_MAX)); tt_assert(v64 == (1ULL*UINT32_MAX*UINT32_MAX));
+	tt_assert(!safe_mul_uint64(&v64, UINT32_MAX+1ULL, UINT32_MAX+1ULL)); tt_assert(v64 == (1ULL*UINT32_MAX*UINT32_MAX));
+	tt_assert(safe_mul_uint64(&v64, UINT64_MAX, 1)); tt_assert(v64 == UINT64_MAX); v64 = 0;
+	tt_assert(safe_mul_uint64(&v64, 1, UINT64_MAX)); tt_assert(v64 == UINT64_MAX);
+	tt_assert(safe_mul_uint64(&v64, (1ULL<<(64-2)), 3)); tt_assert(v64 == (1ULL<<(64-2)) * 3); v64 = 0;
+	tt_assert(safe_mul_uint64(&v64, 3, (1ULL<<(64-2)))); tt_assert(v64 == (1ULL<<(64-2)) * 3);
+	tt_assert(!safe_mul_uint64(&v64, (1ULL<<(64-2)), 5));
+	tt_assert(!safe_mul_uint64(&v64, 5, (1ULL<<(64-2))));
+	tt_assert(safe_mul_uint64(&v64, UINT64_MAX, 0)); tt_assert(v64 == 0);
+
+	tt_assert(safe_mul_uint(&i, UINT16_MAX, UINT16_MAX)); tt_assert(i == (1U * UINT16_MAX * UINT16_MAX));
+	tt_assert(safe_mul_ulong(&l, ULONG_MAX, 1)); tt_assert(l == ULONG_MAX);
+	tt_assert(safe_mul_size(&s, SIZE_MAX, 1)); tt_assert(s == SIZE_MAX);
+	tt_assert(safe_mul_size(&s, 1, SIZE_MAX)); tt_assert(s == SIZE_MAX);
+end:;
+}
+
+/*
  * Describe
  */
 
@@ -126,6 +191,7 @@ struct testcase_t bits_tests[] = {
 	{ "ror", test_ror },
 	{ "ffs", test_ffs },
 	{ "fls", test_fls },
+	{ "safe_mul", test_safe_mul },
 	END_OF_TESTCASES
 };
 

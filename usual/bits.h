@@ -172,7 +172,8 @@ static inline int ffsll(long long x)
 	if (!a || !b)			\
 		goto safe;		\
 	if ((max / a) >= b)		\
-		return false;		\
+		goto safe;		\
+	return false;			\
    safe:				\
 	*res_p = a * b;			\
 	return true;
