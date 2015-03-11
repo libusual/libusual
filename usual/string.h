@@ -130,6 +130,21 @@ double strtod_dot(const char *s, char **tokend);
 /** Convert double to string with '.' as decimal separator */
 ssize_t dtostr_dot(char *buf, size_t buflen, double val);
 
+#ifndef HAVE_STRTONUM
+#define strtonum(a,b,c,d) usual_strtonum(a,b,c,d)
+/**
+ * Convert string to integer, check limits.
+ *
+ * Accepts only decimal numbers, no octal or hex.  Allows leading whitespace,
+ * but not tailing.
+ *
+ * On success, returns value that is minval <= res <= maxval.  If errstr_p is given
+ * it stores NULL there.  Keeps old errno value.
+ *
+ * On error, returns 0, sets errno, and if errstr_p is given, stores error reason there.
+ */
+long long strtonum(const char *s, long long minval, long long maxval, const char **errstr_p);
+#endif
 
 #endif
 

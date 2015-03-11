@@ -352,6 +352,62 @@ static void test_s2d_dot(void *p)
 end:;
 }
 
+static const char *wrap_strtonum(const char *s, long long minval, long long maxval)
+{
+	static char buf[256];
+	long long res, res1;
+	const char *err = "HUH";
+	errno = EPERM;
+	res1 = strtonum(s, minval, maxval, NULL);
+	errno = EPERM;
+	res = strtonum(s, minval, maxval, &err);
+	if (err && (res != 0 || !errno || errno == ENOMEM))
+		return "ERRBUG";
+	if (!err && errno != EPERM)
+		return "ERRBACKUP";
+	if (res1 != res)
+		return "EH";
+	if (!err) {
+		snprintf(buf, sizeof buf, "%lld", res);
+		return buf;
+	}
+	snprintf(buf, sizeof buf, "E:%s", err);
+	return buf;
+}
+
+static void test_strtonum(void *p)
+{
+	str_check(wrap_strtonum("1", -10, 50), "1");
+	str_check(wrap_strtonum("-11", -100, -1), "-11");
+	str_check(wrap_strtonum("", 1, 9), "E:invalid");
+	str_check(wrap_strtonum(" ", 1, 9), "E:invalid");
+	str_check(wrap_strtonum(" x", 1, 9), "E:invalid");
+	str_check(wrap_strtonum(" 5.5", 1, 9), "E:invalid");
+	str_check(wrap_strtonum(" 5 ", 1, 9), "E:invalid");
+	str_check(wrap_strtonum("0x05", 1, 9), "E:invalid");
+	str_check(wrap_strtonum("0", 1, 9), "E:too small");
+	str_check(wrap_strtonum("11", 1, 9), "E:too large");
+	str_check(wrap_strtonum(" 5", 1, 9), "5");
+	str_check(wrap_strtonum(" -5", -10, 10), "-5");
+
+	str_check(wrap_strtonum("5", -5, 5), "5");
+	str_check(wrap_strtonum("-5", -5, 5), "-5");
+	str_check(wrap_strtonum("6", -5, 5), "E:too large");
+	str_check(wrap_strtonum("-6", -5, 5), "E:too small");
+	/* limits */
+	str_check(wrap_strtonum(" 9223372036854775807", LLONG_MIN, LLONG_MAX), "9223372036854775807");
+	str_check(wrap_strtonum(" 9223372036854775808", LLONG_MIN, LLONG_MAX), "E:too large");
+	str_check(wrap_strtonum(" 9900000000000000000", LLONG_MIN, LLONG_MAX), "E:too large");
+	str_check(wrap_strtonum("-9223372036854775808", LLONG_MIN, LLONG_MAX), "-9223372036854775808");
+	str_check(wrap_strtonum("-9223372036854775809", LLONG_MIN, LLONG_MAX), "E:too small");
+	str_check(wrap_strtonum("-9900000000000000000", LLONG_MIN, LLONG_MAX), "E:too small");
+	str_check(wrap_strtonum("-10", LLONG_MIN, 0), "-10");
+	str_check(wrap_strtonum("10", 0, LLONG_MAX), "10");
+	str_check(wrap_strtonum(" 9223372036854775807", -10, 10), "E:too large");
+	str_check(wrap_strtonum("-9223372036854775808", -10, 10), "E:too small");
+end:;
+}
+
 /*
  * Describe
  */
@@ -370,6 +426,7 @@ struct testcase_t string_tests[] = {
 	{ "strlist", test_strlist },
 	{ "parse_wordlist", test_wlist },
 	{ "str2double_dot", test_s2d_dot },
+	{ "strtonum", test_strtonum },
 	END_OF_TESTCASES
 };
 

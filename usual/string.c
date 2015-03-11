@@ -545,3 +545,57 @@ ssize_t dtostr_dot(char *buf, size_t buflen, double val)
 	return len;
 }
 
+#ifndef HAVE_STRTONUM
+
+long long strtonum(const char *s, long long minval, long long maxval, const char **errstr_p)
+{
+	char *end = NULL;
+	long long res;
+	int old_errno = errno;
+
+	if (minval > maxval)
+		goto einval;
+
+	errno = 0;
+	res = strtoll(s, &end, 10);
+	if (errno == ERANGE) {
+		if (res < 0)
+			goto esmall;
+		else
+			goto elarge;
+	} else if (errno != 0) {
+		goto einval;
+	} else if (*end || end == s) {
+		goto einval;
+	} else if (res < minval) {
+		goto esmall;
+	} else if (res > maxval) {
+		goto elarge;
+	}
+
+	/* success */
+	if (errstr_p)
+		*errstr_p = NULL;
+	errno = old_errno;
+	return res;
+
+esmall:
+	if (errstr_p)
+		*errstr_p = "too small";
+	errno = ERANGE;
+	return 0;
+
+elarge:
+	if (errstr_p)
+		*errstr_p = "too large";
+	errno = ERANGE;
+	return 0;
+
+einval:
+	if (errstr_p)
+		*errstr_p = "invalid";
+	errno = EINVAL;
+	return 0;
+}
+
+#endif

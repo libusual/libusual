@@ -208,7 +208,7 @@ AC_CHECK_FUNCS(err errx warn warnx getprogname setprogname)
 AC_CHECK_FUNCS(posix_memalign memalign valloc explicit_bzero memset_s reallocarray)
 AC_CHECK_FUNCS(getopt getopt_long getopt_long_only)
 AC_CHECK_FUNCS(fls flsl flsll ffs ffsl ffsll)
-AC_CHECK_FUNCS(fnmatch mbsnrtowcs nl_langinfo strtod_l)
+AC_CHECK_FUNCS(fnmatch mbsnrtowcs nl_langinfo strtod_l strtonum)
 ### Functions provided only on win32
 AC_CHECK_FUNCS(localtime_r gettimeofday recvmsg sendmsg usleep getrusage)
 ### Functions used by libusual itself
