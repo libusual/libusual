@@ -144,4 +144,11 @@ static inline struct group *getgrgid(gid_t gid) { return NULL; }
 
 #endif
 
+#define PRIdZ	"Id"
+#define PRIiZ	"Ii"
+#define PRIoZ	"Io"
+#define PRIuZ	"Iu"
+#define PRIxZ	"Ix"
+#define PRIXZ	"IX"
+
 #endif

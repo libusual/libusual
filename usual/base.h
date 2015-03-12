@@ -73,6 +73,15 @@ typedef enum { true=1, false=0 } bool;
 #define DLLIMPORT
 #endif
 
+#ifndef PRIdZ
+#define PRIdZ	"zd"		/**< printf 'd' format specifier for ssize_t */
+#define PRIiZ	"zi"		/**< printf 'i' format specifier for ssize_t */
+#define PRIoZ	"zo"		/**< printf 'o' format specifier for size_t */
+#define PRIuZ	"zu"		/**< printf 'u' format specifier for size_t */
+#define PRIxZ	"zx"		/**< printf 'x' format specifier for size_t */
+#define PRIXZ	"zX"		/**< printf 'X' format specifier for size_t */
+#endif
+
 /** give offset of a field inside struct */
 #ifndef offsetof
 #define offsetof(type, field) ((unsigned long)&(((type *)0)->field))
