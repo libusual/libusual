@@ -599,3 +599,19 @@ einval:
 }
 
 #endif
+
+#ifndef HAVE_STRSEP
+
+char *strsep(char **stringp, const char *delim)
+{
+	char *end, *start = *stringp;
+	if (start) {
+		end = start + strcspn(start, delim);
+		*stringp = *end ? end + 1 : NULL;
+		*end = 0;
+	}
+	return start;
+}
+
+#endif
+

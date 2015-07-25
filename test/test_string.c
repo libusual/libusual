@@ -408,6 +408,42 @@ static void test_strtonum(void *p)
 end:;
 }
 
+static const char *run_strsep(const char *input, const char *delim)
+{
+	static char buf[1024];
+	static char res[1024];
+	char *ptr, *tok;
+
+	strlcpy(buf, input, sizeof(buf));
+	res[0] = 0;
+
+	for (ptr = buf; ptr; ) {
+		tok = strsep(&ptr, delim);
+		if (!tok) tok = "NULL";
+		strlcat(res, "(", sizeof(res));
+		strlcat(res, tok, sizeof(res));
+		strlcat(res, ")", sizeof(res));
+	}
+	return res;
+}
+
+static void test_strsep(void *p)
+{
+	char *ptr = NULL;
+
+	tt_assert(strsep(&ptr, "x") == NULL);
+	str_check(run_strsep("", ""), "()");
+	str_check(run_strsep("qwe", ""), "(qwe)");
+	str_check(run_strsep("", ","), "()");
+	str_check(run_strsep("a,b,,c", ","), "(a)(b)()(c)");
+	str_check(run_strsep(",,", ","), "()()()");
+	str_check(run_strsep(",:,", ",:"), "()()()()");
+	str_check(run_strsep(",:,", ":,"), "()()()()");
+	str_check(run_strsep("", ",:"), "()");
+	str_check(run_strsep(" a , b : c ", ",:"), "( a )( b )( c )");
+end:;
+}
+
 /*
  * Describe
  */
@@ -421,6 +457,7 @@ struct testcase_t string_tests[] = {
 	{ "mempbrk", test_mempbrk },
 	{ "memcspn", test_memcspn },
 	{ "memspn", test_memspn},
+	{ "strsep", test_strsep },
 	{ "basename", test_basename },
 	{ "dirname", test_dirname },
 	{ "strlist", test_strlist },

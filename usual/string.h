@@ -146,5 +146,17 @@ ssize_t dtostr_dot(char *buf, size_t buflen, double val);
 long long strtonum(const char *s, long long minval, long long maxval, const char **errstr_p);
 #endif
 
+#ifndef HAVE_STRSEP
+#undef strsep
+#define strsep(a,b) usual_strsep(a,b)
+/**
+ * Return next token from string.
+ *
+ * Tokens are separated by delim chars
+ * Modifies string in-place.
+ */
+char *strsep(char **stringp, const char *delim);
+#endif
+
 #endif
 
