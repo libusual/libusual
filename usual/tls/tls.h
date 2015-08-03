@@ -115,6 +115,8 @@ int tls_write(struct tls *_ctx, const void *_buf, size_t _buflen,
     size_t *_outlen);
 int tls_close(struct tls *_ctx);
 
+int tls_get_connection_info(struct tls *ctx, char *buf, size_t buflen);
+
 uint8_t *tls_load_file(const char *_file, size_t *_len, char *_password);
 
 int tls_get_peer_cert(struct tls *ctx, struct tls_cert_info **cert_p);

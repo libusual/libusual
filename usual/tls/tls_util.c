@@ -167,3 +167,14 @@ tls_load_file(const char *name, size_t *len, char *password)
 
 	return (NULL);
 }
+
+int
+tls_get_connection_info(struct tls *ctx, char *buf, size_t buflen)
+{
+	SSL *conn = ctx->ssl_conn;
+	if (conn == NULL)
+		return -1;
+
+	return snprintf(buf, buflen, "%s/%s", SSL_get_version(conn), SSL_get_cipher(conn));
+}
+
