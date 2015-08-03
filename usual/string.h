@@ -158,5 +158,15 @@ long long strtonum(const char *s, long long minval, long long maxval, const char
 char *strsep(char **stringp, const char *delim);
 #endif
 
+#ifndef HAVE_ASPRINTF
+#define asprintf(dst_p, fmt, ...) usual_asprintf(dst_p, fmt, __VA_ARGS__)
+int asprintf(char **dst_p, const char *fmt, ...) _PRINTF(2, 3);
+#endif
+
+#ifndef HAVE_VASPRINTF
+#define vasprintf(dst_p, fmt, ap) usual_vasprintf(dst_p, fmt, ap)
+int vasprintf(char **dst_p, const char *fmt, va_list ap) _PRINTF(2, 0);
+#endif
+
 #endif
 

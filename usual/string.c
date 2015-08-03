@@ -23,6 +23,7 @@
 #include <usual/ctype.h>
 #include <usual/bytemap.h>
 
+#include <stdarg.h>
 #include <errno.h>
 #include <locale.h>
 #ifdef HAVE_LANGINFO_H
@@ -611,6 +612,29 @@ char *strsep(char **stringp, const char *delim)
 		*end = 0;
 	}
 	return start;
+}
+
+#endif
+
+#ifndef HAVE_ASPRINTF
+
+int asprintf(char **dst_p, const char *fmt, ...)
+{
+	int res;
+	va_list ap;
+	va_start(ap, fmt);
+	res = vasprintf(dst_p, fmt, ap);
+	va_end(ap);
+	return res;
+}
+
+#endif
+
+#ifndef HAVE_VASPRINTF
+
+int vasprintf(char **dst_p, const char *fmt, va_list ap)
+{
+	return cx_vasprintf(NULL, dst_p, fmt, ap);
 }
 
 #endif

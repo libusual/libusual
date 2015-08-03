@@ -19,6 +19,7 @@
 #include <usual/cxalloc.h>
 #include <usual/statlist.h>
 
+#include <stdarg.h>
 #include <string.h>
 
 /*
@@ -83,6 +84,60 @@ void *cx_memdup(CxMem *cx, const void *src, size_t len)
 void *cx_strdup(CxMem *cx, const char *s)
 {
 	return cx_memdup(cx, s, strlen(s) + 1);
+}
+
+char *cx_sprintf(CxMem *cx, const char *fmt, ...)
+{
+	char *res;
+	va_list ap;
+	va_start(ap, fmt);
+	res = cx_vsprintf(cx, fmt, ap);
+	va_end(ap);
+	return res;
+}
+
+char *cx_vsprintf(CxMem *cx, const char *fmt, va_list ap)
+{
+	char *res;
+	cx_vasprintf(cx, &res, fmt, ap);
+	return res;
+}
+
+int cx_asprintf(CxMem *cx, char **dst_p, const char *fmt, ...)
+{
+	int res;
+	va_list ap;
+	va_start(ap, fmt);
+	res = cx_vasprintf(cx, dst_p, fmt, ap);
+	va_end(ap);
+	return res;
+}
+
+int cx_vasprintf(CxMem *cx, char **dst_p, const char *fmt, va_list ap)
+{
+	char buf[128], *dst;
+	int res, res2;
+
+	*dst_p = NULL;
+
+	res = vsnprintf(buf, sizeof buf, fmt, ap);
+	if (res < 0)
+		return -1;
+	dst = cx_alloc(cx, res + 1);
+	if (!dst)
+		return -1;
+
+	if ((size_t)res < sizeof buf) {
+		memcpy(dst, buf, res+1);
+	} else {
+		res2 = vsnprintf(dst, res+1, fmt, ap);
+		if (res2 != res) {
+			cx_free(cx, dst);
+			return -1;
+		}
+	}
+	*dst_p = dst;
+	return res;
 }
 
 /*

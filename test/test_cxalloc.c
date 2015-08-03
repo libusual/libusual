@@ -111,9 +111,35 @@ end:
 	reset();
 }
 
+static void test_cxalloc_util(void *zzz)
+{
+	CxMem *cx = &log_libc;
+	void *p;
+	delta = 0;
+	p = cx_strdup(cx, "3333");
+	log_check("A(5)");
+	str_check(p, "3333");
+	cx_free(cx, p);
+	log_check("F(5)");
+
+	p = cx_memdup(cx, "9876543", 8);
+	log_check("A(8)");
+	str_check(p, "9876543");
+	cx_free(cx, p);
+	log_check("F(8)");
+
+	p = cx_sprintf(cx, "a=%s", "123");
+	log_check("A(6)")
+	cx_free(cx, p);
+	log_check("F(6)");
+	int_check(delta, 0);
+end:;
+}
+
 struct testcase_t cxalloc_tests[] = {
 	{ "basic", test_cxalloc_basic },
 	{ "tree", test_cxalloc_tree },
+	{ "util", test_cxalloc_util },
 	END_OF_TESTCASES
 };
 
