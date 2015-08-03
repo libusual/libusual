@@ -40,7 +40,7 @@ void csrandom_bytes(void *buf, size_t nbytes)
 	arc4random_buf(buf, nbytes);
 }
 
-uint32_t csrandom_range(upper_bound)
+uint32_t csrandom_range(uint32_t upper_bound)
 {
 	return arc4random_uniform(upper_bound);
 }
