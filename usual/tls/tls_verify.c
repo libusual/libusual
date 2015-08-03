@@ -115,7 +115,7 @@ tls_check_subject_altname(struct tls *ctx, X509 *cert, const char *name)
 			continue;
 
 		if (type == GEN_DNS) {
-			unsigned char	*data;
+			void		*data;
 			int		 format, len;
 
 			format = ASN1_STRING_type(altname->d.dNSName);
@@ -123,7 +123,7 @@ tls_check_subject_altname(struct tls *ctx, X509 *cert, const char *name)
 				data = ASN1_STRING_data(altname->d.dNSName);
 				len = ASN1_STRING_length(altname->d.dNSName);
 
-				if (len < 0 || len != strlen(data)) {
+				if (len < 0 || (size_t)len != strlen(data)) {
 					tls_set_error(ctx,
 					    "error verifying name '%s': "
 					    "NUL byte in subjectAltName, "
@@ -216,7 +216,7 @@ tls_check_common_name(struct tls *ctx, X509 *cert, const char *name)
 	    common_name_len + 1);
 
 	/* NUL bytes in CN? */
-	if (common_name_len != strlen(common_name)) {
+	if ((size_t)common_name_len != strlen(common_name)) {
 		tls_set_error(ctx, "error verifying name '%s': "
 		    "NUL byte in Common Name field, "
 		    "probably a malicious certificate", name);
