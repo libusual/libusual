@@ -1,5 +1,7 @@
 
-AM_CPPFLAGS = -I$(builddir) -I$(srcdir)
+AM_CPPFLAGS = -I$(builddir) -I$(srcdir) $(TLS_CPPFLAGS)
+AM_LDFLAGS = $(TLS_LDFLAGS)
+AM_LIBS = $(TLS_LIBS)
 
 # main target
 lib_LIBRARIES = libusual.a
@@ -69,6 +71,10 @@ libusual_a_SOURCES = usual/config.h.in \
 	usual/strpool.h usual/strpool.c \
 	usual/talloc.h usual/talloc.c \
 	usual/time.h usual/time.c \
+	usual/tls/tls.h usual/tls/tls.c usual/tls/tls_internal.h \
+	usual/tls/tls_compat.h usual/tls/tls_compat.c \
+	usual/tls/tls_client.c usual/tls/tls_config.c usual/tls/tls_info.c \
+	usual/tls/tls_server.c usual/tls/tls_util.c usual/tls/tls_verify.c \
 	usual/utf8.h usual/utf8.c \
 	usual/wchar.h usual/wchar.c
 
@@ -87,6 +93,7 @@ dist_aclocal_DATA = m4/usual.m4 m4/antimake.m4
 noinst_PROGRAMS = test/compile
 test_compile_SOURCES = test/compile.c
 test_compile_LDADD = libusual.a
+test_compile_LIBS = $(TLS_LIBS)
 
 # extra clean files
 DISTCLEANFILES = config.log build.mk config.status libtool config.mak

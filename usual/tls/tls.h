@@ -15,15 +15,14 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef HEADER_TLS_H
-#define HEADER_TLS_H
+#ifndef _USUAL_HEADER_TLS_H_
+#define _USUAL_HEADER_TLS_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include <stddef.h>
-#include <stdint.h>
+#include <usual/base.h>
 
 #define TLS_API	20141031
 
@@ -126,4 +125,4 @@ void tls_cert_free(struct tls_cert_info *cert);
 }
 #endif
 
-#endif /* HEADER_TLS_H */
+#endif /* _USUAL_HEADER_TLS_H_ */

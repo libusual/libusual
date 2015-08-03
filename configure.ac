@@ -29,6 +29,8 @@ AC_USUAL_LIBEVENT(opt)
 
 AC_USUAL_GETADDRINFO_A
 
+AC_USUAL_TLS
+
 dnl search for common libraries
 AC_SEARCH_LIBS(clock_gettime, rt)
 AC_SEARCH_LIBS(getsockname, socket)

@@ -15,11 +15,10 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <ctype.h>
-#include <errno.h>
-#include <stdlib.h>
+#include "tls_compat.h"
 
-#include <tls.h>
+#include <ctype.h>
+
 #include "tls_internal.h"
 
 static int

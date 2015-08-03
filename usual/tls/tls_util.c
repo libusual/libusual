@@ -16,13 +16,10 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#include "tls_compat.h"
+
 #include <sys/stat.h>
 
-#include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
-
-#include "tls.h"
 #include "tls_internal.h"
 
 /*

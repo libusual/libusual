@@ -15,10 +15,11 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#include "tls_compat.h"
+
 #include <openssl/ec.h>
 #include <openssl/ssl.h>
 
-#include <tls.h>
 #include "tls_internal.h"
 
 struct tls *

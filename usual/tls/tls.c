@@ -15,12 +15,9 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <sys/socket.h>
+#include "tls_compat.h"
 
-#include <errno.h>
 #include <limits.h>
-#include <stdlib.h>
-#include <unistd.h>
 
 #include <openssl/bio.h>
 #include <openssl/err.h>
@@ -28,7 +25,6 @@
 #include <openssl/pem.h>
 #include <openssl/x509.h>
 
-#include <tls.h>
 #include "tls_internal.h"
 
 static struct tls_config *tls_config_default;

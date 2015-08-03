@@ -15,20 +15,13 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <sys/types.h>
-#include <sys/socket.h>
-
-#include <arpa/inet.h>
-#include <netinet/in.h>
+#include "tls_compat.h"
 
 #include <limits.h>
 #include <netdb.h>
-#include <stdlib.h>
-#include <unistd.h>
 
 #include <openssl/x509.h>
 
-#include <tls.h>
 #include "tls_internal.h"
 
 struct tls *

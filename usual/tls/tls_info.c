@@ -15,16 +15,10 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <sys/socket.h>
-
-#include <arpa/inet.h>
-#include <netinet/in.h>
-
-#include <string.h>
+#include "tls_compat.h"
 
 #include <openssl/x509v3.h>
 
-#include "tls.h"
 #include "tls_internal.h"
 
 static int

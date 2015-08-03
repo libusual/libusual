@@ -24,6 +24,7 @@
 #include <usual/socket.h>
 #include <usual/statlist.h>
 #include <usual/string.h>
+#include <usual/tls/tls.h>
 #include <usual/time.h>
 #include <usual/utf8.h>
 
@@ -60,6 +61,7 @@ int main(void)
 	printf("xmalloc: %p\n", xmalloc(128));
 	if (0) die("0");
 	csrandom();
+	tls_init();
 	return 0;
 }
 
