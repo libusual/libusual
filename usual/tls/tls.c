@@ -176,6 +176,35 @@ err:
 	return (1);
 }
 
+static void
+tls_info_callback(const SSL *ssl, int where, int rc)
+{
+	struct tls *ctx = SSL_get_app_data(ssl);
+
+	if (where & SSL_CB_HANDSHAKE_START) {
+		if (ctx->flags & TLS_ESTABLISHED)
+			ctx->flags |= TLS_ABORT;
+	} else if (where & SSL_CB_HANDSHAKE_DONE) {
+		ctx->flags |= TLS_ESTABLISHED;
+	}
+}
+
+static int
+tls_do_abort(struct tls *ctx)
+{
+	int ssl_ret, rv;
+
+	ssl_ret = SSL_shutdown(ctx->ssl_conn);
+	if (ssl_ret < 0) {
+		rv = tls_ssl_error(ctx, ctx->ssl_conn, ssl_ret, "shutdown");
+		if (rv == TLS_READ_AGAIN || rv == TLS_WRITE_AGAIN)
+			return (rv);
+	}
+
+	tls_set_error(ctx, "unexpected handshake, closing connection");
+	return -1;
+}
+
 int
 tls_configure_ssl(struct tls *ctx)
 {
@@ -203,6 +232,8 @@ tls_configure_ssl(struct tls *ctx)
 			goto err;
 		}
 	}
+
+	SSL_CTX_set_info_callback(ctx->ssl_ctx, tls_info_callback);
 
 	return (0);
 
@@ -294,6 +325,9 @@ tls_read(struct tls *ctx, void *buf, size_t buflen, size_t *outlen)
 		return (-1);
 	}
 
+	if (ctx->flags & TLS_ABORT)
+		return tls_do_abort(ctx);
+
 	ssl_ret = SSL_read(ctx->ssl_conn, buf, buflen);
 	if (ssl_ret > 0) {
 		*outlen = (size_t)ssl_ret;
@@ -314,6 +348,9 @@ tls_write(struct tls *ctx, const void *buf, size_t buflen, size_t *outlen)
 		tls_set_error(ctx, "buflen too long");
 		return (-1);
 	}
+
+	if (ctx->flags & TLS_ABORT)
+		return tls_do_abort(ctx);
 
 	ssl_ret = SSL_write(ctx->ssl_conn, buf, buflen);
 	if (ssl_ret > 0) {
