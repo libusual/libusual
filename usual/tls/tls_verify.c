@@ -17,6 +17,8 @@
 
 #include "tls_compat.h"
 
+#ifdef USUAL_LIBSSL_FOR_TLS
+
 #include <openssl/x509v3.h>
 
 #include "tls_internal.h"
@@ -282,4 +284,6 @@ tls_configure_verify(struct tls *ctx)
 err:
 	return -1;
 }
+
+#endif /* USUAL_LIBSSL_FOR_TLS */
 

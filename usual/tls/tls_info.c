@@ -17,6 +17,8 @@
 
 #include "tls_compat.h"
 
+#ifdef USUAL_LIBSSL_FOR_TLS
+
 #include <openssl/x509v3.h>
 
 #include "tls_internal.h"
@@ -207,3 +209,4 @@ failed:
 	return -1;
 }
 
+#endif

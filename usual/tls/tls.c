@@ -17,6 +17,8 @@
 
 #include "tls_compat.h"
 
+#ifdef USUAL_LIBSSL_FOR_TLS
+
 #include <limits.h>
 
 #include <openssl/bio.h>
@@ -396,3 +398,6 @@ tls_close(struct tls *ctx)
 
 	return (rv);
 }
+
+#endif /* USUAL_LIBSSL_FOR_TLS */
+

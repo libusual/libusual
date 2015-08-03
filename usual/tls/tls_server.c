@@ -17,6 +17,8 @@
 
 #include "tls_compat.h"
 
+#ifdef USUAL_LIBSSL_FOR_TLS
+
 #include <openssl/ec.h>
 #include <openssl/ssl.h>
 
@@ -157,3 +159,5 @@ tls_accept_socket(struct tls *ctx, struct tls **cctx, int socket)
 
 	return (rv);
 }
+
+#endif /* USUAL_LIBSSL_FOR_TLS */

@@ -17,6 +17,8 @@
 
 #include "tls_compat.h"
 
+#ifdef USUAL_LIBSSL_FOR_TLS
+
 #include <limits.h>
 #include <netdb.h>
 
@@ -256,3 +258,5 @@ err:
 
 	return (-1);
 }
+
+#endif /* USUAL_LIBSSL_FOR_TLS */

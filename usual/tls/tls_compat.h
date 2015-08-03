@@ -4,6 +4,8 @@
 
 #include <usual/tls/tls.h>
 
+#ifdef USUAL_LIBSSL_FOR_TLS
+
 #include <usual/crypto/csrandom.h>
 #include <usual/string.h>
 #include <usual/socket.h>
@@ -30,5 +32,7 @@ int SSL_CTX_use_certificate_chain_mem(SSL_CTX *ctx, void *buf, int len);
 int SSL_CTX_load_verify_mem(SSL_CTX *ctx, void *buf, int len);
 #endif
 
-#endif
+#endif /* USUAL_LIBSSL_FOR_TLS */
+
+#endif /* _USUAL_TLS_COMPAT_H_ */
 

@@ -18,6 +18,8 @@
 
 #include "tls_compat.h"
 
+#ifdef USUAL_LIBSSL_FOR_TLS
+
 #include <sys/stat.h>
 
 #include "tls_internal.h"
@@ -174,4 +176,6 @@ tls_get_connection_info(struct tls *ctx, char *buf, size_t buflen)
 
 	return snprintf(buf, buflen, "%s/%s", SSL_get_version(conn), SSL_get_cipher(conn));
 }
+
+#endif /* USUAL_LIBSSL_FOR_TLS */
 

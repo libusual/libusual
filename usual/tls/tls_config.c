@@ -17,6 +17,8 @@
 
 #include "tls_compat.h"
 
+#ifdef USUAL_LIBSSL_FOR_TLS
+
 #include <ctype.h>
 
 #include "tls_internal.h"
@@ -299,3 +301,5 @@ tls_config_verify(struct tls_config *config)
 	config->verify_cert = 1;
 	config->verify_name = 1;
 }
+
+#endif /* USUAL_LIBSSL_FOR_TLS */
