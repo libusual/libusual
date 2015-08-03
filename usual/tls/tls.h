@@ -42,6 +42,28 @@ extern "C" {
 struct tls;
 struct tls_config;
 
+#define TLS_CERT_NAME_DNS	1
+#define TLS_CERT_NAME_IPv4	2
+#define TLS_CERT_NAME_IPv6	3
+
+struct tls_cert_alt_name {
+	const void *alt_name;
+	int alt_name_type;
+};
+
+struct tls_cert_info {
+	const char *common_name;
+	const char *locality_name;
+	const char *country_name;
+	const char *state_or_province_name;
+	const char *organization_name;
+	const char *organizational_unit_name;
+	const char *email_address;
+
+	int altname_count;
+	struct tls_cert_alt_name *altnames;
+};
+
 int tls_init(void);
 
 const char *tls_error(struct tls *_ctx);
@@ -94,6 +116,9 @@ int tls_write(struct tls *_ctx, const void *_buf, size_t _buflen,
 int tls_close(struct tls *_ctx);
 
 uint8_t *tls_load_file(const char *_file, size_t *_len, char *_password);
+
+int tls_get_peer_cert(struct tls *ctx, struct tls_cert_info **cert_p);
+void tls_cert_free(struct tls_cert_info *cert);
 
 #ifdef __cplusplus
 }
