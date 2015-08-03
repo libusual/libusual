@@ -9,7 +9,10 @@ dnl Order does not matter:
 dnl  AC_USUAL_CASSERT
 dnl  AC_USUAL_WERROR
 dnl  AC_USUAL_DEBUG
-
+dnl Optional features:
+dnl  AC_USUAL_LIBEVENT / AC_USUAL_LIBEVENT_OPT
+dnl  AC_USUAL_UREGEX
+dnl  AC_USUAL_GETADDRINFO_A
 
 dnl
 dnl  AC_USUAL_INIT:
