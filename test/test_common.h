@@ -27,6 +27,7 @@ extern struct testcase_t endian_tests[];
 extern struct testcase_t hashtab_tests[];
 extern struct testcase_t mdict_tests[];
 extern struct testcase_t shlist_tests[];
+extern struct testcase_t event_tests[];
 extern struct testcase_t time_tests[];
 extern struct testcase_t hashing_tests[];
 extern struct testcase_t fileutil_tests[];
