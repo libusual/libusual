@@ -25,7 +25,7 @@
 
 #include <stdarg.h>
 #include <errno.h>
-#include <locale.h>
+#include <xlocale.h>
 #ifdef HAVE_LANGINFO_H
 #include <langinfo.h>
 #endif
