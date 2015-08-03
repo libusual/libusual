@@ -25,8 +25,8 @@
 
 #define _PATH_SSL_CA_FILE "/etc/ssl/cert.pem"
 
-#define TLS_CIPHERS_COMPAT	"ALL:!aNULL:!eNULL"
-#define TLS_CIPHERS_DEFAULT	"TLSv1.2+AEAD+ECDHE:TLSv1.2+AEAD+DHE"
+#define TLS_CIPHERS_COMPAT	"HIGH:+3DES:!aNULL"
+#define TLS_CIPHERS_DEFAULT	"HIGH+EECDH:HIGH+EDH:!SSLv3:!SHA384:!SHA256:!DSS:!aNULL"
 
 struct tls_config {
 	const char *ca_file;
