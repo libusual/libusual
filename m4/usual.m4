@@ -187,7 +187,7 @@ AC_CHECK_HEADERS([sys/param.h sys/uio.h pwd.h grp.h])
 AC_CHECK_HEADERS([sys/wait.h sys/mman.h syslog.h netdb.h dlfcn.h])
 AC_CHECK_HEADERS([err.h pthread.h endian.h sys/endian.h byteswap.h])
 AC_CHECK_HEADERS([malloc.h regex.h getopt.h fnmatch.h])
-AC_CHECK_HEADERS([langinfo.h])
+AC_CHECK_HEADERS([langinfo.h xlocale.h])
 dnl ucred.h may have prereqs
 AC_CHECK_HEADERS([ucred.h sys/ucred.h], [], [], [
 #ifdef HAVE_SYS_TYPES_H
