@@ -42,6 +42,7 @@
 #ifndef _USUAL_CXALLOC_H_
 #define _USUAL_CXALLOC_H_
 
+#include <stdarg.h>
 #include <usual/base.h>
 
 /**
