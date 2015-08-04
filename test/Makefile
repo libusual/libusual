@@ -15,17 +15,19 @@ regtest_system_SOURCES = \
 	test_shlist.c test_time.c test_hashing.c test_fileutil.c \
 	test_socket.c test_getopt.c test_ctype.c test_fnmatch.c \
 	test_wchar.c test_json.c test_talloc.c test_event.c \
+	test_tls.c \
 	test_common.h tinytest.h tinytest_macros.h
 
 # build regtest_system against actual library
 regtest_system_LDADD = ../libusual.a
-regtest_system_LDFLAGS =
-regtest_system_CPPFLAGS = -I.. -I.
+regtest_system_LIBS = $(TLS_LIBS) $(LIBS)
+regtest_system_LDFLAGS = $(TLS_LDFLAGS)
+regtest_system_CPPFLAGS = -I.. -I. $(TLS_CPPFLAGS)
 
 # build regtest_compat as embedded project
 regtest_compat_EMBED_LIBUSUAL = 1
-regtest_compat_CPPFLAGS := -I.. -I. -DUSUAL_TEST_CONFIG
-regtest_compat_LDFLAGS =
+regtest_compat_CPPFLAGS := -I.. -I. -DUSUAL_TEST_CONFIG $(TLS_CPPFLAGS)
+regtest_compat_LDFLAGS = $(TLS_LDFLAGS)
 regtest_compat_SOURCES := $(regtest_system_SOURCES)
 nodist_regtest_compat_SOURCES = test_config.h
 

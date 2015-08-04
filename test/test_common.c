@@ -29,6 +29,7 @@ struct testgroup_t groups[] = {
 	{ "regex/", regex_tests },
 	{ "socket/", socket_tests },
 	{ "event/", event_tests },
+	{ "tls/", tls_tests },
 	{ "netdb/", netdb_tests },
 	{ "cfparser/", cfparser_tests },
 	{ "getopt/", getopt_tests },
