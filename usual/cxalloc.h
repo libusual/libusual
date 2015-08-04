@@ -130,13 +130,13 @@ void *cx_strdup(CxMem *cx, const char *str) _MALLOC;
 int cx_asprintf(CxMem *cx, char **dst_p, const char *fmt, ...) _PRINTF(3, 4);
 
 /** Print to allocated string, return length or -1 on error */
-int cx_vasprintf(CxMem *cx, char **dst_p, const char *fmt, va_list ap) _PRINTF(3, 0);
+int cx_vasprintf(CxMem *cx, char **dst_p, const char *fmt, ...) _PRINTF(3, 0);
 
 /** Print to allocated string, return new string or NULL on error */
 char *cx_sprintf(CxMem *cx, const char *fmt, ...) _PRINTF(2, 3);
 
 /** Print to allocated string, return new string or NULL on error */
-char *cx_vsprintf(CxMem *cx, const char *fmt, va_list ap) _PRINTF(2, 0);
+char *cx_vsprintf(CxMem *cx, const char *fmt, ...) _PRINTF(2, 0);
 
 
 /** Allocator that uses libc malloc/realloc/free */

@@ -96,10 +96,13 @@ char *cx_sprintf(CxMem *cx, const char *fmt, ...)
 	return res;
 }
 
-char *cx_vsprintf(CxMem *cx, const char *fmt, va_list ap)
+char *cx_vsprintf(CxMem *cx, const char *fmt, ...)
 {
 	char *res;
+	va_list ap;
+	va_start(ap, fmt);
 	cx_vasprintf(cx, &res, fmt, ap);
+	va_end(ap);
 	return res;
 }
 
@@ -113,14 +116,17 @@ int cx_asprintf(CxMem *cx, char **dst_p, const char *fmt, ...)
 	return res;
 }
 
-int cx_vasprintf(CxMem *cx, char **dst_p, const char *fmt, va_list ap)
+int cx_vasprintf(CxMem *cx, char **dst_p, const char *fmt, ...)
 {
 	char buf[128], *dst;
 	int res, res2;
+	va_list ap;
 
 	*dst_p = NULL;
 
+	va_start(ap, fmt);
 	res = vsnprintf(buf, sizeof buf, fmt, ap);
+	va_end(ap);
 	if (res < 0)
 		return -1;
 	dst = cx_alloc(cx, res + 1);
