@@ -216,6 +216,8 @@ tls_config_set_ciphers(struct tls_config *config, const char *ciphers)
 	else if (strcasecmp(ciphers, "compat") == 0 ||
 	    strcasecmp(ciphers, "legacy") == 0)
 		ciphers = TLS_CIPHERS_COMPAT;
+	else if (strcasecmp(ciphers, "fast") == 0)
+		ciphers = TLS_CIPHERS_FAST;
 
 	return set_string(&config->ciphers, ciphers);
 }

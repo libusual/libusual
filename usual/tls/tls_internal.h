@@ -25,8 +25,24 @@
 
 #define _PATH_SSL_CA_FILE USUAL_TLS_CA_FILE
 
+/*
+ * Anything that is not completely broken.
+ *
+ * Also fixes 3DES ordering bug in older OpenSSLs.
+ */
 #define TLS_CIPHERS_COMPAT	"HIGH:+3DES:!aNULL"
+
+/*
+ * TLSv1.2+AEAD+ECDHE/DHE.  CBC modes are dubious due to spec bugs in TLS.
+ */
 #define TLS_CIPHERS_DEFAULT	"HIGH+EECDH:HIGH+EDH:!SSLv3:!SHA384:!SHA256:!DSS:!aNULL"
+
+/*
+ * Prefer performance if it does not affect security.
+ *
+ * ECDH > DH > RSA, AESGCM > CBC, TLSv1.2 > TLSv1.0, AES128 > AES256.
+ */
+#define TLS_CIPHERS_FAST	"HIGH+EECDH:HIGH+EDH:HIGH+RSA:+AES256:+SHA256:+SHA384:+SSLv3:+EDH:+RSA:!3DES:!CAMELLIA:!DSS:!aNULL"
 
 struct tls_config {
 	const char *ca_file;
