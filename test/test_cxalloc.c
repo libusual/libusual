@@ -1,6 +1,5 @@
 #include "test_common.h"
 
-#include <stdarg.h>
 #include <usual/string.h>
 #include <usual/cxextra.h>
 

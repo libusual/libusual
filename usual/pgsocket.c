@@ -18,8 +18,6 @@
 
 #include <usual/pgsocket.h>
 
-#include <stdarg.h>
-
 #include <usual/event.h>
 #include <usual/logging.h>
 #include <usual/time.h>

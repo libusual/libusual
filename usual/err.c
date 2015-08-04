@@ -18,10 +18,6 @@
 
 #include <usual/err.h>
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <errno.h>
-
 #include <usual/string.h>
 
 #ifndef HAVE_SETPROGNAME

@@ -24,8 +24,6 @@
 #include <usual/ctype.h>
 #include <usual/bytemap.h>
 #include <usual/string.h>
-#include <string.h>
-#include <stdarg.h>
 #include <math.h>
 
 #define TYPE_BITS	3

@@ -23,8 +23,6 @@
 #include <usual/bits.h>
 
 #include <string.h>
-#include <stdarg.h>
-
 
 #define MAGIC_USED		0xF100F7	/* allocated block */
 #define MAGIC_FREE		0x8600CB	/* freed block */

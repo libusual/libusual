@@ -98,8 +98,6 @@ static void sig_close(struct event_base *base);
 #ifdef CASSERT
 #include <usual/logging.h>
 #include <usual/time.h>
-#include <stdarg.h>
-#include <stdio.h>
 static void base_dbg(struct event_base *base, const char *s, ...)
 {
 	va_list ap;

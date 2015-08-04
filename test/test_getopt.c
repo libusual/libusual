@@ -5,8 +5,6 @@
 
 #include <usual/string.h>
 
-#include <stdarg.h>
-
 static const char *xgetopt(const char *opts, const struct option *lopts, ...)
 {
 	static char resbuf[1024];

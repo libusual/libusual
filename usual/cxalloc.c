@@ -19,7 +19,6 @@
 #include <usual/cxalloc.h>
 #include <usual/statlist.h>
 
-#include <stdarg.h>
 #include <string.h>
 
 /*

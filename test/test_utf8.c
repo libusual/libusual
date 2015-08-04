@@ -3,7 +3,6 @@
 
 #include "test_common.h"
 
-#include <stdarg.h>
 #include <string.h>
 
 static int uget1(int a)

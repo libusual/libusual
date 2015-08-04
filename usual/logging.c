@@ -18,9 +18,6 @@
 
 #include <usual/logging.h>
 
-#include <stdio.h>
-#include <stdarg.h>
-
 #include <usual/ctype.h>
 #include <usual/string.h>
 #include <usual/time.h>

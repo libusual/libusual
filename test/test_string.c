@@ -1,7 +1,6 @@
 
 #include <usual/base.h>
 #include <string.h>
-#include <stdarg.h>
 #ifdef HAVE_LIBGEN_H
 #include <libgen.h>
 #endif
