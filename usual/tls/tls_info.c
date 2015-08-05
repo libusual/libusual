@@ -23,39 +23,197 @@
 
 #include "tls_internal.h"
 
+/*
+ * Load cert data from X509 cert.
+ */
+
 static int
-tls_get_subj_string(X509_NAME *subject, int nid, const char **str_p, int *len_p)
+tls_cert_get_subj_string(struct tls *ctx, X509_NAME *subject, int nid, const char **str_p)
 {
 	char *res = NULL;
 	int res_len;
 
+	*str_p = NULL;
 	res_len = X509_NAME_get_text_by_NID(subject, nid, NULL, 0);
-	if (res_len < 0) {
-		if (len_p) *len_p = 0;
-		if (str_p) *str_p = NULL;
+	if (res_len < 0)
 		return 0;
-	}
-
-	if (len_p)
-		*len_p = res_len;
-
-	if (!str_p)
-		return res_len;
 
 	res = calloc(res_len + 1, 1);
-	if (res == NULL)
+	if (res == NULL) {
+		tls_set_error(ctx, "no mem");
 		return -1;
+	}
 
 	X509_NAME_get_text_by_NID(subject, nid, res, res_len + 1);
 
 	/* NUL bytes in value? */
 	if ((size_t)res_len != strlen(res)) {
+		tls_set_error(ctx, "corrupt cert - NUL bytes is value");
 		free(res);
-		return -1;
+		return -2;
 	}
 
 	*str_p = res;
 	return 0;
+}
+
+/* See RFC 5280 section 4.2.1.6 for SubjectAltName details. */
+static int
+tls_cert_get_altnames(struct tls *ctx, struct tls_cert_info *cert_info, X509 *x509_cert)
+{
+	STACK_OF(GENERAL_NAME) *altname_stack = NULL;
+	GENERAL_NAME *altname;
+	int count, i, format, len;
+	struct tls_cert_alt_name *slot;
+	void *data;
+	int rv = -1;
+
+	altname_stack = X509_get_ext_d2i(x509_cert, NID_subject_alt_name, NULL, NULL);
+	if (altname_stack == NULL)
+		return 0;
+
+	count = sk_GENERAL_NAME_num(altname_stack);
+	if (count == 0) {
+		rv = 0;
+		goto out;
+	}
+
+	cert_info->altnames = calloc(sizeof (struct tls_cert_alt_name), count);
+	if (cert_info->altnames == NULL) {
+		tls_set_error(ctx, "no mem");
+		goto out;
+	}
+
+	for (i = 0; i < count; i++) {
+		slot = &cert_info->altnames[cert_info->altname_count];
+		altname = sk_GENERAL_NAME_value(altname_stack, i);
+
+		if (altname->type == GEN_DNS) {
+			format = ASN1_STRING_type(altname->d.dNSName);
+			if (format != V_ASN1_IA5STRING) {
+				/* ignore unknown string type */
+				continue;
+			}
+
+			data = ASN1_STRING_data(altname->d.dNSName);
+			len = ASN1_STRING_length(altname->d.dNSName);
+			if (len < 0 || (size_t)len != strlen(data)) {
+				tls_set_error(ctx, "invalid string value");
+				goto out;
+			}
+
+			/*
+			 * Per RFC 5280 section 4.2.1.6:
+			 * " " is a legal domain name, but that
+			 * dNSName must be rejected.
+			 */
+			if (strcmp(data, " ") == 0) {
+				tls_set_error(ctx, "single space as name");
+				goto out;
+			}
+
+			slot->alt_name = strdup(data);
+			if (slot->alt_name == NULL) {
+				tls_set_error(ctx, "no mem");
+				goto out;
+			}
+			slot->alt_name_type = TLS_CERT_NAME_DNS;
+			cert_info->altname_count++;
+		} else if (altname->type == GEN_IPADD) {
+			len = ASN1_STRING_length(altname->d.iPAddress);
+			data = ASN1_STRING_data(altname->d.iPAddress);
+			if (len < 0) {
+				tls_set_error(ctx, "negative length for ipaddress");
+				goto out;
+			}
+
+			/*
+			 * Per RFC 5280 section 4.2.1.6:
+			 * IPv4 must use 4 octets and IPv6 must use 16 octets.
+			 */
+			if (len == 4) {
+				slot->alt_name_type = TLS_CERT_NAME_IPv4;
+			} else if (len == 16) {
+				slot->alt_name_type = TLS_CERT_NAME_IPv6;
+			} else {
+				tls_set_error(ctx, "invalid length for ipaddress");
+				goto out;
+			}
+
+			slot->alt_name = malloc(len);
+			if (slot->alt_name == NULL) {
+				tls_set_error(ctx, "no mem");
+				goto out;
+			}
+
+			memcpy((void *)slot->alt_name, data, len);
+			cert_info->altname_count++;
+		} else {
+			/* ignore unknown types */
+		}
+	}
+	rv = 0;
+out:
+	sk_GENERAL_NAME_pop_free(altname_stack, GENERAL_NAME_free);
+	return rv;
+}
+
+int
+tls_get_peer_cert(struct tls *ctx, struct tls_cert_info **cert_p)
+{
+	struct tls_cert_info *cert = NULL;
+	SSL *conn = ctx->ssl_conn;
+	X509 *peer;
+	X509_NAME *subject;
+	int ret = -1;
+
+	*cert_p = NULL;
+
+	if (!conn) {
+		tls_set_error(ctx, "not connected");
+		return -1;
+	}
+
+	peer = SSL_get_peer_certificate(conn);
+	if (!peer) {
+		tls_set_error(ctx, "peer does not have cert");
+		return -1;
+	}
+
+	subject = X509_get_subject_name(peer);
+	if (!subject) {
+		tls_set_error(ctx, "cert does not have subject");
+		return -1;
+	}
+
+	cert = calloc(sizeof *cert, 1);
+	if (!cert) {
+		tls_set_error(ctx, "calloc failed");
+		goto failed;
+	}
+
+	ret = tls_cert_get_subj_string(ctx, subject, NID_commonName, &cert->common_name);
+	if (ret == 0)
+		ret = tls_cert_get_subj_string(ctx, subject, NID_countryName, &cert->country_name);
+	if (ret == 0)
+		ret = tls_cert_get_subj_string(ctx, subject, NID_localityName, &cert->locality_name);
+	if (ret == 0)
+		ret = tls_cert_get_subj_string(ctx, subject, NID_stateOrProvinceName, &cert->state_or_province_name);
+	if (ret == 0)
+		ret = tls_cert_get_subj_string(ctx, subject, NID_organizationName, &cert->organization_name);
+	if (ret == 0)
+		ret = tls_cert_get_subj_string(ctx, subject, NID_organizationalUnitName, &cert->organizational_unit_name);
+	if (ret == 0)
+		ret = tls_cert_get_subj_string(ctx, subject, NID_pkcs9_emailAddress, &cert->email_address);
+	if (ret == 0)
+		ret = tls_cert_get_altnames(ctx, cert, peer);
+	if (ret == 0) {
+		*cert_p = cert;
+		return 0;
+	}
+failed:
+	tls_cert_free(cert);
+	return ret;
 }
 
 void
@@ -78,135 +236,5 @@ tls_cert_free(struct tls_cert_info *cert)
 	free(cert);
 }
 
-/* See RFC 5280 section 4.2.1.6 for SubjectAltName details. */
-static int
-fill_altname(struct tls_cert_info *cert_info, X509 *x509_cert)
-{
-	STACK_OF(GENERAL_NAME) *altname_stack = NULL;
-	GENERAL_NAME *altname;
-	int count, i, format, len;
-	struct tls_cert_alt_name *slot;
-	void *data;
-	int rv = -1;
+#endif /* USUAL_LIBSSL_FOR_TLS */
 
-	altname_stack = X509_get_ext_d2i(x509_cert, NID_subject_alt_name, NULL, NULL);
-	if (altname_stack == NULL)
-		return 0;
-
-	count = sk_GENERAL_NAME_num(altname_stack);
-	if (count == 0)
-		return 0;
-
-	cert_info->altnames = calloc(sizeof (struct tls_cert_alt_name), count);
-	if (cert_info->altnames == NULL)
-		return -1;
-
-	for (i = 0; i < count; i++) {
-		slot = &cert_info->altnames[cert_info->altname_count];
-		altname = sk_GENERAL_NAME_value(altname_stack, i);
-
-		if (altname->type == GEN_DNS) {
-			format = ASN1_STRING_type(altname->d.dNSName);
-			if (format != V_ASN1_IA5STRING)
-				goto failed;
-			data = ASN1_STRING_data(altname->d.dNSName);
-			len = ASN1_STRING_length(altname->d.dNSName);
-			if (len < 0 || (size_t)len != strlen(data))
-				goto failed;
-
-			/*
-			 * Per RFC 5280 section 4.2.1.6:
-			 * " " is a legal domain name, but that
-			 * dNSName must be rejected.
-			 */
-			if (strcmp(data, " ") == 0)
-				goto failed;
-
-			slot->alt_name = strdup(data);
-			if (slot->alt_name == NULL)
-				goto failed;
-			slot->alt_name_type = TLS_CERT_NAME_DNS;
-			cert_info->altname_count++;
-		} else if (altname->type == GEN_IPADD) {
-			len = ASN1_STRING_length(altname->d.iPAddress);
-			data = ASN1_STRING_data(altname->d.iPAddress);
-			if (len < 0)
-				goto failed;
-
-			/*
-			 * Per RFC 5280 section 4.2.1.6:
-			 * IPv4 must use 4 octets and IPv6 must use 16 octets.
-			 */
-			if (len == 4) {
-				slot->alt_name_type = TLS_CERT_NAME_IPv4;
-			} else if (len == 16) {
-				slot->alt_name_type = TLS_CERT_NAME_IPv6;
-			} else {
-				goto failed;
-			}
-			slot->alt_name = malloc(len);
-			if (slot->alt_name == NULL)
-				goto failed;
-			memcpy((void *)slot->alt_name, data, len);
-			cert_info->altname_count++;
-		} else {
-			/* ignore unknown types */
-		}
-	}
-	rv = 0;
-failed:
-	sk_GENERAL_NAME_pop_free(altname_stack, GENERAL_NAME_free);
-	return rv;
-}
-
-int
-tls_get_peer_cert(struct tls *ctx, struct tls_cert_info **cert_p)
-{
-	struct tls_cert_info *cert = NULL;
-	SSL *conn = ctx->ssl_conn;
-	X509 *peer;
-	X509_NAME *subject;
-
-	*cert_p = NULL;
-	if (!conn)
-		return 0;
-
-	peer = SSL_get_peer_certificate(conn);
-	if (!peer)
-		return 0;
-
-	cert = calloc(sizeof *cert, 1);
-	if (!cert)
-		return -1;
-
-	subject = X509_get_subject_name(peer);
-	if (!subject)
-		goto failed;
-
-	if (tls_get_subj_string(subject, NID_commonName, &cert->common_name, NULL) < 0)
-		goto failed;
-	if (tls_get_subj_string(subject, NID_countryName, &cert->country_name, NULL) < 0)
-		goto failed;
-	if (tls_get_subj_string(subject, NID_localityName, &cert->locality_name, NULL) < 0)
-		goto failed;
-	if (tls_get_subj_string(subject, NID_stateOrProvinceName, &cert->state_or_province_name, NULL) < 0)
-		goto failed;
-	if (tls_get_subj_string(subject, NID_organizationName, &cert->organization_name, NULL) < 0)
-		goto failed;
-	if (tls_get_subj_string(subject, NID_organizationalUnitName, &cert->organizational_unit_name, NULL) < 0)
-		goto failed;
-	if (tls_get_subj_string(subject, NID_pkcs9_emailAddress, &cert->email_address, NULL) < 0)
-		goto failed;
-
-	if (fill_altname(cert, peer) < 0)
-		goto failed;
-
-	*cert_p = cert;
-	return 0;
-
-failed:
-	tls_cert_free(cert);
-	return -1;
-}
-
-#endif
