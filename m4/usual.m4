@@ -497,6 +497,8 @@ if test "$tls_support" = "auto" -o "$tls_support" = "libssl"; then
   fi
   AC_DEFINE_UNQUOTED(USUAL_TLS_CA_FILE, ["$cafile"], [Path to root CA certs.])
   AC_MSG_RESULT([$cafile])
+else
+  AC_MSG_RESULT([no])
 fi
 
 AC_SUBST(tls_support)
