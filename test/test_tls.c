@@ -10,7 +10,9 @@
 
 #include "test_common.h"
 
+#ifdef USUAL_LIBSSL_FOR_TLS
 #include <usual/tls/tls_internal.h>
+#endif
 
 enum WState {
 	HANDSHAKE,
@@ -538,8 +540,10 @@ end:;
  * Host name pattern matching.
  */
 
+
 static const char *do_verify(const char *hostname, const char *commonName, ...)
 {
+#ifdef USUAL_LIBSSL_FOR_TLS
 	struct tls ctx;
 	struct tls_cert_info cert;
 	struct tls_cert_alt_name names[20], *alt;
@@ -588,6 +592,7 @@ static const char *do_verify(const char *hostname, const char *commonName, ...)
 		return "OK";
 	if (ret == -1)
 		return "FAIL";
+#endif
 	return "Unexpected code";
 }
 
@@ -627,8 +632,10 @@ static void test_servername(void *_)
 end:;
 }
 
-
 struct testcase_t tls_tests[] = {
+#ifndef USUAL_LIBSSL_FOR_TLS
+	END_OF_TESTCASES,
+#endif
 	{ "verify", test_verify },
 	{ "noverifyname", test_noverifyname },
 	{ "noverifycert", test_noverifycert },
