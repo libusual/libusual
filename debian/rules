@@ -1,0 +1,12 @@
+#!/usr/bin/make -f
+
+#export DH_VERBOSE=1
+#export orig_CFLAGS=1
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	./autogen.sh
+	./configure --prefix=/usr --with-openssl --with-libevent
+
