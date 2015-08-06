@@ -257,7 +257,7 @@ int
 tls_configure_verify(struct tls *ctx)
 {
 	if (ctx->config->verify_cert) {
-		SSL_CTX_set_verify(ctx->ssl_ctx, SSL_VERIFY_PEER | SSL_VERIFY_FAIL_IF_NO_PEER_CERT, NULL);
+		SSL_CTX_set_verify(ctx->ssl_ctx, SSL_VERIFY_PEER, NULL);
 
 		if (ctx->config->ca_mem != NULL) {
 			if (ctx->config->ca_len > INT_MAX) {
