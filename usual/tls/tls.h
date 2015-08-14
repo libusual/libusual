@@ -121,6 +121,8 @@ uint8_t *tls_load_file(const char *_file, size_t *_len, char *_password);
 int tls_get_peer_cert(struct tls *ctx, struct tls_cert_info **cert_p);
 void tls_cert_free(struct tls_cert_info *cert);
 
+int tls_get_peer_cert_fingerprint(struct tls *ctx, const char *algo, void *buf, size_t buflen, size_t *outlen);
+
 #ifdef __cplusplus
 }
 #endif

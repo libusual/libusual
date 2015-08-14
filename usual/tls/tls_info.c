@@ -236,5 +236,59 @@ tls_cert_free(struct tls_cert_info *cert)
 	free(cert);
 }
 
+/*
+ * Fingerprint calculation.
+ */
+
+int
+tls_get_peer_cert_fingerprint(struct tls *ctx, const char *algo, void *buf, size_t buflen, size_t *outlen)
+{
+	SSL *conn = ctx->ssl_conn;
+	X509 *peer;
+	const EVP_MD *md;
+	unsigned char tmpbuf[EVP_MAX_MD_SIZE];
+	unsigned int tmplen = 0;
+	int ret;
+
+	if (outlen)
+		*outlen = 0;
+
+	if (!conn) {
+		tls_set_error(ctx, "not connected");
+		return -1;
+	}
+
+	peer = SSL_get_peer_certificate(conn);
+	if (!peer) {
+		tls_set_error(ctx, "peer does not have cert");
+		return -1;
+	}
+
+	if (strcasecmp(algo, "sha1") == 0) {
+		md = EVP_sha1();
+	} else if (strcasecmp(algo, "sha256") == 0) {
+		md = EVP_sha256();
+	} else {
+		tls_set_error(ctx, "invalid fingerprint algorithm");
+		return -1;
+	}
+
+	ret = X509_digest(peer, md, tmpbuf, &tmplen);
+	if (ret != 1) {
+		tls_set_error(ctx, "X509_digest failed");
+		return -1;
+	}
+
+	if (tmplen > buflen)
+		tmplen = buflen;
+	memcpy(buf, tmpbuf, tmplen);
+
+	explicit_bzero(tmpbuf, sizeof(tmpbuf));
+	if (outlen)
+		*outlen = tmplen;
+
+	return 0;
+}
+
 #endif /* USUAL_LIBSSL_FOR_TLS */
 

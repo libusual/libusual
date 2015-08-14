@@ -4,6 +4,8 @@
 #include <usual/string.h>
 #include <usual/signal.h>
 #include <usual/err.h>
+#include <usual/fileutil.h>
+#include <usual/ctype.h>
 
 #include <string.h>
 #include <stdarg.h>
@@ -36,6 +38,9 @@ struct Worker {
 	enum WState wstate;
 	int socket;
 	char errbuf[1024];
+
+	const char *peer_fingerprint_sha1;
+	const char *peer_fingerprint_sha256;
 };
 
 static void free_worker(struct Worker *w)
@@ -157,6 +162,10 @@ static const char *create_worker(struct Worker **w_p, bool is_server, ...)
 			uint32_t protos;
 			err = tls_config_parse_protocols(&protos, v);
 			tls_config_set_protocols(w->config, TLS_PROTOCOLS_ALL);
+		} else if (!strncmp(k, "peer-sha1=", klen)) {
+			w->peer_fingerprint_sha1 = v;
+		} else if (!strncmp(k, "peer-sha256=", klen)) {
+			w->peer_fingerprint_sha256 = v;
 		} else {
 			return k;
 		}
@@ -237,10 +246,70 @@ static void worker_cb(int fd, short flags, void *arg)
 	return;
 }
 
+static const char *mkhex(const uint8_t *src, int len, char *dst)
+{
+	static const char hextbl[] = "0123456789ABCDEF";
+	int i;
+	for (i = 0; i < len; i++) {
+		dst[i*2] = hextbl[src[i] >> 4];
+		dst[i*2+1] = hextbl[src[i] & 15];
+	}
+	dst[i*2] = 0;
+	return dst;
+}
+
+static const char *hexcmp(const char *fn, const void *buf, unsigned int len)
+{
+	char hexbuf[256];
+	size_t flen;
+	char *fdata = load_file(fn, &flen);
+	int cmp;
+
+	if (!fdata)
+		return strerror(errno);
+	while (flen && isspace(fdata[flen-1]))
+		flen--;
+	fdata[flen] = 0;
+
+	mkhex(buf, len, hexbuf);
+
+	cmp = strcmp(hexbuf, fdata);
+	free(fdata);
+	return cmp ? "Fingerprint does not match" : NULL;
+}
+
+static const char *check_fp(struct Worker *w, const char *algo, const char *fn, size_t xlen)
+{
+	char buf[128];
+	const char *emsg;
+	int res;
+	size_t outlen = 0;
+
+	if (!fn)
+		return NULL;
+
+	res = tls_get_peer_cert_fingerprint(w->ctx, algo, buf, sizeof buf, &outlen);
+	if (res != 0 || outlen != xlen)
+		return "FP-sha1-fail";
+	emsg = hexcmp(fn, buf, outlen);
+	if (emsg)
+		return emsg;
+	return NULL;
+}
+
 static const char *done_handshake(struct Worker *w)
 {
 	int res;
-	size_t outlen;
+	size_t outlen = 0;
+	const char *emsg;
+
+	emsg = check_fp(w, "sha1", w->peer_fingerprint_sha1, 20);
+	if (emsg)
+		return emsg;
+	emsg = check_fp(w, "sha256", w->peer_fingerprint_sha256, 32);
+	if (emsg)
+		return emsg;
+
 	if (!w->is_server) {
 		res = tls_write(w->ctx, "PKT", 3, &outlen);
 		if (res != 0 && outlen != 3)
@@ -536,6 +605,46 @@ static void test_clientcert(void *z)
 end:;
 }
 
+static void test_fingerprint(void *z)
+{
+	struct Worker *server = NULL, *client = NULL;
+
+	tt_assert(tls_init() == 0);
+
+	/* both server & client with cert */
+	str_check(create_worker(&server, true,
+		"key=ssl/TestCA1/sites/01-example.com.key",
+		"cert=ssl/TestCA1/sites/01-example.com.crt",
+		"ca=ssl/TestCA2/ca.crt",
+		"peer-sha1=ssl/TestCA2/sites/02-client2.crt.sha1",
+		"peer-sha256=ssl/TestCA2/sites/02-client2.crt.sha256",
+		NULL), "OK");
+	str_check(create_worker(&client, false,
+		"key=ssl/TestCA2/sites/02-client2.key",
+		"cert=ssl/TestCA2/sites/02-client2.crt",
+		"ca=ssl/TestCA1/ca.crt",
+		"host=example.com",
+		"peer-sha1=ssl/TestCA1/sites/01-example.com.crt.sha1",
+		"peer-sha256=ssl/TestCA1/sites/01-example.com.crt.sha256",
+		NULL), "OK");
+	str_check(run_case(client, server), "OK");
+
+	/* client without cert */
+	str_check(create_worker(&server, true,
+		"key=ssl/TestCA1/sites/01-example.com.key",
+		"cert=ssl/TestCA1/sites/01-example.com.crt",
+		"ca=ssl/TestCA1/ca.crt",
+		"peer-sha1=ssl/TestCA2/sites/02-client2.crt.sha1",
+		"peer-sha256=ssl/TestCA2/sites/02-client2.crt.sha256",
+		NULL), "OK");
+	str_check(create_worker(&client, false,
+		"ca=ssl/TestCA1/ca.crt",
+		"host=example.com",
+		NULL), "OK");
+	str_check(run_case(client, server), "C:write!=3 - S:FP-sha1-fail");
+end:;
+}
+
 /*
  * Host name pattern matching.
  */
@@ -640,6 +749,7 @@ struct testcase_t tls_tests[] = {
 	{ "noverifyname", test_noverifyname },
 	{ "noverifycert", test_noverifycert },
 	{ "clientcert", test_clientcert },
+	{ "fingerprint", test_fingerprint },
 	{ "servername", test_servername },
 	END_OF_TESTCASES
 };
