@@ -4,16 +4,20 @@ AM_LDFLAGS = $(TLS_LDFLAGS)
 AM_LIBS = $(TLS_LIBS)
 
 # main target
-lib_LIBRARIES = libusual.a
+lib_LTLIBRARIES = libusual.la
 
 # sources that are not always built
-EXTRA_libusual_a_SOURCES = usual/pgsocket.h usual/pgsocket.c
+EXTRA_libusual_la_SOURCES = usual/pgsocket.h usual/pgsocket.c
+
+internal_headers = usual/pgutil_kwlookup.h \
+		   usual/tls/tls_compat.h \
+		   usual/tls/tls_internal.h
 
 # sources not in tar.gz
-nodist_EXTRA_libusual_a_SOURCES = usual/config.h
+nodist_EXTRA_libusual_la_SOURCES = usual/config.h
 
 # regular source files
-libusual_a_SOURCES = usual/config.h.in \
+libusual_la_SOURCES = usual/config.h.in \
 	usual/aatree.h usual/aatree.c \
 	usual/base.h usual/base.c usual/base_win32.h \
 	usual/bits.h \
@@ -79,7 +83,8 @@ libusual_a_SOURCES = usual/config.h.in \
 	usual/wchar.h usual/wchar.c
 
 # we want to filter headers, so cannot use usual install method via _HEADERS
-USUAL_HEADERS = $(filter %.h,$(libusual_a_SOURCES) $(nodist_EXTRA_libusual_a_SOURCES))
+USUAL_HEADERS = $(filter-out $(internal_headers), \
+		$(filter %.h,$(libusual_la_SOURCES) $(nodist_EXTRA_libusual_la_SOURCES)))
 
 # define aclocal destination
 aclocaldir = ${datarootdir}/aclocal
@@ -92,7 +97,7 @@ dist_aclocal_DATA = m4/usual.m4 m4/antimake.m4
 # test program for link-test
 noinst_PROGRAMS = test/compile
 test_compile_SOURCES = test/compile.c
-test_compile_LDADD = libusual.a
+test_compile_LDADD = libusual.la
 test_compile_LIBS = $(TLS_LIBS)
 
 # extra clean files
@@ -118,6 +123,7 @@ install-local:
 	@$(MKDIR_P) $(DESTDIR)$(includedir)/usual
 	@$(MKDIR_P) $(DESTDIR)$(includedir)/usual/hashing
 	@$(MKDIR_P) $(DESTDIR)$(includedir)/usual/crypto
+	@$(MKDIR_P) $(DESTDIR)$(includedir)/usual/tls
 	@for hdr in $(USUAL_HEADERS); do \
 		echo Filtering $$hdr; \
 		$(SED) -f mk/safe-headers.sed $$hdr \
@@ -181,4 +187,7 @@ nodoc:
 	@for hdr in `find usual -name '*.h'`; do \
 	  grep -q "$$hdr" doc/mainpage.dox || echo "$$hdr" ; \
 	done
+
+deb:
+	debuild -us -uc -b
 
