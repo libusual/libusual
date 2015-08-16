@@ -378,6 +378,7 @@ libusual.so.0 libusual0 #MINVER#
  tls_free@Base 1.0
  tls_get_connection_info@Base 1.0
  tls_get_peer_cert@Base 1.0
+ tls_get_peer_cert_fingerprint@Base 1.0
  tls_host_port@Base 1.0
  tls_init@Base 1.0
  tls_load_file@Base 1.0
