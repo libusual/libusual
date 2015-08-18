@@ -19,7 +19,7 @@ regtest_system_SOURCES = \
 	test_common.h tinytest.h tinytest_macros.h
 
 # build regtest_system against actual library
-regtest_system_LDADD = ../libusual.a
+regtest_system_LDADD = -static ../libusual.la
 regtest_system_LIBS = $(TLS_LIBS) $(LIBS)
 regtest_system_LDFLAGS = $(TLS_LDFLAGS)
 regtest_system_CPPFLAGS = -I.. -I. $(TLS_CPPFLAGS)
