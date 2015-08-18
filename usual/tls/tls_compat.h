@@ -11,6 +11,12 @@
 
 #include <openssl/ssl.h>
 
+/* ecdh_auto is broken (LibreSSL, OpenSSL 1.0.2+) */
+#undef SSL_CTX_set_ecdh_auto
+
+/* dh_auto seems fine (LibreSSL) */
+//#undef SSL_CTX_set_dh_auto
+
 #ifndef SSL_CTX_set_dh_auto
 long SSL_CTX_set_dh_auto(SSL_CTX *ctx, int onoff);
 #endif
