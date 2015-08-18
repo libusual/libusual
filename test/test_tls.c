@@ -105,6 +105,9 @@ static const char *create_worker(struct Worker **w_p, bool is_server, ...)
 	int klen;
 	struct Worker *w;
 	int err;
+	const char *mem = NULL;
+	void *fdata;
+	size_t flen;
 
 	*w_p = NULL;
 
@@ -138,14 +141,37 @@ static const char *create_worker(struct Worker **w_p, bool is_server, ...)
 		v++;
 		klen = v - k;
 		err = 0;
-		if (!strncmp(k, "ciphers=", klen)) {
-			err = tls_config_set_ciphers(w->config, v);
+		if (!strncmp(k, "mem=", klen)) {
+			mem = v;
 		} else if (!strncmp(k, "ca=", klen)) {
-			err = tls_config_set_ca_file(w->config, v);
+			if (mem) {
+				fdata = load_file(v, &flen);
+				if (!fdata) return strerror(errno);
+				err = tls_config_set_ca_mem(w->config, fdata, flen);
+				free(fdata);
+			} else {
+				err = tls_config_set_ca_file(w->config, v);
+			}
 		} else if (!strncmp(k, "cert=", klen)) {
-			err = tls_config_set_cert_file(w->config, v);
+			if (mem) {
+				fdata = load_file(v, &flen);
+				if (!fdata) return strerror(errno);
+				err = tls_config_set_cert_mem(w->config, fdata, flen);
+				free(fdata);
+			} else {
+				err = tls_config_set_cert_file(w->config, v);
+			}
 		} else if (!strncmp(k, "key=", klen)) {
-			err = tls_config_set_key_file(w->config, v);
+			if (mem) {
+				fdata = load_file(v, &flen);
+				if (!fdata) return strerror(errno);
+				err = tls_config_set_key_mem(w->config, fdata, flen);
+				free(fdata);
+			} else {
+				err = tls_config_set_key_file(w->config, v);
+			}
+		} else if (!strncmp(k, "ciphers=", klen)) {
+			err = tls_config_set_ciphers(w->config, v);
 		} else if (!strncmp(k, "host=", klen)) {
 			w->hostname = v;
 		} else if (!strncmp(k, "noverifycert=", klen)) {
@@ -645,6 +671,30 @@ static void test_fingerprint(void *z)
 end:;
 }
 
+static void test_set_mem(void *z)
+{
+	struct Worker *server = NULL, *client = NULL;
+
+	tt_assert(tls_init() == 0);
+
+	/* both server & client with cert */
+	str_check(create_worker(&server, true,
+		"mem=1",
+		"key=ssl/TestCA1/sites/01-example.com.key",
+		"cert=ssl/TestCA1/sites/01-example.com.crt",
+		"ca=ssl/TestCA2/ca.crt",
+		NULL), "OK");
+	str_check(create_worker(&client, false,
+		"mem=1",
+		"key=ssl/TestCA2/sites/02-client2.key",
+		"cert=ssl/TestCA2/sites/02-client2.crt",
+		"ca=ssl/TestCA1/ca.crt",
+		"host=example.com",
+		NULL), "OK");
+	str_check(run_case(client, server), "OK");
+end:;
+}
+
 /*
  * Host name pattern matching.
  */
@@ -751,6 +801,7 @@ struct testcase_t tls_tests[] = {
 	{ "clientcert", test_clientcert },
 	{ "fingerprint", test_fingerprint },
 	{ "servername", test_servername },
+	{ "set-mem", test_set_mem },
 	END_OF_TESTCASES
 };
 

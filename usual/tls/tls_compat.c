@@ -152,32 +152,6 @@ long SSL_CTX_set_ecdh_auto(SSL_CTX *ctx, int onoff)
 
 #endif
 
-#ifndef HAVE_SSL_CTX_USE_CERTIFICATE_CHAIN_MEM
-
-/*
- * Not supported.
- */
-
-int SSL_CTX_use_certificate_chain_mem(SSL_CTX *ctx, void *buf, int len)
-{
-	return 0;
-}
-
-#endif
-
-#ifndef HAVE_SSL_CTX_LOAD_VERIFY_MEM
-
-/*
- * Not supported.
- */
-
-int SSL_CTX_load_verify_mem(SSL_CTX *ctx, void *buf, int len)
-{
-	return 0;
-}
-
-#endif
-
 #else /* !USUAL_LIBSSL_FOR_TLS */
 
 /*
