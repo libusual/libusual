@@ -5,31 +5,34 @@ Certificate:
     Signature Algorithm: ecdsa-with-SHA256
         Issuer: C=QQ, O=Org1, CN=TestCA1
         Validity
-            Not Before: Aug  5 19:59:09 2015 GMT
-            Not After : Aug 18 19:59:09 2043 GMT
+            Not Before: Aug 18 20:51:52 2015 GMT
+            Not After : Aug 31 20:51:52 2043 GMT
         Subject: C=AA, L=city1, O=Org1, OU=none, CN=example.com
         Subject Public Key Info:
             Public Key Algorithm: id-ecPublicKey
-                Public-Key: (256 bit)
+                Public-Key: (384 bit)
                 pub: 
-                    04:06:cd:6f:ec:fd:f1:83:74:fd:bd:b3:d5:f5:29:
-                    45:a9:49:9e:4e:03:c4:ea:d4:5e:75:9d:92:83:8f:
-                    74:c2:a0:fd:29:14:65:8e:9f:8c:cd:fb:68:bc:1b:
-                    5f:50:4e:85:73:2b:52:98:b3:e6:4f:92:06:fa:05:
-                    eb:5e:88:71:26
-                ASN1 OID: prime256v1
+                    04:c1:bd:ea:57:a5:40:75:a7:dd:98:b3:b5:03:9d:
+                    0a:6a:4b:3c:2e:c9:b3:f1:07:2f:d5:bf:4e:49:d6:
+                    b6:69:2a:1e:f6:c6:17:bd:56:dd:6c:4e:32:87:d5:
+                    21:ea:0d:cc:07:c6:4b:de:63:33:9a:52:da:7b:d1:
+                    dd:f6:99:a3:35:ca:10:14:db:ef:96:33:2b:cc:45:
+                    e1:98:24:f8:4e:cc:56:4a:aa:38:d7:50:60:bb:38:
+                    b8:0c:c5:25:72:3e:d8
+                ASN1 OID: secp384r1
     Signature Algorithm: ecdsa-with-SHA256
-         30:44:02:20:5f:42:80:38:1b:5c:91:60:aa:5e:f7:e0:23:73:
-         7c:ca:a1:8f:9c:0e:fe:64:03:7b:c1:ac:a8:4c:e3:91:9a:2c:
-         02:20:62:9c:e3:01:28:95:12:3c:7f:68:d7:6a:cf:0c:a3:4a:
-         6d:8b:f4:94:d1:11:77:10:92:c2:c1:4b:3e:ff:f6:5c
+         30:45:02:20:4a:4e:e7:e9:03:f5:c5:d5:ec:f4:45:a4:87:b4:
+         cf:0a:ec:c2:33:bc:61:f1:be:bb:5e:72:2a:2b:c9:68:68:e1:
+         02:21:00:e9:dd:6f:7c:99:9c:2b:fa:29:19:fa:ff:84:69:1e:
+         20:ed:d7:70:d4:82:a9:20:8a:ea:65:5c:b0:cc:fd:ef:ae
 -----BEGIN CERTIFICATE-----
-MIIBZjCCAQ0CAQEwCgYIKoZIzj0EAwIwLjELMAkGA1UEBhMCUVExDTALBgNVBAoT
-BE9yZzExEDAOBgNVBAMTB1Rlc3RDQTEwHhcNMTUwODA1MTk1OTA5WhcNNDMwODE4
-MTk1OTA5WjBRMQswCQYDVQQGEwJBQTEOMAwGA1UEBxMFY2l0eTExDTALBgNVBAoT
-BE9yZzExDTALBgNVBAsTBG5vbmUxFDASBgNVBAMTC2V4YW1wbGUuY29tMFkwEwYH
-KoZIzj0CAQYIKoZIzj0DAQcDQgAEBs1v7P3xg3T9vbPV9SlFqUmeTgPE6tRedZ2S
-g490wqD9KRRljp+MzftovBtfUE6FcytSmLPmT5IG+gXrXohxJjAKBggqhkjOPQQD
-AgNHADBEAiBfQoA4G1yRYKpe9+Ajc3zKoY+cDv5kA3vBrKhM45GaLAIgYpzjASiV
-Ejx/aNdqzwyjSm2L9JTREXcQksLBSz7/9lw=
+MIIBhDCCASoCAQEwCgYIKoZIzj0EAwIwLjELMAkGA1UEBhMCUVExDTALBgNVBAoT
+BE9yZzExEDAOBgNVBAMTB1Rlc3RDQTEwHhcNMTUwODE4MjA1MTUyWhcNNDMwODMx
+MjA1MTUyWjBRMQswCQYDVQQGEwJBQTEOMAwGA1UEBxMFY2l0eTExDTALBgNVBAoT
+BE9yZzExDTALBgNVBAsTBG5vbmUxFDASBgNVBAMTC2V4YW1wbGUuY29tMHYwEAYH
+KoZIzj0CAQYFK4EEACIDYgAEwb3qV6VAdafdmLO1A50Kaks8Lsmz8Qcv1b9OSda2
+aSoe9sYXvVbdbE4yh9Uh6g3MB8ZL3mMzmlLae9Hd9pmjNcoQFNvvljMrzEXhmCT4
+TsxWSqo411Bguzi4DMUlcj7YMAoGCCqGSM49BAMCA0gAMEUCIEpO5+kD9cXV7PRF
+pIe0zwrswjO8YfG+u15yKivJaGjhAiEA6d1vfJmcK/opGfr/hGkeIO3XcNSCqSCK
+6mVcsMz9764=
 -----END CERTIFICATE-----

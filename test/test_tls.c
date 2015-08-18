@@ -32,12 +32,14 @@ struct Worker {
 	struct tls *base;
 	struct tls_config *config;
 	const char *hostname;
-	const char *command;
 	bool is_server;
 	bool pending;
 	enum WState wstate;
 	int socket;
 	char errbuf[1024];
+
+	const char *show_ciphers;
+	char cipherbuf[1024];
 
 	const char *peer_fingerprint_sha1;
 	const char *peer_fingerprint_sha256;
@@ -87,8 +89,13 @@ static const char *check_errors(struct Worker *client, struct Worker *server)
 {
 	static char buf[1024];
 
-	if (!client->errbuf[0] && !server->errbuf[0])
+	if (!client->errbuf[0] && !server->errbuf[0]) {
+		if (server->show_ciphers) {
+			strlcpy(buf, server->cipherbuf, sizeof buf);
+			return buf;
+		}
 		return "OK";
+	}
 
 	buf[0] = 0;
 	strlcat(buf, client->errbuf, sizeof buf);
@@ -170,6 +177,8 @@ static const char *create_worker(struct Worker **w_p, bool is_server, ...)
 			} else {
 				err = tls_config_set_key_file(w->config, v);
 			}
+		} else if (!strncmp(k, "show=", klen)) {
+			w->show_ciphers = v;
 		} else if (!strncmp(k, "ciphers=", klen)) {
 			err = tls_config_set_ciphers(w->config, v);
 		} else if (!strncmp(k, "host=", klen)) {
@@ -335,6 +344,8 @@ static const char *done_handshake(struct Worker *w)
 	emsg = check_fp(w, "sha256", w->peer_fingerprint_sha256, 32);
 	if (emsg)
 		return emsg;
+
+	tls_get_connection_info(w->ctx, w->cipherbuf, sizeof w->cipherbuf);
 
 	if (!w->is_server) {
 		res = tls_write(w->ctx, "PKT", 3, &outlen);
@@ -695,6 +706,51 @@ static void test_set_mem(void *z)
 end:;
 }
 
+static void test_cipher_nego(void *z)
+{
+	struct Worker *server = NULL, *client = NULL;
+
+	tt_assert(tls_init() == 0);
+
+	/* server key is EC:secp384r1 - ECDHE-ECDSA */
+	str_check(create_worker(&server, true, "show=1",
+		"key=ssl/TestCA1/sites/01-example.com.key",
+		"cert=ssl/TestCA1/sites/01-example.com.crt",
+		NULL), "OK");
+	str_check(create_worker(&client, false, "show=1",
+		"ciphers=AESGCM",
+		"ca=ssl/TestCA1/ca.crt",
+		"host=example.com",
+		NULL), "OK");
+	str_check(run_case(client, server), "TLSv1.2/ECDHE-ECDSA-AES256-GCM-SHA384/ECDH=secp384r1");
+
+	/* server key is RSA - ECDHE-RSA */
+	str_check(create_worker(&server, true, "show=1",
+		"key=ssl/TestCA2/sites/01-sample.org.key",
+		"cert=ssl/TestCA2/sites/01-sample.org.crt",
+		NULL), "OK");
+	str_check(create_worker(&client, false, "show=1",
+		"ciphers=AESGCM",
+		"ca=ssl/TestCA2/ca.crt",
+		"host=sample.org",
+		NULL), "OK");
+	str_check(run_case(client, server), "TLSv1.2/ECDHE-RSA-AES256-GCM-SHA384/ECDH=prime256v1");
+
+	/* server key is RSA - DHE-RSA */
+	str_check(create_worker(&server, true, "show=1",
+		"key=ssl/TestCA2/sites/01-sample.org.key",
+		"cert=ssl/TestCA2/sites/01-sample.org.crt",
+		"dheparams=auto",
+		NULL), "OK");
+	str_check(create_worker(&client, false, "show=1",
+		"ciphers=EDH+AES",
+		"ca=ssl/TestCA2/ca.crt",
+		"host=sample.org",
+		NULL), "OK");
+	str_check(run_case(client, server), "TLSv1.2/DHE-RSA-AES256-GCM-SHA384/DH=2048");
+end:;
+}
+
 /*
  * Host name pattern matching.
  */
@@ -802,6 +858,7 @@ struct testcase_t tls_tests[] = {
 	{ "fingerprint", test_fingerprint },
 	{ "servername", test_servername },
 	{ "set-mem", test_set_mem },
+	{ "cipher-nego", test_cipher_nego },
 	END_OF_TESTCASES
 };
 

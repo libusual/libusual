@@ -24,7 +24,11 @@ ser=`cat $CaName/serial`
 
 pfx=$CaName/sites/${ser}-$DstName
 
-run openssl ecparam -genkey -name prime256v1 -out $pfx.key
+if test "$KTYPE" = "rsa"; then
+  run openssl genrsa -out "$pfx.key" 2048
+else
+  run openssl ecparam -genkey -name secp384r1 -out $pfx.key
+fi
 
 # cert reqs
 run_req -new -key "$pfx.key" -out "$pfx.csr" -- CN="$DstName" "$@"

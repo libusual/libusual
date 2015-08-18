@@ -26,8 +26,11 @@ echo 01 > "$name"/serial
 
 days=10240
 
-#run openssl genrsa -out "$name/ca.key" $ksize
-run openssl ecparam -name prime256v1 -genkey -out "$name/ca.key"
+if test "$KTYPE" = "rsa"; then
+  run openssl genrsa -out "$name/ca.key" 2048
+else
+  run openssl ecparam -name prime256v1 -genkey -out "$name/ca.key"
+fi
 
 # self-signed cert
 run_req -new -x509 -days $days -key "$name/ca.key" -out "$name/ca.crt" -- "$@"
