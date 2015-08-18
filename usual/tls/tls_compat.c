@@ -107,15 +107,38 @@ long SSL_CTX_set_dh_auto(SSL_CTX *ctx, int onoff)
 #ifndef SSL_CTX_set_ecdh_auto
 
 /*
- * Use NIST P-256 curve.
+ * Use same curve as EC key, fallback to NIST P-256.
  */
 
 static EC_KEY *ecdh_auto_cb(SSL *ssl, int is_export, int keylength)
 {
-	static EC_KEY *ecdh_p256;
-	if (!ecdh_p256)
-		ecdh_p256 = EC_KEY_new_by_curve_name(NID_X9_62_prime256v1);
-	return ecdh_p256;
+	static EC_KEY *ecdh;
+	int last_nid;
+	int nid = 0;
+	EVP_PKEY *pk;
+	EC_KEY *ec;
+
+	pk = SSL_get_privatekey(ssl);
+	if (pk && pk->type == EVP_PKEY_EC) {
+		ec = EVP_PKEY_get1_EC_KEY(pk);
+		if (ec) {
+			nid = EC_GROUP_get_curve_name(EC_KEY_get0_group(ec));
+			EC_KEY_free(ec);
+		}
+	}
+	if (nid == 0)
+		nid = NID_X9_62_prime256v1;
+
+	if (ecdh) {
+		last_nid = EC_GROUP_get_curve_name(EC_KEY_get0_group(ecdh));
+		if (last_nid == nid)
+			return ecdh;
+		EC_KEY_free(ecdh);
+		ecdh = NULL;
+	}
+
+	ecdh = EC_KEY_new_by_curve_name(nid);
+	return ecdh;
 }
 
 long SSL_CTX_set_ecdh_auto(SSL_CTX *ctx, int onoff)
