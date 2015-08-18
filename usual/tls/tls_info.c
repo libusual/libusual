@@ -47,7 +47,7 @@ tls_cert_get_subj_string(struct tls *ctx, X509_NAME *subject, int nid, const cha
 	X509_NAME_get_text_by_NID(subject, nid, res, res_len + 1);
 
 	/* NUL bytes in value? */
-	if ((size_t)res_len != strlen(res)) {
+	if (memchr(res, '\0', res_len)) {
 		tls_set_error(ctx, "corrupt cert - NUL bytes is value");
 		free(res);
 		return -2;
@@ -97,7 +97,7 @@ tls_cert_get_altnames(struct tls *ctx, struct tls_cert_info *cert_info, X509 *x5
 
 			data = ASN1_STRING_data(altname->d.dNSName);
 			len = ASN1_STRING_length(altname->d.dNSName);
-			if (len < 0 || (size_t)len != strlen(data)) {
+			if (len < 0 || memchr(data, '\0', len)) {
 				tls_set_error(ctx, "invalid string value");
 				goto out;
 			}
