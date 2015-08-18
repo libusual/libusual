@@ -6,15 +6,10 @@
 
 #ifdef USUAL_LIBSSL_FOR_TLS
 
-#include <usual/crypto/csrandom.h>
 #include <usual/string.h>
 #include <usual/socket.h>
 
 #include <openssl/ssl.h>
-
-#ifndef HAVE_ARC4RANDOM_BUF
-#define arc4random_buf(a,b) csrandom_bytes(a,b)
-#endif
 
 #ifndef SSL_CTX_set_dh_auto
 long SSL_CTX_set_dh_auto(SSL_CTX *ctx, int onoff);
