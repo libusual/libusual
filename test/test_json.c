@@ -79,6 +79,7 @@ static const char *rerender_opts(const char *json, int opts)
 	static char buf[1024];
 	struct MBuf dst;
 
+	memset(buf, 0, sizeof buf);
 	mbuf_init_fixed_writer(&dst, buf, sizeof(buf));
 
 	ctx = json_new_context(NULL, 128);
@@ -103,6 +104,7 @@ static const char *xrerender_opts(const char *xjson, int opts)
 	char *s;
 	const char *res;
 
+	memset(buf, 0, sizeof buf);
 	strlcpy(buf, xjson, sizeof(buf));
 	for (s = buf; *s; s++) {
 		if (*s == '|')
