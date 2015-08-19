@@ -1,4 +1,5 @@
 #! /usr/bin/env python
+# -*- coding: utf-8 -*-
 
 """Generate x509 keys and certs.
 """
@@ -104,10 +105,12 @@ def _wrapKeyUsage(digital_signature=False, content_commitment=False, key_enciphe
 def x509_sign(privkey, pubkey, subject, issuer, ca=False, alt_names=None, usage=None):
     from cryptography.hazmat.primitives import hashes
     from cryptography.x509.oid import ExtendedKeyUsageOID
+    import hashlib
 
     dt_start = datetime.datetime(2010, 1, 1, 8, 5, 0)
     dt_end = datetime.datetime(2060, 12, 31, 23, 55)
-    serial = int(uuid.uuid4())
+    #serial = int(uuid.uuid4())
+    serial = int(hashlib.sha1(subject[0]).hexdigest(), 16)
 
     builder = (x509.CertificateBuilder()
             .subject_name(_load_name(subject))
@@ -227,13 +230,13 @@ client1 = Leaf(ca1, 'ec:secp192r1', ['CN=client1'], ['822:client@company.com'], 
 client1.write('ca1_client1')
 
 complex1 = Leaf(ca1, 'ec:secp384r1',
-        name = ['CN=complex1.com'],
+        #name = ['CN=complex1.com', 'L=Kõzzä', 'ST=様々な論争を引き起こしてきた。'],
+        name = ['CN=complex1.com', 'C=QQ', 'L=Loc1', 'ST=Foo', 'O=Aorg2', 'OU=Unit1'],
         alt_names = ['dns:complex1.com', 'dns:www.complex1.com',
-         'ip4:127.0.0.1', 'ip6:fffe::1',
-         #'i4n:192.168.1.0/24', 'i6n:::1/128',
-         'uri:http://localhost/',
-         '822:fooxa@example.com',
-         ],
+             'ip4:127.0.0.1', 'ip6:fffe::1',
+             #'i4n:192.168.1.0/24', 'i6n:::1/128',
+             'uri:http://localhost/',
+             '822:fooxa@example.com'],
         usage=['server'])
 complex1.write('ca1_complex1')
 

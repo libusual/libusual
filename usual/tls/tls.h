@@ -44,23 +44,40 @@ struct tls_config;
 #define TLS_CERT_NAME_DNS	1
 #define TLS_CERT_NAME_IPv4	2
 #define TLS_CERT_NAME_IPv6	3
+#define TLS_CERT_NAME_EMAIL	4
+#define TLS_CERT_NAME_URI	5
 
 struct tls_cert_alt_name {
 	const void *alt_name;
 	int alt_name_type;
 };
 
-struct tls_cert_info {
+struct tls_cert_entity {
 	const char *common_name;
-	const char *locality_name;
 	const char *country_name;
 	const char *state_or_province_name;
+	const char *locality_name;
+	const char *street_address;
 	const char *organization_name;
 	const char *organizational_unit_name;
-	const char *email_address;
+};
 
-	int altname_count;
-	struct tls_cert_alt_name *altnames;
+struct tls_cert_info {
+	struct tls_cert_entity subject;
+	struct tls_cert_entity issuer;
+
+	struct tls_cert_alt_name *subject_alt_names;
+	int subject_alt_name_count;
+
+	/* 0:v1, 1:v2, 2:v3 */
+	int version;
+
+	/* decimal number */
+	const char *serial;
+
+	/* ISO 8601 time: 2015-08-18T06:36:40Z */
+	const char *not_before;
+	const char *not_after;
 };
 
 int tls_init(void);

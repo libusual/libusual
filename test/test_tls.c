@@ -22,9 +22,6 @@ enum WState {
 	CLOSED
 };
 
-struct UseCase;
-struct Worker;
-
 struct Worker {
 	struct event ev;
 	struct event_base *evbase;
@@ -92,6 +89,10 @@ static const char *check_errors(struct Worker *client, struct Worker *server)
 	if (!client->errbuf[0] && !server->errbuf[0]) {
 		if (server->show) {
 			strlcpy(buf, server->showbuf, sizeof buf);
+			return buf;
+		}
+		if (client->show) {
+			strlcpy(buf, client->showbuf, sizeof buf);
 			return buf;
 		}
 		return "OK";
@@ -346,9 +347,9 @@ static void show_entity(char *buf, size_t buflen, const struct tls_cert_entity *
 	show_append(buf, buflen, "/C=", ent->country_name);
 	show_append(buf, buflen, "/ST=", ent->state_or_province_name);
 	show_append(buf, buflen, "/L=", ent->locality_name);
+	show_append(buf, buflen, "/A=", ent->street_address);
 	show_append(buf, buflen, "/O=", ent->organization_name);
 	show_append(buf, buflen, "/OU=", ent->organizational_unit_name);
-	show_append(buf, buflen, "/E=", ent->email_address);
 }
 
 static void show_cert(struct tls_cert_info *cert, char *buf, size_t buflen)
@@ -501,6 +502,7 @@ end:
 #define CLIENT2 "key=ssl/ca2_client2.key", "cert=ssl/ca2_client2.crt"
 #define CA1 "ca=ssl/ca1_root.crt"
 #define CA2 "ca=ssl/ca2_root.crt"
+#define COMPLEX1 "key=ssl/ca1_complex1.key", "cert=ssl/ca1_complex1.crt"
 
 static void test_verify(void *z)
 {
@@ -696,7 +698,7 @@ static void test_cert_info(void *z)
 
 	tt_assert(tls_init() == 0);
 
-	/* both server & client with cert */
+	/* server shows client cert */
 	str_check(create_worker(&server, true, "show=peer-cert", SERVER1, CA2,
 		"peer-sha1=ssl/ca2_client2.crt.sha1",
 		"peer-sha256=ssl/ca2_client2.crt.sha256",
@@ -709,10 +711,19 @@ static void test_cert_info(void *z)
 	str_check(run_case(client, server),
 		  "Subject: /CN=client2/C=XX/ST=State2/L=City2/O=Org2"
 		  " Issuer: /CN=TestCA2"
-		  " Serial: 164012649043499037638476466740783405990"
+		  " Serial: 1387724136048036785122419970010419099185643835502"
 		  " NotBefore: 2010-01-01T08:05:00Z"
 		  " NotAfter: 2060-12-31T23:55:00Z");
 
+	/* client shows server cert */
+	str_check(create_worker(&server, true, COMPLEX1, NULL), "OK");
+	str_check(create_worker(&client, false, CA1, "show=peer-cert", "host=complex1.com", NULL), "OK");
+	str_check(run_case(client, server),
+		  "Subject: /CN=complex1.com/C=QQ/ST=Foo/L=Loc1/O=Aorg2/OU=Unit1"
+		  " Issuer: /CN=TestCA1/C=AA/ST=State1/L=City1/O=Org1"
+		  " Serial: 1113692385315072860785465640275941003895485612482"
+		  " NotBefore: 2010-01-01T08:05:00Z"
+		  " NotAfter: 2060-12-31T23:55:00Z");
 end:;
 }
 

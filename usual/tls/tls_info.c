@@ -27,14 +27,112 @@
  * Load cert data from X509 cert.
  */
 
+/* Convert ASN1_INTEGER to decimal string string */
+static int tls_parse_bigint(struct tls *ctx, const ASN1_INTEGER *asn1int, const char **dst_p)
+{
+	long small;
+	BIGNUM *big;
+	char *tmp, buf[64];
+
+	*dst_p = NULL;
+	small = ASN1_INTEGER_get(asn1int);
+	if (small < 0) {
+		big = ASN1_INTEGER_to_BN(asn1int, NULL);
+		if (big) {
+			tmp = BN_bn2dec(big);
+			if (tmp)
+				*dst_p = strdup(tmp);
+			OPENSSL_free(tmp);
+		}
+		BN_free(big);
+	} else {
+		snprintf(buf, sizeof buf, "%lu", small);
+		*dst_p = strdup(buf);
+	}
+	if (*dst_p)
+		return 0;
+
+	tls_set_error(ctx, "cannot parse serial");
+	return -1;
+}
+
+/* Convert ASN1_TIME to ISO 8601 string */
+static int tls_parse_time(struct tls *ctx, const ASN1_TIME *asn1time, const char **dst_p)
+{
+	static const char months[12][4] = {
+		"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+	};
+	char buf[128], *tmp, *mon, *day, *time, *year, *tz;
+	char buf2[128];
+	BIO *bio;
+	int ret, i;
+
+	*dst_p = NULL;
+
+	memset(buf, 0, sizeof buf);
+	bio = BIO_new(BIO_s_mem());
+	if (!bio)
+		goto nomem;
+
+	/* result: Aug 18 20:51:52 2015 GMT */
+	ret = ASN1_TIME_print(bio, asn1time);
+	if (!ret) {
+		BIO_free(bio);
+		goto nomem;
+	}
+	BIO_read(bio, buf, sizeof(buf) - 1);
+	BIO_free(bio);
+	memcpy(buf2, buf, 128);
+
+	// "Jan  1"
+	if (buf[3] == ' ' && buf[4] == ' ')
+		buf[4] = '0';
+
+	tmp = buf;
+	mon = strsep(&tmp, " ");
+	day = strsep(&tmp, " ");
+	time = strsep(&tmp, " ");
+	year = strsep(&tmp, " ");
+	tz = strsep(&tmp, " ");
+
+	if (!year || tmp) {
+		tls_set_error(ctx, "invalid time format: no year: %s", buf2);
+		return -1;
+		goto invalid;
+	}
+	if (tz && strcmp(tz, "GMT") != 0)
+		goto invalid;
+
+	for (i = 0; i < 12; i++) {
+		if (memcmp(months[i], mon, 4) == 0)
+			break;
+	}
+	if (i > 11)
+		goto invalid;
+
+	ret = asprintf(&tmp, "%s-%02d-%sT%sZ", year, i+1, day, time);
+	if (ret < 0)
+		goto nomem;
+	*dst_p = tmp;
+	return 0;
+
+invalid:
+	tls_set_error(ctx, "invalid time format");
+	return -1;
+nomem:
+	tls_set_error(ctx, "no mem to parse time");
+	return -1;
+}
+
 static int
-tls_cert_get_subj_string(struct tls *ctx, X509_NAME *subject, int nid, const char **str_p)
+tls_cert_get_name_string(struct tls *ctx, X509_NAME *name, int nid, const char **str_p)
 {
 	char *res = NULL;
 	int res_len;
 
 	*str_p = NULL;
-	res_len = X509_NAME_get_text_by_NID(subject, nid, NULL, 0);
+
+	res_len = X509_NAME_get_text_by_NID(name, nid, NULL, 0);
 	if (res_len < 0)
 		return 0;
 
@@ -44,7 +142,7 @@ tls_cert_get_subj_string(struct tls *ctx, X509_NAME *subject, int nid, const cha
 		return -1;
 	}
 
-	X509_NAME_get_text_by_NID(subject, nid, res, res_len + 1);
+	X509_NAME_get_text_by_NID(name, nid, res, res_len + 1);
 
 	/* NUL bytes in value? */
 	if (memchr(res, '\0', res_len)) {
@@ -57,15 +155,100 @@ tls_cert_get_subj_string(struct tls *ctx, X509_NAME *subject, int nid, const cha
 	return 0;
 }
 
+static int
+tls_load_alt_ia5string(struct tls *ctx, ASN1_IA5STRING *ia5str, struct tls_cert_info *cert_info, int slot_type)
+{
+	struct tls_cert_alt_name *slot;
+	char *data;
+	int format, len;
+
+	slot = &cert_info->subject_alt_names[cert_info->subject_alt_name_count];
+
+	format = ASN1_STRING_type(ia5str);
+	if (format != V_ASN1_IA5STRING) {
+		/* ignore unknown string type */
+		return 0;
+	}
+
+	data = (char *)ASN1_STRING_data(ia5str);
+	len = ASN1_STRING_length(ia5str);
+
+	/*
+	 * Per RFC 5280 section 4.2.1.6:
+	 * disallow empty strings.
+	 */
+	if (len <= 0 || memchr(data, '\0', len)) {
+		tls_set_error(ctx, "invalid string value");
+		return -1;
+	}
+
+	/*
+	 * Per RFC 5280 section 4.2.1.6:
+	 * " " is a legal domain name, but that
+	 * dNSName must be rejected.
+	 */
+	if (len == 1 && data[0] == ' ') {
+		tls_set_error(ctx, "single space as name");
+		return -1;
+	}
+
+	slot->alt_name = strdup(data);
+	if (slot->alt_name == NULL) {
+		tls_set_error(ctx, "no mem");
+		return -1;
+	}
+	slot->alt_name_type = slot_type;
+
+	cert_info->subject_alt_name_count++;
+	return 0;
+}
+
+static int
+tls_load_alt_ipaddr(struct tls *ctx, ASN1_OCTET_STRING *bin, struct tls_cert_info *cert_info)
+{
+	struct tls_cert_alt_name *slot;
+	void *data;
+	int len;
+
+	slot = &cert_info->subject_alt_names[cert_info->subject_alt_name_count];
+	len = ASN1_STRING_length(bin);
+	data = ASN1_STRING_data(bin);
+	if (len < 0) {
+		tls_set_error(ctx, "negative length for ipaddress");
+		return -1;
+	}
+
+	/*
+	 * Per RFC 5280 section 4.2.1.6:
+	 * IPv4 must use 4 octets and IPv6 must use 16 octets.
+	 */
+	if (len == 4) {
+		slot->alt_name_type = TLS_CERT_NAME_IPv4;
+	} else if (len == 16) {
+		slot->alt_name_type = TLS_CERT_NAME_IPv6;
+	} else {
+		tls_set_error(ctx, "invalid length for ipaddress");
+		return -1;
+	}
+
+	slot->alt_name = malloc(len);
+	if (slot->alt_name == NULL) {
+		tls_set_error(ctx, "no mem");
+		return -1;
+	}
+
+	memcpy((void *)slot->alt_name, data, len);
+	cert_info->subject_alt_name_count++;
+	return 0;
+}
+
 /* See RFC 5280 section 4.2.1.6 for SubjectAltName details. */
 static int
 tls_cert_get_altnames(struct tls *ctx, struct tls_cert_info *cert_info, X509 *x509_cert)
 {
 	STACK_OF(GENERAL_NAME) *altname_stack = NULL;
 	GENERAL_NAME *altname;
-	int count, i, format, len;
-	struct tls_cert_alt_name *slot;
-	void *data;
+	int count, i;
 	int rv = -1;
 
 	altname_stack = X509_get_ext_d2i(x509_cert, NID_subject_alt_name, NULL, NULL);
@@ -78,84 +261,53 @@ tls_cert_get_altnames(struct tls *ctx, struct tls_cert_info *cert_info, X509 *x5
 		goto out;
 	}
 
-	cert_info->altnames = calloc(sizeof (struct tls_cert_alt_name), count);
-	if (cert_info->altnames == NULL) {
+	cert_info->subject_alt_names = calloc(sizeof (struct tls_cert_alt_name), count);
+	if (cert_info->subject_alt_names == NULL) {
 		tls_set_error(ctx, "no mem");
 		goto out;
 	}
 
 	for (i = 0; i < count; i++) {
-		slot = &cert_info->altnames[cert_info->altname_count];
 		altname = sk_GENERAL_NAME_value(altname_stack, i);
 
 		if (altname->type == GEN_DNS) {
-			format = ASN1_STRING_type(altname->d.dNSName);
-			if (format != V_ASN1_IA5STRING) {
-				/* ignore unknown string type */
-				continue;
-			}
-
-			data = ASN1_STRING_data(altname->d.dNSName);
-			len = ASN1_STRING_length(altname->d.dNSName);
-			if (len < 0 || memchr(data, '\0', len)) {
-				tls_set_error(ctx, "invalid string value");
-				goto out;
-			}
-
-			/*
-			 * Per RFC 5280 section 4.2.1.6:
-			 * " " is a legal domain name, but that
-			 * dNSName must be rejected.
-			 */
-			if (strcmp(data, " ") == 0) {
-				tls_set_error(ctx, "single space as name");
-				goto out;
-			}
-
-			slot->alt_name = strdup(data);
-			if (slot->alt_name == NULL) {
-				tls_set_error(ctx, "no mem");
-				goto out;
-			}
-			slot->alt_name_type = TLS_CERT_NAME_DNS;
-			cert_info->altname_count++;
+			rv = tls_load_alt_ia5string(ctx, altname->d.dNSName, cert_info, TLS_CERT_NAME_DNS);
+		} else if (altname->type == GEN_EMAIL) {
+			rv = tls_load_alt_ia5string(ctx, altname->d.rfc822Name, cert_info, TLS_CERT_NAME_EMAIL);
+		} else if (altname->type == GEN_URI) {
+			rv = tls_load_alt_ia5string(ctx, altname->d.uniformResourceIdentifier, cert_info, TLS_CERT_NAME_URI);
 		} else if (altname->type == GEN_IPADD) {
-			len = ASN1_STRING_length(altname->d.iPAddress);
-			data = ASN1_STRING_data(altname->d.iPAddress);
-			if (len < 0) {
-				tls_set_error(ctx, "negative length for ipaddress");
-				goto out;
-			}
-
-			/*
-			 * Per RFC 5280 section 4.2.1.6:
-			 * IPv4 must use 4 octets and IPv6 must use 16 octets.
-			 */
-			if (len == 4) {
-				slot->alt_name_type = TLS_CERT_NAME_IPv4;
-			} else if (len == 16) {
-				slot->alt_name_type = TLS_CERT_NAME_IPv6;
-			} else {
-				tls_set_error(ctx, "invalid length for ipaddress");
-				goto out;
-			}
-
-			slot->alt_name = malloc(len);
-			if (slot->alt_name == NULL) {
-				tls_set_error(ctx, "no mem");
-				goto out;
-			}
-
-			memcpy((void *)slot->alt_name, data, len);
-			cert_info->altname_count++;
+			rv = tls_load_alt_ipaddr(ctx, altname->d.iPAddress, cert_info);
 		} else {
 			/* ignore unknown types */
 		}
+		if (rv < 0)
+			goto out;
 	}
 	rv = 0;
 out:
 	sk_GENERAL_NAME_pop_free(altname_stack, GENERAL_NAME_free);
 	return rv;
+}
+
+static int
+tls_get_entity(struct tls *ctx, X509_NAME *name, struct tls_cert_entity *ent)
+{
+	int ret;
+	ret = tls_cert_get_name_string(ctx, name, NID_commonName, &ent->common_name);
+	if (ret == 0)
+		ret = tls_cert_get_name_string(ctx, name, NID_countryName, &ent->country_name);
+	if (ret == 0)
+		ret = tls_cert_get_name_string(ctx, name, NID_stateOrProvinceName, &ent->state_or_province_name);
+	if (ret == 0)
+		ret = tls_cert_get_name_string(ctx, name, NID_localityName, &ent->locality_name);
+	if (ret == 0)
+		ret = tls_cert_get_name_string(ctx, name, NID_streetAddress, &ent->street_address);
+	if (ret == 0)
+		ret = tls_cert_get_name_string(ctx, name, NID_organizationName, &ent->organization_name);
+	if (ret == 0)
+		ret = tls_cert_get_name_string(ctx, name, NID_organizationalUnitName, &ent->organizational_unit_name);
+	return ret;
 }
 
 int
@@ -164,8 +316,9 @@ tls_get_peer_cert(struct tls *ctx, struct tls_cert_info **cert_p)
 	struct tls_cert_info *cert = NULL;
 	SSL *conn = ctx->ssl_conn;
 	X509 *peer;
-	X509_NAME *subject;
+	X509_NAME *subject, *issuer;
 	int ret = -1;
+	long version;
 
 	*cert_p = NULL;
 
@@ -180,9 +333,21 @@ tls_get_peer_cert(struct tls *ctx, struct tls_cert_info **cert_p)
 		return -1;
 	}
 
+	version = X509_get_version(peer);
+	if (version < 0) {
+		tls_set_error(ctx, "invalid version");
+		return -1;
+	}
+
 	subject = X509_get_subject_name(peer);
 	if (!subject) {
 		tls_set_error(ctx, "cert does not have subject");
+		return -1;
+	}
+
+	issuer = X509_get_issuer_name(peer);
+	if (!issuer) {
+		tls_set_error(ctx, "cert does not have issuer");
 		return -1;
 	}
 
@@ -191,22 +356,19 @@ tls_get_peer_cert(struct tls *ctx, struct tls_cert_info **cert_p)
 		tls_set_error(ctx, "calloc failed");
 		goto failed;
 	}
+	cert->version = version;
 
-	ret = tls_cert_get_subj_string(ctx, subject, NID_commonName, &cert->common_name);
+	ret = tls_get_entity(ctx, subject, &cert->subject);
 	if (ret == 0)
-		ret = tls_cert_get_subj_string(ctx, subject, NID_countryName, &cert->country_name);
-	if (ret == 0)
-		ret = tls_cert_get_subj_string(ctx, subject, NID_localityName, &cert->locality_name);
-	if (ret == 0)
-		ret = tls_cert_get_subj_string(ctx, subject, NID_stateOrProvinceName, &cert->state_or_province_name);
-	if (ret == 0)
-		ret = tls_cert_get_subj_string(ctx, subject, NID_organizationName, &cert->organization_name);
-	if (ret == 0)
-		ret = tls_cert_get_subj_string(ctx, subject, NID_organizationalUnitName, &cert->organizational_unit_name);
-	if (ret == 0)
-		ret = tls_cert_get_subj_string(ctx, subject, NID_pkcs9_emailAddress, &cert->email_address);
+		ret = tls_get_entity(ctx, issuer, &cert->issuer);
 	if (ret == 0)
 		ret = tls_cert_get_altnames(ctx, cert, peer);
+	if (ret == 0)
+		ret = tls_parse_time(ctx, X509_get_notBefore(peer), &cert->not_before);
+	if (ret == 0)
+		ret = tls_parse_time(ctx, X509_get_notAfter(peer), &cert->not_after);
+	if (ret == 0)
+		ret = tls_parse_bigint(ctx, X509_get_serialNumber(peer), &cert->serial);
 	if (ret == 0) {
 		*cert_p = cert;
 		return 0;
@@ -216,23 +378,37 @@ failed:
 	return ret;
 }
 
+static void
+tls_cert_free_entity(struct tls_cert_entity *ent)
+{
+	free(ent->common_name);
+	free(ent->country_name);
+	free(ent->state_or_province_name);
+	free(ent->locality_name);
+	free(ent->street_address);
+	free(ent->organization_name);
+	free(ent->organizational_unit_name);
+}
+
 void
 tls_cert_free(struct tls_cert_info *cert)
 {
 	int i;
 	if (!cert)
 		return;
-	free(cert->common_name);
-	free(cert->country_name);
-	free(cert->locality_name);
-	free(cert->state_or_province_name);
-	free(cert->organization_name);
-	free(cert->organizational_unit_name);
-	if (cert->altname_count) {
-		for (i = 0; i < cert->altname_count; i++)
-			free(cert->altnames[i].alt_name);
+
+	tls_cert_free_entity(&cert->issuer);
+	tls_cert_free_entity(&cert->subject);
+
+	if (cert->subject_alt_name_count) {
+		for (i = 0; i < cert->subject_alt_name_count; i++)
+			free(cert->subject_alt_names[i].alt_name);
 	}
-	free(cert->altnames);
+	free(cert->subject_alt_names);
+
+	free(cert->serial);
+	free(cert->not_before);
+	free(cert->not_after);
 	free(cert);
 }
 

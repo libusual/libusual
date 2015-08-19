@@ -85,7 +85,7 @@ tls_check_subject_altname(struct tls *ctx, struct tls_cert_info *cert, const cha
 	int addrlen, type;
 	int i;
 
-	if (cert->altname_count == 0)
+	if (cert->subject_alt_name_count == 0)
 		return -1;
 
 	if (inet_pton(AF_INET, name, &addrbuf) == 1) {
@@ -99,8 +99,8 @@ tls_check_subject_altname(struct tls *ctx, struct tls_cert_info *cert, const cha
 		addrlen = 0;
 	}
 
-	for (i = 0; i < cert->altname_count; i++) {
-		altname = &cert->altnames[i];
+	for (i = 0; i < cert->subject_alt_name_count; i++) {
+		altname = &cert->subject_alt_names[i];
 		if (altname->alt_name_type != type)
 			continue;
 
@@ -121,7 +121,7 @@ tls_check_common_name(struct tls *ctx, struct tls_cert_info *cert, const char *n
 {
 	union { struct in_addr ip4; struct in6_addr ip6; } addrbuf;
 
-	if (cert->common_name == NULL)
+	if (cert->subject.common_name == NULL)
 		return -1;
 
 	if (inet_pton(AF_INET,  name, &addrbuf) == 1 ||
@@ -130,10 +130,10 @@ tls_check_common_name(struct tls *ctx, struct tls_cert_info *cert, const char *n
 		 * We don't want to attempt wildcard matching against IP
 		 * addresses, so perform a simple comparison here.
 		 */
-		if (strcmp(cert->common_name, name) == 0)
+		if (strcmp(cert->subject.common_name, name) == 0)
 			return 0;
 	} else {
-		if (tls_match_name(cert->common_name, name) == 0)
+		if (tls_match_name(cert->subject.common_name, name) == 0)
 			return 0;
 	}
 	return -1;
