@@ -6,10 +6,18 @@ config.mak
 obj
 test/obj
 test/test_config.h
-test/regtest
+test/regtest_*
+test/compile
 doc/html
 *.[oas]
 *.gc[odn][aov]
+*.la
+*.pc
+*.log
+*.substvars
+*.debhelper
+*.diff
+zconf.*
 
 ./install-sh
 config.guess
@@ -23,4 +31,10 @@ build.mk
 install-sh
 tmp
 tags
+
+mk/temos/html
+mk/temos/output
+debian/libusual-dev/
+debian/libusual0/
+debian/files
 
