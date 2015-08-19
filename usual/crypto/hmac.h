@@ -34,6 +34,9 @@ struct HMAC *hmac_new(const struct DigestInfo *impl,
 		      const void *key, unsigned int key_len,
 		      CxMem *cx);
 
+/** Free context */
+void hmac_free(struct HMAC *ctx);
+
 /** Initialize context */
 void hmac_reset(struct HMAC *ctx);
 

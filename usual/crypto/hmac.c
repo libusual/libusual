@@ -75,6 +75,13 @@ struct HMAC *hmac_new(const struct DigestInfo *impl,
 	return hmac;
 }
 
+/* Free context */
+void hmac_free(struct HMAC *ctx)
+{
+	digest_free(ctx->hash);
+	cx_free(ctx->cx, ctx);
+}
+
 /* Clean HMAC state */
 void hmac_reset(struct HMAC *ctx)
 {
