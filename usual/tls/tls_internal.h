@@ -77,8 +77,8 @@ struct tls {
 	struct tls_config *config;
 	uint64_t flags;
 
-	int err;
 	char *errmsg;
+	int err;
 
 	int socket;
 
