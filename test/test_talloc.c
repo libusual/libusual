@@ -311,7 +311,7 @@ static void test_talloc_strings(void *zzz)
 	str_check(a, "foozzz");
 
 	c = talloc_memdup(top, x, 8);
-	talloc_strdup_append_buffer(c, "zzz");
+	c = talloc_strdup_append_buffer(c, "zzz");
 	int_check(talloc_get_size(c), 11);
 	tt_assert(memcmp(c, "foo\0barzzz", 11) == 0);
 
@@ -387,6 +387,8 @@ static void test_talloc_refs(void *zzz)
 	//int_check(destruct_calls, 2);
 	//log_check_full("A:1, A:2, A:3, A:4, A:5, A:6, F:6, F:2, F:1");
 	log_reset();
+
+	talloc_disable_null_tracking();
 end:;
 }
 

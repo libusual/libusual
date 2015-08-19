@@ -402,6 +402,7 @@ static const char *run_variable(const char *hex, const struct DigestInfo *mdinfo
 		digest_final(ctx, res + reslen);
 		reslen += digest_result_len(ctx);
 	}
+	digest_free(ctx);
 
 	return mkhex(res, reslen);
 }
@@ -478,6 +479,7 @@ static const char *run_hmac(const char *key, const char *str, const struct Diges
 
 	hmac_update(ctx, str, len);
 	hmac_final(ctx, res);
+	hmac_free(ctx);
 
 	return mkhex(res, reslen);
 }
