@@ -31,10 +31,16 @@ regtest_compat_LDFLAGS = $(TLS_LDFLAGS)
 regtest_compat_SOURCES := $(regtest_system_SOURCES)
 nodist_regtest_compat_SOURCES = test_config.h
 
+connect_SOURCES = connect-tls.c
+connect_LDADD = -static ../libusual.la
+connect_LIBS = $(TLS_LIBS) $(LIBS)
+connect_LDFLAGS = $(TLS_LDFLAGS)
+connect_CPPFLAGS = -I.. -I. $(TLS_CPPFLAGS)
+
 EXTRA_DIST = Makefile tinytest_demo.c force_compat.sed test_cfparser.ini
 
 noinst_PROGRAMS = regtest_system
-EXTRA_PROGRAMS = regtest_compat
+EXTRA_PROGRAMS = regtest_compat connect
 
 include ../build.mk
 
