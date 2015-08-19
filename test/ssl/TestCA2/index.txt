@@ -1,3 +1,0 @@
-V	430831205152Z		01	unknown	/C=DD/L=city4/O=Org2/OU=none/CN=sample.org
-V	430831205152Z		02	unknown	/C=EE/L=city5/O=Org2/OU=none/CN=client2
-V	430831205152Z		03	unknown	/C=FF/L=city6/O=Org2/OU=none/CN=random2
