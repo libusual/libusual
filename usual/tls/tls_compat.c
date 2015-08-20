@@ -1,12 +1,26 @@
 /*
- * LibreSSL compat for other OpenSSL's.
+ * Compatibility with various libssl implementations.
+ *
+ * Copyright (c) 2015  Marko Kreen
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
 #include "tls_compat.h"
 
 #ifdef USUAL_LIBSSL_FOR_TLS
 
-#include <openssl/ec.h>
+#include <openssl/err.h>
 
 
 #ifndef SSL_CTX_set_dh_auto
@@ -148,6 +162,120 @@ long SSL_CTX_set_ecdh_auto(SSL_CTX *ctx, int onoff)
 		SSL_CTX_set_tmp_ecdh_callback(ctx, ecdh_auto_cb);
 	}
 	return 1;
+}
+
+#endif
+
+#ifndef HAVE_SSL_CTX_USE_CERTIFICATE_CHAIN_MEM
+
+/*
+ * Load certs for public key from memory.
+ */
+
+int
+SSL_CTX_use_certificate_chain_mem(SSL_CTX *ctx, void *data, int data_len)
+{
+	pem_password_cb *psw_fn = ctx->default_passwd_callback;
+	void *psw_arg = ctx->default_passwd_callback_userdata;
+	X509 *cert;
+	BIO *bio = NULL;
+	int ok;
+
+	ERR_clear_error();
+
+	/* Read from memory */
+	bio = BIO_new_mem_buf(data, data_len);
+	if (!bio) {
+		SSLerr(SSL_F_SSL_CTX_USE_CERTIFICATE_CHAIN_FILE, ERR_R_BUF_LIB);
+		goto failed;
+	}
+
+	/* Load primary cert */
+	cert = PEM_read_bio_X509_AUX(bio, NULL, psw_fn, psw_arg);
+	if (!cert) {
+		SSLerr(SSL_F_SSL_CTX_USE_CERTIFICATE_CHAIN_FILE, ERR_R_PEM_LIB);
+		goto failed;
+	}
+
+	/* Increments refcount */
+	ok = SSL_CTX_use_certificate(ctx, cert);
+	X509_free(cert);
+	if (!ok || ERR_peek_error())
+		goto failed;
+
+	/* Load extra certs */
+	ok = SSL_CTX_clear_extra_chain_certs(ctx);
+	while (ok) {
+		cert = PEM_read_bio_X509(bio, NULL, psw_fn, psw_arg);
+		if (!cert) {
+			/* Is it EOF? */
+			unsigned long err = ERR_peek_last_error();
+			if (ERR_GET_LIB(err) != ERR_LIB_PEM)
+				break;
+			if (ERR_GET_REASON(err) != PEM_R_NO_START_LINE)
+				break;
+
+			/* On EOF do successful exit */
+			BIO_free(bio);
+			ERR_clear_error();
+			return 1;
+		}
+		/* Does not increment refcount */
+		ok = SSL_CTX_add_extra_chain_cert(ctx, cert);
+		if (!ok)
+			X509_free(cert);
+	}
+failed:
+	if (bio)
+		BIO_free(bio);
+	return 0;
+}
+
+#endif
+
+#ifndef HAVE_SSL_CTX_LOAD_VERIFY_MEM
+
+/*
+ * Load CA certs for verification from memory.
+ */
+
+int SSL_CTX_load_verify_mem(SSL_CTX *ctx, void *data, int data_len)
+{
+	STACK_OF(X509_INFO) *stack = NULL;
+	X509_INFO *info;
+	int nstack, i, ret = 0, got = 0;
+	BIO *bio;
+
+	/* Read from memory */
+	bio = BIO_new_mem_buf(data, data_len);
+	if (!bio)
+		goto failed;
+
+	/* Parse X509_INFO records */
+	stack = PEM_X509_INFO_read_bio(bio, NULL, NULL, NULL);
+	if (!stack)
+		goto failed;
+
+	/* Loop over stack, add certs and revocation records to store */
+	nstack = sk_X509_INFO_num(stack);
+	for (i = 0; i < nstack; i++) {
+		info = sk_X509_INFO_value(stack, i);
+		if (info->x509 && !X509_STORE_add_cert(ctx->cert_store, info->x509))
+			goto failed;
+		if (info->crl && !X509_STORE_add_crl(ctx->cert_store, info->crl))
+			goto failed;
+		if (info->x509 || info->crl)
+			got = 1;
+	}
+	ret = got;
+failed:
+	if (bio)
+		BIO_free(bio);
+	if (stack)
+		sk_X509_INFO_pop_free(stack, X509_INFO_free);
+	if (!ret)
+		X509err(X509_F_X509_LOAD_CERT_CRL_FILE, ERR_R_PEM_LIB);
+	return ret;
 }
 
 #endif
