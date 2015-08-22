@@ -16,6 +16,11 @@ import uuid
 # CA utilities
 #
 
+# avoid ancient string formats
+from cryptography.hazmat.backends.openssl import backend
+backend._lib.ASN1_STRING_set_default_mask_asc(b"utf8only")
+del backend
+
 def get_backend():
     from cryptography.hazmat.backends import default_backend
     return default_backend()
@@ -230,8 +235,8 @@ client1 = Leaf(ca1, 'ec:secp192r1', ['CN=client1'], ['822:client@company.com'], 
 client1.write('ca1_client1')
 
 complex1 = Leaf(ca1, 'ec:secp384r1',
-        #name = ['CN=complex1.com', 'L=Kõzzä', 'ST=様々な論争を引き起こしてきた。'],
-        name = ['CN=complex1.com', 'C=QQ', 'L=Loc1', 'ST=Foo', 'O=Aorg2', 'OU=Unit1'],
+        name = ['CN=complex1.com', 'L=Kõzzä', 'ST=様々な論争を引き起こしてきた。'],
+        #name = ['CN=complex1.com', 'C=QQ', 'L=Loc1', 'ST=Foo', 'O=Aorg2', 'OU=Unit1'],
         alt_names = ['dns:complex1.com', 'dns:www.complex1.com',
              'ip4:127.0.0.1', 'ip6:fffe::1',
              #'i4n:192.168.1.0/24', 'i6n:::1/128',

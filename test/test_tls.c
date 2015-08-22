@@ -719,7 +719,7 @@ static void test_cert_info(void *z)
 	str_check(create_worker(&server, true, COMPLEX1, NULL), "OK");
 	str_check(create_worker(&client, false, CA1, "show=peer-cert", "host=complex1.com", NULL), "OK");
 	str_check(run_case(client, server),
-		  "Subject: /CN=complex1.com/C=QQ/ST=Foo/L=Loc1/O=Aorg2/OU=Unit1"
+		  "Subject: /CN=complex1.com/ST=様々な論争を引き起こしてきた。/L=Kõzzä"
 		  " Issuer: /CN=TestCA1/C=AA/ST=State1/L=City1/O=Org1"
 		  " Serial: 1113692385315072860785465640275941003895485612482"
 		  " NotBefore: 2010-01-01T08:05:00Z"
