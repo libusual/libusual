@@ -238,8 +238,8 @@ tls_connect_fds(struct tls *ctx, int fd_read, int fd_write,
 	ctx->flags &= ~TLS_CONNECTING;
 
 	if (ctx->config->verify_name) {
-		struct tls_cert_info *cert = NULL;
-		ret = tls_get_peer_cert(ctx, &cert);
+		struct tls_cert *cert = NULL;
+		ret = tls_get_peer_cert(ctx, &cert, NULL);
 		if (ret != 0)
 			goto err;
 		ret = tls_check_servername(ctx, cert, servername);

@@ -28,7 +28,8 @@
  */
 
 /* Convert ASN1_INTEGER to decimal string string */
-static int tls_parse_bigint(struct tls *ctx, const ASN1_INTEGER *asn1int, const char **dst_p)
+static int
+tls_parse_bigint(struct tls *ctx, const ASN1_INTEGER *asn1int, const char **dst_p)
 {
 	long small;
 	BIGNUM *big;
@@ -57,7 +58,8 @@ static int tls_parse_bigint(struct tls *ctx, const ASN1_INTEGER *asn1int, const 
 }
 
 /* Convert ASN1_TIME to ISO 8601 string */
-static int tls_parse_time(struct tls *ctx, const ASN1_TIME *asn1time, const char **dst_p)
+static int
+tls_parse_time(struct tls *ctx, const ASN1_TIME *asn1time, const char **dst_p)
 {
 	static const char months[12][4] = {
 		"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
@@ -125,7 +127,7 @@ nomem:
 }
 
 static int
-tls_cert_get_name_string(struct tls *ctx, X509_NAME *name, int nid, const char **str_p)
+tls_cert_get_dname_string(struct tls *ctx, X509_NAME *name, int nid, const char **str_p)
 {
 	char *res = NULL;
 	int res_len;
@@ -156,13 +158,13 @@ tls_cert_get_name_string(struct tls *ctx, X509_NAME *name, int nid, const char *
 }
 
 static int
-tls_load_alt_ia5string(struct tls *ctx, ASN1_IA5STRING *ia5str, struct tls_cert_info *cert_info, int slot_type)
+tls_load_alt_ia5string(struct tls *ctx, ASN1_IA5STRING *ia5str, struct tls_cert *cert, int slot_type)
 {
 	struct tls_cert_alt_name *slot;
 	char *data;
 	int format, len;
 
-	slot = &cert_info->subject_alt_names[cert_info->subject_alt_name_count];
+	slot = &cert->subject_alt_names[cert->subject_alt_name_count];
 
 	format = ASN1_STRING_type(ia5str);
 	if (format != V_ASN1_IA5STRING) {
@@ -199,18 +201,18 @@ tls_load_alt_ia5string(struct tls *ctx, ASN1_IA5STRING *ia5str, struct tls_cert_
 	}
 	slot->alt_name_type = slot_type;
 
-	cert_info->subject_alt_name_count++;
+	cert->subject_alt_name_count++;
 	return 0;
 }
 
 static int
-tls_load_alt_ipaddr(struct tls *ctx, ASN1_OCTET_STRING *bin, struct tls_cert_info *cert_info)
+tls_load_alt_ipaddr(struct tls *ctx, ASN1_OCTET_STRING *bin, struct tls_cert *cert)
 {
 	struct tls_cert_alt_name *slot;
 	void *data;
 	int len;
 
-	slot = &cert_info->subject_alt_names[cert_info->subject_alt_name_count];
+	slot = &cert->subject_alt_names[cert->subject_alt_name_count];
 	len = ASN1_STRING_length(bin);
 	data = ASN1_STRING_data(bin);
 	if (len < 0) {
@@ -238,13 +240,13 @@ tls_load_alt_ipaddr(struct tls *ctx, ASN1_OCTET_STRING *bin, struct tls_cert_inf
 	}
 
 	memcpy((void *)slot->alt_name, data, len);
-	cert_info->subject_alt_name_count++;
+	cert->subject_alt_name_count++;
 	return 0;
 }
 
 /* See RFC 5280 section 4.2.1.6 for SubjectAltName details. */
 static int
-tls_cert_get_altnames(struct tls *ctx, struct tls_cert_info *cert_info, X509 *x509_cert)
+tls_cert_get_altnames(struct tls *ctx, struct tls_cert *cert, X509 *x509_cert)
 {
 	STACK_OF(GENERAL_NAME) *altname_stack = NULL;
 	GENERAL_NAME *altname;
@@ -261,8 +263,8 @@ tls_cert_get_altnames(struct tls *ctx, struct tls_cert_info *cert_info, X509 *x5
 		goto out;
 	}
 
-	cert_info->subject_alt_names = calloc(sizeof (struct tls_cert_alt_name), count);
-	if (cert_info->subject_alt_names == NULL) {
+	cert->subject_alt_names = calloc(sizeof (struct tls_cert_alt_name), count);
+	if (cert->subject_alt_names == NULL) {
 		tls_set_error(ctx, "no mem");
 		goto out;
 	}
@@ -271,13 +273,13 @@ tls_cert_get_altnames(struct tls *ctx, struct tls_cert_info *cert_info, X509 *x5
 		altname = sk_GENERAL_NAME_value(altname_stack, i);
 
 		if (altname->type == GEN_DNS) {
-			rv = tls_load_alt_ia5string(ctx, altname->d.dNSName, cert_info, TLS_CERT_NAME_DNS);
+			rv = tls_load_alt_ia5string(ctx, altname->d.dNSName, cert, TLS_CERT_NAME_DNS);
 		} else if (altname->type == GEN_EMAIL) {
-			rv = tls_load_alt_ia5string(ctx, altname->d.rfc822Name, cert_info, TLS_CERT_NAME_EMAIL);
+			rv = tls_load_alt_ia5string(ctx, altname->d.rfc822Name, cert, TLS_CERT_NAME_EMAIL);
 		} else if (altname->type == GEN_URI) {
-			rv = tls_load_alt_ia5string(ctx, altname->d.uniformResourceIdentifier, cert_info, TLS_CERT_NAME_URI);
+			rv = tls_load_alt_ia5string(ctx, altname->d.uniformResourceIdentifier, cert, TLS_CERT_NAME_URI);
 		} else if (altname->type == GEN_IPADD) {
-			rv = tls_load_alt_ipaddr(ctx, altname->d.iPAddress, cert_info);
+			rv = tls_load_alt_ipaddr(ctx, altname->d.iPAddress, cert);
 		} else {
 			/* ignore unknown types */
 		}
@@ -291,29 +293,80 @@ out:
 }
 
 static int
-tls_get_entity(struct tls *ctx, X509_NAME *name, struct tls_cert_entity *ent)
+tls_get_entity(struct tls *ctx, X509_NAME *name, struct tls_cert_dname *dname)
 {
 	int ret;
-	ret = tls_cert_get_name_string(ctx, name, NID_commonName, &ent->common_name);
+	ret = tls_cert_get_dname_string(ctx, name, NID_commonName, &dname->common_name);
 	if (ret == 0)
-		ret = tls_cert_get_name_string(ctx, name, NID_countryName, &ent->country_name);
+		ret = tls_cert_get_dname_string(ctx, name, NID_countryName, &dname->country_name);
 	if (ret == 0)
-		ret = tls_cert_get_name_string(ctx, name, NID_stateOrProvinceName, &ent->state_or_province_name);
+		ret = tls_cert_get_dname_string(ctx, name, NID_stateOrProvinceName, &dname->state_or_province_name);
 	if (ret == 0)
-		ret = tls_cert_get_name_string(ctx, name, NID_localityName, &ent->locality_name);
+		ret = tls_cert_get_dname_string(ctx, name, NID_localityName, &dname->locality_name);
 	if (ret == 0)
-		ret = tls_cert_get_name_string(ctx, name, NID_streetAddress, &ent->street_address);
+		ret = tls_cert_get_dname_string(ctx, name, NID_streetAddress, &dname->street_address);
 	if (ret == 0)
-		ret = tls_cert_get_name_string(ctx, name, NID_organizationName, &ent->organization_name);
+		ret = tls_cert_get_dname_string(ctx, name, NID_organizationName, &dname->organization_name);
 	if (ret == 0)
-		ret = tls_cert_get_name_string(ctx, name, NID_organizationalUnitName, &ent->organizational_unit_name);
+		ret = tls_cert_get_dname_string(ctx, name, NID_organizationalUnitName, &dname->organizational_unit_name);
 	return ret;
 }
 
-int
-tls_get_peer_cert(struct tls *ctx, struct tls_cert_info **cert_p)
+static void *
+tls_calc_fingerprint(struct tls *ctx, X509 *x509, const char *algo, size_t *outlen)
 {
-	struct tls_cert_info *cert = NULL;
+	const EVP_MD *md;
+	void *res;
+	int ret;
+	unsigned int tmplen, mdlen;
+
+	if (outlen)
+		*outlen = 0;
+
+	if (strcasecmp(algo, "sha1") == 0) {
+		md = EVP_sha1();
+	} else if (strcasecmp(algo, "sha256") == 0) {
+		md = EVP_sha256();
+	} else {
+		tls_set_error(ctx, "invalid fingerprint algorithm");
+		return NULL;
+	}
+
+	mdlen = EVP_MD_size(md);
+	res = malloc(mdlen);
+	if (!res) {
+		tls_set_error(ctx, "no mem");
+		return NULL;
+	}
+
+	ret = X509_digest(x509, md, res, &tmplen);
+	if (ret != 1 || tmplen != mdlen) {
+		free(res);
+		tls_set_error(ctx, "X509_digest failed");
+		return NULL;
+	}
+
+	if (outlen)
+		*outlen = mdlen;
+
+	return res;
+}
+
+static void
+check_verify_error(struct tls *ctx, struct tls_cert *cert)
+{
+	long vres = SSL_get_verify_result(ctx->ssl_conn);
+	if (vres == X509_V_OK) {
+		cert->successful_verify = 1;
+	} else {
+		cert->successful_verify = 0;
+	}
+}
+
+int
+tls_get_peer_cert(struct tls *ctx, struct tls_cert **cert_p, const char *fingerprint_algo)
+{
+	struct tls_cert *cert = NULL;
 	SSL *conn = ctx->ssl_conn;
 	X509 *peer;
 	X509_NAME *subject, *issuer;
@@ -330,7 +383,7 @@ tls_get_peer_cert(struct tls *ctx, struct tls_cert_info **cert_p)
 	peer = SSL_get_peer_certificate(conn);
 	if (!peer) {
 		tls_set_error(ctx, "peer does not have cert");
-		return -1;
+		return TLS_NO_CERT;
 	}
 
 	version = X509_get_version(peer);
@@ -358,6 +411,12 @@ tls_get_peer_cert(struct tls *ctx, struct tls_cert_info **cert_p)
 	}
 	cert->version = version;
 
+	if (fingerprint_algo) {
+		cert->fingerprint = tls_calc_fingerprint(ctx, peer, fingerprint_algo, &cert->fingerprint_size);
+		if (!cert->fingerprint)
+			goto failed;
+	}
+
 	ret = tls_get_entity(ctx, subject, &cert->subject);
 	if (ret == 0)
 		ret = tls_get_entity(ctx, issuer, &cert->issuer);
@@ -370,6 +429,7 @@ tls_get_peer_cert(struct tls *ctx, struct tls_cert_info **cert_p)
 	if (ret == 0)
 		ret = tls_parse_bigint(ctx, X509_get_serialNumber(peer), &cert->serial);
 	if (ret == 0) {
+		check_verify_error(ctx, cert);
 		*cert_p = cert;
 		return 0;
 	}
@@ -379,91 +439,38 @@ failed:
 }
 
 static void
-tls_cert_free_entity(struct tls_cert_entity *ent)
+tls_cert_free_dname(struct tls_cert_dname *dname)
 {
-	free(ent->common_name);
-	free(ent->country_name);
-	free(ent->state_or_province_name);
-	free(ent->locality_name);
-	free(ent->street_address);
-	free(ent->organization_name);
-	free(ent->organizational_unit_name);
+	free((void*)dname->common_name);
+	free((void*)dname->country_name);
+	free((void*)dname->state_or_province_name);
+	free((void*)dname->locality_name);
+	free((void*)dname->street_address);
+	free((void*)dname->organization_name);
+	free((void*)dname->organizational_unit_name);
 }
 
 void
-tls_cert_free(struct tls_cert_info *cert)
+tls_cert_free(struct tls_cert *cert)
 {
 	int i;
 	if (!cert)
 		return;
 
-	tls_cert_free_entity(&cert->issuer);
-	tls_cert_free_entity(&cert->subject);
+	tls_cert_free_dname(&cert->issuer);
+	tls_cert_free_dname(&cert->subject);
 
 	if (cert->subject_alt_name_count) {
 		for (i = 0; i < cert->subject_alt_name_count; i++)
-			free(cert->subject_alt_names[i].alt_name);
+			free((void*)cert->subject_alt_names[i].alt_name);
 	}
 	free(cert->subject_alt_names);
 
-	free(cert->serial);
-	free(cert->not_before);
-	free(cert->not_after);
+	free((void*)cert->serial);
+	free((void*)cert->not_before);
+	free((void*)cert->not_after);
+	free((void*)cert->fingerprint);
 	free(cert);
-}
-
-/*
- * Fingerprint calculation.
- */
-
-int
-tls_get_peer_cert_fingerprint(struct tls *ctx, const char *algo, void *buf, size_t buflen, size_t *outlen)
-{
-	SSL *conn = ctx->ssl_conn;
-	X509 *peer;
-	const EVP_MD *md;
-	unsigned char tmpbuf[EVP_MAX_MD_SIZE];
-	unsigned int tmplen = 0;
-	int ret;
-
-	if (outlen)
-		*outlen = 0;
-
-	if (!conn) {
-		tls_set_error(ctx, "not connected");
-		return -1;
-	}
-
-	peer = SSL_get_peer_certificate(conn);
-	if (!peer) {
-		tls_set_error(ctx, "peer does not have cert");
-		return -1;
-	}
-
-	if (strcasecmp(algo, "sha1") == 0) {
-		md = EVP_sha1();
-	} else if (strcasecmp(algo, "sha256") == 0) {
-		md = EVP_sha256();
-	} else {
-		tls_set_error(ctx, "invalid fingerprint algorithm");
-		return -1;
-	}
-
-	ret = X509_digest(peer, md, tmpbuf, &tmplen);
-	if (ret != 1) {
-		tls_set_error(ctx, "X509_digest failed");
-		return -1;
-	}
-
-	if (tmplen > buflen)
-		tmplen = buflen;
-	memcpy(buf, tmpbuf, tmplen);
-
-	explicit_bzero(tmpbuf, sizeof(tmpbuf));
-	if (outlen)
-		*outlen = tmplen;
-
-	return 0;
 }
 
 #endif /* USUAL_LIBSSL_FOR_TLS */

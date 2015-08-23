@@ -316,18 +316,20 @@ static const char *hexcmp(const char *fn, const void *buf, unsigned int len)
 
 static const char *check_fp(struct Worker *w, const char *algo, const char *fn, size_t xlen)
 {
-	char buf[128];
 	const char *emsg;
 	int res;
-	size_t outlen = 0;
+	struct tls_cert *cert;
 
 	if (!fn)
 		return NULL;
 
-	res = tls_get_peer_cert_fingerprint(w->ctx, algo, buf, sizeof buf, &outlen);
-	if (res != 0 || outlen != xlen)
+	res = tls_get_peer_cert(w->ctx, &cert, algo);
+	if (res != 0 || cert->fingerprint_size != xlen) {
+		tls_cert_free(cert);
 		return "FP-sha1-fail";
-	emsg = hexcmp(fn, buf, outlen);
+	}
+	emsg = hexcmp(fn, cert->fingerprint, cert->fingerprint_size);
+	tls_cert_free(cert);
 	if (emsg)
 		return emsg;
 	return NULL;
@@ -341,27 +343,27 @@ static void show_append(char *buf, size_t buflen, const char *s1, const char *s2
 	strlcat(buf, s2, buflen);
 }
 
-static void show_entity(char *buf, size_t buflen, const struct tls_cert_entity *ent)
+static void show_dname(char *buf, size_t buflen, const struct tls_cert_dname *dname)
 {
-	show_append(buf, buflen, "/CN=", ent->common_name);
-	show_append(buf, buflen, "/C=", ent->country_name);
-	show_append(buf, buflen, "/ST=", ent->state_or_province_name);
-	show_append(buf, buflen, "/L=", ent->locality_name);
-	show_append(buf, buflen, "/A=", ent->street_address);
-	show_append(buf, buflen, "/O=", ent->organization_name);
-	show_append(buf, buflen, "/OU=", ent->organizational_unit_name);
+	show_append(buf, buflen, "/CN=", dname->common_name);
+	show_append(buf, buflen, "/C=", dname->country_name);
+	show_append(buf, buflen, "/ST=", dname->state_or_province_name);
+	show_append(buf, buflen, "/L=", dname->locality_name);
+	show_append(buf, buflen, "/A=", dname->street_address);
+	show_append(buf, buflen, "/O=", dname->organization_name);
+	show_append(buf, buflen, "/OU=", dname->organizational_unit_name);
 }
 
-static void show_cert(struct tls_cert_info *cert, char *buf, size_t buflen)
+static void show_cert(struct tls_cert *cert, char *buf, size_t buflen)
 {
 	if (!cert) {
 		snprintf(buf, buflen, "no cert");
 		return;
 	}
 	show_append(buf, buflen, "Subject: ", "");
-	show_entity(buf, buflen, &cert->subject);
+	show_dname(buf, buflen, &cert->subject);
 	show_append(buf, buflen, " Issuer: ", "");
-	show_entity(buf, buflen, &cert->issuer);
+	show_dname(buf, buflen, &cert->issuer);
 	show_append(buf, buflen, " Serial: ", cert->serial);
 	show_append(buf, buflen, " NotBefore: ", cert->not_before);
 	show_append(buf, buflen, " NotAfter: ", cert->not_after);
@@ -384,8 +386,8 @@ static const char *done_handshake(struct Worker *w)
 		if (strcmp(w->show, "ciphers") == 0) {
 			tls_get_connection_info(w->ctx, w->showbuf, sizeof w->showbuf);
 		} else if (strcmp(w->show, "peer-cert") == 0) {
-			struct tls_cert_info *cert = NULL;
-			tls_get_peer_cert(w->ctx, &cert);
+			struct tls_cert *cert = NULL;
+			tls_get_peer_cert(w->ctx, &cert, NULL);
 			show_cert(cert, w->showbuf, sizeof w->showbuf);
 			tls_cert_free(cert);
 		} else {
@@ -736,7 +738,7 @@ static const char *do_verify(const char *hostname, const char *commonName, ...)
 {
 #ifdef USUAL_LIBSSL_FOR_TLS
 	struct tls ctx;
-	struct tls_cert_info cert;
+	struct tls_cert cert;
 	struct tls_cert_alt_name names[20], *alt;
 	union { struct in_addr ip4; struct in6_addr ip6; } addrbuf[20];
 	int addrpos = 0, ret;

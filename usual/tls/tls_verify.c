@@ -74,7 +74,7 @@ tls_match_name(const char *cert_name, const char *name)
 
 /* See RFC 5280 section 4.2.1.6 for SubjectAltName details. */
 static int
-tls_check_subject_altname(struct tls *ctx, struct tls_cert_info *cert, const char *name)
+tls_check_subject_altname(struct tls *ctx, struct tls_cert *cert, const char *name)
 {
 	union { struct in_addr ip4; struct in6_addr ip6; } addrbuf;
 	struct tls_cert_alt_name *altname;
@@ -113,7 +113,7 @@ tls_check_subject_altname(struct tls *ctx, struct tls_cert_info *cert, const cha
 }
 
 static int
-tls_check_common_name(struct tls *ctx, struct tls_cert_info *cert, const char *name)
+tls_check_common_name(struct tls *ctx, struct tls_cert *cert, const char *name)
 {
 	union { struct in_addr ip4; struct in6_addr ip6; } addrbuf;
 
@@ -136,7 +136,7 @@ tls_check_common_name(struct tls *ctx, struct tls_cert_info *cert, const char *n
 }
 
 int
-tls_check_servername(struct tls *ctx, struct tls_cert_info *cert, const char *servername)
+tls_check_servername(struct tls *ctx, struct tls_cert *cert, const char *servername)
 {
 	int	rv;
 

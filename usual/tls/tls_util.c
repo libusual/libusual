@@ -104,7 +104,8 @@ tls_load_file(const char *name, size_t *len, char *password)
 	FILE *fp;
 	EVP_PKEY *key = NULL;
 	BIO *bio = NULL;
-	unsigned char *data, *buf = NULL;
+	uint8_t *buf = NULL;
+	char *data;
 	struct stat st;
 	size_t size;
 	int fd = -1;

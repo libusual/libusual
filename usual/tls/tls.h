@@ -37,6 +37,7 @@ extern "C" {
 
 #define TLS_READ_AGAIN	-2
 #define TLS_WRITE_AGAIN	-3
+#define TLS_NO_CERT	-4
 
 struct tls;
 struct tls_config;
@@ -52,7 +53,7 @@ struct tls_cert_alt_name {
 	int alt_name_type;
 };
 
-struct tls_cert_entity {
+struct tls_cert_dname {
 	const char *common_name;
 	const char *country_name;
 	const char *state_or_province_name;
@@ -62,22 +63,33 @@ struct tls_cert_entity {
 	const char *organizational_unit_name;
 };
 
-struct tls_cert_info {
-	struct tls_cert_entity subject;
-	struct tls_cert_entity issuer;
+struct tls_cert {
+	/* Version number from cert: 0:v1, 1:v2, 2:v3 */
+	int version;
 
+	/* did it pass verify?  useful when noverifycert is on. */
+	int successful_verify;
+
+	/* DistringuishedName for subject */
+	struct tls_cert_dname subject;
+
+	/* DistringuishedName for issuer */
+	struct tls_cert_dname issuer;
+
+	/* SubjectAltName extension */
 	struct tls_cert_alt_name *subject_alt_names;
 	int subject_alt_name_count;
-
-	/* 0:v1, 1:v2, 2:v3 */
-	int version;
 
 	/* decimal number */
 	const char *serial;
 
-	/* ISO 8601 time: 2015-08-18T06:36:40Z */
+	/* Validity times in ISO 8601 format: 2015-08-18T06:36:40Z */
 	const char *not_before;
 	const char *not_after;
+
+	/* Fingerprint as raw hash */
+	const unsigned char *fingerprint;
+	size_t fingerprint_size;
 };
 
 int tls_init(void);
@@ -135,13 +147,11 @@ ssize_t tls_get_connection_info(struct tls *ctx, char *buf, size_t buflen);
 
 uint8_t *tls_load_file(const char *_file, size_t *_len, char *_password);
 
-int tls_get_peer_cert(struct tls *ctx, struct tls_cert_info **cert_p);
-void tls_cert_free(struct tls_cert_info *cert);
-
-int tls_get_peer_cert_fingerprint(struct tls *ctx, const char *algo, void *buf, size_t buflen, size_t *outlen);
+int tls_get_peer_cert(struct tls *ctx, struct tls_cert **cert_p, const char *fingerprint_algo);
+void tls_cert_free(struct tls_cert *cert);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _USUAL_HEADER_TLS_H_ */
+#endif /* HEADER_TLS_H */
