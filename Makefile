@@ -77,7 +77,7 @@ libusual_la_SOURCES = usual/config.h.in \
 	usual/time.h usual/time.c \
 	usual/tls/tls.h usual/tls/tls.c usual/tls/tls_internal.h \
 	usual/tls/tls_compat.h usual/tls/tls_compat.c \
-	usual/tls/tls_client.c usual/tls/tls_config.c usual/tls/tls_info.c \
+	usual/tls/tls_client.c usual/tls/tls_config.c usual/tls/tls_cert.c \
 	usual/tls/tls_server.c usual/tls/tls_util.c usual/tls/tls_verify.c \
 	usual/utf8.h usual/utf8.c \
 	usual/wchar.h usual/wchar.c
