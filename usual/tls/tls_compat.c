@@ -329,13 +329,11 @@ int tls_read(struct tls *_ctx, void *_buf, size_t _buflen, size_t *_outlen) { re
 int tls_write(struct tls *_ctx, const void *_buf, size_t _buflen, size_t *_outlen) { return -1; }
 int tls_close(struct tls *_ctx) { return -1; }
 
-int tls_get_connection_info(struct tls *ctx, char *buf, size_t buflen) { return -1; }
+ssize_t tls_get_connection_info(struct tls *ctx, char *buf, size_t buflen) { return -1; }
 
 uint8_t *tls_load_file(const char *_file, size_t *_len, char *_password) { return NULL; }
 
-int tls_get_peer_cert(struct tls *ctx, struct tls_cert_info **cert_p) { *cert_p = NULL; return -1; }
-void tls_cert_free(struct tls_cert_info *cert) {}
-
-int tls_get_peer_cert_fingerprint(struct tls *ctx, const char *algo, void *buf, size_t buflen, size_t *outlen) { if (outlen) *outlen=0; return -1; }
+int tls_get_peer_cert(struct tls *ctx, struct tls_cert **cert_p, const char *algo) { *cert_p = NULL; return -1; }
+void tls_cert_free(struct tls_cert *cert) {}
 
 #endif /* !USUAL_LIBSSL_FOR_TLS */
