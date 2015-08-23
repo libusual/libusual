@@ -16,10 +16,19 @@ import uuid
 # CA utilities
 #
 
-# avoid ancient string formats
-from cryptography.hazmat.backends.openssl import backend
-backend._lib.ASN1_STRING_set_default_mask_asc(b"utf8only")
-del backend
+def set_string_mask(mask):
+    """Set default string format in certs.
+
+    utf8only - as name says
+    default - anything: usually printable, t61, bmp or utf8 according to data.
+    pkix - "default" without t61
+    nombstr - "default" without bmp and utf8
+    MASK:<int> - bitmask as integer
+    """
+    if isinstance(mask, unicode):
+        mask = mask.encode('utf8')
+    from cryptography.hazmat.backends.openssl import backend
+    backend._lib.ASN1_STRING_set_default_mask_asc(mask)
 
 def get_backend():
     from cryptography.hazmat.backends import default_backend
@@ -225,6 +234,8 @@ class Leaf(Base):
 # CA1 - EC keys
 #
 
+set_string_mask("utf8only")
+
 ca1 = CA('ec:secp384r1', ['CN=TestCA1', 'C=AA', 'L=City1', 'ST=State1', 'O=Org1'])
 ca1.write('ca1_root')
 
@@ -245,6 +256,8 @@ complex1 = Leaf(ca1, 'ec:secp384r1',
         usage=['server'])
 complex1.write('ca1_complex1')
 
+set_string_mask("utf8only")
+
 #
 # CA2 - RSA keys
 #
@@ -260,4 +273,16 @@ client2 = Leaf(ca2, 'rsa:1024',
         alt_names = ['822:client2@company.com'],
         usage=['client'])
 client2.write('ca2_client2')
+
+# create cert with old string types
+set_string_mask("default")
+complex2 = Leaf(ca2, 'rsa:4096',
+        name = ['CN=complex2.com', 'L=Kõzzä', 'ST=様々な論争を引き起こしてきた。'],
+        alt_names = ['dns:complex2.com', 'dns:www.complex2.com',
+             'ip4:127.0.0.1', 'ip6:fffe::1',
+             'uri:http://localhost/',
+             '822:fooxa@example.com'],
+        usage=['server'])
+complex2.write('ca2_complex2')
+set_string_mask("utf8only")
 

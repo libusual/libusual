@@ -505,6 +505,7 @@ end:
 #define CA1 "ca=ssl/ca1_root.crt"
 #define CA2 "ca=ssl/ca2_root.crt"
 #define COMPLEX1 "key=ssl/ca1_complex1.key", "cert=ssl/ca1_complex1.crt"
+#define COMPLEX2 "key=ssl/ca2_complex2.key", "cert=ssl/ca2_complex2.crt"
 
 static void test_verify(void *z)
 {
@@ -717,13 +718,23 @@ static void test_cert_info(void *z)
 		  " NotBefore: 2010-01-01T08:05:00Z"
 		  " NotAfter: 2060-12-31T23:55:00Z");
 
-	/* client shows server cert */
+	/* client shows server cert - utf8 */
 	str_check(create_worker(&server, true, COMPLEX1, NULL), "OK");
 	str_check(create_worker(&client, false, CA1, "show=peer-cert", "host=complex1.com", NULL), "OK");
 	str_check(run_case(client, server),
 		  "Subject: /CN=complex1.com/ST=様々な論争を引き起こしてきた。/L=Kõzzä"
 		  " Issuer: /CN=TestCA1/C=AA/ST=State1/L=City1/O=Org1"
 		  " Serial: 1113692385315072860785465640275941003895485612482"
+		  " NotBefore: 2010-01-01T08:05:00Z"
+		  " NotAfter: 2060-12-31T23:55:00Z");
+
+	/* client shows server cert - t61/bmp */
+	str_check(create_worker(&server, true, COMPLEX2, NULL), "OK");
+	str_check(create_worker(&client, false, CA2, "show=peer-cert", "host=complex2.com", NULL), "OK");
+	str_check(run_case(client, server),
+		  "Subject: /CN=complex2.com/ST=様々な論争を引き起こしてきた。/L=Kõzzä"
+		  " Issuer: /CN=TestCA2"
+		  " Serial: 344032136906054686761742495217219742691739762030"
 		  " NotBefore: 2010-01-01T08:05:00Z"
 		  " NotAfter: 2060-12-31T23:55:00Z");
 end:;
