@@ -16,6 +16,7 @@
 
 #include <usual/hashing/siphash.h>
 
+#include <usual/crypto/csrandom.h>
 #include <usual/endian.h>
 #include <usual/bits.h>
 
@@ -79,8 +80,8 @@ uint64_t siphash24_secure(const void *data, size_t len)
 	static uint64_t k0, k1;
 
 	if (!initialized) {
-		k0 = ((uint64_t)random() << 32) | random();
-		k1 = ((uint64_t)random() << 32) | random();
+		k0 = ((uint64_t)csrandom() << 32) | csrandom();
+		k1 = ((uint64_t)csrandom() << 32) | csrandom();
 		initialized = true;
 	}
 
