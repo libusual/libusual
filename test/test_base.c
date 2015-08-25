@@ -78,7 +78,7 @@ static void test_reallocarray(void *_p)
 {
 	void *p;
 	p = reallocarray(NULL, 1, 1); tt_assert(p); free(p);
-	p = reallocarray(NULL, LLONG_MAX, LLONG_MAX); tt_assert(p == NULL);
+	p = reallocarray(NULL, SIZE_MAX, SIZE_MAX); tt_assert(p == NULL);
 end:;
 }
 
