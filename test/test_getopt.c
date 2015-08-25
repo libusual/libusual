@@ -4,6 +4,7 @@
 #include "test_common.h"
 
 #include <usual/string.h>
+#include <usual/err.h>
 
 static const char *xgetopt(const char *opts, const struct option *lopts, ...)
 {
@@ -12,7 +13,7 @@ static const char *xgetopt(const char *opts, const struct option *lopts, ...)
 	int i, c, argc = 1;
 	char *argv[100];
 	va_list ap;
-	char *p = resbuf;
+	char *p = resbuf, *bufend = resbuf + sizeof resbuf;
 
 	resbuf[0] = 'X';
 	resbuf[1] = 0;
@@ -48,13 +49,15 @@ static const char *xgetopt(const char *opts, const struct option *lopts, ...)
 			if (p != resbuf)
 				*p++ = ',';
 			if (optarg)
-				p += sprintf(p, "%c=%s", c, optarg);
+				p += snprintf(p, bufend - p, "%c=%s", c, optarg);
 			else
-				p += sprintf(p, "%c", c);
+				p += snprintf(p, bufend - p, "%c", c);
 		}
 	}
 	for (i = optind; i < argc; i++)
-		p += sprintf(p, "|%s", argv[i]);
+		p += snprintf(p, bufend - p, "|%s", argv[i]);
+	if (p >= bufend)
+		return "bufover";
 	return resbuf;
 }
 

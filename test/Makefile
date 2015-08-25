@@ -27,6 +27,7 @@ regtest_system_CPPFLAGS = -I.. -I. $(TLS_CPPFLAGS)
 # build regtest_compat as embedded project
 regtest_compat_EMBED_LIBUSUAL = 1
 regtest_compat_CPPFLAGS := -I.. -I. -DUSUAL_TEST_CONFIG $(TLS_CPPFLAGS)
+regtest_compat_LIBS = $(TLS_LIBS) $(LIBS)
 regtest_compat_LDFLAGS = $(TLS_LDFLAGS)
 regtest_compat_SOURCES := $(regtest_system_SOURCES)
 nodist_regtest_compat_SOURCES = test_config.h

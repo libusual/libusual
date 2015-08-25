@@ -17,7 +17,7 @@ static const char *b_rx(const char *regex, const char *str, int flags)
 	regmatch_t matches[NMATCH];
 	unsigned int nmatch, i;
 	int err;
-	char *dst = buf;
+	char *dst = buf, *bufend = buf + sizeof buf;
 
 	memset(&rx, 0, sizeof(rx));
 	memset(matches, -1, sizeof(&matches));
@@ -38,14 +38,16 @@ static const char *b_rx(const char *regex, const char *str, int flags)
 		regmatch_t *m = &matches[i];
 		*dst++ = '(';
 		if (m->rm_so >= 0)
-			dst += sprintf(dst, "%d", (int)m->rm_so);
+			dst += snprintf(dst, bufend - dst, "%d", (int)m->rm_so);
 		else
 			*dst++ = '?';
 		*dst++ = ',';
 		if (m->rm_eo >= 0)
-			dst += sprintf(dst, "%d", (int)m->rm_eo);
+			dst += snprintf(dst, bufend - dst, "%d", (int)m->rm_eo);
 		else
 			*dst++ = '?';
+		if (dst >= bufend)
+			return "bufover";
 		*dst++ = ')';
 	}
 	regfree(&rx);

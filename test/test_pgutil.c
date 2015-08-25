@@ -134,7 +134,7 @@ static char *aparse(const char *src)
 			*dst++ = ':';
 		s = strlist_pop(sl);
 		if (!s) {
-			strcpy(dst, "NULL");
+			memcpy(dst, "NULL", 5);
 			dst += 4;
 		} else {
 			len = strlen(s);

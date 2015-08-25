@@ -20,7 +20,7 @@
 static char *run_strlcpy(char *dst, const char *src, int size, int expres)
 {
 	int res;
-	strcpy(dst, "XXX");
+	memcpy(dst, "XXX", 4);
 	res = strlcpy(dst, src, size);
 	if (res != expres)
 		return "FAIL";
@@ -49,7 +49,7 @@ end:;
 static char *run_strlcat(char *dst, const char *src, int size, int expres)
 {
 	int res;
-	strcpy(dst, "PFX");
+	memcpy(dst, "PFX", 4);
 	res = strlcat(dst, src, size);
 	if (res != expres)
 		return "FAIL";
