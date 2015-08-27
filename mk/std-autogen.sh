@@ -29,13 +29,13 @@ if test "$AUTOCONF_VERSION" = ""; then
   if test "$AUTOCONF" = "autoconf"; then
     for ac in 70 69 68 67 66 65 64 63 62 61 60 59; do
       ac="2.$ac"
-      if which autoconf-$ac > /dev/null; then
+      if which autoconf-$ac > /dev/null 2>&1; then
         AUTOCONF=autoconf-$ac
         AUTOHEADER=autoheader-$ac
         echo "Using autoconf: $AUTOCONF"
         break
       fi
-      if which autoconf$ac > /dev/null; then
+      if which autoconf$ac > /dev/null 2>&1; then
         AUTOCONF=autoconf$ac
         AUTOHEADER=autoheader$ac
         echo "Using autoconf: $AUTOCONF"
@@ -48,12 +48,12 @@ fi
 if test "$AUTOMAKE_VERSION" = ""; then
   if test "$ACLOCAL" = "aclocal"; then
     for am in 1.16 1.15 1.14 1.13 1.12 1.11 1.10 1.9; do
-      if which aclocal-$am > /dev/null; then
+      if which aclocal-$am > /dev/null 2>&1; then
         ACLOCAL=aclocal-$am
         echo "Using aclocal: $ACLOCAL"
         break
       fi
-      if which aclocal$am > /dev/null; then
+      if which aclocal$am > /dev/null 2>&1; then
         ACLOCAL=aclocal$am
         echo "Using aclocal: $ACLOCAL"
         break
