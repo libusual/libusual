@@ -63,6 +63,7 @@ libusual_la_SOURCES = usual/config.h.in \
 	usual/misc.h \
 	usual/netdb.h usual/netdb.c \
 	usual/pgutil.h usual/pgutil.c usual/pgutil_kwlookup.h \
+	usual/psrandom.h usual/psrandom.c \
 	usual/pthread.h usual/pthread.c \
 	usual/regex.h usual/regex.c \
 	usual/safeio.h usual/safeio.c \

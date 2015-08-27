@@ -61,6 +61,7 @@
  * <tr><td>  <usual/endian.h>        </td><td>  Endianess conversion   </td></tr>
  * <tr><td>  <usual/misc.h>          </td><td>  Misc arithmetic   </td></tr>
  * <tr><td>  <usual/json.h>          </td><td>  Read/write JSON   </td></tr>
+ * <tr><td>  <usual/psrandom.h>      </td><td>  Pseudo-random functions   </td></tr>
  * <tr><td>  <usual/regex.h>         </td><td>  POSIX regex compat   </td></tr>
  * <tr><td>  <usual/pgutil.h>        </td><td>  PostgreSQL data formats   </td></tr>
  * <tr><td>  <usual/utf8.h>          </td><td>  Low-level UTF8 handling   </td></tr>
