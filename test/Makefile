@@ -53,3 +53,11 @@ clean: clean-local
 
 clean-local:
 	$(Q) $(RM) -r fmod_test
+
+run:
+	@echo CC=$(CC) CFLAGS=$(CFLAGS)
+	$(MAKE) -C ..
+	$(MAKE) regtest_system regtest_compat
+	./regtest_system
+	./regtest_compat
+
