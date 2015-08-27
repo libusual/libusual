@@ -27,6 +27,7 @@
 #include <usual/base.h>
 
 #ifndef HAVE_GETENTROPY
+#define getentropy(dst, len) usual_getentropy(dst, len)
 
 /**
  * Fetch entropy from OS kernel.
