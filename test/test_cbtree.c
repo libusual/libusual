@@ -142,7 +142,7 @@ static void test_cbtree_random(void *p)
 	tree = cbtree_create(my_getkey, my_node_free, NULL, NULL);
 
 	while (total < 20000) {
-		int r = random() & 15;
+		int r = pseudo_random_range(16);
 		if (prefer_remove)
 			op = r > 5;
 		else
