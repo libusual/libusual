@@ -7,16 +7,41 @@ DIST_SUBDIRS = attregex
 USUAL_DIR = $(abs_top_srcdir)
 
 regtest_system_SOURCES = \
-	test_string.c test_crypto.c test_aatree.c test_heap.c \
-	test_common.c test_list.c tinytest.c test_cbtree.c \
-	test_utf8.c test_strpool.c test_pgutil.c test_regex.c \
-	test_cxalloc.c test_bits.c test_base.c test_netdb.c \
-	test_cfparser.c test_endian.c test_hashtab.c test_mdict.c \
-	test_shlist.c test_time.c test_hashing.c test_fileutil.c \
-	test_socket.c test_getopt.c test_ctype.c test_fnmatch.c \
-	test_wchar.c test_json.c test_talloc.c test_event.c \
-	test_tls.c test_psrandom.c \
-	test_common.h tinytest.h tinytest_macros.h
+	test_aatree.c \
+	test_base.c \
+	test_bits.c \
+	test_cbtree.c \
+	test_cfparser.c \
+	test_crypto.c \
+	test_ctype.c \
+	test_cxalloc.c \
+	test_endian.c \
+	test_event.c \
+	test_fileutil.c \
+	test_fnmatch.c \
+	test_getopt.c \
+	test_hashing.c \
+	test_hashtab.c \
+	test_heap.c \
+	test_json.c \
+	test_list.c \
+	test_mdict.c \
+	test_netdb.c \
+	test_pgutil.c \
+	test_psrandom.c \
+	test_regex.c \
+	test_shlist.c \
+	test_socket.c \
+	test_string.c \
+	test_strpool.c \
+	test_talloc.c \
+	test_time.c \
+	test_tls.c \
+	test_utf8.c \
+	test_wchar.c \
+	\
+	test_common.c test_common.h \
+	tinytest.c tinytest.h tinytest_macros.h
 
 # build regtest_system against actual library
 regtest_system_LDADD = -static ../libusual.la
