@@ -341,21 +341,11 @@ AC_LINK_IFELSE([AC_LANG_SOURCE([
     struct event ev;
     event_init();
     event_set(&ev, 1, EV_READ, NULL, NULL);
-    /* this checks for 1.2+ but next we check for 1.3b+ anyway */
-    /* event_base_free(NULL); */
+    /* this checks for 1.2+ */
+    event_base_free(NULL);
   } ])],
 [AC_MSG_RESULT([found])],
 [AC_MSG_ERROR([not found, cannot proceed])])
-
-dnl libevent < 1.3b crashes on event_base_free()
-dnl no good way to check libevent version.  use hack:
-dnl evhttp.h defines HTTP_SERVUNAVAIL only since 1.3b
-AC_MSG_CHECKING([whether libevent version >= 1.3b])
-AC_EGREP_CPP([HTTP_SERVUNAVAIL],
-[#include <evhttp.h>
-  HTTP_SERVUNAVAIL ],
-[AC_MSG_ERROR([no, cannot proceed])],
-[AC_MSG_RESULT([yes])])
 
 AC_CHECK_FUNCS(event_loopbreak event_base_new evdns_base_new)
 have_libevent=yes
