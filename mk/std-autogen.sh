@@ -30,15 +30,13 @@ if test "$AUTOCONF_VERSION" = ""; then
     for ac in 70 69 68 67 66 65 64 63 62 61 60 59; do
       ac="2.$ac"
       if which autoconf-$ac > /dev/null 2>&1; then
-        AUTOCONF=autoconf-$ac
-        AUTOHEADER=autoheader-$ac
-        echo "Using autoconf: $AUTOCONF"
+        AUTOCONF_VERSION="$ac"
+        echo "Using autoconf: $AUTOCONF_VERSION"
         break
       fi
       if which autoconf$ac > /dev/null 2>&1; then
-        AUTOCONF=autoconf$ac
-        AUTOHEADER=autoheader$ac
-        echo "Using autoconf: $AUTOCONF"
+        AUTOCONF_VERSION="$ac"
+        echo "Using autoconf: $AUTOCONF_VERSION"
         break
       fi
     done
@@ -49,18 +47,20 @@ if test "$AUTOMAKE_VERSION" = ""; then
   if test "$ACLOCAL" = "aclocal"; then
     for am in 1.16 1.15 1.14 1.13 1.12 1.11 1.10 1.9; do
       if which aclocal-$am > /dev/null 2>&1; then
-        ACLOCAL=aclocal-$am
-        echo "Using aclocal: $ACLOCAL"
+        AUTOMAKE_VERSION="$am"
+        echo "Using aclocal: $AUTOMAKE_VERSION"
         break
       fi
       if which aclocal$am > /dev/null 2>&1; then
-        ACLOCAL=aclocal$am
-        echo "Using aclocal: $ACLOCAL"
+        AUTOMAKE_VERSION="$am"
+        echo "Using aclocal: $AUTOMAKE_VERSION"
         break
       fi
     done
   fi
 fi
+
+export AUTOCONF_VERSION AUTOMAKE_VERSION
 
 # detect first glibtoolize then libtoolize
 if test "x$LIBTOOLIZE" = "x"; then
