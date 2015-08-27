@@ -34,9 +34,12 @@ extern struct testcase_t hashing_tests[];
 extern struct testcase_t fileutil_tests[];
 extern struct testcase_t socket_tests[];
 extern struct testcase_t getopt_tests[];
+extern struct testcase_t psrandom_tests[];
 extern struct testcase_t ctype_tests[];
 extern struct testcase_t fnmatch_tests[];
 extern struct testcase_t wchar_tests[];
 extern struct testcase_t json_tests[];
 extern struct testcase_t talloc_tests[];
+
+extern unsigned long long test_seed1, test_seed2;
 

@@ -2,6 +2,8 @@
 #include <usual/cbtree.h>
 
 #include <usual/string.h>
+#include <usual/psrandom.h>
+
 #include "test_common.h"
 
 static char *OK = "OK";
@@ -114,7 +116,7 @@ end:
 
 static int get_next(bool with_stat, bool added[])
 {
-	int r = random() % RSIZE;
+	int r = pseudo_random_range(RSIZE);
 	int i = r;
 	while (1) {
 		if (added[i] == with_stat)
@@ -135,7 +137,6 @@ static void test_cbtree_random(void *p)
 	struct CBTree *tree;
 	unsigned long long total = 0;
 
-	srandom(123123);
 	memset(is_added, 0, sizeof(is_added));
 
 	tree = cbtree_create(my_getkey, my_node_free, NULL, NULL);

@@ -1,5 +1,7 @@
 
 #include <usual/aatree.h>
+#include <usual/psrandom.h>
+#include <usual/time.h>
 
 #include <string.h>
 
@@ -157,7 +159,7 @@ end:
 
 static int get_next(bool with_stat, bool added[])
 {
-	int r = random() % RSIZE;
+	int r = pseudo_random_range(RSIZE);
 	int i = r;
 	while (1) {
 		if (added[i] == with_stat)
@@ -178,12 +180,11 @@ static void test_aatree_random(void *p)
 	struct AATree tree[1];
 	unsigned long long total = 0;
 
-	srandom(123123);
 	memset(is_added, 0, sizeof(is_added));
 
 	aatree_init(tree, my_node_cmp, my_node_free);
 	while (total < 20000) {
-		int r = random() & 15;
+		int r = pseudo_random_range(16);
 		if (prefer_remove)
 			op = r > 5;
 		else

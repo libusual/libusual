@@ -4,8 +4,14 @@
 
 #include <locale.h>
 
+#include <usual/time.h>
+#include <usual/psrandom.h>
+
+unsigned long long test_seed1, test_seed2;
+
 struct testgroup_t groups[] = {
 	{ "base/", base_tests },
+	{ "psrandom/", psrandom_tests },
 	{ "aatree/", aatree_tests },
 	{ "bits/", bits_tests },
 	{ "cxalloc/", cxalloc_tests },
@@ -43,6 +49,12 @@ int main(int argc, const char *argv[])
 {
 	if (getenv("USE_LOCALE"))
 		setlocale(LC_ALL, "");
+
+	test_seed1 = pseudo_random();
+	test_seed2 = pseudo_random();
+	pseudo_random_seed(test_seed1, test_seed2);
+	printf("inital seed: %llu %llu\n", test_seed1, test_seed2);
+
 	return tinytest_main(argc, argv, groups);
 }
 

@@ -1,6 +1,7 @@
 
 #include "test_common.h"
 
+#include <usual/psrandom.h>
 #include <usual/list.h>
 #include <usual/mempool.h>
 
@@ -76,7 +77,7 @@ static bool test_sort(void (*sort)(struct List *list, list_cmp_f cmp), int n)
 	for (i = 0; i < n; i++) {
 		struct MyNode *e = mempool_alloc(&pool, sizeof(*e));
 		list_init(&e->node);
-		e->val = random() % 100;
+		e->val = pseudo_random_range(100);
 		e->seq = i;
 		list_append(list, &e->node);
 	}
