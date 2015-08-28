@@ -23,6 +23,11 @@
 
 #include "tls_internal.h"
 
+static int tls_match_name(const char *cert_name, const char *name);
+static int tls_check_subject_altname(struct tls *ctx, struct tls_cert *cert,
+    const char *name);
+static int tls_check_common_name(struct tls *ctx, struct tls_cert *cert, const char *name);
+
 static int
 tls_match_name(const char *cert_name, const char *name)
 {
@@ -145,7 +150,7 @@ tls_check_servername(struct tls *ctx, struct tls_cert *cert, const char *servern
 		return rv;
 	rv = tls_check_common_name(ctx, cert, servername);
 	if (rv != 0)
-		tls_set_error(ctx, "name '%s' does not match cert", servername);
+		tls_set_errorx(ctx, "name '%s' does not match cert", servername);
 	return rv;
 }
 
@@ -157,7 +162,7 @@ tls_configure_verify(struct tls *ctx)
 
 		if (ctx->config->ca_mem != NULL) {
 			if (ctx->config->ca_len > INT_MAX) {
-				tls_set_error(ctx, "ca too long");
+				tls_set_errorx(ctx, "ca too long");
 				goto err;
 			}
 

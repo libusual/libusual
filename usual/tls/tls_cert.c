@@ -54,7 +54,7 @@ tls_parse_bigint(struct tls *ctx, const ASN1_INTEGER *asn1int, const char **dst_
 	if (*dst_p)
 		return 0;
 
-	tls_set_error(ctx, "cannot parse serial");
+	tls_set_errorx(ctx, "cannot parse serial");
 	return -1;
 }
 
@@ -98,11 +98,8 @@ tls_parse_time(struct tls *ctx, const ASN1_TIME *asn1time, const char **dst_p)
 	year = strsep(&tmp, " ");
 	tz = strsep(&tmp, " ");
 
-	if (!year || tmp) {
-		tls_set_error(ctx, "invalid time format: no year: %s", buf2);
-		return -1;
+	if (!year || tmp)
 		goto invalid;
-	}
 	if (tz && strcmp(tz, "GMT") != 0)
 		goto invalid;
 
@@ -118,12 +115,11 @@ tls_parse_time(struct tls *ctx, const ASN1_TIME *asn1time, const char **dst_p)
 		goto nomem;
 	*dst_p = tmp;
 	return 0;
-
 invalid:
-	tls_set_error(ctx, "invalid time format");
+	tls_set_errorx(ctx, "invalid time format");
 	return -1;
 nomem:
-	tls_set_error(ctx, "no mem to parse time");
+	tls_set_error(ctx, "no mem");
 	return -1;
 }
 
@@ -153,7 +149,7 @@ tls_parse_asn1string(struct tls *ctx, ASN1_STRING *a1str, const char **dst_p, in
 	data = ASN1_STRING_data(a1str);
 	len = ASN1_STRING_length(a1str);
 	if (len < minchars) {
-		tls_set_error(ctx, "invalid length");
+		tls_set_errorx(ctx, "invalid length");
 		goto failed;
 	}
 
@@ -164,7 +160,7 @@ tls_parse_asn1string(struct tls *ctx, ASN1_STRING *a1str, const char **dst_p, in
 	case V_ASN1_IA5STRING:
 		/* Ascii */
 		if (len > maxchars) {
-			tls_set_error(ctx, "invalid length");
+			tls_set_errorx(ctx, "invalid length");
 			goto failed;
 		}
 		ascii_only = 1;
@@ -189,7 +185,7 @@ tls_parse_asn1string(struct tls *ctx, ASN1_STRING *a1str, const char **dst_p, in
 		mbconvert = MBSTRING_UTF8;
 		break;
 	default:
-		tls_set_error(ctx, "invalid string type");
+		tls_set_errorx(ctx, "invalid string type");
 		goto failed;
 	}
 
@@ -199,14 +195,14 @@ tls_parse_asn1string(struct tls *ctx, ASN1_STRING *a1str, const char **dst_p, in
 		if (mbres < 0) {
 			int err = ERR_peek_error();
 			if (err != 0) {
-				tls_set_error(ctx, "multibyte conversion failed: %s", ERR_error_string(err, NULL));
+				tls_set_errorx(ctx, "multibyte conversion failed: %s", ERR_error_string(err, NULL));
 			} else {
-				tls_set_error(ctx, "multibyte conversion failed");
+				tls_set_errorx(ctx, "multibyte conversion failed");
 			}
 			goto failed;
 		}
 		if (mbres != V_ASN1_UTF8STRING) {
-			tls_set_error(ctx, "multibyte conversion failed: expected UTF8 result");
+			tls_set_errorx(ctx, "multibyte conversion failed: expected UTF8 result");
 			goto failed;
 		}
 		data = ASN1_STRING_data(a1utf);
@@ -218,23 +214,23 @@ tls_parse_asn1string(struct tls *ctx, ASN1_STRING *a1str, const char **dst_p, in
 		c = data[i];
 
 		if (ascii_only && (c & 0x80) != 0) {
-			tls_set_error(ctx, "8-bit chars not allowed: 0x%02x", c);
+			tls_set_errorx(ctx, "8-bit chars not allowed: 0x%02x", c);
 			goto failed;
 		} else if (c < 0x20) {
 			/* ascii control chars, including NUL */
 			if (c != '\t' && c != '\n' && c != '\r') {
-				tls_set_error(ctx, "invalid C0 control char: 0x%02x", c);
+				tls_set_errorx(ctx, "invalid C0 control char: 0x%02x", c);
 				goto failed;
 			}
 		} else if (c == 0xC2 && (i + 1) < len) {
 			/* C1 control chars in UTF-8: \xc2\x80 - \xc2\x9f */
 			c = data[i + 1];
 			if (c >= 0x80 && c <= 0x9F) {
-				tls_set_error(ctx, "invalid C1 control char 0x%02x", c);
+				tls_set_errorx(ctx, "invalid C1 control char 0x%02x", c);
 				goto failed;
 			}
 		} else if (c == 0x7F) {
-			tls_set_error(ctx, "invalid DEL char");
+			tls_set_errorx(ctx, "invalid DEL char");
 			goto failed;
 		}
 	}
@@ -242,7 +238,7 @@ tls_parse_asn1string(struct tls *ctx, ASN1_STRING *a1str, const char **dst_p, in
 	/* copy to new string */
 	cstr = malloc(len + 1);
 	if (!cstr) {
-		tls_set_error(ctx, "no mem");
+		tls_set_error(ctx, "malloc");
 		goto failed;
 	}
 	memcpy(cstr, data, len);
@@ -297,7 +293,7 @@ tls_load_alt_ia5string(struct tls *ctx, ASN1_IA5STRING *ia5str, struct tls_cert 
 	 * dNSName must be rejected.
 	 */
 	if (len == 1 && data[0] == ' ') {
-		tls_set_error(ctx, "single space as name");
+		tls_set_errorx(ctx, "single space as name");
 		return -1;
 	}
 
@@ -319,7 +315,7 @@ tls_load_alt_ipaddr(struct tls *ctx, ASN1_OCTET_STRING *bin, struct tls_cert *ce
 	len = ASN1_STRING_length(bin);
 	data = ASN1_STRING_data(bin);
 	if (len < 0) {
-		tls_set_error(ctx, "negative length for ipaddress");
+		tls_set_errorx(ctx, "negative length for ipaddress");
 		return -1;
 	}
 
@@ -332,13 +328,13 @@ tls_load_alt_ipaddr(struct tls *ctx, ASN1_OCTET_STRING *bin, struct tls_cert *ce
 	} else if (len == 16) {
 		slot->alt_name_type = TLS_CERT_NAME_IPv6;
 	} else {
-		tls_set_error(ctx, "invalid length for ipaddress");
+		tls_set_errorx(ctx, "invalid length for ipaddress");
 		return -1;
 	}
 
 	slot->alt_name = malloc(len);
 	if (slot->alt_name == NULL) {
-		tls_set_error(ctx, "no mem");
+		tls_set_error(ctx, "malloc");
 		return -1;
 	}
 
@@ -368,7 +364,7 @@ tls_cert_get_altnames(struct tls *ctx, struct tls_cert *cert, X509 *x509_cert)
 
 	cert->subject_alt_names = calloc(sizeof (struct tls_cert_alt_name), count);
 	if (cert->subject_alt_names == NULL) {
-		tls_set_error(ctx, "no mem");
+		tls_set_error(ctx, "calloc");
 		goto out;
 	}
 
@@ -439,21 +435,21 @@ tls_calc_fingerprint(struct tls *ctx, X509 *x509, const char *algo, size_t *outl
 	} else if (strcasecmp(algo, "sha256") == 0) {
 		md = EVP_sha256();
 	} else {
-		tls_set_error(ctx, "invalid fingerprint algorithm");
+		tls_set_errorx(ctx, "invalid fingerprint algorithm");
 		return NULL;
 	}
 
 	mdlen = EVP_MD_size(md);
 	res = malloc(mdlen);
 	if (!res) {
-		tls_set_error(ctx, "no mem");
+		tls_set_error(ctx, "malloc");
 		return NULL;
 	}
 
 	ret = X509_digest(x509, md, res, &tmplen);
 	if (ret != 1 || tmplen != mdlen) {
 		free(res);
-		tls_set_error(ctx, "X509_digest failed");
+		tls_set_errorx(ctx, "X509_digest failed");
 		return NULL;
 	}
 
@@ -486,25 +482,25 @@ tls_parse_cert(struct tls *ctx, struct tls_cert **cert_p, const char *fingerprin
 
 	version = X509_get_version(x509);
 	if (version < 0) {
-		tls_set_error(ctx, "invalid version");
+		tls_set_errorx(ctx, "invalid version");
 		return -1;
 	}
 
 	subject = X509_get_subject_name(x509);
 	if (!subject) {
-		tls_set_error(ctx, "cert does not have subject");
+		tls_set_errorx(ctx, "cert does not have subject");
 		return -1;
 	}
 
 	issuer = X509_get_issuer_name(x509);
 	if (!issuer) {
-		tls_set_error(ctx, "cert does not have issuer");
+		tls_set_errorx(ctx, "cert does not have issuer");
 		return -1;
 	}
 
 	cert = calloc(sizeof *cert, 1);
 	if (!cert) {
-		tls_set_error(ctx, "calloc failed");
+		tls_set_error(ctx, "calloc");
 		goto failed;
 	}
 	cert->version = version;
@@ -545,13 +541,13 @@ tls_get_peer_cert(struct tls *ctx, struct tls_cert **cert_p, const char *fingerp
 	*cert_p = NULL;
 
 	if (!conn) {
-		tls_set_error(ctx, "not connected");
+		tls_set_errorx(ctx, "not connected");
 		return -1;
 	}
 
 	peer = SSL_get_peer_certificate(conn);
 	if (!peer) {
-		tls_set_error(ctx, "peer does not have cert");
+		tls_set_errorx(ctx, "peer does not have cert");
 		return TLS_NO_CERT;
 	}
 
