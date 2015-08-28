@@ -168,13 +168,13 @@ tls_configure_verify(struct tls *ctx)
 
 			if (SSL_CTX_load_verify_mem(ctx->ssl_ctx,
 			    ctx->config->ca_mem, ctx->config->ca_len) != 1) {
-				tls_set_error(ctx,
+				tls_set_errorx(ctx,
 				    "ssl verify memory setup failure");
 				goto err;
 			}
 		} else if (SSL_CTX_load_verify_locations(ctx->ssl_ctx,
 		    ctx->config->ca_file, ctx->config->ca_path) != 1) {
-			tls_set_error(ctx, "ssl verify setup failure");
+			tls_set_errorx(ctx, "ssl verify setup failure");
 			goto err;
 		}
 		if (ctx->config->verify_depth >= 0)
