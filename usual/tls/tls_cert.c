@@ -277,7 +277,7 @@ tls_cert_get_dname_string(struct tls *ctx, X509_NAME *name, int nid, const char 
 static int
 tls_load_alt_ia5string(struct tls *ctx, ASN1_IA5STRING *ia5str, struct tls_cert *cert, int slot_type, int minchars, int maxchars)
 {
-	struct tls_cert_alt_name *slot;
+	struct tls_cert_general_name *slot;
 	const char *data;
 	int len;
 
@@ -297,8 +297,8 @@ tls_load_alt_ia5string(struct tls *ctx, ASN1_IA5STRING *ia5str, struct tls_cert 
 		return -1;
 	}
 
-	slot->alt_name = data;
-	slot->alt_name_type = slot_type;
+	slot->name_value = data;
+	slot->name_type = slot_type;
 
 	cert->subject_alt_name_count++;
 	return 0;
@@ -307,7 +307,7 @@ tls_load_alt_ia5string(struct tls *ctx, ASN1_IA5STRING *ia5str, struct tls_cert 
 static int
 tls_load_alt_ipaddr(struct tls *ctx, ASN1_OCTET_STRING *bin, struct tls_cert *cert)
 {
-	struct tls_cert_alt_name *slot;
+	struct tls_cert_general_name *slot;
 	void *data;
 	int len;
 
@@ -324,21 +324,21 @@ tls_load_alt_ipaddr(struct tls *ctx, ASN1_OCTET_STRING *bin, struct tls_cert *ce
 	 * IPv4 must use 4 octets and IPv6 must use 16 octets.
 	 */
 	if (len == 4) {
-		slot->alt_name_type = TLS_CERT_NAME_IPv4;
+		slot->name_type = TLS_CERT_GNAME_IPv4;
 	} else if (len == 16) {
-		slot->alt_name_type = TLS_CERT_NAME_IPv6;
+		slot->name_type = TLS_CERT_GNAME_IPv6;
 	} else {
 		tls_set_errorx(ctx, "invalid length for ipaddress");
 		return -1;
 	}
 
-	slot->alt_name = malloc(len);
-	if (slot->alt_name == NULL) {
+	slot->name_value = malloc(len);
+	if (slot->name_value == NULL) {
 		tls_set_error(ctx, "malloc");
 		return -1;
 	}
 
-	memcpy((void *)slot->alt_name, data, len);
+	memcpy((void *)slot->name_value, data, len);
 	cert->subject_alt_name_count++;
 	return 0;
 }
@@ -362,7 +362,7 @@ tls_cert_get_altnames(struct tls *ctx, struct tls_cert *cert, X509 *x509_cert)
 		goto out;
 	}
 
-	cert->subject_alt_names = calloc(sizeof (struct tls_cert_alt_name), count);
+	cert->subject_alt_names = calloc(sizeof (struct tls_cert_general_name), count);
 	if (cert->subject_alt_names == NULL) {
 		tls_set_error(ctx, "calloc");
 		goto out;
@@ -372,11 +372,11 @@ tls_cert_get_altnames(struct tls *ctx, struct tls_cert *cert, X509 *x509_cert)
 		altname = sk_GENERAL_NAME_value(altname_stack, i);
 
 		if (altname->type == GEN_DNS) {
-			rv = tls_load_alt_ia5string(ctx, altname->d.dNSName, cert, TLS_CERT_NAME_DNS, 1, 64);
+			rv = tls_load_alt_ia5string(ctx, altname->d.dNSName, cert, TLS_CERT_GNAME_DNS, 1, 64);
 		} else if (altname->type == GEN_EMAIL) {
-			rv = tls_load_alt_ia5string(ctx, altname->d.rfc822Name, cert, TLS_CERT_NAME_EMAIL, 1, 255);
+			rv = tls_load_alt_ia5string(ctx, altname->d.rfc822Name, cert, TLS_CERT_GNAME_EMAIL, 1, 255);
 		} else if (altname->type == GEN_URI) {
-			rv = tls_load_alt_ia5string(ctx, altname->d.uniformResourceIdentifier, cert, TLS_CERT_NAME_URI, 1, 255);
+			rv = tls_load_alt_ia5string(ctx, altname->d.uniformResourceIdentifier, cert, TLS_CERT_GNAME_URI, 1, 255);
 		} else if (altname->type == GEN_IPADD) {
 			rv = tls_load_alt_ipaddr(ctx, altname->d.iPAddress, cert);
 		} else {
@@ -581,7 +581,7 @@ tls_cert_free(struct tls_cert *cert)
 
 	if (cert->subject_alt_name_count) {
 		for (i = 0; i < cert->subject_alt_name_count; i++)
-			free((void*)cert->subject_alt_names[i].alt_name);
+			free((void*)cert->subject_alt_names[i].name_value);
 	}
 	free(cert->subject_alt_names);
 

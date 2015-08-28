@@ -82,7 +82,7 @@ static int
 tls_check_subject_altname(struct tls *ctx, struct tls_cert *cert, const char *name)
 {
 	union { struct in_addr ip4; struct in6_addr ip6; } addrbuf;
-	struct tls_cert_alt_name *altname;
+	struct tls_cert_general_name *altname;
 	int addrlen, type;
 	int i;
 
@@ -90,26 +90,26 @@ tls_check_subject_altname(struct tls *ctx, struct tls_cert *cert, const char *na
 		return -1;
 
 	if (inet_pton(AF_INET, name, &addrbuf) == 1) {
-		type = TLS_CERT_NAME_IPv4;
+		type = TLS_CERT_GNAME_IPv4;
 		addrlen = 4;
 	} else if (inet_pton(AF_INET6, name, &addrbuf) == 1) {
-		type = TLS_CERT_NAME_IPv6;
+		type = TLS_CERT_GNAME_IPv6;
 		addrlen = 16;
 	} else {
-		type = TLS_CERT_NAME_DNS;
+		type = TLS_CERT_GNAME_DNS;
 		addrlen = 0;
 	}
 
 	for (i = 0; i < cert->subject_alt_name_count; i++) {
 		altname = &cert->subject_alt_names[i];
-		if (altname->alt_name_type != type)
+		if (altname->name_type != type)
 			continue;
 
-		if (type == TLS_CERT_NAME_DNS) {
-			if (tls_match_name(altname->alt_name, name) == 0)
+		if (type == TLS_CERT_GNAME_DNS) {
+			if (tls_match_name(altname->name_value, name) == 0)
 				return 0;
 		} else {
-			if (memcmp(altname->alt_name, &addrbuf, addrlen) == 0)
+			if (memcmp(altname->name_value, &addrbuf, addrlen) == 0)
 				return 0;
 		}
 	}

@@ -42,17 +42,23 @@ extern "C" {
 struct tls;
 struct tls_config;
 
-#define TLS_CERT_NAME_DNS	1
-#define TLS_CERT_NAME_IPv4	2
-#define TLS_CERT_NAME_IPv6	3
-#define TLS_CERT_NAME_EMAIL	4
-#define TLS_CERT_NAME_URI	5
+#define TLS_CERT_GNAME_DNS	1
+#define TLS_CERT_GNAME_IPv4	2
+#define TLS_CERT_GNAME_IPv6	3
+#define TLS_CERT_GNAME_EMAIL	4
+#define TLS_CERT_GNAME_URI	5
 
-struct tls_cert_alt_name {
-	const void *alt_name;
-	int alt_name_type;
+/*
+ * GeneralName
+ */
+struct tls_cert_general_name {
+	const void *name_value;
+	int name_type;
 };
 
+/*
+ * DistinguishedName
+ */
 struct tls_cert_dname {
 	const char *common_name;
 	const char *country_name;
@@ -77,7 +83,7 @@ struct tls_cert {
 	struct tls_cert_dname issuer;
 
 	/* SubjectAltName extension */
-	struct tls_cert_alt_name *subject_alt_names;
+	struct tls_cert_general_name *subject_alt_names;
 	int subject_alt_name_count;
 
 	/* decimal number */
