@@ -28,6 +28,18 @@
  * Load cert data from X509 cert.
  */
 
+/* Upper bounds */
+#define UB_COMMON_NAME				64
+#define UB_COUNTRY_NAME				3
+#define UB_STATE_NAME				128
+#define UB_LOCALITY_NAME			128
+#define UB_ORGANIZATION_NAME			64
+#define UB_ORGANIZATIONAL_UNIT_NAME		64
+
+#define UB_GNAME_DNS				64
+#define UB_GNAME_EMAIL				255
+#define UB_GNAME_URI				255
+
 /* Convert ASN1_INTEGER to decimal string string */
 static int
 tls_parse_bigint(struct tls *ctx, const ASN1_INTEGER *asn1int, const char **dst_p)
@@ -372,11 +384,11 @@ tls_cert_get_altnames(struct tls *ctx, struct tls_cert *cert, X509 *x509_cert)
 		altname = sk_GENERAL_NAME_value(altname_stack, i);
 
 		if (altname->type == GEN_DNS) {
-			rv = tls_load_alt_ia5string(ctx, altname->d.dNSName, cert, TLS_CERT_GNAME_DNS, 1, 64);
+			rv = tls_load_alt_ia5string(ctx, altname->d.dNSName, cert, TLS_CERT_GNAME_DNS, 1, UB_GNAME_DNS);
 		} else if (altname->type == GEN_EMAIL) {
-			rv = tls_load_alt_ia5string(ctx, altname->d.rfc822Name, cert, TLS_CERT_GNAME_EMAIL, 1, 255);
+			rv = tls_load_alt_ia5string(ctx, altname->d.rfc822Name, cert, TLS_CERT_GNAME_EMAIL, 1, UB_GNAME_EMAIL);
 		} else if (altname->type == GEN_URI) {
-			rv = tls_load_alt_ia5string(ctx, altname->d.uniformResourceIdentifier, cert, TLS_CERT_GNAME_URI, 1, 255);
+			rv = tls_load_alt_ia5string(ctx, altname->d.uniformResourceIdentifier, cert, TLS_CERT_GNAME_URI, 1, UB_GNAME_URI);
 		} else if (altname->type == GEN_IPADD) {
 			rv = tls_load_alt_ipaddr(ctx, altname->d.iPAddress, cert);
 		} else {
@@ -390,14 +402,6 @@ out:
 	sk_GENERAL_NAME_pop_free(altname_stack, GENERAL_NAME_free);
 	return rv;
 }
-
-/* Upper bounds */
-#define UB_COMMON_NAME				64
-#define UB_COUNTRY_NAME				3
-#define UB_STATE_NAME				128
-#define UB_LOCALITY_NAME			128
-#define UB_ORGANIZATION_NAME			64
-#define UB_ORGANIZATIONAL_UNIT_NAME		64
 
 static int
 tls_get_dname(struct tls *ctx, X509_NAME *name, struct tls_cert_dname *dname)
