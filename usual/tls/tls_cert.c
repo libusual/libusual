@@ -19,6 +19,7 @@
 
 #ifdef USUAL_LIBSSL_FOR_TLS
 
+#include <openssl/err.h>
 #include <openssl/x509v3.h>
 
 #include "tls_internal.h"
@@ -173,11 +174,11 @@ tls_parse_asn1string(struct tls *ctx, ASN1_STRING *a1str, const char **dst_p, in
 		mbconvert = MBSTRING_ASC;
 		break;
 	case V_ASN1_BMPSTRING:
-		/* UCS-16BE */
+		/* UCS-2 big-endian */
 		mbconvert = MBSTRING_BMP;
 		break;
 	case V_ASN1_UNIVERSALSTRING:
-		/* UCS-32BE */
+		/* UCS-4 big-endian */
 		mbconvert = MBSTRING_UNIV;
 		break;
 	case V_ASN1_UTF8STRING:
@@ -196,7 +197,16 @@ tls_parse_asn1string(struct tls *ctx, ASN1_STRING *a1str, const char **dst_p, in
 	if (mbconvert != -1) {
 		mbres = ASN1_mbstring_ncopy(&a1utf, data, len, mbconvert, B_ASN1_UTF8STRING, minchars, maxchars);
 		if (mbres < 0) {
-			tls_set_error(ctx, "multibyte conversion failed");
+			int err = ERR_peek_error();
+			if (err != 0) {
+				tls_set_error(ctx, "multibyte conversion failed: %s", ERR_error_string(err, NULL));
+			} else {
+				tls_set_error(ctx, "multibyte conversion failed");
+			}
+			goto failed;
+		}
+		if (mbres != V_ASN1_UTF8STRING) {
+			tls_set_error(ctx, "multibyte conversion failed: expected UTF8 result");
 			goto failed;
 		}
 		data = ASN1_STRING_data(a1utf);
@@ -207,27 +217,24 @@ tls_parse_asn1string(struct tls *ctx, ASN1_STRING *a1str, const char **dst_p, in
 	for (i = 0; i < len; i++) {
 		c = data[i];
 
-		/* ascii control chars, inluding NUL */
-		if (c < 0x20 && c != '\t' && c != '\n' && c != '\r') {
-			tls_set_error(ctx, "invalid C0 control char");
-			goto failed;
-		}
-
-		/* C1 control chars in UTF-8: \xc2\x80 - \xc2\x9f */
-		if (c == 0xC2 && data[i+1] >= 0x80 && data[i+1] <= 0x9F) {
-			tls_set_error(ctx, "invalid C1 control char");
-			goto failed;
-		}
-
-		/* ascii DEL */
-		if (c == 0x7F) {
-			tls_set_error(ctx, "invalid DEL char");
-			goto failed;
-		}
-
-		/* non-ascii */
 		if (ascii_only && (c & 0x80) != 0) {
-			tls_set_error(ctx, "8-bit chars not allowed");
+			tls_set_error(ctx, "8-bit chars not allowed: 0x%02x", c);
+			goto failed;
+		} else if (c < 0x20) {
+			/* ascii control chars, including NUL */
+			if (c != '\t' && c != '\n' && c != '\r') {
+				tls_set_error(ctx, "invalid C0 control char: 0x%02x", c);
+				goto failed;
+			}
+		} else if (c == 0xC2 && (i + 1) < len) {
+			/* C1 control chars in UTF-8: \xc2\x80 - \xc2\x9f */
+			c = data[i + 1];
+			if (c >= 0x80 && c <= 0x9F) {
+				tls_set_error(ctx, "invalid C1 control char 0x%02x", c);
+				goto failed;
+			}
+		} else if (c == 0x7F) {
+			tls_set_error(ctx, "invalid DEL char");
 			goto failed;
 		}
 	}
