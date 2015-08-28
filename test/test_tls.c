@@ -750,7 +750,7 @@ static const char *do_verify(const char *hostname, const char *commonName, ...)
 #ifdef USUAL_LIBSSL_FOR_TLS
 	struct tls ctx;
 	struct tls_cert cert;
-	struct tls_cert_alt_name names[20], *alt;
+	struct tls_cert_general_name names[20], *alt;
 	union { struct in_addr ip4; struct in6_addr ip6; } addrbuf[20];
 	int addrpos = 0, ret;
 	va_list ap;
@@ -771,17 +771,17 @@ static const char *do_verify(const char *hostname, const char *commonName, ...)
 			break;
 		alt = &names[cert.subject_alt_name_count++];
 		if (!memcmp(aname, "dns:", 4)) {
-			alt->alt_name_type = TLS_CERT_NAME_DNS;
-			alt->alt_name = aname + 4;
+			alt->name_type = TLS_CERT_GNAME_DNS;
+			alt->name_value = aname + 4;
 		} else if (!memcmp(aname, "ip4:", 4)) {
-			alt->alt_name_type = TLS_CERT_NAME_IPv4;
-			alt->alt_name = &addrbuf[addrpos++];
-			if (inet_pton(AF_INET, aname + 4, (void*)alt->alt_name) != 1)
+			alt->name_type = TLS_CERT_GNAME_IPv4;
+			alt->name_value = &addrbuf[addrpos++];
+			if (inet_pton(AF_INET, aname + 4, (void*)alt->name_value) != 1)
 				return aname;
 		} else if (!memcmp(aname, "ip6:", 4)) {
-			alt->alt_name_type = TLS_CERT_NAME_IPv6;
-			alt->alt_name = &addrbuf[addrpos++];
-			if (inet_pton(AF_INET6, aname + 4, (void*)alt->alt_name) != 1)
+			alt->name_type = TLS_CERT_GNAME_IPv6;
+			alt->name_value = &addrbuf[addrpos++];
+			if (inet_pton(AF_INET6, aname + 4, (void*)alt->name_value) != 1)
 				return aname;
 		} else {
 			return aname;
