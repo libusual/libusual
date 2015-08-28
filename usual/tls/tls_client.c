@@ -162,13 +162,13 @@ tls_connect_fds(struct tls *ctx, int fd_read, int fd_write,
 	union { struct in_addr ip4; struct in6_addr ip6; } addrbuf;
 	int ret, err;
 
-	if (ctx->flags & TLS_CONNECTING)
-		goto connecting;
-
 	if ((ctx->flags & TLS_CLIENT) == 0) {
 		tls_set_error(ctx, "not a client context");
 		goto err;
 	}
+
+	if (ctx->state & TLS_STATE_CONNECTING)
+		goto connecting;
 
 	if (fd_read < 0 || fd_write < 0) {
 		tls_set_error(ctx, "invalid file descriptors");
@@ -226,16 +226,16 @@ tls_connect_fds(struct tls *ctx, int fd_read, int fd_write,
 		}
 	}
 
- connecting:
+connecting:
 	if ((ret = SSL_connect(ctx->ssl_conn)) != 1) {
 		err = tls_ssl_error(ctx, ctx->ssl_conn, ret, "connect");
 		if (err == TLS_READ_AGAIN || err == TLS_WRITE_AGAIN) {
-			ctx->flags |= TLS_CONNECTING;
+			ctx->state |= TLS_STATE_CONNECTING;
 			return (err);
 		}
 		goto err;
 	}
-	ctx->flags &= ~TLS_CONNECTING;
+	ctx->state &= ~TLS_STATE_CONNECTING;
 
 	if (ctx->config->verify_name) {
 		struct tls_cert *cert = NULL;

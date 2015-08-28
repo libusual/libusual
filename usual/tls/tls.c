@@ -192,10 +192,10 @@ tls_info_callback(const SSL *ssl, int where, int rc)
 
 	/* detect renegotation on established connection */
 	if (where & SSL_CB_HANDSHAKE_START) {
-		if (ctx->flags & TLS_ESTABLISHED)
-			ctx->flags |= TLS_ABORT;
+		if (ctx->state & TLS_STATE_ESTABLISHED)
+			ctx->state |= TLS_STATE_ABORT;
 	} else if (where & SSL_CB_HANDSHAKE_DONE) {
-		ctx->flags |= TLS_ESTABLISHED;
+		ctx->state |= TLS_STATE_ESTABLISHED;
 	}
 }
 
@@ -266,11 +266,11 @@ tls_reset(struct tls *ctx)
 	SSL_CTX_free(ctx->ssl_ctx);
 	SSL_free(ctx->ssl_conn);
 
-	ctx->flags &= TLS_KEEP_FLAGS;
 	ctx->ssl_conn = NULL;
 	ctx->ssl_ctx = NULL;
 
 	ctx->socket = -1;
+	ctx->state = 0;
 
 	ctx->err = 0;
 	free(ctx->errmsg);
@@ -335,7 +335,7 @@ tls_read(struct tls *ctx, void *buf, size_t buflen, size_t *outlen)
 		return (-1);
 	}
 
-	if (ctx->flags & TLS_ABORT)
+	if (ctx->state & TLS_STATE_ABORT)
 		return tls_do_abort(ctx);
 
 	ssl_ret = SSL_read(ctx->ssl_conn, buf, buflen);
@@ -359,7 +359,7 @@ tls_write(struct tls *ctx, const void *buf, size_t buflen, size_t *outlen)
 		return (-1);
 	}
 
-	if (ctx->flags & TLS_ABORT)
+	if (ctx->state & TLS_STATE_ABORT)
 		return tls_do_abort(ctx);
 
 	ssl_ret = SSL_write(ctx->ssl_conn, buf, buflen);
