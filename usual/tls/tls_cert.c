@@ -460,14 +460,72 @@ check_verify_error(struct tls *ctx, struct tls_cert *cert)
 }
 
 int
-tls_get_peer_cert(struct tls *ctx, struct tls_cert **cert_p, const char *fingerprint_algo)
+tls_parse_cert(struct tls *ctx, struct tls_cert **cert_p, const char *fingerprint_algo, X509 *x509)
 {
 	struct tls_cert *cert = NULL;
-	SSL *conn = ctx->ssl_conn;
-	X509 *peer;
 	X509_NAME *subject, *issuer;
 	int ret = -1;
 	long version;
+
+	*cert_p = NULL;
+
+	version = X509_get_version(x509);
+	if (version < 0) {
+		tls_set_error(ctx, "invalid version");
+		return -1;
+	}
+
+	subject = X509_get_subject_name(x509);
+	if (!subject) {
+		tls_set_error(ctx, "cert does not have subject");
+		return -1;
+	}
+
+	issuer = X509_get_issuer_name(x509);
+	if (!issuer) {
+		tls_set_error(ctx, "cert does not have issuer");
+		return -1;
+	}
+
+	cert = calloc(sizeof *cert, 1);
+	if (!cert) {
+		tls_set_error(ctx, "calloc failed");
+		goto failed;
+	}
+	cert->version = version;
+
+	if (fingerprint_algo) {
+		cert->fingerprint = tls_calc_fingerprint(ctx, x509, fingerprint_algo, &cert->fingerprint_size);
+		if (!cert->fingerprint)
+			goto failed;
+	}
+
+	ret = tls_get_dname(ctx, subject, &cert->subject);
+	if (ret == 0)
+		ret = tls_get_dname(ctx, issuer, &cert->issuer);
+	if (ret == 0)
+		ret = tls_cert_get_altnames(ctx, cert, x509);
+	if (ret == 0)
+		ret = tls_parse_time(ctx, X509_get_notBefore(x509), &cert->not_before);
+	if (ret == 0)
+		ret = tls_parse_time(ctx, X509_get_notAfter(x509), &cert->not_after);
+	if (ret == 0)
+		ret = tls_parse_bigint(ctx, X509_get_serialNumber(x509), &cert->serial);
+	if (ret == 0) {
+		*cert_p = cert;
+		return 0;
+	}
+failed:
+	tls_cert_free(cert);
+	return ret;
+}
+
+int
+tls_get_peer_cert(struct tls *ctx, struct tls_cert **cert_p, const char *fingerprint_algo)
+{
+	SSL *conn = ctx->ssl_conn;
+	X509 *peer;
+	int res;
 
 	*cert_p = NULL;
 
@@ -482,56 +540,10 @@ tls_get_peer_cert(struct tls *ctx, struct tls_cert **cert_p, const char *fingerp
 		return TLS_NO_CERT;
 	}
 
-	version = X509_get_version(peer);
-	if (version < 0) {
-		tls_set_error(ctx, "invalid version");
-		return -1;
-	}
-
-	subject = X509_get_subject_name(peer);
-	if (!subject) {
-		tls_set_error(ctx, "cert does not have subject");
-		return -1;
-	}
-
-	issuer = X509_get_issuer_name(peer);
-	if (!issuer) {
-		tls_set_error(ctx, "cert does not have issuer");
-		return -1;
-	}
-
-	cert = calloc(sizeof *cert, 1);
-	if (!cert) {
-		tls_set_error(ctx, "calloc failed");
-		goto failed;
-	}
-	cert->version = version;
-
-	if (fingerprint_algo) {
-		cert->fingerprint = tls_calc_fingerprint(ctx, peer, fingerprint_algo, &cert->fingerprint_size);
-		if (!cert->fingerprint)
-			goto failed;
-	}
-
-	ret = tls_get_dname(ctx, subject, &cert->subject);
-	if (ret == 0)
-		ret = tls_get_dname(ctx, issuer, &cert->issuer);
-	if (ret == 0)
-		ret = tls_cert_get_altnames(ctx, cert, peer);
-	if (ret == 0)
-		ret = tls_parse_time(ctx, X509_get_notBefore(peer), &cert->not_before);
-	if (ret == 0)
-		ret = tls_parse_time(ctx, X509_get_notAfter(peer), &cert->not_after);
-	if (ret == 0)
-		ret = tls_parse_bigint(ctx, X509_get_serialNumber(peer), &cert->serial);
-	if (ret == 0) {
-		check_verify_error(ctx, cert);
-		*cert_p = cert;
-		return 0;
-	}
-failed:
-	tls_cert_free(cert);
-	return ret;
+	res = tls_parse_cert(ctx, cert_p, fingerprint_algo, peer);
+	if (res == 0)
+		check_verify_error(ctx, *cert_p);
+	return res;
 }
 
 static void
