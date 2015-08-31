@@ -93,7 +93,7 @@ tls_parse_time(struct tls *ctx, const ASN1_TIME *asn1time, const char **dst_p)
 	ret = ASN1_TIME_print(bio, asn1time);
 	if (!ret) {
 		BIO_free(bio);
-		goto nomem;
+		goto invalid;
 	}
 	BIO_read(bio, buf, sizeof(buf) - 1);
 	BIO_free(bio);
@@ -393,6 +393,7 @@ tls_cert_get_altnames(struct tls *ctx, struct tls_cert *cert, X509 *x509_cert)
 			rv = tls_load_alt_ipaddr(ctx, altname->d.iPAddress, cert);
 		} else {
 			/* ignore unknown types */
+			rv = 0;
 		}
 		if (rv < 0)
 			goto out;
