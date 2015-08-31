@@ -30,7 +30,7 @@
  *
  * Also fixes 3DES ordering bug in older OpenSSLs.
  */
-#define TLS_CIPHERS_COMPAT	"HIGH:+3DES:!aNULL"
+#define TLS_CIPHERS_COMPAT	"HIGH:MEDIUM:+3DES:!aNULL"
 
 /*
  * TLSv1.2+AEAD+ECDHE/DHE.  CBC modes are dubious due to spec bugs in TLS.
@@ -38,11 +38,22 @@
 #define TLS_CIPHERS_DEFAULT	"HIGH+EECDH:HIGH+EDH:!SSLv3:!SHA384:!SHA256:!DSS:!aNULL"
 
 /*
+ * Compact subset of reasonable suites only.
+ *
+ * Priorities, in order:
+ * - ECDHE > DHE > RSA
+ * - AESGCM > CBC
+ * - TLSv1.2 > TLSv1.0
+ * - AES256 > AES128.
+ */
+#define TLS_CIPHERS_NORMAL	"HIGH+EECDH:HIGH+EDH:HIGH+RSA:+SHA384:+SHA256:+SSLv3:+EDH:+RSA:-3DES:3DES+RSA:!CAMELLIA:!DSS:!aNULL"
+
+/*
  * Prefer performance if it does not affect security.
  *
- * ECDH > DH > RSA, AESGCM > CBC, TLSv1.2 > TLSv1.0, AES128 > AES256.
+ * Same as "normal" but prefers AES128 to AES256.
  */
-#define TLS_CIPHERS_FAST	"HIGH+EECDH:HIGH+EDH:HIGH+RSA:+AES256:+SHA256:+SHA384:+SSLv3:+EDH:+RSA:!3DES:!CAMELLIA:!DSS:!aNULL"
+#define TLS_CIPHERS_FAST	"HIGH+EECDH:HIGH+EDH:HIGH+RSA:+AES256:+SHA256:+SHA384:+SSLv3:+EDH:+RSA:-3DES:3DES+RSA:!CAMELLIA:!DSS:!aNULL"
 
 struct tls_config {
 	const char *ca_file;
