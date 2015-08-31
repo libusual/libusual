@@ -132,6 +132,7 @@ static EC_KEY *ecdh_auto_cb(SSL *ssl, int is_export, int keylength)
 	EVP_PKEY *pk;
 	EC_KEY *ec;
 
+	/* pick curve from EC key */
 	pk = SSL_get_privatekey(ssl);
 	if (pk && pk->type == EVP_PKEY_EC) {
 		ec = EVP_PKEY_get1_EC_KEY(pk);
@@ -140,6 +141,8 @@ static EC_KEY *ecdh_auto_cb(SSL *ssl, int is_export, int keylength)
 			EC_KEY_free(ec);
 		}
 	}
+
+	/* ssl->tlsext_ellipticcurvelist is empty, nothing else to do... */
 	if (nid == 0)
 		nid = NID_X9_62_prime256v1;
 

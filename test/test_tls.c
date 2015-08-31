@@ -692,6 +692,16 @@ static void test_cipher_nego(void *z)
 		"host=server2.com",
 		NULL), "OK");
 	str_check(run_case(client, server), "TLSv1.2/DHE-RSA-AES256-GCM-SHA384/DH=2048");
+
+	/* server key is RSA - ECDHE-RSA */
+	str_check(create_worker(&server, true, SERVER2,
+		"show=ciphers",
+		NULL), "OK");
+	str_check(create_worker(&client, false, CA2,
+		"ciphers=EECDH+AES",
+		"host=server2.com",
+		NULL), "OK");
+	str_check(run_case(client, server), "TLSv1.2/ECDHE-RSA-AES256-GCM-SHA384/ECDH=prime256v1");
 end:;
 }
 
