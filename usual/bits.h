@@ -29,6 +29,7 @@
 #include <usual/base.h>
 
 #include <string.h>
+#include <limits.h>
 
 /** Checks if integer has only one bit set */
 static inline bool is_power_of_2(unsigned int n)
