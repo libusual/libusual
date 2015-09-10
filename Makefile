@@ -181,7 +181,7 @@ sizes: all
 
 .PHONY: tags
 tags:
-	ctags $(libusual_a_SOURCES)
+	ctags $(libusual_la_SOURCES)
 
 .PHONY: nodoc
 nodoc:
