@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
 {
 	struct tls_config *conf;
 	struct tls *ctx;
-	struct tls_cert_info *cert;
+	struct tls_cert *cert;
 	int res;
 	const char *host;
 
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 
 	printf("connect ok\n");
 
-	res = tls_get_peer_cert(ctx, &cert);
+	res = tls_get_peer_cert(ctx, &cert, NULL);
 	if (res < 0)
 		errx(1, "tls_get_peer_cert: %s", tls_error(ctx));
 
