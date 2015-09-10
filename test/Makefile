@@ -65,8 +65,8 @@ connect_CPPFLAGS = -I.. -I. $(TLS_CPPFLAGS)
 
 EXTRA_DIST = Makefile tinytest_demo.c force_compat.sed test_cfparser.ini
 
-noinst_PROGRAMS = regtest_system
-EXTRA_PROGRAMS = regtest_compat connect
+noinst_PROGRAMS = regtest_system connect
+EXTRA_PROGRAMS = regtest_compat
 
 include ../build.mk
 
@@ -82,7 +82,7 @@ clean-local:
 run:
 	@echo CC=$(CC) CFLAGS=$(CFLAGS)
 	$(MAKE) -C ..
-	$(MAKE) regtest_system regtest_compat
+	$(MAKE) all regtest_system regtest_compat
 	./regtest_system
 	./regtest_compat
 
