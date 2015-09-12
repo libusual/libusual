@@ -213,7 +213,7 @@ AC_CHECK_FUNCS(posix_memalign memalign valloc explicit_bzero memset_s reallocarr
 AC_CHECK_FUNCS(getopt getopt_long getopt_long_only)
 AC_CHECK_FUNCS(fls flsl flsll ffs ffsl ffsll)
 AC_CHECK_FUNCS(fnmatch mbsnrtowcs nl_langinfo strtod_l strtonum)
-AC_CHECK_FUNCS(asprintf vasprintf)
+AC_CHECK_FUNCS(asprintf vasprintf timegm)
 ### Functions provided only on win32
 AC_CHECK_FUNCS(localtime_r gettimeofday recvmsg sendmsg usleep getrusage)
 ### Functions used by libusual itself

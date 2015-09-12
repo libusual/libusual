@@ -177,4 +177,37 @@ int getrusage(int who, struct rusage *dst)
 
 #endif /* !HAVE_GETRUSAGE */
 
+#ifndef HAVE_TIMEGM
+
+time_t timegm(struct tm *tm)
+{
+	char buf[128], *tz, *old = NULL;
+	time_t secs;
+
+	tz = getenv("TZ");
+	if (tz) {
+		old = strdup(tz);
+		if (!old) {
+			strlcpy(buf, tz, sizeof buf);
+			old = buf;
+		}
+	}
+	setenv("TZ", "", 1);
+	tzset();
+
+	secs = mktime(tm);
+
+	if (old) {
+		setenv("TZ", old, 1);
+	} else {
+		unsetenv("TZ");
+	}
+	tzset();
+	if (old && old != buf)
+		free(old)
+	return secs;
+}
+
+#endif /* HAVE_TIMEGM */
+
 #endif /* WIN32 */
