@@ -135,9 +135,6 @@ int tls_set_error_libssl(struct tls *ctx, const char *fmt, ...)
     __attribute__((__format__ (printf, 2, 3)))
     __attribute__((__nonnull__ (2)));
 
-int tls_parse_cert(struct tls *ctx, struct tls_cert **cert_p,
-		   const char *fingerprint_algo, X509 *x509);
-
 int tls_ocsp_verify_callback(SSL *ssl, void *arg);
 int tls_ocsp_stapling_callback(SSL *ssl, void *arg);
 void tls_ocsp_client_free(struct tls *ctx);

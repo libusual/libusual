@@ -1,5 +1,6 @@
 
 #include <usual/tls/tls.h>
+#include <usual/tls/tls_cert.h>
 #include <usual/err.h>
 #include <usual/time.h>
 

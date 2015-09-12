@@ -14,6 +14,7 @@
 
 #ifdef USUAL_LIBSSL_FOR_TLS
 #include <usual/tls/tls_internal.h>
+#include <usual/tls/tls_cert.h>
 #endif
 
 enum WState {

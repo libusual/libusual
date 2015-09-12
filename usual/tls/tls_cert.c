@@ -25,6 +25,9 @@
 
 #include "tls_internal.h"
 
+#define TLS_CERT_INTERNAL_FUNCS
+#include "tls_cert.h"
+
 /*
  * Load cert data from X509 cert.
  */
