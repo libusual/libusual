@@ -178,11 +178,18 @@ long SSL_CTX_set_ecdh_auto(SSL_CTX *ctx, int onoff)
 int
 SSL_CTX_use_certificate_chain_mem(SSL_CTX *ctx, void *data, int data_len)
 {
-	pem_password_cb *psw_fn = ctx->default_passwd_callback;
-	void *psw_arg = ctx->default_passwd_callback_userdata;
+	pem_password_cb *psw_fn = NULL;
+	void *psw_arg = NULL;
 	X509 *cert;
 	BIO *bio = NULL;
 	int ok;
+
+#ifdef USE_LIBSSL_INTERNALS
+	psw_fn = ctx->default_passwd_callback;
+	psw_arg = ctx->default_passwd_callback_userdata;
+#else
+#define SSL_F_SSL_CTX_USE_CERTIFICATE_CHAIN_FILE 0
+#endif
 
 	ERR_clear_error();
 
@@ -245,6 +252,7 @@ SSL_CTX_use_certificate_chain_mem(SSL_CTX *ctx, void *data, int data_len)
 int SSL_CTX_load_verify_mem(SSL_CTX *ctx, void *data, int data_len)
 {
 	STACK_OF(X509_INFO) *stack = NULL;
+	X509_STORE *store;
 	X509_INFO *info;
 	int nstack, i, ret = 0, got = 0;
 	BIO *bio;
@@ -260,12 +268,13 @@ int SSL_CTX_load_verify_mem(SSL_CTX *ctx, void *data, int data_len)
 		goto failed;
 
 	/* Loop over stack, add certs and revocation records to store */
+	store = SSL_CTX_get_cert_store(ctx);
 	nstack = sk_X509_INFO_num(stack);
 	for (i = 0; i < nstack; i++) {
 		info = sk_X509_INFO_value(stack, i);
-		if (info->x509 && !X509_STORE_add_cert(ctx->cert_store, info->x509))
+		if (info->x509 && !X509_STORE_add_cert(store, info->x509))
 			goto failed;
-		if (info->crl && !X509_STORE_add_crl(ctx->cert_store, info->crl))
+		if (info->crl && !X509_STORE_add_crl(store, info->crl))
 			goto failed;
 		if (info->x509 || info->crl)
 			got = 1;

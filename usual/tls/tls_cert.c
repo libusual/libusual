@@ -19,6 +19,7 @@
 
 #ifdef USUAL_LIBSSL_FOR_TLS
 
+#include <openssl/bn.h>
 #include <openssl/err.h>
 #include <openssl/x509v3.h>
 
