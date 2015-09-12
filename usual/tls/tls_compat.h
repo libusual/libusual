@@ -15,11 +15,11 @@
 #define USE_LIBSSL_INTERNALS
 #endif
 
-/* ecdh_auto is broken (LibreSSL, OpenSSL 1.0.2+) */
+/* ecdh_auto is broken - ignores main EC key */
 #undef SSL_CTX_set_ecdh_auto
 
-/* dh_auto seems fine (LibreSSL) */
-//#undef SSL_CTX_set_dh_auto
+/* dh_auto seems fine, but use ours to get DH info */
+#undef SSL_CTX_set_dh_auto
 
 #ifndef SSL_CTX_set_dh_auto
 long SSL_CTX_set_dh_auto(SSL_CTX *ctx, int onoff);

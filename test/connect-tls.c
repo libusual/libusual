@@ -4,6 +4,10 @@
 #include <usual/err.h>
 #include <usual/time.h>
 
+#ifdef USUAL_LIBSSL_FOR_TLS
+#include <openssl/crypto.h>
+#endif
+
 static void show_time(const char *desc, time_t t)
 {
 	const char *val;
@@ -36,6 +40,9 @@ int main(int argc, char *argv[])
 		errx(1, "give host as arg\n");
 	host = argv[1];
 
+#ifdef USUAL_LIBSSL_FOR_TLS
+	printf("libssl: %s\n", SSLeay_version(SSLEAY_VERSION));
+#endif
 	res = tls_init();
 	if (res < 0)
 		errx(1, "tls_init");

@@ -21,6 +21,9 @@
 #ifdef USUAL_LIBSSL_FOR_TLS
 
 #include <openssl/err.h>
+#include <openssl/dh.h>
+
+#include <usual/tls/tls_internal.h>
 
 
 #ifndef SSL_CTX_set_dh_auto
@@ -66,7 +69,7 @@ static const char file_dh4096[] =
 
 static DH *dh1024, *dh2048, *dh4096;
 
-static DH *load_dh_buffer(DH **dhp, const char *buf)
+static DH *load_dh_buffer(struct tls *ctx, DH **dhp, const char *buf)
 {
 	BIO *bio;
 	DH *dh = *dhp;
@@ -78,6 +81,8 @@ static DH *load_dh_buffer(DH **dhp, const char *buf)
 		}
 		*dhp = dh;
 	}
+	if (ctx)
+		ctx->used_dh_bits = DH_size(dh) * 8;
 	return dh;
 }
 
@@ -85,22 +90,24 @@ static DH *dh_auto_cb(SSL *s, int is_export, int keylength)
 {
 	EVP_PKEY *pk;
 	int bits;
+	struct tls *ctx = SSL_get_app_data(s);
 
 	pk = SSL_get_privatekey(s);
 	if (!pk)
-		return load_dh_buffer(&dh2048, file_dh2048);
+		return load_dh_buffer(ctx, &dh2048, file_dh2048);
 
 	bits = EVP_PKEY_bits(pk);
 	if (bits >= 3072)
-		return load_dh_buffer(&dh4096, file_dh4096);
+		return load_dh_buffer(ctx, &dh4096, file_dh4096);
 	if (bits >= 1536)
-		return load_dh_buffer(&dh2048, file_dh2048);
-	return load_dh_buffer(&dh1024, file_dh1024);
+		return load_dh_buffer(ctx, &dh2048, file_dh2048);
+	return load_dh_buffer(ctx, &dh1024, file_dh1024);
 }
 
 static DH *dh_legacy_cb(SSL *s, int is_export, int keylength)
 {
-	return load_dh_buffer(&dh1024, file_dh1024);
+	struct tls *ctx = SSL_get_app_data(s);
+	return load_dh_buffer(ctx, &dh1024, file_dh1024);
 }
 
 long SSL_CTX_set_dh_auto(SSL_CTX *ctx, int onoff)
@@ -131,6 +138,7 @@ static EC_KEY *ecdh_auto_cb(SSL *ssl, int is_export, int keylength)
 	int nid = 0;
 	EVP_PKEY *pk;
 	EC_KEY *ec;
+	struct tls *ctx = SSL_get_app_data(ssl);
 
 	/* pick curve from EC key */
 	pk = SSL_get_privatekey(ssl);
@@ -145,6 +153,9 @@ static EC_KEY *ecdh_auto_cb(SSL *ssl, int is_export, int keylength)
 	/* ssl->tlsext_ellipticcurvelist is empty, nothing else to do... */
 	if (nid == 0)
 		nid = NID_X9_62_prime256v1;
+
+	if (ctx)
+		ctx->used_ecdh_nid = nid;
 
 	if (ecdh) {
 		last_nid = EC_GROUP_get_curve_name(EC_KEY_get0_group(ecdh));

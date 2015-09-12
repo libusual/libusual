@@ -8,6 +8,13 @@
 #define int_check(a, b) tt_int_op(a, ==, b)
 #define ull_check(a, b) tt_assert_op_type(a, ==, b, uint64_t, "%" PRIu64)
 
+#define str_any2(val, a, b) \
+	do { \
+		const char *res = (val); \
+		if (strcmp(res, a) && strcmp(res, b)) \
+			str_check(val, a); \
+	} while (0)
+
 extern struct testcase_t aatree_tests[];
 extern struct testcase_t base_tests[];
 extern struct testcase_t bits_tests[];

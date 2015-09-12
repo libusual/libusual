@@ -22,6 +22,7 @@
 #include <openssl/ec.h>
 #include <openssl/ssl.h>
 #include <openssl/rand.h>
+#include <openssl/err.h>
 
 #include "tls_internal.h"
 
@@ -173,6 +174,8 @@ tls_handshake_server(struct tls *ctx)
 {
 	int ssl_ret;
 	int rv = -1;
+
+	ERR_clear_error();
 
 	if ((ctx->flags & TLS_SERVER_CONN) == 0) {
 		tls_set_errorx(ctx, "not a server connection context");

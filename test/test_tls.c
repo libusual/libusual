@@ -58,12 +58,21 @@ static void free_worker(struct Worker *w)
 	free(w);
 }
 
-static const char *add_error(struct Worker *w, const char *s)
+static const char *add_error(struct Worker *w, const char *s, ...)
 {
+	char buf[1024];
+	va_list ap;
+
 	if (!s)
 		return s;
 	if (strcmp(s, "OK") == 0)
 		return s;
+
+	va_start(ap, s);
+	vsnprintf(buf, sizeof buf, s, ap);
+	va_end(ap);
+	s = buf;
+
 	if (strstr(s, "SSL routines")) {
 		s = strrchr(s, ':') + 1;
 	}
@@ -263,7 +272,7 @@ static void worker_cb(int fd, short flags, void *arg)
 					wait_for_event(w, EV_READ);
 				}
 			} else {
-				add_error(w, "bad pkt");
+				add_error(w, "bad pkt: res=%d err=%s", res, tls_error(w->ctx));
 			}
 		} else {
 			add_error(w, "EV_WRITE?");
@@ -445,7 +454,6 @@ static const char *do_handshake(struct Worker *w, int fd)
 	const char *msg;
 
 	err = tls_handshake(w->ctx);
-	//printf("tls_handshake: res=%d errno=%d\n", err, errno);
 	if (err == TLS_WANT_POLLIN) {
 		return wait_for_event(w, EV_READ);
 	} else if (err == TLS_WANT_POLLIN) {
@@ -630,23 +638,40 @@ static void test_clientcert(void *z)
 
 	tt_assert(tls_init() == 0);
 
-	/* ok: server checks server cert */
-	str_check(create_worker(&server, true, SERVER1, CA2, NULL), "OK");
+	/* ok: server checks client cert */
+	str_check(create_worker(&server, true, SERVER1, CA2,
+				"verify-client=1",
+				NULL), "OK");
 	str_check(create_worker(&client, false, CLIENT2, CA1, "host=server1.com", NULL), "OK");
 	str_check(run_case(client, server), "OK");
 
 	/* fail: server rejects invalid cert */
-	str_check(create_worker(&server, true, SERVER1, CA1, "verify-client=1", NULL), "OK");
+	str_check(create_worker(&server, true, SERVER1, CA1,
+				"verify-client=1",
+				NULL), "OK");
 	str_check(create_worker(&client, false, CLIENT2, CA1, "host=server1.com", NULL), "OK");
-	str_check(run_case(client, server), "C:tlsv1 alert unknown ca - S:no certificate returned");
+	str_any2(run_case(client, server),
+		 "C:tlsv1 alert unknown ca - S:no certificate returned",
+		 "C:tlsv1 alert unknown ca - S:certificate verify failed");
 
 	/* noverifycert: server allow invalid cert */
-	str_check(create_worker(&server, true, SERVER1, CA1, "noverifycert=1", NULL), "OK");
+	str_check(create_worker(&server, true, SERVER1, CA1,
+				"noverifycert=1",
+				NULL), "OK");
 	str_check(create_worker(&client, false, CLIENT2, CA1, "host=server1.com", NULL), "OK");
 	str_check(run_case(client, server), "OK");
 
-	/* allow client without cert */
-	str_check(create_worker(&server, true, SERVER1, CA2, NULL), "OK");
+	/* verify-client: don't allow client without cert */
+	str_check(create_worker(&server, true, SERVER1, CA2,
+				"verify-client=1",
+				NULL), "OK");
+	str_check(create_worker(&client, false, CA1, "host=server1.com", NULL), "OK");
+	str_check(run_case(client, server), "C:sslv3 alert handshake failure - S:peer did not return a certificate");
+
+	/* verify-client-optional: allow client without cert */
+	str_check(create_worker(&server, true, SERVER1, CA2,
+				"verify-client-optional=1",
+				NULL), "OK");
 	str_check(create_worker(&client, false, CA1, "host=server1.com", NULL), "OK");
 	str_check(run_case(client, server), "OK");
 end:;
@@ -723,7 +748,7 @@ static void test_cipher_nego(void *z)
 		"dheparams=auto",
 		NULL), "OK");
 	str_check(create_worker(&client, false, CA2,
-		"ciphers=EDH+AES",
+		"ciphers=EDH+AESGCM",
 		"host=server2.com",
 		NULL), "OK");
 	str_check(run_case(client, server), "TLSv1.2/DHE-RSA-AES256-GCM-SHA384/DH=2048");

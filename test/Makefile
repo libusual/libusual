@@ -86,3 +86,7 @@ run:
 	./regtest_system
 	./regtest_compat
 
+.PHONY: tags
+tags:
+	ctags $(regtest_system_SOURCES)
+

@@ -624,26 +624,21 @@ tls_parse_cert(struct tls *ctx, struct tls_cert **cert_p, const char *fingerprin
 int
 tls_get_peer_cert(struct tls *ctx, struct tls_cert **cert_p, const char *fingerprint_algo)
 {
-	SSL *conn = ctx->ssl_conn;
-	X509 *peer;
+	X509 *peer = ctx->ssl_peer_cert;
 	int res;
 
 	*cert_p = NULL;
 
-	if (!conn) {
-		tls_set_errorx(ctx, "not connected");
-		return -1;
-	}
-
-	peer = SSL_get_peer_certificate(conn);
 	if (!peer) {
 		tls_set_errorx(ctx, "peer does not have cert");
 		return TLS_NO_CERT;
 	}
 
+	ERR_clear_error();
 	res = tls_parse_cert(ctx, cert_p, fingerprint_algo, peer);
 	if (res == 0)
 		check_verify_error(ctx, *cert_p);
+	ERR_clear_error();
 	return res;
 }
 

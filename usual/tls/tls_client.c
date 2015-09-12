@@ -22,6 +22,7 @@
 #include <limits.h>
 #include <netdb.h>
 
+#include <openssl/err.h>
 #include <openssl/x509.h>
 
 #include "tls_internal.h"
@@ -163,6 +164,8 @@ tls_connect_fds(struct tls *ctx, int fd_read, int fd_write,
 {
 	union { struct in_addr ip4; struct in6_addr ip6; } addrbuf;
 	int rv = -1;
+
+	ERR_clear_error();
 
 	if ((ctx->flags & TLS_CLIENT) == 0) {
 		tls_set_errorx(ctx, "not a client context");

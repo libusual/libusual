@@ -264,11 +264,13 @@ tls_info_callback(const SSL *ssl, int where, int rc)
 	struct tls *ctx = SSL_get_app_data(ssl);
 
 #ifdef USE_LIBSSL_INTERNALS
-	/* steal info about used DH key */
-	if (ssl->s3 && ssl->s3->tmp.dh && !ctx->used_dh_bits) {
-		ctx->used_dh_bits = DH_size(ssl->s3->tmp.dh) * 8;
-	} else if (ssl->s3 && ssl->s3->tmp.ecdh && !ctx->used_ecdh_nid) {
-		ctx->used_ecdh_nid = EC_GROUP_get_curve_name(EC_KEY_get0_group(ssl->s3->tmp.ecdh));
+	if (!(ctx->state & TLS_HANDSHAKE_COMPLETE) && ssl->s3) {
+		/* steal info about used DH key */
+		if (ssl->s3->tmp.dh && !ctx->used_dh_bits) {
+			ctx->used_dh_bits = DH_size(ssl->s3->tmp.dh) * 8;
+		} else if (ssl->s3->tmp.ecdh && !ctx->used_ecdh_nid) {
+			ctx->used_ecdh_nid = EC_GROUP_get_curve_name(EC_KEY_get0_group(ssl->s3->tmp.ecdh));
+		}
 	}
 #endif
 
@@ -455,6 +457,8 @@ tls_handshake(struct tls *ctx)
 {
 	int rv = -1;
 
+	ERR_clear_error();
+
 	if ((ctx->flags & TLS_CLIENT) != 0)
 		rv = tls_handshake_client(ctx);
 	else if ((ctx->flags & TLS_SERVER_CONN) != 0)
@@ -475,6 +479,8 @@ tls_read(struct tls *ctx, void *buf, size_t buflen)
 {
 	ssize_t rv = -1;
 	int ssl_ret;
+
+	ERR_clear_error();
 
 	if (ctx->state & TLS_DO_ABORT) {
 		rv = tls_do_abort(ctx);
@@ -509,6 +515,8 @@ tls_write(struct tls *ctx, const void *buf, size_t buflen)
 	ssize_t rv = -1;
 	int ssl_ret;
 
+	ERR_clear_error();
+
 	if (ctx->state & TLS_DO_ABORT) {
 		rv = tls_do_abort(ctx);
 		goto out;
@@ -541,6 +549,8 @@ tls_close(struct tls *ctx)
 {
 	int ssl_ret;
 	int rv = 0;
+
+	ERR_clear_error();
 
 	if (ctx->ssl_conn != NULL) {
 		ssl_ret = SSL_shutdown(ctx->ssl_conn);
