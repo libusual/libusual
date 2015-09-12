@@ -388,6 +388,9 @@ tls_reset(struct tls *ctx)
 	free(ctx->errmsg);
 	ctx->errmsg = NULL;
 	ctx->errnum = 0;
+
+	ctx->used_dh_bits = 0;
+	ctx->used_ecdh_nid = 0;
 }
 
 int
