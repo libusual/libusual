@@ -383,6 +383,129 @@ tls_get_dname(struct tls *ctx, X509_NAME *name, struct tls_cert_dname *dname)
 	return ret;
 }
 
+static int
+tls_get_basic_constraints(struct tls *ctx, struct tls_cert *cert, X509 *x509)
+{
+	BASIC_CONSTRAINTS *bc;
+	int crit;
+	int ret = -1;
+
+	bc = X509_get_ext_d2i(x509, NID_basic_constraints, &crit, NULL);
+	if (!bc)
+		return 0;
+
+	cert->ext_set |= TLS_EXT_BASIC;
+	if (crit)
+		cert->ext_crit |= TLS_EXT_BASIC;
+
+	cert->basic_constraints_ca = bc->ca ? 1 : 0;
+	if (bc->pathlen) {
+		cert->basic_constraints_pathlen = ASN1_INTEGER_get(bc->pathlen);
+		if (cert->basic_constraints_pathlen < 0) {
+			tls_set_error(ctx, "BasicConstraints has invalid pathlen");
+			goto failed;
+		}
+	} else {
+		cert->basic_constraints_pathlen = -1;
+	}
+	ret = 0;
+failed:
+	BASIC_CONSTRAINTS_free(bc);
+	return ret;
+}
+
+static uint32_t map_bits(const uint32_t map[][2], uint32_t input)
+{
+	uint32_t i, out = 0;
+	for (i = 0; map[i][0]; i++) {
+		if (map[i][0] & input)
+			out |= map[i][1];
+	}
+	return out;
+}
+
+static int
+tls_get_key_usage(struct tls *ctx, struct tls_cert *cert, X509 *x509)
+{
+	static const uint32_t ku_map[][2] = {
+		{KU_DIGITAL_SIGNATURE, KU_DIGITAL_SIGNATURE},
+		{KU_NON_REPUDIATION, KU_NON_REPUDIATION},
+		{KU_KEY_ENCIPHERMENT, KU_KEY_ENCIPHERMENT},
+		{KU_DATA_ENCIPHERMENT, KU_DATA_ENCIPHERMENT},
+		{KU_KEY_AGREEMENT, KU_KEY_AGREEMENT},
+		{KU_KEY_CERT_SIGN, KU_KEY_CERT_SIGN},
+		{KU_CRL_SIGN, KU_CRL_SIGN},
+		{KU_ENCIPHER_ONLY, KU_ENCIPHER_ONLY},
+		{KU_DECIPHER_ONLY, KU_DECIPHER_ONLY},
+		{0, 0},
+	};
+	ASN1_BIT_STRING *ku;
+	int crit;
+
+	ku = X509_get_ext_d2i(x509, NID_key_usage, &crit, NULL);
+	if (!ku)
+		return 0;
+
+	cert->ext_set |= TLS_EXT_KEY_USAGE;
+	if (crit)
+		cert->ext_crit |= TLS_EXT_KEY_USAGE;
+	ASN1_BIT_STRING_free(ku);
+
+	cert->key_usage_flags = map_bits(ku_map, x509->ex_kusage);
+	return 0;
+}
+
+static int
+tls_get_ext_key_usage(struct tls *ctx, struct tls_cert *cert, X509 *x509)
+{
+	static const uint32_t xku_map[][2] = {
+		{XKU_SSL_SERVER, TLS_XKU_SSL_SERVER},
+		{XKU_SSL_CLIENT, TLS_XKU_SSL_CLIENT},
+		{XKU_SMIME, TLS_XKU_SMIME},
+		{XKU_CODE_SIGN, TLS_XKU_CODE_SIGN},
+		{XKU_SGC, TLS_XKU_SGC},
+		{XKU_OCSP_SIGN, TLS_XKU_OCSP_SIGN},
+		{XKU_TIMESTAMP, TLS_XKU_TIMESTAMP},
+		{XKU_DVCS, TLS_XKU_DVCS},
+		{0, 0},
+	};
+	EXTENDED_KEY_USAGE *xku;
+	int crit;
+
+	xku = X509_get_ext_d2i(x509, NID_ext_key_usage, &crit, NULL);
+	if (!xku)
+		return 0;
+	sk_ASN1_OBJECT_pop_free(xku, ASN1_OBJECT_free);
+
+	cert->ext_set |= TLS_EXT_EXTENDED_KEY_USAGE;
+	if (crit)
+		cert->ext_crit |= TLS_EXT_EXTENDED_KEY_USAGE;
+
+	cert->extended_key_usage_flags = map_bits(xku_map, x509->ex_xkusage);
+	return 0;
+}
+
+static int
+tls_load_extensions(struct tls *ctx, struct tls_cert *cert, X509 *x509)
+{
+	int ret;
+
+	/*
+	 * Force libssl to fill extension fields under X509 struct.
+	 * Then libtls does not need to parse raw data.
+	 */
+	X509_check_ca(x509);
+
+	ret = tls_get_basic_constraints(ctx, cert, x509);
+	if (ret == 0)
+		ret = tls_get_key_usage(ctx, cert, x509);
+	if (ret == 0)
+		ret = tls_get_ext_key_usage(ctx, cert, x509);
+	if (ret == 0)
+		ret = tls_cert_get_altnames(ctx, cert, x509);
+	return ret;
+}
+
 static void *
 tls_calc_fingerprint(struct tls *ctx, X509 *x509, const char *algo, size_t *outlen)
 {
@@ -479,13 +602,13 @@ tls_parse_cert(struct tls *ctx, struct tls_cert **cert_p, const char *fingerprin
 	if (ret == 0)
 		ret = tls_get_dname(ctx, issuer, &cert->issuer);
 	if (ret == 0)
-		ret = tls_cert_get_altnames(ctx, cert, x509);
-	if (ret == 0)
 		ret = tls_asn1_parse_time(ctx, X509_get_notBefore(x509), &cert->not_before);
 	if (ret == 0)
 		ret = tls_asn1_parse_time(ctx, X509_get_notAfter(x509), &cert->not_after);
 	if (ret == 0)
 		ret = tls_parse_bigint(ctx, X509_get_serialNumber(x509), &cert->serial);
+	if (ret == 0)
+		ret = tls_load_extensions(ctx, cert, x509);
 	if (ret == 0) {
 		*cert_p = cert;
 		return 0;
