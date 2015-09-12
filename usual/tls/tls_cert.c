@@ -128,10 +128,10 @@ tls_parse_time(struct tls *ctx, const ASN1_TIME *asn1time, const char **dst_p)
 		goto nomem;
 	*dst_p = tmp;
 	return 0;
-invalid:
+ invalid:
 	tls_set_errorx(ctx, "invalid time format");
 	return -1;
-nomem:
+ nomem:
 	tls_set_error(ctx, "no mem");
 	return -1;
 }
@@ -178,7 +178,7 @@ check_invalid_bytes(struct tls *ctx, unsigned char *data, unsigned int len,
 		}
 	}
 	return 0;
-failed:
+ failed:
 	return -1;
 }
 
@@ -273,7 +273,7 @@ tls_parse_asn1string(struct tls *ctx, ASN1_STRING *a1str, const char **dst_p, in
 	cstr[len] = 0;
 	*dst_p = cstr;
 	ret = len;
-failed:
+ failed:
 	ASN1_STRING_free(a1utf);
 	return ret;
 }
@@ -415,7 +415,7 @@ tls_cert_get_altnames(struct tls *ctx, struct tls_cert *cert, X509 *x509_cert)
 			goto out;
 	}
 	rv = 0;
-out:
+ out:
 	sk_GENERAL_NAME_pop_free(altname_stack, GENERAL_NAME_free);
 	return rv;
 }
@@ -554,7 +554,7 @@ tls_parse_cert(struct tls *ctx, struct tls_cert **cert_p, const char *fingerprin
 		*cert_p = cert;
 		return 0;
 	}
-failed:
+ failed:
 	tls_cert_free(cert);
 	return ret;
 }

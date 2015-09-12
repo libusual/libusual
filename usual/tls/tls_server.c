@@ -64,10 +64,15 @@ tls_configure_server(struct tls *ctx)
 
 	if (tls_configure_ssl(ctx) != 0)
 		goto err;
-	if (tls_configure_keypair(ctx) != 0)
+	if (tls_configure_keypair(ctx, 1) != 0)
 		goto err;
-	if (tls_configure_verify(ctx) != 0)
-		goto err;
+	if (ctx->config->verify_client != 0) {
+		int verify = SSL_VERIFY_PEER;
+		if (ctx->config->verify_client == 1)
+			verify |= SSL_VERIFY_FAIL_IF_NO_PEER_CERT;
+		if (tls_configure_ssl_verify(ctx, verify) == -1)
+			goto err;
+	}
 
 	if (ctx->config->dheparams == -1)
 		SSL_CTX_set_dh_auto(ctx->ssl_ctx, 1);
@@ -87,6 +92,10 @@ tls_configure_server(struct tls *ctx)
 		EC_KEY_free(ecdh_key);
 	}
 
+	if (ctx->config->ciphers_server == 1)
+		SSL_CTX_set_options(ctx->ssl_ctx,
+		    SSL_OP_CIPHER_SERVER_PREFERENCE); 
+
 	/*
 	 * Set session ID context to a random value.  We don't support
 	 * persistent caching of sessions so it is OK to set a temporary
@@ -103,66 +112,77 @@ tls_configure_server(struct tls *ctx)
 
 	return (0);
 
-err:
-	return (-1);
-}
-
-int
-tls_accept_fds(struct tls *ctx, struct tls **cctx, int fd_read, int fd_write)
-{
-	struct tls *conn_ctx = *cctx;
-	int ret, err;
-	
-	if ((ctx->flags & TLS_SERVER) == 0) {
-		tls_set_errorx(ctx, "not a server context");
-		goto err;
-	}
-
-	if (conn_ctx == NULL) {
-		if ((conn_ctx = tls_server_conn(ctx)) == NULL) {
-			tls_set_errorx(ctx, "connection context failure");
-			goto err;
-		}
-		*cctx = conn_ctx;
-
-		if ((conn_ctx->ssl_conn = SSL_new(ctx->ssl_ctx)) == NULL) {
-			tls_set_errorx(ctx, "ssl failure");
-			goto err;
-		}
-		if (SSL_set_app_data(conn_ctx->ssl_conn, conn_ctx) != 1) {
-			tls_set_errorx(ctx, "ssl application data failure");
-			goto err;
-		}
-		if (SSL_set_rfd(conn_ctx->ssl_conn, fd_read) != 1 ||
-		    SSL_set_wfd(conn_ctx->ssl_conn, fd_write) != 1) {
-			tls_set_errorx(ctx, "ssl file descriptor failure");
-			goto err;
-		}
-	}
-
-	if ((ret = SSL_accept(conn_ctx->ssl_conn)) != 1) {
-		err = tls_ssl_error(ctx, conn_ctx->ssl_conn, ret, "accept");
-		if (err == TLS_READ_AGAIN || err == TLS_WRITE_AGAIN) {
-			return (err);
-		}
-		goto err;
-	}
-
-	return (0);
-
-err:
+ err:
 	return (-1);
 }
 
 int
 tls_accept_socket(struct tls *ctx, struct tls **cctx, int socket)
 {
-	int rv;
+	return (tls_accept_fds(ctx, cctx, socket, socket));
+}
 
-	rv = tls_accept_fds(ctx, cctx, socket, socket);
-	if (*cctx != NULL)
-		(*cctx)->socket = socket;
+int
+tls_accept_fds(struct tls *ctx, struct tls **cctx, int fd_read, int fd_write)
+{
+	struct tls *conn_ctx = NULL;
+	
+	if ((ctx->flags & TLS_SERVER) == 0) {
+		tls_set_errorx(ctx, "not a server context");
+		goto err;
+	}
 
+	if ((conn_ctx = tls_server_conn(ctx)) == NULL) {
+		tls_set_errorx(ctx, "connection context failure");
+		goto err;
+	}
+
+	if ((conn_ctx->ssl_conn = SSL_new(ctx->ssl_ctx)) == NULL) {
+		tls_set_errorx(ctx, "ssl failure");
+		goto err;
+	}
+	if (SSL_set_app_data(conn_ctx->ssl_conn, conn_ctx) != 1) {
+		tls_set_errorx(ctx, "ssl application data failure");
+		goto err;
+	}
+	if (SSL_set_rfd(conn_ctx->ssl_conn, fd_read) != 1 ||
+	    SSL_set_wfd(conn_ctx->ssl_conn, fd_write) != 1) {
+		tls_set_errorx(ctx, "ssl file descriptor failure");
+		goto err;
+	}
+
+	*cctx = conn_ctx;
+
+	return (0);
+
+ err:
+	tls_free(conn_ctx);
+
+	*cctx = NULL;
+
+	return (-1);
+}
+
+int
+tls_handshake_server(struct tls *ctx)
+{
+	int ssl_ret;
+	int rv = -1;
+
+	if ((ctx->flags & TLS_SERVER_CONN) == 0) {
+		tls_set_errorx(ctx, "not a server connection context");
+		goto err;
+	}
+
+	if ((ssl_ret = SSL_accept(ctx->ssl_conn)) != 1) {
+		rv = tls_ssl_error(ctx, ctx->ssl_conn, ssl_ret, "handshake");
+		goto err;
+	}
+
+	ctx->state |= TLS_HANDSHAKE_COMPLETE;
+	rv = 0;
+
+ err:
 	return (rv);
 }
 

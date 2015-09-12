@@ -21,8 +21,6 @@
 
 #include <openssl/ssl.h>
 
-#define HTTPS_PORT "443"
-
 #define _PATH_SSL_CA_FILE USUAL_TLS_CA_FILE
 
 /*
@@ -64,6 +62,7 @@ struct tls_config {
 	char *cert_mem;
 	size_t cert_len;
 	const char *ciphers;
+	int ciphers_server;
 	int dheparams;
 	int ecdhecurve;
 	const char *key_file;
@@ -71,6 +70,7 @@ struct tls_config {
 	size_t key_len;
 	uint32_t protocols;
 	int verify_cert;
+	int verify_client;
 	int verify_depth;
 	int verify_name;
 };
@@ -79,9 +79,8 @@ struct tls_config {
 #define TLS_SERVER		(1 << 1)
 #define TLS_SERVER_CONN		(1 << 2)
 
-#define TLS_STATE_CONNECTING	(1 << 0)
-#define TLS_STATE_ESTABLISHED	(1 << 1)
-#define TLS_STATE_ABORT		(1 << 2)
+#define TLS_HANDSHAKE_COMPLETE	(1 << 0)
+#define TLS_DO_ABORT		(1 << 1)
 
 struct tls {
 	struct tls_config *config;
@@ -91,10 +90,12 @@ struct tls {
 	char *errmsg;
 	int errnum;
 
+	char *servername;
 	int socket;
 
 	SSL *ssl_conn;
 	SSL_CTX *ssl_ctx;
+	X509 *ssl_peer_cert;
 
 	int used_dh_bits;
 	int used_ecdh_nid;
@@ -103,11 +104,13 @@ struct tls {
 struct tls *tls_new(void);
 struct tls *tls_server_conn(struct tls *ctx);
 
-int tls_check_servername(struct tls *ctx, struct tls_cert *cert, const char *servername);
-int tls_configure_keypair(struct tls *ctx);
+int tls_check_name(struct tls *ctx, X509 *cert, const char *servername);
+int tls_configure_keypair(struct tls *ctx, int);
 int tls_configure_server(struct tls *ctx);
 int tls_configure_ssl(struct tls *ctx);
-int tls_configure_verify(struct tls *ctx);
+int tls_configure_ssl_verify(struct tls *ctx, int verify);
+int tls_handshake_client(struct tls *ctx);
+int tls_handshake_server(struct tls *ctx);
 int tls_host_port(const char *hostport, char **host, char **port);
 int tls_set_error(struct tls *ctx, const char *fmt, ...)
     __attribute__((__format__ (printf, 2, 3)))

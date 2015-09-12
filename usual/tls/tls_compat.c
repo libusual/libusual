@@ -228,7 +228,7 @@ SSL_CTX_use_certificate_chain_mem(SSL_CTX *ctx, void *data, int data_len)
 		if (!ok)
 			X509_free(cert);
 	}
-failed:
+ failed:
 	if (bio)
 		BIO_free(bio);
 	return 0;
@@ -271,7 +271,7 @@ int SSL_CTX_load_verify_mem(SSL_CTX *ctx, void *data, int data_len)
 			got = 1;
 	}
 	ret = got;
-failed:
+ failed:
 	if (bio)
 		BIO_free(bio);
 	if (stack)

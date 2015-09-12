@@ -79,10 +79,9 @@ tls_set_verror(struct tls *ctx, int errnum, const char *fmt, va_list ap)
 		ctx->errmsg = NULL;
 		goto err;
 	}
-	
 	rv = 0;
 
-err:
+ err:
 	free(errmsg);
 
 	return (rv);
@@ -176,11 +175,18 @@ tls_configure(struct tls *ctx, struct tls_config *config)
 }
 
 int
-tls_configure_keypair(struct tls *ctx)
+tls_configure_keypair(struct tls *ctx, int required)
 {
 	EVP_PKEY *pkey = NULL;
 	X509 *cert = NULL;
 	BIO *bio = NULL;
+
+	if (!required &&
+	    ctx->config->cert_mem == NULL &&
+	    ctx->config->key_mem == NULL &&
+	    ctx->config->cert_file == NULL &&
+	    ctx->config->key_file == NULL)
+		return(0);
 
 	if (ctx->config->cert_mem != NULL) {
 		if (ctx->config->cert_len > INT_MAX) {
@@ -243,7 +249,7 @@ tls_configure_keypair(struct tls *ctx)
 
 	return (0);
 
-err:
+ err:
 	EVP_PKEY_free(pkey);
 	X509_free(cert);
 	BIO_free(bio);
@@ -265,10 +271,8 @@ tls_info_callback(const SSL *ssl, int where, int rc)
 
 	/* detect renegotation on established connection */
 	if (where & SSL_CB_HANDSHAKE_START) {
-		if (ctx->state & TLS_STATE_ESTABLISHED)
-			ctx->state |= TLS_STATE_ABORT;
-	} else if (where & SSL_CB_HANDSHAKE_DONE) {
-		ctx->state |= TLS_STATE_ESTABLISHED;
+		if (ctx->state & TLS_HANDSHAKE_COMPLETE)
+			ctx->state |= TLS_DO_ABORT;
 	}
 }
 
@@ -280,7 +284,7 @@ tls_do_abort(struct tls *ctx)
 	ssl_ret = SSL_shutdown(ctx->ssl_conn);
 	if (ssl_ret < 0) {
 		rv = tls_ssl_error(ctx, ctx->ssl_conn, ssl_ret, "shutdown");
-		if (rv == TLS_READ_AGAIN || rv == TLS_WRITE_AGAIN)
+		if (rv == TLS_WANT_POLLIN || rv == TLS_WANT_POLLOUT)
 			return (rv);
 	}
 
@@ -320,7 +324,38 @@ tls_configure_ssl(struct tls *ctx)
 
 	return (0);
 
-err:
+ err:
+	return (-1);
+}
+
+int
+tls_configure_ssl_verify(struct tls *ctx, int verify)
+{
+	SSL_CTX_set_verify(ctx->ssl_ctx, verify, NULL);
+
+	if (ctx->config->ca_mem != NULL) {
+		/* XXX do this in set. */
+		if (ctx->config->ca_len > INT_MAX) {
+			tls_set_errorx(ctx, "ca too long");
+			goto err;
+		}
+		if (SSL_CTX_load_verify_mem(ctx->ssl_ctx,
+		    ctx->config->ca_mem, ctx->config->ca_len) != 1) {
+			tls_set_errorx(ctx, "ssl verify memory setup failure");
+			goto err;
+		}
+	} else if (SSL_CTX_load_verify_locations(ctx->ssl_ctx,
+            ctx->config->ca_file, ctx->config->ca_path) != 1) {
+		tls_set_errorx(ctx, "ssl verify setup failure");
+		goto err;
+	}
+	if (ctx->config->verify_depth >= 0)
+		SSL_CTX_set_verify_depth(ctx->ssl_ctx,
+		    ctx->config->verify_depth);
+
+	return (0);
+
+ err:
 	return (-1);
 }
 
@@ -338,12 +373,17 @@ tls_reset(struct tls *ctx)
 {
 	SSL_CTX_free(ctx->ssl_ctx);
 	SSL_free(ctx->ssl_conn);
+	X509_free(ctx->ssl_peer_cert);
 
 	ctx->ssl_conn = NULL;
 	ctx->ssl_ctx = NULL;
+	ctx->ssl_peer_cert = NULL;
 
 	ctx->socket = -1;
 	ctx->state = 0;
+
+	free(ctx->servername);
+	ctx->servername = NULL;
 
 	free(ctx->errmsg);
 	ctx->errmsg = NULL;
@@ -364,10 +404,10 @@ tls_ssl_error(struct tls *ctx, SSL *ssl_conn, int ssl_ret, const char *prefix)
 		return (0);
 
 	case SSL_ERROR_WANT_READ:
-		return (TLS_READ_AGAIN);
+		return (TLS_WANT_POLLIN);
 
 	case SSL_ERROR_WANT_WRITE:
-		return (TLS_WRITE_AGAIN);
+		return (TLS_WANT_POLLOUT);
 
 	case SSL_ERROR_SYSCALL:
 		if ((err = ERR_peek_error()) != 0) {
@@ -397,51 +437,89 @@ tls_ssl_error(struct tls *ctx, SSL *ssl_conn, int ssl_ret, const char *prefix)
 }
 
 int
-tls_read(struct tls *ctx, void *buf, size_t buflen, size_t *outlen)
+tls_handshake(struct tls *ctx)
 {
-	int ssl_ret;
+	int rv = -1;
 
-	*outlen = 0;
+	if ((ctx->flags & TLS_CLIENT) != 0)
+		rv = tls_handshake_client(ctx);
+	else if ((ctx->flags & TLS_SERVER_CONN) != 0)
+		rv = tls_handshake_server(ctx);
+	else
+		tls_set_errorx(ctx, "handshake on invalid context");
 
-	if (buflen > INT_MAX) {
-		tls_set_errorx(ctx, "buflen too long");
-		return (-1);
-	}
+	if (rv == 0)
+		ctx->ssl_peer_cert = SSL_get_peer_certificate(ctx->ssl_conn);
 
-	if (ctx->state & TLS_STATE_ABORT)
-		return tls_do_abort(ctx);
-
-	ssl_ret = SSL_read(ctx->ssl_conn, buf, buflen);
-	if (ssl_ret > 0) {
-		*outlen = (size_t)ssl_ret;
-		return (0);
-	}
-
-	return tls_ssl_error(ctx, ctx->ssl_conn, ssl_ret, "read"); 
+	/* Prevent callers from performing incorrect error handling */
+	errno = 0;
+	return (rv);
 }
 
-int
-tls_write(struct tls *ctx, const void *buf, size_t buflen, size_t *outlen)
+ssize_t
+tls_read(struct tls *ctx, void *buf, size_t buflen)
 {
+	ssize_t rv = -1;
 	int ssl_ret;
 
-	*outlen = 0;
+	if (ctx->state & TLS_DO_ABORT) {
+		rv = tls_do_abort(ctx);
+		goto out;
+	}
+
+	if ((ctx->state & TLS_HANDSHAKE_COMPLETE) == 0) {
+		if ((rv = tls_handshake(ctx)) != 0)
+			goto out;
+	}
 
 	if (buflen > INT_MAX) {
 		tls_set_errorx(ctx, "buflen too long");
-		return (-1);
+		goto out;
 	}
 
-	if (ctx->state & TLS_STATE_ABORT)
-		return tls_do_abort(ctx);
-
-	ssl_ret = SSL_write(ctx->ssl_conn, buf, buflen);
-	if (ssl_ret > 0) {
-		*outlen = (size_t)ssl_ret;
-		return (0);
+	if ((ssl_ret = SSL_read(ctx->ssl_conn, buf, buflen)) > 0) {
+		rv = (ssize_t)ssl_ret;
+		goto out;
 	}
 
-	return tls_ssl_error(ctx, ctx->ssl_conn, ssl_ret, "write"); 
+	rv = (ssize_t)tls_ssl_error(ctx, ctx->ssl_conn, ssl_ret, "read");
+ out:
+	/* Prevent callers from performing incorrect error handling */
+	errno = 0;
+	return (rv);
+}
+
+ssize_t
+tls_write(struct tls *ctx, const void *buf, size_t buflen)
+{
+	ssize_t rv = -1;
+	int ssl_ret;
+
+	if (ctx->state & TLS_DO_ABORT) {
+		rv = tls_do_abort(ctx);
+		goto out;
+	}
+
+	if ((ctx->state & TLS_HANDSHAKE_COMPLETE) == 0) {
+		if ((rv = tls_handshake(ctx)) != 0)
+			goto out;
+	}
+
+	if (buflen > INT_MAX) {
+		tls_set_errorx(ctx, "buflen too long");
+		goto out;
+	}
+
+	if ((ssl_ret = SSL_write(ctx->ssl_conn, buf, buflen)) > 0) {
+		rv = (ssize_t)ssl_ret;
+		goto out;
+	}
+
+	rv =  (ssize_t)tls_ssl_error(ctx, ctx->ssl_conn, ssl_ret, "write");
+ out:
+	/* Prevent callers from performing incorrect error handling */
+	errno = 0;
+	return (rv);
 }
 
 int
@@ -455,8 +533,8 @@ tls_close(struct tls *ctx)
 		if (ssl_ret < 0) {
 			rv = tls_ssl_error(ctx, ctx->ssl_conn, ssl_ret,
 			    "shutdown");
-			if (rv == TLS_READ_AGAIN || rv == TLS_WRITE_AGAIN)
-				return (rv);
+			if (rv == TLS_WANT_POLLIN || rv == TLS_WANT_POLLOUT)
+				goto out;
 		}
 	}
 
@@ -476,7 +554,9 @@ tls_close(struct tls *ctx)
 		}
 		ctx->socket = -1;
 	}
-
+ out:
+	/* Prevent callers from performing incorrect error handling */
+	errno = 0;
 	return (rv);
 }
 

@@ -72,14 +72,14 @@ tls_host_port(const char *hostport, char **host, char **port)
 	rv = 0;
 	goto done;
 
-fail:
+ fail:
 	free(*host);
 	*host = NULL;
 	free(*port);
 	*port = NULL;
 	rv = -1;
 
-done:
+ done:
 	free(s);
 
 	return (rv);

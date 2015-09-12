@@ -50,6 +50,8 @@ static void free_worker(struct Worker *w)
 	tls_config_free(w->config);
 	tls_free(w->ctx);
 	tls_free(w->base);
+	if (w->socket > 0)
+		close(w->socket);
 	memset(w, 0, sizeof *w);
 	free(w);
 }
@@ -202,6 +204,10 @@ static const char *create_worker(struct Worker **w_p, bool is_server, ...)
 			w->peer_fingerprint_sha1 = v;
 		} else if (!strncmp(k, "peer-sha256=", klen)) {
 			w->peer_fingerprint_sha256 = v;
+		} else if (!strncmp(k, "verify-client=", klen)) {
+			tls_config_verify_client(w->config);
+		} else if (!strncmp(k, "verify-client-optional=", klen)) {
+			tls_config_verify_client_optional(w->config);
 		} else {
 			return k;
 		}
@@ -232,7 +238,6 @@ static void worker_cb(int fd, short flags, void *arg)
 	const char *err;
 	char buf[128];
 	int res;
-	size_t outlen;
 
 	w->pending = 0;
 
@@ -241,16 +246,16 @@ static void worker_cb(int fd, short flags, void *arg)
 		add_error(w, err);
 	} else if (w->wstate == CONNECTED) {
 		if (flags & EV_READ) {
-			res = tls_read(w->ctx, buf, sizeof buf, &outlen);
-			if (res == TLS_READ_AGAIN) {
+			res = tls_read(w->ctx, buf, sizeof buf);
+			if (res == TLS_WANT_POLLIN) {
 				wait_for_event(w, EV_READ);
-			} else if (res == TLS_WRITE_AGAIN) {
+			} else if (res == TLS_WANT_POLLOUT) {
 				wait_for_event(w, EV_WRITE);
-			} else if (res == 0) {
-				if (outlen > 0 && w->is_server) {
-					tls_write(w->ctx, "END", 3, &outlen);
+			} else if (res >= 0) {
+				if (res > 0 && w->is_server) {
+					res = tls_write(w->ctx, "END", 3);
 					w->wstate = CLOSED;
-				} else if (outlen == 0) {
+				} else if (res == 0) {
 					w->wstate = CLOSED;
 				} else {
 					wait_for_event(w, EV_READ);
@@ -267,9 +272,9 @@ static void worker_cb(int fd, short flags, void *arg)
 		if (res == 0) {
 			tls_free(w->ctx);
 			w->ctx = NULL;
-		} else if (res == TLS_READ_AGAIN) {
+		} else if (res == TLS_WANT_POLLIN) {
 			wait_for_event(w, EV_READ);
-		} else if (res == TLS_WRITE_AGAIN) {
+		} else if (res == TLS_WANT_POLLOUT) {
 			wait_for_event(w, EV_WRITE);
 		} else {
 			tls_free(w->ctx);
@@ -318,13 +323,18 @@ static const char *check_fp(struct Worker *w, const char *algo, const char *fn, 
 {
 	const char *emsg;
 	int res;
-	struct tls_cert *cert;
+	struct tls_cert *cert = NULL;
+	static char buf[1024];
 
 	if (!fn)
 		return NULL;
 
 	res = tls_get_peer_cert(w->ctx, &cert, algo);
-	if (res != 0 || cert->fingerprint_size != xlen) {
+	if (res != 0) {
+		snprintf(buf, sizeof buf, "fp-cert: %s", tls_error(w->ctx));
+		return buf;
+	}
+	if (cert->fingerprint_size != xlen) {
 		tls_cert_free(cert);
 		return "FP-sha1-fail";
 	}
@@ -372,7 +382,6 @@ static void show_cert(struct tls_cert *cert, char *buf, size_t buflen)
 static const char *done_handshake(struct Worker *w)
 {
 	int res;
-	size_t outlen = 0;
 	const char *emsg;
 
 	emsg = check_fp(w, "sha1", w->peer_fingerprint_sha1, 20);
@@ -396,9 +405,10 @@ static const char *done_handshake(struct Worker *w)
 	}
 
 	if (!w->is_server) {
-		res = tls_write(w->ctx, "PKT", 3, &outlen);
-		if (res != 0 && outlen != 3)
+		res = tls_write(w->ctx, "PKT", 3);
+		if (res != 3) {
 			return "write!=3";
+		}
 	}
 	return wait_for_event(w, EV_READ);
 }
@@ -417,14 +427,12 @@ static const char *do_handshake(struct Worker *w, int fd)
 {
 	int err;
 	const char *msg;
-	if (w->is_server) {
-		err = tls_accept_socket(w->base, &w->ctx, fd);
-	} else {
-		err = tls_connect_socket(w->ctx, fd, w->hostname);
-	}
-	if (err == TLS_READ_AGAIN) {
+
+	err = tls_handshake(w->ctx);
+	//printf("tls_handshake: res=%d errno=%d\n", err, errno);
+	if (err == TLS_WANT_POLLIN) {
 		return wait_for_event(w, EV_READ);
-	} else if (err == TLS_WRITE_AGAIN) {
+	} else if (err == TLS_WANT_POLLIN) {
 		return wait_for_event(w, EV_WRITE);
 	} else if (err == 0) {
 		w->wstate = CONNECTED;
@@ -436,7 +444,16 @@ static const char *do_handshake(struct Worker *w, int fd)
 
 static const char *start_worker(struct Worker *w, int fd)
 {
+	int err;
 	w->socket = fd;
+	if (w->is_server) {
+		err = tls_accept_socket(w->base, &w->ctx, fd);
+	} else {
+		err = tls_connect_socket(w->ctx, fd, w->hostname);
+	}
+	if (err != 0) {
+		return tls_error(w->ctx ? w->ctx : w->base);
+	}
 	return do_handshake(w, fd);
 }
 
@@ -521,12 +538,12 @@ static void test_verify(void *z)
 	/* default: client checks server cert, fails due to bad ca */
 	str_check(create_worker(&server, true, SERVER1, NULL), "OK");
 	str_check(create_worker(&client, false, CA2, "host=example.com", NULL), "OK");
-	str_check(run_case(client, server), "C:certificate verify failed - S:handshake failure");
+	str_check(run_case(client, server), "C:certificate verify failed - S:tlsv1 alert unknown ca");
 
 	/* default: client checks server cert, fails due to bad hostname */
 	str_check(create_worker(&server, true, SERVER1, NULL), "OK");
 	str_check(create_worker(&client, false, CA1, "host=example2.com", NULL), "OK");
-	str_check(run_case(client, server), "C:name 'example2.com' does not match cert");
+	str_check(run_case(client, server), "C:name `example2.com' not present in server certificate");
 end:;
 }
 
@@ -570,7 +587,7 @@ static void test_noverifycert(void *z)
 		"host=server2.com",
 		"noverifycert=1",
 		NULL), "OK");
-	str_check(run_case(client, server), "C:name 'server2.com' does not match cert");
+	str_check(run_case(client, server), "C:name `server2.com' not present in server certificate");
 
 	/* noverifycert: client ignores both cert, hostname */
 	str_check(create_worker(&server, true, SERVER1, NULL), "OK");
@@ -603,9 +620,9 @@ static void test_clientcert(void *z)
 	str_check(run_case(client, server), "OK");
 
 	/* fail: server rejects invalid cert */
-	str_check(create_worker(&server, true, SERVER1, CA1, NULL), "OK");
+	str_check(create_worker(&server, true, SERVER1, CA1, "verify-client=1", NULL), "OK");
 	str_check(create_worker(&client, false, CLIENT2, CA1, "host=server1.com", NULL), "OK");
-	str_check(run_case(client, server), "C:tlsv1 alert unknown ca - S:handshake failure");
+	str_check(run_case(client, server), "C:tlsv1 alert unknown ca - S:no certificate returned");
 
 	/* noverifycert: server allow invalid cert */
 	str_check(create_worker(&server, true, SERVER1, CA1, "noverifycert=1", NULL), "OK");
@@ -627,6 +644,7 @@ static void test_fingerprint(void *z)
 
 	/* both server & client with cert */
 	str_check(create_worker(&server, true, SERVER1, CA2,
+		"verify-client=1",
 		"peer-sha1=ssl/ca2_client2.crt.sha1",
 		"peer-sha256=ssl/ca2_client2.crt.sha256",
 		NULL), "OK");
@@ -639,11 +657,12 @@ static void test_fingerprint(void *z)
 
 	/* client without cert */
 	str_check(create_worker(&server, true, SERVER1, CA1,
+		"verify-client=1",
 		"peer-sha1=ssl/ca2_client2.crt.sha1",
 		"peer-sha256=ssl/ca2_client2.crt.sha256",
 		NULL), "OK");
 	str_check(create_worker(&client, false, CA1, "host=server1.com", NULL), "OK");
-	str_check(run_case(client, server), "C:write!=3 - S:FP-sha1-fail");
+	str_check(run_case(client, server), "C:sslv3 alert handshake failure - S:peer did not return a certificate");
 end:;
 }
 
@@ -715,6 +734,7 @@ static void test_cert_info(void *z)
 	str_check(create_worker(&server, true, "show=peer-cert", SERVER1, CA2,
 		"peer-sha1=ssl/ca2_client2.crt.sha1",
 		"peer-sha256=ssl/ca2_client2.crt.sha256",
+		"verify-client=1",
 		NULL), "OK");
 	str_check(create_worker(&client, false, CLIENT2, CA1,
 		"host=server1.com",
@@ -757,7 +777,7 @@ end:;
 
 static const char *do_verify(const char *hostname, const char *commonName, ...)
 {
-#ifdef USUAL_LIBSSL_FOR_TLS
+#ifdef DISABLED_TEST
 	struct tls ctx;
 	struct tls_cert cert;
 	struct tls_cert_general_name names[20], *alt;
@@ -855,10 +875,10 @@ struct testcase_t tls_tests[] = {
 	{ "noverifycert", test_noverifycert },
 	{ "clientcert", test_clientcert },
 	{ "fingerprint", test_fingerprint },
-	{ "servername", test_servername },
 	{ "set-mem", test_set_mem },
 	{ "cipher-nego", test_cipher_nego },
 	{ "cert-info", test_cert_info },
-	END_OF_TESTCASES
+	END_OF_TESTCASES,
+	{ "servername", test_servername },
 };
 
