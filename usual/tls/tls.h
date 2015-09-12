@@ -38,6 +38,7 @@ extern "C" {
 #define TLS_WANT_POLLIN		-2
 #define TLS_WANT_POLLOUT	-3
 #define TLS_NO_CERT		-4
+#define TLS_NO_OCSP		-5
 
 struct tls;
 struct tls_config;
@@ -135,6 +136,21 @@ struct tls_cert {
 	size_t fingerprint_size;
 };
 
+#define TLS_OCSP_STATUS_SUCCESSFUL	0
+#define TLS_OCSP_STATUS_MALFORMED	1
+#define TLS_OCSP_STATUS_INTERNALERR	2
+#define TLS_OCSP_STATUS_TRYLATER	3
+#define TLS_OCSP_STATUS_SIGREQUIRED	5
+#define TLS_OCSP_STATUS_UNAUTHORIZED	6
+
+struct tls_ocsp_info {
+	int status;
+	int reason;
+	time_t this_update;
+	time_t next_update;
+	time_t revocation_time;
+};
+
 int tls_init(void);
 
 const char *tls_error(struct tls *_ctx);
@@ -156,6 +172,8 @@ int tls_config_set_ecdhecurve(struct tls_config *_config, const char *_name);
 int tls_config_set_key_file(struct tls_config *_config, const char *_key_file);
 int tls_config_set_key_mem(struct tls_config *_config, const uint8_t *_key,
     size_t _len);
+int tls_config_set_ocsp_stapling_file(struct tls_config *_config, const char *_blob_file);
+int tls_config_set_ocsp_stapling_mem(struct tls_config *_config, const uint8_t *_blob, size_t _len);
 void tls_config_set_protocols(struct tls_config *_config, uint32_t _protocols);
 void tls_config_set_verify_depth(struct tls_config *_config, int _verify_depth);
 
@@ -205,6 +223,12 @@ ssize_t tls_get_connection_info(struct tls *ctx, char *buf, size_t buflen);
 
 int tls_get_peer_cert(struct tls *ctx, struct tls_cert **cert_p, const char *fingerprint_algo);
 void tls_cert_free(struct tls_cert *cert);
+
+int tls_ocsp_refresh_stapling(struct tls **ocsp_ctx_p, int *async_fd_p, struct tls_config *config);
+int tls_ocsp_check_peer(struct tls **ocsp_ctx_p, int *async_fd_p, struct tls *client);
+
+struct tls_ocsp_info *tls_get_ocsp_info(struct tls *ctx);
+void tls_ocsp_info_free(struct tls_ocsp_info *info);
 
 #ifdef __cplusplus
 }

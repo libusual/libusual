@@ -80,6 +80,7 @@ libusual_la_SOURCES = usual/config.h.in \
 	usual/tls/tls_compat.h usual/tls/tls_compat.c usual/tls/tls_peer.c \
 	usual/tls/tls_client.c usual/tls/tls_config.c usual/tls/tls_cert.c \
 	usual/tls/tls_server.c usual/tls/tls_util.c usual/tls/tls_verify.c \
+	usual/tls/tls_ocsp.c \
 	usual/utf8.h usual/utf8.c \
 	usual/wchar.h usual/wchar.c
 

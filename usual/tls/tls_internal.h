@@ -68,6 +68,9 @@ struct tls_config {
 	const char *key_file;
 	char *key_mem;
 	size_t key_len;
+	const char *ocsp_file;
+	char *ocsp_mem;
+	size_t ocsp_len;
 	uint32_t protocols;
 	int verify_cert;
 	int verify_client;
@@ -78,9 +81,12 @@ struct tls_config {
 #define TLS_CLIENT		(1 << 0)
 #define TLS_SERVER		(1 << 1)
 #define TLS_SERVER_CONN		(1 << 2)
+#define TLS_OCSP_CLIENT		(1 << 3)
 
 #define TLS_HANDSHAKE_COMPLETE	(1 << 0)
 #define TLS_DO_ABORT		(1 << 1)
+
+struct tls_ocsp_query;
 
 struct tls {
 	struct tls_config *config;
@@ -99,6 +105,11 @@ struct tls {
 
 	int used_dh_bits;
 	int used_ecdh_nid;
+
+	const char *ocsp_result;
+	struct tls_ocsp_info *ocsp_info;
+
+	struct tls_ocsp_query *ocsp_query;
 };
 
 struct tls *tls_new(void);
@@ -126,6 +137,10 @@ int tls_set_error_libssl(struct tls *ctx, const char *fmt, ...)
 
 int tls_parse_cert(struct tls *ctx, struct tls_cert **cert_p,
 		   const char *fingerprint_algo, X509 *x509);
+
+int tls_ocsp_verify_callback(SSL *ssl, void *arg);
+int tls_ocsp_stapling_callback(SSL *ssl, void *arg);
+void tls_ocsp_client_free(struct tls *ctx);
 
 int tls_asn1_parse_time(struct tls *ctx, const ASN1_TIME *asn1time, time_t *dst);
 

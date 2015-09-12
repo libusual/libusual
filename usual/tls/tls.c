@@ -394,6 +394,14 @@ tls_reset(struct tls *ctx)
 
 	ctx->used_dh_bits = 0;
 	ctx->used_ecdh_nid = 0;
+	ctx->ocsp_result = NULL;
+
+	tls_ocsp_info_free(ctx->ocsp_info);
+	ctx->ocsp_info = NULL;
+
+	if (ctx->flags & TLS_OCSP_CLIENT)
+		tls_ocsp_client_free(ctx);
+
 }
 
 int

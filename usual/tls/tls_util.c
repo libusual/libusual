@@ -172,21 +172,29 @@ ssize_t
 tls_get_connection_info(struct tls *ctx, char *buf, size_t buflen)
 {
 	SSL *conn = ctx->ssl_conn;
-	if (conn == NULL)
-		return -1;
+	const char *ocsp_pfx = "", *ocsp_info = "";
+	const char *proto = "-", *cipher = "-";
+	char dh[64];
 
-	if (ctx->used_dh_bits)
-		return snprintf(buf, buflen, "%s/%s/DH=%d",
-				SSL_get_version(conn), SSL_get_cipher(conn),
-				ctx->used_dh_bits);
+	if (conn != NULL) {
+		proto = SSL_get_version(conn);
+		cipher = SSL_get_cipher(conn);
+	}
 
-	if (ctx->used_ecdh_nid)
-		return snprintf(buf, buflen, "%s/%s/ECDH=%s",
-				SSL_get_version(conn), SSL_get_cipher(conn),
-				OBJ_nid2sn(ctx->used_ecdh_nid));
+	if (ctx->used_dh_bits) {
+		snprintf(dh, sizeof dh, "/DH=%d", ctx->used_dh_bits);
+	} else if (ctx->used_ecdh_nid) {
+		snprintf(dh, sizeof dh, "/ECDH=%s", OBJ_nid2sn(ctx->used_ecdh_nid));
+	} else {
+		dh[0] = 0;
+	}
 
-	return snprintf(buf, buflen, "%s/%s",
-			SSL_get_version(conn), SSL_get_cipher(conn));
+	if (ctx->ocsp_result) {
+		ocsp_info = ctx->ocsp_result;
+		ocsp_pfx = "/OCSP=";
+	}
+
+	return snprintf(buf, buflen, "%s/%s%s%s%s", proto, cipher, dh, ocsp_pfx, ocsp_info);
 }
 
 static int parse2num(const char **str_p, int min, int max)
