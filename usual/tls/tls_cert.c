@@ -72,71 +72,6 @@ tls_parse_bigint(struct tls *ctx, const ASN1_INTEGER *asn1int, const char **dst_
 	return -1;
 }
 
-/* Convert ASN1_TIME to ISO 8601 string */
-static int
-tls_parse_time(struct tls *ctx, const ASN1_TIME *asn1time, const char **dst_p)
-{
-	static const char months[12][4] = {
-		"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-	};
-	char buf[128], *tmp, *mon, *day, *time, *year, *tz;
-	char buf2[128];
-	BIO *bio;
-	int ret, i;
-
-	*dst_p = NULL;
-
-	memset(buf, 0, sizeof buf);
-	bio = BIO_new(BIO_s_mem());
-	if (!bio)
-		goto nomem;
-
-	/* result: Aug 18 20:51:52 2015 GMT */
-	ret = ASN1_TIME_print(bio, asn1time);
-	if (!ret) {
-		BIO_free(bio);
-		goto invalid;
-	}
-	BIO_read(bio, buf, sizeof(buf) - 1);
-	BIO_free(bio);
-	memcpy(buf2, buf, 128);
-
-	/* "Jan  1" */
-	if (buf[3] == ' ' && buf[4] == ' ')
-		buf[4] = '0';
-
-	tmp = buf;
-	mon = strsep(&tmp, " ");
-	day = strsep(&tmp, " ");
-	time = strsep(&tmp, " ");
-	year = strsep(&tmp, " ");
-	tz = strsep(&tmp, " ");
-
-	if (!year || tmp)
-		goto invalid;
-	if (tz && strcmp(tz, "GMT") != 0)
-		goto invalid;
-
-	for (i = 0; i < 12; i++) {
-		if (memcmp(months[i], mon, 4) == 0)
-			break;
-	}
-	if (i > 11)
-		goto invalid;
-
-	ret = asprintf(&tmp, "%s-%02d-%sT%sZ", year, i+1, day, time);
-	if (ret < 0)
-		goto nomem;
-	*dst_p = tmp;
-	return 0;
- invalid:
-	tls_set_errorx(ctx, "invalid time format");
-	return -1;
- nomem:
-	tls_set_error(ctx, "no mem");
-	return -1;
-}
-
 /*
  * Decode all string types used in RFC5280.
  *
@@ -546,9 +481,9 @@ tls_parse_cert(struct tls *ctx, struct tls_cert **cert_p, const char *fingerprin
 	if (ret == 0)
 		ret = tls_cert_get_altnames(ctx, cert, x509);
 	if (ret == 0)
-		ret = tls_parse_time(ctx, X509_get_notBefore(x509), &cert->not_before);
+		ret = tls_asn1_parse_time(ctx, X509_get_notBefore(x509), &cert->not_before);
 	if (ret == 0)
-		ret = tls_parse_time(ctx, X509_get_notAfter(x509), &cert->not_after);
+		ret = tls_asn1_parse_time(ctx, X509_get_notAfter(x509), &cert->not_after);
 	if (ret == 0)
 		ret = tls_parse_bigint(ctx, X509_get_serialNumber(x509), &cert->serial);
 	if (ret == 0) {
@@ -615,8 +550,6 @@ tls_cert_free(struct tls_cert *cert)
 	free(cert->subject_alt_names);
 
 	free((void*)cert->serial);
-	free((void*)cert->not_before);
-	free((void*)cert->not_after);
 	free((void*)cert->fingerprint);
 	free(cert);
 }

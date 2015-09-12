@@ -364,6 +364,20 @@ static void show_dname(char *buf, size_t buflen, const struct tls_cert_dname *dn
 	show_append(buf, buflen, "/OU=", dname->organizational_unit_name);
 }
 
+static const char *isotime(char *dst, size_t max, time_t t)
+{
+	static char buf[32];
+	struct tm tm;
+	if (!dst) {
+		dst = buf;
+		max = sizeof buf;
+	}
+	memset(&tm, 0, sizeof tm);
+	gmtime_r(&t, &tm);
+	strftime(dst, max, "%Y-%m-%dT%H:%M:%SZ", &tm);
+	return dst;
+}
+
 static void show_cert(struct tls_cert *cert, char *buf, size_t buflen)
 {
 	if (!cert) {
@@ -375,8 +389,8 @@ static void show_cert(struct tls_cert *cert, char *buf, size_t buflen)
 	show_append(buf, buflen, " Issuer: ", "");
 	show_dname(buf, buflen, &cert->issuer);
 	show_append(buf, buflen, " Serial: ", cert->serial);
-	show_append(buf, buflen, " NotBefore: ", cert->not_before);
-	show_append(buf, buflen, " NotAfter: ", cert->not_after);
+	show_append(buf, buflen, " NotBefore: ", isotime(NULL, 0, cert->not_before));
+	show_append(buf, buflen, " NotAfter: ", isotime(NULL, 0, cert->not_after));
 }
 
 static const char *done_handshake(struct Worker *w)
@@ -866,10 +880,67 @@ static void test_servername(void *_)
 end:;
 }
 
+/*
+ * Test ASN.1 parse time.
+ */
+
+static const char *run_time(const char *val)
+{
+	ASN1_TIME tmp;
+	time_t t = 0;
+	static char buf[128];
+	struct tm *tm, tmbuf;
+	struct tls *ctx;
+	int err;
+
+	memset(&tmp, 0, sizeof tmp);
+	memset(&tmbuf, 0, sizeof tmbuf);
+
+	tmp.data = (unsigned char*)val+2;
+	if (val[0] == 'G' && val[1] == ':') {
+		tmp.type = V_ASN1_GENERALIZEDTIME;
+	} else if (val[0] == 'U' && val[1] == ':') {
+		tmp.type = V_ASN1_UTCTIME;
+	} else {
+		tmp.type = val[0];
+	}
+
+	ctx = tls_client();
+	if (!ctx)
+		return "NOMEM";
+	err = tls_asn1_parse_time(ctx, &tmp, &t);
+	if (err) {
+		strlcpy(buf, tls_error(ctx), sizeof buf);
+		tls_free(ctx);
+		return buf;
+	}
+	tls_free(ctx);
+
+	tm = gmtime_r(&t, &tmbuf);
+	if (!tm)
+		return "E-GMTIME";
+	strftime(buf, sizeof buf, "%Y-%m-%d %H:%M:%S GMT", tm);
+	return buf;
+}
+
+static void test_time(void *_)
+{
+	str_check(run_time("U:1401010215Z"), "2014-01-01 02:15:00 GMT");
+	str_check(run_time("U:140101021500Z"), "2014-01-01 02:15:00 GMT");
+	str_check(run_time("U:1401010215"), "2014-01-01 02:15:00 GMT");
+	str_check(run_time("U:140101021500"), "2014-01-01 02:15:00 GMT");
+	str_check(run_time("U:14010102150"), "Invalid asn1 time");
+	str_check(run_time("U:"), "Invalid asn1 time");
+	str_check(run_time("X:"), "Invalid time object type: 88");
+	str_check(run_time("G:20140101021544Z"), "2014-01-01 02:15:44 GMT");
+end:;
+}
+
 struct testcase_t tls_tests[] = {
 #ifndef USUAL_LIBSSL_FOR_TLS
 	END_OF_TESTCASES,
 #endif
+	{ "time", test_time },
 	{ "verify", test_verify },
 	{ "noverifyname", test_noverifyname },
 	{ "noverifycert", test_noverifycert },

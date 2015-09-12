@@ -127,4 +127,6 @@ int tls_set_error_libssl(struct tls *ctx, const char *fmt, ...)
 int tls_parse_cert(struct tls *ctx, struct tls_cert **cert_p,
 		   const char *fingerprint_algo, X509 *x509);
 
+int tls_asn1_parse_time(struct tls *ctx, const ASN1_TIME *asn1time, time_t *dst);
+
 #endif /* HEADER_TLS_INTERNAL_H */

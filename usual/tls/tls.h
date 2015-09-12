@@ -89,9 +89,9 @@ struct tls_cert {
 	/* decimal number */
 	const char *serial;
 
-	/* Validity times in ISO 8601 format: 2015-08-18T06:36:40Z */
-	const char *not_before;
-	const char *not_after;
+	/* Validity times */
+	time_t not_before;
+	time_t not_after;
 
 	/* Fingerprint as raw hash */
 	const unsigned char *fingerprint;
