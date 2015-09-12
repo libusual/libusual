@@ -294,6 +294,8 @@ int SSL_CTX_load_verify_mem(SSL_CTX *ctx, void *data, int data_len)
 
 #else /* !USUAL_LIBSSL_FOR_TLS */
 
+#include <usual/tls/tls_cert.h>
+
 /*
  * Install empty functions when openssl is not available.
  */
@@ -315,15 +317,28 @@ int tls_config_set_dheparams(struct tls_config *_config, const char *_params) { 
 int tls_config_set_ecdhecurve(struct tls_config *_config, const char *_name) { return -1; }
 int tls_config_set_key_file(struct tls_config *_config, const char *_key_file) { return -1; }
 int tls_config_set_key_mem(struct tls_config *_config, const uint8_t *_key, size_t _len) { return -1; }
+int tls_config_set_ocsp_stapling_file(struct tls_config *_config, const char *_blob_file) { return -1; }
+int tls_config_set_ocsp_stapling_mem(struct tls_config *_config, const uint8_t *_blob, size_t _len) { return -1; }
 void tls_config_set_protocols(struct tls_config *_config, uint32_t _protocols) {}
 void tls_config_set_verify_depth(struct tls_config *_config, int _verify_depth) {}
 
-void tls_config_clear_keys(struct tls_config *_config) {}
-int tls_config_parse_protocols(uint32_t *_protocols, const char *_protostr) { return -1; }
+void tls_config_prefer_ciphers_client(struct tls_config *_config) {}
+void tls_config_prefer_ciphers_server(struct tls_config *_config) {}
 
 void tls_config_insecure_noverifycert(struct tls_config *_config) {}
 void tls_config_insecure_noverifyname(struct tls_config *_config) {}
 void tls_config_verify(struct tls_config *_config) {}
+
+void tls_config_verify_client(struct tls_config *_config) {}
+void tls_config_verify_client_optional(struct tls_config *_config) {}
+
+int tls_peer_cert_provided(struct tls *ctx) { return 0; }
+int tls_peer_cert_contains_name(struct tls *ctx, const char *name) { return 0; }
+int tls_peer_cert_issuer(struct tls *ctx, char **name) { return -1; }
+int tls_peer_cert_subject(struct tls *ctx, char **subject) { return -1; }
+
+void tls_config_clear_keys(struct tls_config *_config) {}
+int tls_config_parse_protocols(uint32_t *_protocols, const char *_protostr) { return -1; }
 
 struct tls *tls_client(void) { return NULL; }
 struct tls *tls_server(void) { return NULL; }
@@ -337,15 +352,25 @@ int tls_connect(struct tls *_ctx, const char *_host, const char *_port) { return
 int tls_connect_fds(struct tls *_ctx, int _fd_read, int _fd_write, const char *_servername) { return -1; }
 int tls_connect_servername(struct tls *_ctx, const char *_host, const char *_port, const char *_servername) { return -1; }
 int tls_connect_socket(struct tls *_ctx, int _s, const char *_servername) { return -1; }
-int tls_read(struct tls *_ctx, void *_buf, size_t _buflen, size_t *_outlen) { return -1; }
-int tls_write(struct tls *_ctx, const void *_buf, size_t _buflen, size_t *_outlen) { return -1; }
+int tls_handshake(struct tls *_ctx) { return -1; }
+ssize_t tls_read(struct tls *_ctx, void *_buf, size_t _buflen) { return -1; }
+ssize_t tls_write(struct tls *_ctx, const void *_buf, size_t _buflen) { return -1; }
 int tls_close(struct tls *_ctx) { return -1; }
 
-ssize_t tls_get_connection_info(struct tls *ctx, char *buf, size_t buflen) { return -1; }
+int tls_peer_cert_hash(struct tls *_ctx, char **_hash) { return -1; }
 
 uint8_t *tls_load_file(const char *_file, size_t *_len, char *_password) { return NULL; }
 
+ssize_t tls_get_connection_info(struct tls *ctx, char *buf, size_t buflen) { return -1; }
+
 int tls_get_peer_cert(struct tls *ctx, struct tls_cert **cert_p, const char *algo) { *cert_p = NULL; return -1; }
 void tls_cert_free(struct tls_cert *cert) {}
+
+int tls_ocsp_refresh_stapling(struct tls **ocsp_ctx_p, int *async_fd_p, struct tls_config *config) { return -1; }
+int tls_ocsp_check_peer(struct tls **ocsp_ctx_p, int *async_fd_p, struct tls *client) { return -1; }
+
+struct tls_ocsp_info *tls_get_ocsp_info(struct tls *ctx) { return NULL; }
+void tls_ocsp_info_free(struct tls_ocsp_info *info) {}
+
 
 #endif /* !USUAL_LIBSSL_FOR_TLS */

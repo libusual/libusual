@@ -14,8 +14,9 @@
 
 #ifdef USUAL_LIBSSL_FOR_TLS
 #include <usual/tls/tls_internal.h>
-#include <usual/tls/tls_cert.h>
 #endif
+
+#include <usual/tls/tls_cert.h>
 
 enum WState {
 	HANDSHAKE,
@@ -887,6 +888,7 @@ end:;
 
 static const char *run_time(const char *val)
 {
+#ifdef USUAL_LIBSSL_FOR_TLS
 	ASN1_TIME tmp;
 	time_t t = 0;
 	static char buf[128];
@@ -922,6 +924,9 @@ static const char *run_time(const char *val)
 		return "E-GMTIME";
 	strftime(buf, sizeof buf, "%Y-%m-%d %H:%M:%S GMT", tm);
 	return buf;
+#else
+	return "no-asn1";
+#endif
 }
 
 static void test_time(void *_)
