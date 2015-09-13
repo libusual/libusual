@@ -78,6 +78,14 @@ struct tls_config {
 	int verify_name;
 };
 
+struct tls_conninfo {
+	char *issuer;
+	char *subject;
+	char *hash;
+	char *serial;
+	char *fingerprint;
+};
+
 #define TLS_CLIENT		(1 << 0)
 #define TLS_SERVER		(1 << 1)
 #define TLS_SERVER_CONN		(1 << 2)
@@ -102,6 +110,7 @@ struct tls {
 	SSL *ssl_conn;
 	SSL_CTX *ssl_ctx;
 	X509 *ssl_peer_cert;
+	struct tls_conninfo *conninfo;
 
 	int used_dh_bits;
 	int used_ecdh_nid;
@@ -134,6 +143,9 @@ int tls_ssl_error(struct tls *ctx, SSL *ssl_conn, int ssl_ret,
 int tls_set_error_libssl(struct tls *ctx, const char *fmt, ...)
     __attribute__((__format__ (printf, 2, 3)))
     __attribute__((__nonnull__ (2)));
+
+int tls_get_conninfo(struct tls *ctx);
+void tls_free_conninfo(struct tls_conninfo *conninfo);
 
 int tls_ocsp_verify_callback(SSL *ssl, void *arg);
 int tls_ocsp_stapling_callback(SSL *ssl, void *arg);

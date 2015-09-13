@@ -165,8 +165,6 @@ tls_connect_fds(struct tls *ctx, int fd_read, int fd_write,
 	union { struct in_addr ip4; struct in6_addr ip6; } addrbuf;
 	int rv = -1;
 
-	ERR_clear_error();
-
 	if ((ctx->flags & TLS_CLIENT) == 0) {
 		tls_set_errorx(ctx, "not a client context");
 		goto err;
@@ -259,6 +257,7 @@ tls_handshake_client(struct tls *ctx)
 		goto err;
 	}
 
+	ERR_clear_error();
 	if ((ssl_ret = SSL_connect(ctx->ssl_conn)) != 1) {
 		rv = tls_ssl_error(ctx, ctx->ssl_conn, ssl_ret, "handshake");
 		goto err;

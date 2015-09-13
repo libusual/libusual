@@ -175,13 +175,12 @@ tls_handshake_server(struct tls *ctx)
 	int ssl_ret;
 	int rv = -1;
 
-	ERR_clear_error();
-
 	if ((ctx->flags & TLS_SERVER_CONN) == 0) {
 		tls_set_errorx(ctx, "not a server connection context");
 		goto err;
 	}
 
+	ERR_clear_error();
 	if ((ssl_ret = SSL_accept(ctx->ssl_conn)) != 1) {
 		rv = tls_ssl_error(ctx, ctx->ssl_conn, ssl_ret, "handshake");
 		goto err;
