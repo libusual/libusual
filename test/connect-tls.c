@@ -15,16 +15,19 @@ static void show_time(const char *desc, time_t t)
 	printf("%s: %s", desc, val);
 }
 
-static void show_ocsp_info(struct tls *ctx)
+static void show_ocsp_info(const char *desc, struct tls *ctx)
 {
-	struct tls_ocsp_info *info;
-	info = tls_get_ocsp_info(ctx);
-	if (info) {
-		printf("  status=%d reason=%d\n", info->status, info->reason);
-		show_time("  this update", info->this_update);
-		show_time("  next update", info->next_update);
-		show_time("  revocation", info->revocation_time);
-		tls_ocsp_info_free(info);
+	int req_status, cert_status, crl_reason, res;
+	const char *msg;
+	time_t this_update, next_update, revocation_time;
+
+	res = tls_get_ocsp_info(ctx, &req_status, &cert_status, &crl_reason, &this_update, &next_update, &revocation_time, &msg);
+	printf("%s: %s\n", desc, msg);
+	if (res == 0) {
+		printf("  req_status=%d cert_status=%d crl_reason=%d\n", req_status, cert_status, crl_reason);
+		show_time("  this update", this_update);
+		show_time("  next update", next_update);
+		show_time("  revocation", revocation_time);
 	}
 }
 int main(int argc, char *argv[])
@@ -85,15 +88,16 @@ int main(int argc, char *argv[])
 	printf("  O='%s'\n", cert->subject.organization_name);
 	printf("  OU='%s'\n", cert->subject.organizational_unit_name);
 
-	printf("OCSP stapling:\n");
-	show_ocsp_info(ctx);
+	show_ocsp_info("OCSP stapling", ctx);
 
 	ocsp = NULL;
 	res = tls_ocsp_check_peer(&ocsp, NULL, ctx);
-	tls_get_connection_info(ocsp, buf, sizeof buf);
-	printf("OCSP responder: '%s'\n", buf);
-	show_ocsp_info(ocsp);
-	tls_free(ocsp);
+	if (ocsp) {
+		show_ocsp_info("OCSP responder", ocsp);
+		tls_free(ocsp);
+	} else if (res == TLS_NO_OCSP) {
+		printf("OCSP responder: No OCSP support in libtls\n");
+	}
 
 	tls_close(ctx);
 	tls_free(ctx);

@@ -219,7 +219,8 @@ tls_get_connection_info(struct tls *ctx, char *buf, size_t buflen)
 	return snprintf(buf, buflen, "%s/%s%s%s%s", proto, cipher, dh, ocsp_pfx, ocsp_info);
 }
 
-static int parse2num(const char **str_p, int min, int max)
+static int
+parse2num(const char **str_p, int min, int max)
 {
 	const char *s = *str_p;
 	if (s && s[0] >= '0' && s[0] <= '9' && s[1] >= '0' && s[1] <= '9') {

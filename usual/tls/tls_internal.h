@@ -95,6 +95,7 @@ struct tls_conninfo {
 #define TLS_DO_ABORT		(1 << 1)
 
 struct tls_ocsp_query;
+struct tls_ocsp_info;
 
 struct tls {
 	struct tls_config *config;
@@ -119,6 +120,15 @@ struct tls {
 	struct tls_ocsp_info *ocsp_info;
 
 	struct tls_ocsp_query *ocsp_query;
+};
+
+struct tls_ocsp_info {
+	int response_status;
+	int cert_status;
+	int crl_reason;
+	time_t this_update;
+	time_t next_update;
+	time_t revocation_time;
 };
 
 struct tls *tls_new(void);
@@ -150,6 +160,7 @@ void tls_free_conninfo(struct tls_conninfo *conninfo);
 int tls_ocsp_verify_callback(SSL *ssl, void *arg);
 int tls_ocsp_stapling_callback(SSL *ssl, void *arg);
 void tls_ocsp_client_free(struct tls *ctx);
+void tls_ocsp_info_free(struct tls_ocsp_info *info);
 
 int tls_asn1_parse_time(struct tls *ctx, const ASN1_TIME *asn1time, time_t *dst);
 

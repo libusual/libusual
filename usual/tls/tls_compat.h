@@ -37,6 +37,11 @@ int SSL_CTX_use_certificate_chain_mem(SSL_CTX *ctx, void *buf, int len);
 int SSL_CTX_load_verify_mem(SSL_CTX *ctx, void *buf, int len);
 #endif
 
+#ifdef OPENSSL_IS_BORINGSSL
+#define SSL_CTX_set_tlsext_status_cb(a,b) (1)
+#define SSL_set_tlsext_status_type(a,b) (1)
+#endif
+
 #endif /* USUAL_LIBSSL_FOR_TLS */
 
 #endif /* _USUAL_TLS_COMPAT_H_ */

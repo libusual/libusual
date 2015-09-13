@@ -25,6 +25,10 @@
 
 #include <usual/tls/tls_internal.h>
 
+#ifndef SSLerr
+#define SSLerr(a,b) do {} while (0)
+#define X509err(a,b) do {} while (0)
+#endif
 
 #ifndef SSL_CTX_set_dh_auto
 
@@ -198,8 +202,6 @@ SSL_CTX_use_certificate_chain_mem(SSL_CTX *ctx, void *data, int data_len)
 #ifdef USE_LIBSSL_INTERNALS
 	psw_fn = ctx->default_passwd_callback;
 	psw_arg = ctx->default_passwd_callback_userdata;
-#else
-#define SSL_F_SSL_CTX_USE_CERTIFICATE_CHAIN_FILE 0
 #endif
 
 	ERR_clear_error();
