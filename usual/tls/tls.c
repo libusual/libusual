@@ -432,7 +432,8 @@ tls_ssl_error(struct tls *ctx, SSL *ssl_conn, int ssl_ret, const char *prefix)
 		if ((err = ERR_peek_error()) != 0) {
 			errstr = ERR_error_string(err, NULL);
 		} else if (ssl_ret == 0) {
-			errstr = "EOF";
+			ctx->state |= TLS_EOF_NO_CLOSE_NOTIFY;
+			return (0);
 		} else if (ssl_ret == -1) {
 			errstr = strerror(errno);
 		}
@@ -591,6 +592,12 @@ tls_close(struct tls *ctx)
 		}
 		ctx->socket = -1;
 	}
+
+	if ((ctx->state & TLS_EOF_NO_CLOSE_NOTIFY) != 0) {
+		tls_set_errorx(ctx, "EOF without close notify");
+		rv = -1;
+	}
+
  out:
 	/* Prevent callers from performing incorrect error handling */
 	errno = 0;

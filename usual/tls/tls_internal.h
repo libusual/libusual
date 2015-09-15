@@ -96,8 +96,9 @@ struct tls_conninfo {
 #define TLS_SERVER_CONN		(1 << 2)
 #define TLS_OCSP_CLIENT		(1 << 3)
 
-#define TLS_HANDSHAKE_COMPLETE	(1 << 0)
-#define TLS_DO_ABORT		(1 << 1)
+#define TLS_EOF_NO_CLOSE_NOTIFY	(1 << 0)
+#define TLS_HANDSHAKE_COMPLETE	(1 << 1)
+#define TLS_DO_ABORT		(1 << 8)
 
 struct tls_ocsp_query;
 struct tls_ocsp_info;
