@@ -96,6 +96,7 @@ void tls_config_prefer_ciphers_server(struct tls_config *_config);
 
 void tls_config_insecure_noverifycert(struct tls_config *_config);
 void tls_config_insecure_noverifyname(struct tls_config *_config);
+void tls_config_insecure_noverifytime(struct tls_config *_config);
 void tls_config_verify(struct tls_config *_config);
 
 void tls_config_verify_client(struct tls_config *_config);

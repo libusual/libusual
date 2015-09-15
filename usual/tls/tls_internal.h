@@ -81,6 +81,7 @@ struct tls_config {
 	int verify_client;
 	int verify_depth;
 	int verify_name;
+	int verify_time;
 };
 
 struct tls_conninfo {

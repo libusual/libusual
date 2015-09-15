@@ -327,6 +327,13 @@ tls_configure_ssl(struct tls *ctx)
 
 	SSL_CTX_set_info_callback(ctx->ssl_ctx, tls_info_callback);
 
+#ifdef X509_V_FLAG_NO_CHECK_TIME
+	if (ctx->config->verify_time == 0) {
+		X509_VERIFY_PARAM_set_flags(ctx->ssl_ctx->param,
+		    X509_V_FLAG_NO_CHECK_TIME);
+	}
+#endif
+
 	return (0);
 
  err:
