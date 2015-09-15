@@ -28,7 +28,12 @@
  *
  * Also fixes 3DES ordering bug in older OpenSSLs.
  */
-#define TLS_CIPHERS_COMPAT	"HIGH:MEDIUM:+3DES:!aNULL"
+#define TLS_CIPHERS_COMPAT	"HIGH:+3DES:!aNULL"
+
+/*
+ * All==insecure.
+ */
+#define TLS_CIPHERS_ALL		"ALL:!aNULL:!eNULL"
 
 /*
  * TLSv1.2+AEAD+ECDHE/DHE.  CBC modes are dubious due to spec bugs in TLS.
