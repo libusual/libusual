@@ -42,6 +42,7 @@ struct Worker {
 
 	const char *peer_fingerprint_sha1;
 	const char *peer_fingerprint_sha256;
+	int aggressive_close;
 };
 
 static void free_worker(struct Worker *w)
@@ -219,6 +220,8 @@ static const char *create_worker(struct Worker **w_p, bool is_server, ...)
 			tls_config_verify_client(w->config);
 		} else if (!strncmp(k, "verify-client-optional=", klen)) {
 			tls_config_verify_client_optional(w->config);
+		} else if (!strncmp(k, "aggressive-close=", klen)) {
+			w->aggressive_close = 1;
 		} else {
 			return k;
 		}
@@ -279,7 +282,13 @@ static void worker_cb(int fd, short flags, void *arg)
 		}
 	}
 	if (w->wstate == CLOSED && w->ctx) {
-		res = tls_close(w->ctx);
+		if (w->aggressive_close) {
+			close(w->socket);
+			tls_close(w->ctx);
+			res = 0;
+		} else {
+			res = tls_close(w->ctx);
+		}
 		if (res == 0) {
 			tls_free(w->ctx);
 			w->ctx = NULL;
@@ -288,6 +297,7 @@ static void worker_cb(int fd, short flags, void *arg)
 		} else if (res == TLS_WANT_POLLOUT) {
 			wait_for_event(w, EV_WRITE);
 		} else {
+			add_error(w, "close error: res=%d err=%s", res, tls_error(w->ctx));
 			tls_free(w->ctx);
 			w->ctx = NULL;
 		}
@@ -428,10 +438,20 @@ static const char *done_handshake(struct Worker *w)
 			snprintf(w->showbuf, sizeof w->showbuf, "bad kw: show=%s", w->show);
 		}
 	}
+	if (w->aggressive_close) {
+		close(w->socket);
+		tls_close(w->ctx);
+		w->wstate = CLOSED;
+		return "OK";
+	}
 
 	if (!w->is_server) {
 		res = tls_write(w->ctx, "PKT", 3);
-		if (res != 3) {
+		if (res < 0) {
+			return tls_error(w->ctx);
+		} else if (res == 0) {
+			return "write==0";
+		} else if (res != 3) {
 			return "write!=3";
 		}
 	}
@@ -568,6 +588,19 @@ static void test_verify(void *z)
 	str_check(create_worker(&server, true, SERVER1, NULL), "OK");
 	str_check(create_worker(&client, false, CA1, "host=example2.com", NULL), "OK");
 	str_check(run_case(client, server), "C:name `example2.com' not present in server certificate");
+
+#if 0
+	/* client: aggressive close */
+	str_check(create_worker(&server, true, SERVER1, NULL), "OK");
+	str_check(create_worker(&client, false, CA1, "aggressive-close=1", "host=server1.com", NULL), "OK");
+	str_check(run_case(client, server), "S:bad pkt: res=-1 err=read failed: EOF,S:close error: res=-1 err=shutdown failed: Broken pipe");
+
+	/* server: aggressive close */
+	str_check(create_worker(&server, true, SERVER1, "aggressive-close=1", NULL), "OK");
+	str_check(create_worker(&client, false, CA1, "host=server1.com", NULL), "OK");
+	str_check(run_case(client, server), "C:write failed: Broken pipe,C:close error: res=-1 err=shutdown failed: Success");
+#endif
+
 end:;
 }
 
