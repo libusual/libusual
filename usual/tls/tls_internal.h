@@ -90,6 +90,8 @@ struct tls_conninfo {
 	char *hash;
 	char *serial;
 	char *fingerprint;
+	char *version;
+	char *cipher;
 };
 
 #define TLS_CLIENT		(1 << 0)
