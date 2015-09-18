@@ -36,6 +36,29 @@
 #endif
 
 /*
+ * State for request.
+ */
+
+struct tls_ocsp_query {
+	/* responder location */
+	char *ocsp_url;
+
+	/* request blob */
+	uint8_t *request_data;
+	size_t request_size;
+
+	/* network state */
+	BIO *bio;
+	SSL_CTX *ssl_ctx;
+	OCSP_REQ_CTX *http_req;
+
+	/* cert data, this struct does not own these */
+	X509 *main_cert;
+	STACK_OF(X509) *extra_certs;
+	SSL_CTX *cert_ssl_ctx;
+};
+
+/*
  * Extract OCSP response info.
  */
 
@@ -70,6 +93,21 @@ tls_ocsp_fill_info(struct tls *ctx,
 		tls_ocsp_info_free(info);
 	}
 	return res;
+}
+
+static void
+tls_ocsp_fill_result(struct tls *ctx, int res)
+{
+	struct tls_ocsp_info *info = ctx->ocsp_info;
+	if (res < 0) {
+		ctx->ocsp_result = "error";
+	} else if (info->response_status != OCSP_RESPONSE_STATUS_SUCCESSFUL) {
+		ctx->ocsp_result = OCSP_response_status_str(info->response_status);
+	} else if (info->cert_status != V_OCSP_CERTSTATUS_REVOKED) {
+		ctx->ocsp_result = OCSP_cert_status_str(info->cert_status);
+	} else {
+		ctx->ocsp_result = OCSP_crl_reason_str(info->crl_reason);
+	}
 }
 
 void
@@ -112,7 +150,7 @@ tls_get_ocsp_info(struct tls *ctx, int *response_status, int *cert_status,
 	if (revoction_time)
 		*revoction_time = info->revocation_time;
 	if (result_text)
-		*result_text = ctx->ocsp_result;
+		*result_text = ocsp_result;
 
 	return ret;
 }
@@ -159,14 +197,15 @@ tls_ocsp_get_certid(X509 *main_cert, STACK_OF(X509) *extra_certs, SSL_CTX *ssl_c
 
 static int
 tls_ocsp_verify_response(struct tls *ctx, X509 *main_cert, STACK_OF(X509) *extra_certs,
-			 SSL_CTX *ssl_ctx, OCSP_RESPONSE *resp, OCSP_REQUEST *nonce_req)
+			 SSL_CTX *ssl_ctx, OCSP_RESPONSE *resp)
 {
 	OCSP_BASICRESP *br = NULL;
 	STACK_OF(X509) *ocsp_chain = NULL;
 	ASN1_GENERALIZEDTIME *revtime = NULL, *thisupd = NULL, *nextupd = NULL;
 	OCSP_CERTID *cid = NULL;
 	STACK_OF(X509) *combined = NULL;
-	int res, response_status=0, cert_status=0, crl_reason=0;
+	int response_status=0, cert_status=0, crl_reason=0;
+	int ssl_res, ret = -1;
 	unsigned long flags;
 #ifdef BUGGY_VERIFY
 	STACK_OF(X509) *tmpchain = NULL;
@@ -174,24 +213,11 @@ tls_ocsp_verify_response(struct tls *ctx, X509 *main_cert, STACK_OF(X509) *extra
 
 	br = OCSP_response_get1_basic(resp);
 	if (!br) {
-		ctx->ocsp_result = "error: fetch-failed";
+		tls_set_errorx(ctx, "ocsp error: cannot load");
 		goto error;
 	}
 
-	/* did nonce roundtrip via external responder */
-	if (nonce_req) {
-		res = OCSP_check_nonce(nonce_req, br);
-		if (res < 0) {
-			ctx->ocsp_result = "invalid: nonce-dropped";
-			goto error;
-		}
-		if (res == 0) {
-			ctx->ocsp_result = "invalid: nonce-mismatch";
-			goto error;
-		}
-	}
-
-#if defined(BUGGY_VERIFY)
+#ifdef BUGGY_VERIFY
 	/*
 	 * There may be OCSP-subCA in OCSP response that chains to subCA
 	 * in main TLS headers.  Need to present both chains to verify.
@@ -205,20 +231,20 @@ tls_ocsp_verify_response(struct tls *ctx, X509 *main_cert, STACK_OF(X509) *extra
 
 		combined = sk_X509_new_null();
 		if (!combined) {
-			ctx->ocsp_result = "error: merge-failed";
+			tls_set_errorx(ctx, "ocsp error: cannot merge");
 			goto error;
 		}
 		for (i = 0; i < sk_X509_num(br->certs); i++) {
-			res = sk_X509_push(combined, sk_X509_value(br->certs, i));
-			if (res == 0) {
-				ctx->ocsp_result = "error: merge-failed";
+			ssl_res = sk_X509_push(combined, sk_X509_value(br->certs, i));
+			if (ssl_res == 0) {
+				tls_set_errorx(ctx, "ocsp error: cannot merge");
 				goto error;
 			}
 		}
 		for (i = 0; i < sk_X509_num(extra_certs); i++) {
-			res = sk_X509_push(combined, sk_X509_value(extra_certs, i));
-			if (res == 0) {
-				ctx->ocsp_result = "error: merge-failed";
+			ssl_res = sk_X509_push(combined, sk_X509_value(extra_certs, i));
+			if (ssl_res == 0) {
+				tls_set_errorx(ctx, "ocsp error: cannot merge");
 				goto error;
 			}
 		}
@@ -249,7 +275,7 @@ tls_ocsp_verify_response(struct tls *ctx, X509 *main_cert, STACK_OF(X509) *extra
 	}
 
 	/* now verify */
-	res = OCSP_basic_verify(br, ocsp_chain, SSL_CTX_get_cert_store(ssl_ctx), flags);
+	ssl_res = OCSP_basic_verify(br, ocsp_chain, SSL_CTX_get_cert_store(ssl_ctx), flags);
 
 #ifdef BUGGY_VERIFY
 	/* replace back */
@@ -259,124 +285,55 @@ tls_ocsp_verify_response(struct tls *ctx, X509 *main_cert, STACK_OF(X509) *extra
 	}
 #endif
 
-	if (res != 1) {
-		ctx->ocsp_result = "invalid: verify-failed";
+	if (ssl_res != 1) {
+		tls_set_error_libssl(ctx, "ocsp verify failed");
 		goto error;
 	}
 
 	/* signature OK, look inside */
 	response_status = OCSP_response_status(resp);
 	if (response_status != OCSP_RESPONSE_STATUS_SUCCESSFUL) {
-		switch (response_status) {
-		case OCSP_RESPONSE_STATUS_MALFORMEDREQUEST:
-			ctx->ocsp_result = "failed: malformedrequest";
-			break;
-		case OCSP_RESPONSE_STATUS_INTERNALERROR:
-			ctx->ocsp_result = "failed: internalerror";
-			break;
-		case OCSP_RESPONSE_STATUS_TRYLATER:
-			ctx->ocsp_result = "failed: trylater";
-			break;
-		case OCSP_RESPONSE_STATUS_SIGREQUIRED:
-			ctx->ocsp_result = "failed: sigrequired";
-			break;
-		case OCSP_RESPONSE_STATUS_UNAUTHORIZED:
-			ctx->ocsp_result = "failed: unauthorized";
-			break;
-		default:
-			ctx->ocsp_result = "failed: unknown";
-			break;
-		}
-		goto myerror;
+		tls_set_errorx(ctx, "ocsp verify failed: unsuccessful response - %s",
+			       OCSP_response_status_str(response_status));
+		goto error;
 	}
 
 	cid = tls_ocsp_get_certid(main_cert, extra_certs, ssl_ctx);
 	if (!cid) {
-		ctx->ocsp_result = "invalid: no-issuer-cert";
-		goto myerror;
-	}
-
-	res = OCSP_resp_find_status(br, cid, &cert_status, &crl_reason, &revtime, &thisupd, &nextupd);
-	if (res != 1) {
-		ctx->ocsp_result = "invalid: status-failed-no-cert";
+		tls_set_errorx(ctx, "ocsp verify failed: no issuer cert");
 		goto error;
 	}
 
-	/* load info before age check */
-	res = tls_ocsp_fill_info(ctx, response_status, cert_status, crl_reason, revtime, thisupd, nextupd);
-	if (res != 0) {
-		ctx->ocsp_result = "invalid: bad-info";
+	ssl_res = OCSP_resp_find_status(br, cid, &cert_status, &crl_reason, &revtime, &thisupd, &nextupd);
+	if (ssl_res != 1) {
+		tls_set_errorx(ctx, "ocsp verify failed: no result for cert");
 		goto error;
 	}
 
-	/* check age */
-	res = OCSP_check_validity(thisupd, nextupd, JITTER_SEC, MAXAGE_SEC);
-	if (res != 1) {
-		ctx->ocsp_result = "invalid: outdated";
+	ssl_res = OCSP_check_validity(thisupd, nextupd, JITTER_SEC, MAXAGE_SEC);
+	if (ssl_res != 1) {
+		tls_set_errorx(ctx, "ocsp verify failed: bad age");
 		goto error;
 	}
+
+	ssl_res = tls_ocsp_fill_info(ctx, response_status, cert_status, crl_reason, revtime, thisupd, nextupd);
+	if (ssl_res != 0)
+		goto error;
 
 	/* finally can look at status */
-	switch (cert_status) {
-	case V_OCSP_CERTSTATUS_GOOD:
-		ctx->ocsp_result = "good";
-		break;
-	case V_OCSP_CERTSTATUS_UNKNOWN:
-		/* is that good or bad?  nobody knows */
-		ctx->ocsp_result = "unknown";
-		break;
-	case V_OCSP_CERTSTATUS_REVOKED:
-		/* simply report reason string */
-		switch (crl_reason) {
-		case OCSP_REVOKED_STATUS_UNSPECIFIED:
-			ctx->ocsp_result = "revoked: unspecified";
-			break;
-		case OCSP_REVOKED_STATUS_KEYCOMPROMISE:
-			ctx->ocsp_result = "revoked: keyCompromise";
-			break;
-		case OCSP_REVOKED_STATUS_CACOMPROMISE:
-			ctx->ocsp_result = "revoked: cACompromise";
-			break;
-		case OCSP_REVOKED_STATUS_AFFILIATIONCHANGED:
-			ctx->ocsp_result = "revoked: affiliationChanged";
-			break;
-		case OCSP_REVOKED_STATUS_SUPERSEDED:
-			ctx->ocsp_result = "revoked: superseded";
-			break;
-		case OCSP_REVOKED_STATUS_CESSATIONOFOPERATION:
-			ctx->ocsp_result = "revoked: cessationOfOperation";
-			break;
-		case OCSP_REVOKED_STATUS_CERTIFICATEHOLD:
-			ctx->ocsp_result = "revoked: certificateHold";
-			break;
-		case OCSP_REVOKED_STATUS_REMOVEFROMCRL:
-			ctx->ocsp_result = "revoked: removeFromCRL";
-			break;
-		default:
-			ctx->ocsp_result = "revoked: unknown-reason";
-			break;
-		}
-		goto myerror;
-	default:
-		ctx->ocsp_result = "invalid: status-not-supported";
-		goto myerror;
+	if (cert_status != V_OCSP_CERTSTATUS_GOOD && cert_status != V_OCSP_CERTSTATUS_UNKNOWN) {
+		tls_set_errorx(ctx, "ocsp verify failed: revoked cert - %s",
+			       OCSP_crl_reason_str(crl_reason));
+		goto error;
 	}
 
-	sk_X509_free(combined);
-	OCSP_CERTID_free(cid);
-	OCSP_BASICRESP_free(br);
-	return 0;
+	ret = 0;
 
-myerror:
-	/* put up some libssl error */
-	OCSPerr(OCSP_F_OCSP_BASIC_VERIFY, OCSP_R_CERTIFICATE_VERIFY_ERROR);
 error:
 	sk_X509_free(combined);
 	OCSP_CERTID_free(cid);
 	OCSP_BASICRESP_free(br);
-
-	tls_set_errorx(ctx, "ocsp verify failed: %s", ctx->ocsp_result);
-	return -1;
+	return ret;
 }
 
 /*
@@ -399,26 +356,25 @@ tls_ocsp_verify_callback(SSL *ssl, void *arg)
 		return -1;
 
 	size = SSL_get_tlsext_status_ocsp_resp(ssl, &raw);
-	if (size <= 0) {
-		ctx->ocsp_result = NULL;
+	if (size <= 0)
 		return 1;
-	}
 
 	peer = SSL_get_peer_certificate(ssl);
 	if (!peer) {
-		ctx->ocsp_result = "no-peer-cert";
+		tls_set_errorx(ctx, "ocsp verify failed: no peer cert");
 		goto error;
 	}
 
 	resp = d2i_OCSP_RESPONSE(NULL, &raw, size);
 	if (!resp) {
-		ctx->ocsp_result = "parse-failed";
+		tls_set_errorx(ctx, "ocsp verify failed: parse failed");
 		goto error;
 	}
 
 	extra_certs = SSL_get_peer_cert_chain(ssl);
-	res = tls_ocsp_verify_response(ctx, peer, extra_certs, ctx->ssl_ctx, resp, NULL);
+	res = tls_ocsp_verify_response(ctx, peer, extra_certs, ctx->ssl_ctx, resp);
 error:
+	tls_ocsp_fill_result(ctx, res);
 	OCSP_RESPONSE_free(resp);
 	X509_free(peer);
 	return (res == 0) ? 1 : 0;
@@ -469,31 +425,6 @@ err:
  * Query OCSP responder over HTTP(S).
  */
 
-struct tls_ocsp_query {
-	/* responder location */
-	char *ocsp_url;
-	char *host;
-	char *port;
-	char *path;
-	int https;
-
-	/* was nonce sent? */
-	int use_nonce;
-
-	/* state */
-	OCSP_REQUEST *ocsp_req;
-	OCSP_REQ_CTX *http_req;
-
-	/* connection to responder */
-	BIO *bio;
-	SSL_CTX *ssl_ctx;
-
-	/* cert data, this struct does not own these */
-	X509 *main_cert;
-	STACK_OF(X509) *extra_certs;
-	SSL_CTX *cert_ssl_ctx;
-};
-
 void
 tls_ocsp_client_free(struct tls *ctx)
 {
@@ -502,15 +433,13 @@ tls_ocsp_client_free(struct tls *ctx)
 		return;
 	q = ctx->ocsp_query;
 	if (q) {
-		free(q->host);
-		free(q->port);
-		free(q->path);
-
-		OCSP_REQUEST_free(q->ocsp_req);
 		if (q->http_req)
 			OCSP_REQ_CTX_free(q->http_req);
 		BIO_free_all(q->bio);
 		SSL_CTX_free(q->ssl_ctx);
+
+		free(q->ocsp_url);
+		free(q->request_data);
 		free(q);
 
 		ctx->ocsp_query = NULL;
@@ -543,6 +472,8 @@ tls_build_ocsp_request(struct tls *ctx)
 	OCSP_REQUEST *req = NULL;
 	OCSP_CERTID *cid = NULL;
 	OCSP_ONEREQ *onereq = NULL;
+	BIO *mem = NULL;
+	void *data;
 
 	q = ctx->ocsp_query;
 
@@ -565,33 +496,46 @@ tls_build_ocsp_request(struct tls *ctx)
 	}
 	cid = NULL;
 
-	if (USE_NONCE) {
-		ok = OCSP_request_add1_nonce(req, NULL, -1);
-		if (ok != 1) {
-			tls_set_error_libssl(ctx, "Cannot add nonce");
-			goto failed;
-		}
-		q->use_nonce = 1;
+	/*
+	 * Now render it.
+	 */
+
+	mem = BIO_new(BIO_s_mem());
+	if (!mem) {
+		tls_set_errorx(ctx, "BIO_new");
+		goto failed;
 	}
 
-	q->ocsp_req = req;
+	ok = i2d_OCSP_REQUEST_bio(mem, req);
+	if (!ok) {
+		tls_set_error_libssl(ctx, "i2d_OCSP_RESPONSE_bio");
+		goto failed;
+	}
+	q->request_size = BIO_get_mem_data(mem, &data);
+	q->request_data = malloc(q->request_size);
+	if (!q->request_data) {
+		tls_set_error(ctx, "Failed to allocate request data");
+		goto failed;
+	}
+	memcpy(q->request_data, data, q->request_size);
+
 	req = NULL;
 	ret = 0;
 failed:
 	OCSP_CERTID_free(cid);
 	OCSP_REQUEST_free(req);
+	BIO_free(mem);
 	return ret;
 }
 
 static int
-tls_ocsp_setup(struct tls **ocsp_ctx_p, int *fd_p, struct tls_config *config, struct tls *target)
+tls_ocsp_setup(struct tls **ocsp_ctx_p, struct tls_config *config, struct tls *target)
 {
 	struct tls *ctx;
 	struct tls_ocsp_query *q;
-	int ret, ok;
+	int ret;
 	STACK_OF(OPENSSL_STRING) *ocsp_urls;
 
-	*fd_p = -1;
 	ctx = tls_ocsp_client_new();
 	if (!ctx)
 		return -1;
@@ -632,12 +576,6 @@ tls_ocsp_setup(struct tls **ocsp_ctx_p, int *fd_p, struct tls_config *config, st
 		goto failed;
 	}
 
-	ok = OCSP_parse_url(q->ocsp_url, &q->host, &q->port, &q->path, &q->https);
-	if (ok != 1) {
-		tls_set_error_libssl(ctx, "Cannot parse URL");
-		goto failed;
-	}
-
 	ret = tls_build_ocsp_request(ctx);
 	if (ret != 0)
 		goto failed;
@@ -657,9 +595,8 @@ tls_ocsp_process_response_parsed(struct tls *ctx, struct tls_config *config, OCS
 	size_t len;
 	unsigned char *data;
 	int ret = -1, ok, res;
-	OCSP_REQUEST *nonce_req = q->use_nonce ? q->ocsp_req : NULL;
 
-	res = tls_ocsp_verify_response(ctx, q->main_cert, q->extra_certs, q->cert_ssl_ctx, resp, nonce_req);
+	res = tls_ocsp_verify_response(ctx, q->main_cert, q->extra_certs, q->cert_ssl_ctx, resp);
 	if (res < 0)
 		goto failed;
 
@@ -682,58 +619,30 @@ tls_ocsp_process_response_parsed(struct tls *ctx, struct tls_config *config, OCS
 	}
 	ret = 0;
 failed:
-	OCSP_RESPONSE_free(resp);
 	BIO_free(mem);
-
-	/* release own data early */
-	tls_ocsp_client_free(ctx);
-
+	tls_ocsp_fill_result(ctx, ret);
 	return ret;
 }
 
 static int
-tls_ocsp_create_request(struct tls **ocsp_ctx_p, struct tls_config *config, struct tls *target,
-			char **ocsp_url, void **request_blob, size_t *request_size)
+tls_ocsp_create_request(struct tls **ocsp_ctx_p,
+			struct tls_config *config, struct tls *target,
+			char **ocsp_url,
+			void **request_blob, size_t *request_size)
 {
 	int res;
-	BIO *mem = NULL;
-	int ok;
-	void *data = NULL;
-	ssize_t size;
-	struct tls *ctx;
+	struct tls_ocsp_query *q;
 
-	res = tls_ocsp_setup(ocsp_ctx_p, NULL, config, target);
+	res = tls_ocsp_setup(ocsp_ctx_p, config, target);
 	if (res != 0)
 		return res;
-	res = -1;
-	ctx = *ocsp_ctx_p;
+	q = (*ocsp_ctx_p)->ocsp_query;
 
-	mem = BIO_new(BIO_s_mem());
-	if (!mem) {
-		tls_set_error_libssl(ctx, "BIO_new");
-		goto failed;
-	}
+	*ocsp_url = q->ocsp_url;
+	*request_blob = q->request_data;
+	*request_size = q->request_size;
 
-	ok = i2d_OCSP_REQUEST_bio(mem, ctx->ocsp_query->ocsp_req);
-	if (!ok) {
-		tls_set_error_libssl(ctx, "i2d_OCSP_RESPONSE_bio");
-		goto failed;
-	}
-	size = BIO_get_mem_data(mem, &data);
-	if (size <= 0) {
-		tls_set_error_libssl(ctx, "Invalid data length");
-		goto failed;
-	}
-	*request_blob = malloc(size);
-	if (!*request_blob) {
-		tls_set_error(ctx, "Failed to allocate request data");
-		goto failed;
-	}
-	memcpy(*request_blob, data, size);
-	res = 0;
-failed:
-	BIO_free(mem);
-	return res;
+	return 0;
 }
 
 /*
@@ -767,7 +676,7 @@ tls_ocsp_process_response(struct tls *ctx, const void *response_blob, size_t siz
 	resp = d2i_OCSP_RESPONSE(NULL, &raw, size);
 	if (!resp) {
 		ctx->ocsp_result = "parse-failed";
-		tls_set_errorx(ctx, "parse failed");
+		tls_set_error_libssl(ctx, "parse failed");
 		return -1;
 	}
 	ret = tls_ocsp_process_response_parsed(ctx, ctx->config, resp);
@@ -784,35 +693,63 @@ tls_ocsp_build_http_req(struct tls *ctx)
 {
 	struct tls_ocsp_query *q = ctx->ocsp_query;
 	int ok;
+	OCSP_REQUEST *req;
 	OCSP_REQ_CTX *sreq;
+	const unsigned char *data;
+	int ret=-1, https=0;
+	char *host=NULL, *port=NULL, *path=NULL;
 
-	sreq = OCSP_sendreq_new(q->bio, q->path, NULL, -1);
-	if (!sreq)
+	ok = OCSP_parse_url(q->ocsp_url, &host, &port, &path, &https);
+	if (ok != 1) {
+		tls_set_error_libssl(ctx, "Cannot parse URL");
 		goto failed;
+	}
+
+	sreq = OCSP_sendreq_new(q->bio, path, NULL, -1);
+	if (!sreq) {
+		tls_set_error_libssl(ctx, "OCSP HTTP request setup failed");
+		goto failed;
+	}
 	q->http_req = sreq;
 
-	ok = OCSP_REQ_CTX_add1_header(sreq, "Host", q->host);
+	ok = OCSP_REQ_CTX_add1_header(sreq, "Host", host);
 
 	/* add payload after headers */
-	if (ok)
-		ok = OCSP_REQ_CTX_set1_req(sreq, q->ocsp_req);
+	if (ok) {
+		data = q->request_data;
+		req = d2i_OCSP_REQUEST(NULL, &data, q->request_size);
+		if (req)
+			ok = OCSP_REQ_CTX_set1_req(sreq, req);
+		else
+			ok = false;
+		OCSP_REQUEST_free(req);
+	}
 
 	if (ok)
-		return 0;
+		ret = 0;
 failed:
-	tls_set_error_libssl(ctx, "OCSP HTTP request setup failed");
-	return -1;
+	free(host);
+	free(port);
+	free(path);
+	return ret;
 }
 
 static int
 tls_ocsp_connection_setup(struct tls *ctx)
 {
 	SSL *ssl = NULL;
-	int ret = -1;
+	int ret = -1, ok, https=0;
 	struct tls_ocsp_query *q = ctx->ocsp_query;
 	union { struct in_addr ip4; struct in6_addr ip6; } addrbuf;
+	char *host=NULL, *port=NULL, *path=NULL;
 
-	if (q->https) {
+	ok = OCSP_parse_url(q->ocsp_url, &host, &port, &path, &https);
+	if (ok != 1) {
+		tls_set_error_libssl(ctx, "Cannot parse URL");
+		goto failed;
+	}
+
+	if (https) {
 		q->ssl_ctx = SSL_CTX_new(SSLv23_client_method());
 		if (!q->ssl_ctx) {
 			tls_set_error_libssl(ctx, "Cannot init SSL");
@@ -826,13 +763,13 @@ tls_ocsp_connection_setup(struct tls *ctx)
 
 		q->bio = BIO_new_ssl_connect(q->ssl_ctx);
 		if (q->bio) {
-			if (inet_pton(AF_INET, q->host, &addrbuf) != 1 &&
-			    inet_pton(AF_INET6, q->host, &addrbuf) != 1) {
+			if (inet_pton(AF_INET, host, &addrbuf) != 1 &&
+			    inet_pton(AF_INET6, host, &addrbuf) != 1) {
 				if (!BIO_get_ssl(q->bio, &ssl)) {
 					tls_set_errorx(ctx, "cannot get ssl struct");
 					goto failed;
 				}
-				if (SSL_set_tlsext_host_name(ssl, q->host) == 0) {
+				if (SSL_set_tlsext_host_name(ssl, host) == 0) {
 					tls_set_errorx(ctx, "server name indication failure");
 					goto failed;
 				}
@@ -847,11 +784,14 @@ tls_ocsp_connection_setup(struct tls *ctx)
 		goto failed;
 	}
 
-	BIO_set_conn_hostname(q->bio, q->host);
-	BIO_set_conn_port(q->bio, q->port);
+	BIO_set_conn_hostname(q->bio, host);
+	BIO_set_conn_port(q->bio, port);
 	BIO_set_nbio(q->bio, 1);
 	ret = 0;
 failed:
+	free(host);
+	free(port);
+	free(path);
 	return ret;
 }
 
@@ -866,13 +806,13 @@ tls_ocsp_evloop(struct tls *ctx, int *fd_p, struct tls_config *config)
 		ok = BIO_do_connect(q->bio);
 		if (ok != 1 && !BIO_should_retry(q->bio)) {
 			tls_set_error_libssl(ctx, "Connection failure");
-			return -1;
+			goto error;
 		}
 
 		*fd_p = BIO_get_fd(q->bio, NULL);
 		if (*fd_p < 0) {
 			tls_set_error_libssl(ctx, "Cannot get FD");
-			return -1;
+			goto error;
 		}
 
 		if (ok != 1)
@@ -880,7 +820,7 @@ tls_ocsp_evloop(struct tls *ctx, int *fd_p, struct tls_config *config)
 
 		ret = tls_ocsp_build_http_req(ctx);
 		if (ret != 0)
-			return ret;
+			goto error;
 	}
 
 	ok = OCSP_sendreq_nbio(&ocsp_resp, q->http_req);
@@ -889,7 +829,7 @@ tls_ocsp_evloop(struct tls *ctx, int *fd_p, struct tls_config *config)
 		return ret;
 	} else if (ok == 0) {
 		tls_set_error_libssl(ctx, "OCSP request failed");
-		return -1;
+		goto error;
 	} else if (BIO_should_read(q->bio)) {
 		return TLS_WANT_POLLIN;
 	} else if (BIO_should_write(q->bio)) {
@@ -897,6 +837,8 @@ tls_ocsp_evloop(struct tls *ctx, int *fd_p, struct tls_config *config)
 	}
 
 	tls_set_error_libssl(ctx, "Unexpected request error");
+error:
+	tls_ocsp_fill_result(ctx, -1);
 	return -1;
 }
 
@@ -935,7 +877,7 @@ tls_ocsp_query_async(struct tls **ocsp_ctx_p, int *fd_p, struct tls_config *conf
 	int ret;
 
 	if (!ctx) {
-		ret = tls_ocsp_setup(&ctx, fd_p, config, target);
+		ret = tls_ocsp_setup(&ctx, config, target);
 		if (ret != 0)
 			goto failed;
 		ret = tls_ocsp_connection_setup(ctx);

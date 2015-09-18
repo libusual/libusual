@@ -283,7 +283,8 @@ tls_config_set_key_mem(struct tls_config *config, const uint8_t *key,
 int
 tls_config_set_ocsp_stapling_file(struct tls_config *config, const char *blob_file)
 {
-	tls_config_set_ocsp_stapling_mem(config, NULL, 0);
+	if (blob_file != NULL)
+		tls_config_set_ocsp_stapling_mem(config, NULL, 0);
 
 	return set_string(&config->ocsp_file, blob_file);
 }
@@ -291,7 +292,8 @@ tls_config_set_ocsp_stapling_file(struct tls_config *config, const char *blob_fi
 int
 tls_config_set_ocsp_stapling_mem(struct tls_config *config, const uint8_t *blob, size_t len)
 {
-	tls_config_set_ocsp_stapling_file(config, NULL);
+	if (blob != NULL)
+		tls_config_set_ocsp_stapling_file(config, NULL);
 
 	return set_mem(&config->ocsp_mem, &config->ocsp_len, blob, len);
 }

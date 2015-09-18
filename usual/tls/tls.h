@@ -146,10 +146,11 @@ int tls_get_ocsp_info(struct tls *ctx, int *response_status, int *cert_status, i
 
 int tls_ocsp_check_peer_request(struct tls **ocsp_ctx_p, struct tls *target,
 			    char **ocsp_url, void **request_blob, size_t *request_size);
-int tls_ocsp_refresh_stapling_request(struct tls **ocsp_ctx_p, struct tls_config *config,
-			    char **ocsp_url, void **request_blob, size_t *request_size);
-int tls_ocsp_process_response(struct tls *ocsp_ctx, const void *response_blob, size_t size);
 
+int tls_ocsp_refresh_stapling_request(struct tls **ocsp_ctx_p, struct tls_config *config,
+		char **ocsp_url, void **request_blob, size_t *request_size);
+
+int tls_ocsp_process_response(struct tls *ctx, const void *response_blob, size_t size);
 
 #ifdef __cplusplus
 }
