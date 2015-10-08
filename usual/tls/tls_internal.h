@@ -100,6 +100,8 @@ struct tls_conninfo {
 	char *fingerprint;
 	char *version;
 	char *cipher;
+	time_t notbefore;
+	time_t notafter;
 };
 
 #define TLS_CLIENT		(1 << 0)
@@ -180,5 +182,7 @@ void tls_ocsp_client_free(struct tls *ctx);
 void tls_ocsp_info_free(struct tls_ocsp_info *info);
 
 int tls_asn1_parse_time(struct tls *ctx, const ASN1_TIME *asn1time, time_t *dst);
+
+int asn1_time_parse(const char *, size_t, struct tm *, int);
 
 #endif /* HEADER_TLS_INTERNAL_H */
