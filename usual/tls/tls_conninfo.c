@@ -166,17 +166,17 @@ tls_free_conninfo(struct tls_conninfo *conninfo) {
 const char *
 tls_conn_cipher(struct tls *ctx)
 {
-	if (ctx->conninfo)
-		return (ctx->conninfo->cipher);
-	return NULL;
+	if (ctx->conninfo == NULL)
+		return (NULL);
+	return (ctx->conninfo->cipher);
 }
 
 const char *
 tls_conn_version(struct tls *ctx)
 {
-	if (ctx->conninfo)
-		return (ctx->conninfo->version);
-	return NULL;
+	if (ctx->conninfo == NULL)
+		return (NULL);
+	return (ctx->conninfo->version);
 }
 
 #endif
