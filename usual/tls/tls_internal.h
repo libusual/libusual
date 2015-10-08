@@ -19,6 +19,9 @@
 #ifndef HEADER_TLS_INTERNAL_H
 #define HEADER_TLS_INTERNAL_H
 
+#include <arpa/inet.h>
+#include <netinet/in.h>
+
 #include <openssl/ssl.h>
 
 #define _PATH_SSL_CA_FILE USUAL_TLS_CA_FILE
@@ -57,6 +60,11 @@
  * Same as "normal" but prefers AES128 to AES256.
  */
 #define TLS_CIPHERS_FAST	"HIGH+EECDH:HIGH+EDH:HIGH+RSA:+AES256:+SHA256:+SHA384:+SSLv3:+EDH:+RSA:-3DES:3DES+RSA:!CAMELLIA:!DSS:!aNULL"
+
+union tls_addr {
+	struct in_addr ip4;
+	struct in6_addr ip6;
+};
 
 struct tls_config {
 	const char *ca_file;
