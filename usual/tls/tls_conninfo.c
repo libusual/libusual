@@ -126,7 +126,7 @@ tls_get_peer_cert_subject(struct tls *ctx, char **subject)
 
 int
 tls_get_conninfo(struct tls *ctx) {
-	int rv = -1;
+	const char * tmp;
 	if (ctx->ssl_peer_cert != NULL) {
 		if (tls_get_peer_cert_hash(ctx, &ctx->conninfo->hash) == -1)
 			goto err;
@@ -135,16 +135,21 @@ tls_get_conninfo(struct tls *ctx) {
 			goto err;
 		if (tls_get_peer_cert_issuer(ctx, &ctx->conninfo->issuer) == -1)
 			goto err;
-		ctx->conninfo->version = strdup(SSL_get_version(ctx->ssl_conn));
-		if (ctx->conninfo->version == NULL)
-			goto err;
-		ctx->conninfo->cipher = strdup(SSL_get_cipher(ctx->ssl_conn));
-		if (ctx->conninfo->cipher == NULL)
-			goto err;
 	}
-	rv = 0;
+	if ((tmp = SSL_get_version(ctx->ssl_conn)) == NULL)
+		goto err;
+	ctx->conninfo->version = strdup(tmp);
+	if (ctx->conninfo->version == NULL)
+		goto err;
+	if ((tmp = SSL_get_cipher(ctx->ssl_conn)) == NULL)
+		goto err;
+	ctx->conninfo->cipher = strdup(tmp);
+	if (ctx->conninfo->cipher == NULL)
+		goto err;
+	return (0);
 err:
-	return (rv);
+	tls_free_conninfo(ctx->conninfo);
+	return (-1);
 }
 
 void
