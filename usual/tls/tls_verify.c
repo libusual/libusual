@@ -85,7 +85,10 @@ static int
 tls_check_subject_altname(struct tls *ctx, X509 *cert, const char *name)
 {
 	STACK_OF(GENERAL_NAME) *altname_stack = NULL;
-	union { struct in_addr ip4; struct in6_addr ip6; } addrbuf;
+	union {
+		struct in_addr ip4;
+		struct in6_addr ip6;
+	} addrbuf;
 	int addrlen, type;
 	int count, i;
 	int rv = -1;
@@ -198,7 +201,10 @@ tls_check_common_name(struct tls *ctx, X509 *cert, const char *name)
 	char *common_name = NULL;
 	int common_name_len;
 	int rv = -1;
-	union { struct in_addr ip4; struct in6_addr ip6; } addrbuf;
+	union {
+		struct in_addr ip4;
+		struct in6_addr ip6;
+	} addrbuf;
 
 	subject_name = X509_get_subject_name(cert);
 	if (subject_name == NULL)

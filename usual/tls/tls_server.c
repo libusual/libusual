@@ -95,7 +95,7 @@ tls_configure_server(struct tls *ctx)
 
 	if (ctx->config->ciphers_server == 1)
 		SSL_CTX_set_options(ctx->ssl_ctx,
-		    SSL_OP_CIPHER_SERVER_PREFERENCE); 
+		    SSL_OP_CIPHER_SERVER_PREFERENCE);
 
 	if (SSL_CTX_set_tlsext_status_cb(ctx->ssl_ctx, tls_ocsp_stapling_callback) != 1) {
 		tls_set_errorx(ctx, "ssl OCSP stapling setup failure");
@@ -132,7 +132,7 @@ int
 tls_accept_fds(struct tls *ctx, struct tls **cctx, int fd_read, int fd_write)
 {
 	struct tls *conn_ctx = NULL;
-	
+
 	if ((ctx->flags & TLS_SERVER) == 0) {
 		tls_set_errorx(ctx, "not a server context");
 		goto err;

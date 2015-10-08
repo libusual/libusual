@@ -162,7 +162,10 @@ int
 tls_connect_fds(struct tls *ctx, int fd_read, int fd_write,
     const char *servername)
 {
-	union { struct in_addr ip4; struct in6_addr ip6; } addrbuf;
+	union {
+		struct in_addr ip4;
+		struct in6_addr ip6;
+	} addrbuf;
 	int rv = -1;
 
 	if ((ctx->flags & TLS_CLIENT) == 0) {

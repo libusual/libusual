@@ -357,7 +357,7 @@ tls_configure_ssl_verify(struct tls *ctx, int verify)
 			goto err;
 		}
 	} else if (SSL_CTX_load_verify_locations(ctx->ssl_ctx,
-            ctx->config->ca_file, ctx->config->ca_path) != 1) {
+	    ctx->config->ca_file, ctx->config->ca_path) != 1) {
 		tls_set_errorx(ctx, "ssl verify setup failure");
 		goto err;
 	}
