@@ -66,6 +66,31 @@ size_t strlcpy(char *dst, const char *src, size_t n);
 size_t strlcat(char *dst, const char *src, size_t n);
 #endif
 
+#undef strpcpy
+#define strpcpy(a,b,c) usual_strpcpy(a,b,c)
+
+/**
+ * Safe string copy.
+ *
+ * Returns pointer to end of string in dst or NULL
+ * if truncation occured.  Destination will be
+ * zero-terminated unless dstlen is 0.
+ */
+char *strpcpy(char *dst, const char *src, size_t dstlen);
+
+#undef strpcat
+#define strpcat(a,b,c) usual_strpcat(a,b,c)
+
+/**
+ * Safe string concat.
+ *
+ * Returns pointer to end of string in dst or NULL if truncation occured.
+ * Destination will be zero-terminated, unless dstlen is 0 or existing
+ * contents were not zero-terminated.
+ */
+char *strpcat(char *dst, const char *src, size_t dstlen);
+
+
 #ifndef HAVE_MEMRCHR
 #define memrchr(a,b,c) usual_memrchr(a,b,c)
 /** Compat: find byte in reverse direction */
@@ -76,6 +101,12 @@ void *memrchr(const void *s, int c, size_t n);
 #define memmem(a,b,c,d) usual_memmem(a,b,c,d)
 /** Compat: find memory area */
 void *memmem(const void *s, size_t slen, const void *q, size_t qlen);
+#endif
+
+#ifndef HAVE_MEMPCPY
+#define mempcpy(a,b,c) usual_mempcpy(a,b,c)
+/** Copy memory, return pointer to end. */
+void *mempcpy(void *dst, const void *src, size_t len);
 #endif
 
 /** Return position to first byte that is in 'find'. */

@@ -216,6 +216,34 @@ size_t strlcat(char *dst, const char *src, size_t n)
 }
 #endif
 
+char *strpcpy(char *dst, const char *src, size_t n)
+{
+	if (n == 0)
+		return NULL;
+	for (; n > 0; n--, dst++, src++) {
+		if ((*dst = *src) == '\0')
+			return dst;
+	}
+	dst[-1] = '\0';
+	return NULL;
+}
+
+char *strpcat(char *dst, const char *src, size_t n)
+{
+	size_t dstlen = strnlen(dst, n);
+	if (dstlen < n)
+		return strpcpy(dst + dstlen, src, n - dstlen);
+	return NULL;
+}
+
+#ifndef HAVE_MEMPCPY
+void *mempcpy(void *dst, const void *src, size_t n)
+{
+	memcpy(dst, src, n);
+	return (char *)(dst) + n;
+}
+#endif
+
 #ifndef HAVE_MEMRCHR
 void *memrchr(const void *s, int c, size_t n)
 {

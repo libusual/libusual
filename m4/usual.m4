@@ -210,8 +210,9 @@ dnl
 AC_DEFUN([AC_USUAL_FUNCTION_CHECK], [
 ### Functions provided if missing
 dnl AC_CHECK_FUNCS(basename dirname) # unstable, provide always
-AC_CHECK_FUNCS(strlcpy strlcat strsep memmem getpeereid sigaction sigqueue)
-AC_CHECK_FUNCS(inet_ntop inet_pton poll getline memrchr regcomp)
+AC_CHECK_FUNCS(strlcpy strlcat strsep getpeereid sigaction sigqueue)
+AC_CHECK_FUNCS(memmem memrchr mempcpy)
+AC_CHECK_FUNCS(inet_ntop inet_pton poll getline regcomp)
 AC_CHECK_FUNCS(err errx warn warnx getprogname setprogname)
 AC_CHECK_FUNCS(posix_memalign memalign valloc explicit_bzero memset_s reallocarray)
 AC_CHECK_FUNCS(getopt getopt_long getopt_long_only)

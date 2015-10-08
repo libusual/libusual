@@ -143,6 +143,119 @@ end:;
 }
 
 /*
+ * mempcpy
+ */
+
+static void test_mempcpy(void *p)
+{
+	char buf[128];
+	memset(buf, 0, sizeof buf);
+	tt_assert(mempcpy(buf, "xx", 0) == buf);  str_check(buf, "");
+	tt_assert(mempcpy(buf, "xx", 1) == buf+1);  str_check(buf, "x");
+	tt_assert(mempcpy(buf, "yy", 2) == buf+2);  str_check(buf, "yy");
+end:;
+}
+
+/*
+ * strpcpy
+ */
+
+static int run_strpcpy(char *dst, const char *src, int size)
+{
+	char *res;
+	memcpy(dst, "XXX", 4);
+	res = strpcpy(dst, src, size);
+	if (res == NULL) {
+		if (size == 0) {
+			if (strcmp(dst, "XXX") != 0)
+				return -10;
+		} else {
+			if (memcmp(dst, src, size - 1) != 0)
+				return -11;
+			if (dst[size-1] !=  '\0')
+				return -12;
+		}
+		return -1;
+	}
+	if (*res != '\0')
+		return -13;
+	if (memcmp(dst, src, res-dst) != 0)
+		return -14;
+	if (res < dst)
+		return -15;
+	return res - dst;
+}
+
+static void test_strpcpy(void *p)
+{
+	char buf[128];
+	memset(buf, 0, sizeof buf);
+	int_check(run_strpcpy(buf, "", 0), -1);
+	int_check(run_strpcpy(buf, "", 1), 0);
+	int_check(run_strpcpy(buf, "a", 0), -1);
+	int_check(run_strpcpy(buf, "a", 1), -1);
+	int_check(run_strpcpy(buf, "a", 2), 1);
+	int_check(run_strpcpy(buf, "asd", 1), -1);
+	int_check(run_strpcpy(buf, "asd", 2), -1);
+	int_check(run_strpcpy(buf, "asd", 3), -1);
+	int_check(run_strpcpy(buf, "asd", 4), 3);
+	int_check(run_strpcpy(buf, "asd", 5), 3);
+end:;
+}
+
+/*
+ * strpcat
+ */
+
+static int run_strpcat(char *dst, const char *src, int size)
+{
+	char *res;
+	char copydst[1024];
+	char copy[1024];
+	strlcpy(copydst, dst, sizeof copy);
+	strlcpy(copy, dst, sizeof copy);
+	strlcat(copy, src, sizeof copy);
+	res = strpcat(dst, src, size);
+	if (res == NULL) {
+		if (size == 0) {
+			if (strcmp(dst, copydst) != 0)
+				return -10;
+		} else {
+			if (memcmp(dst, copy, size - 1) != 0)
+				return -11;
+			if (dst[size-1] !=  '\0')
+				return -12;
+		}
+		return -1;
+	}
+	if (*res != '\0')
+		return -13;
+	if (memcmp(dst, copy, res-dst) != 0)
+		return -14;
+	if (res < dst)
+		return -15;
+	return res - dst;
+}
+
+static void test_strpcat(void *p)
+{
+	char buf[128];
+	memset(buf, 0, sizeof buf);
+	int_check(run_strpcat(buf, "", 0), -1);
+	int_check(run_strpcat(buf, "", 1), 0);
+	int_check(run_strpcat(buf, "a", 1), -1);
+	int_check(run_strpcat(buf, "a", 2), 1);
+	str_check(buf, "a");
+
+	int_check(run_strpcat(buf, "b", 0), -1);
+	int_check(run_strpcat(buf, "b", 1), -12);
+	int_check(run_strpcat(buf, "b", 2), -1);
+	int_check(run_strpcat(buf, "b", 3), 2);
+	str_check(buf, "ab");
+end:;
+}
+
+/*
  * basename
  */
 
@@ -500,7 +613,10 @@ struct testcase_t string_tests[] = {
 	{ "mempbrk", test_mempbrk },
 	{ "memcspn", test_memcspn },
 	{ "memspn", test_memspn},
+	{ "mempcpy", test_mempcpy },
 	{ "strsep", test_strsep },
+	{ "strpcpy", test_strpcpy },
+	{ "strpcat", test_strpcat },
 	{ "basename", test_basename },
 	{ "dirname", test_dirname },
 	{ "strlist", test_strlist },
