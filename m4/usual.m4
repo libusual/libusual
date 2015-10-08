@@ -127,16 +127,6 @@ AC_SUBST(WFLAGS)
 
 AC_PROG_INSTALL
 
-dnl Convert relative path to absolute path.
-case "$ac_install_sh" in
-./*)  ac_install_sh="`pwd`/${ac_install_sh}" ;;
-../*) ac_install_sh="`pwd`/${ac_install_sh}" ;;
-esac
-case "$INSTALL" in
-./*)  INSTALL="`pwd`/${INSTALL}" ;;
-../*) INSTALL="`pwd`/${INSTALL}" ;;
-esac
-
 AC_PROG_LN_S
 AC_PROG_EGREP
 AC_PROG_AWK
@@ -154,6 +144,20 @@ m4_ifdef([AC_PROG_SED], [
   SED="sed"
   AC_SUBST(SED)
 ])
+
+dnl Convert relative path to absolute path.
+case "$ac_install_sh" in
+./*)  ac_install_sh="`pwd`/${ac_install_sh}" ;;
+../*) ac_install_sh="`pwd`/${ac_install_sh}" ;;
+esac
+case "$INSTALL" in
+./*)  INSTALL="`pwd`/${INSTALL}" ;;
+../*) INSTALL="`pwd`/${INSTALL}" ;;
+esac
+case "$MKDIR_P" in
+./*)  MKDIR_P="`pwd`/${MKDIR_P}" ;;
+../*) MKDIR_P="`pwd`/${MKDIR_P}" ;;
+esac
 
 AC_CHECK_TOOL([STRIP], [strip])
 AC_CHECK_TOOL([RANLIB], [ranlib], [true])
