@@ -1,8 +1,11 @@
 
 #include <usual/tls/tls.h>
 #include <usual/tls/tls_cert.h>
+#include <usual/tls/tls_internal.h>
 #include <usual/err.h>
 #include <usual/time.h>
+#include <usual/socket.h>
+#include <usual/signal.h>
 
 #ifdef USUAL_LIBSSL_FOR_TLS
 #include <openssl/crypto.h>
@@ -30,6 +33,66 @@ static void show_ocsp_info(const char *desc, struct tls *ctx)
 		show_time("  revocation", revocation_time);
 	}
 }
+
+static void ignore_sigpipe(void)
+{
+#ifndef WIN32
+	static bool done;
+	sigset_t set;
+	int ret;
+
+	if (done)
+		return;
+
+	/* block SIGPIPE */
+	sigemptyset(&set);
+	sigaddset(&set, SIGPIPE);
+	ret = sigprocmask(SIG_BLOCK, &set, NULL);
+	if (ret < 0)
+		err(1, "sigprocmask");
+	done = true;
+#endif
+}
+
+static void test_context(struct tls *ctx)
+{
+	char buf[2*1024*1024], *ptr = buf;
+	ssize_t ret, len = sizeof buf;
+	struct pollfd pfd;
+
+	ignore_sigpipe();
+
+	memset(buf, 'X', len);
+
+	buf[len - 4] = ':';
+	buf[len - 3] = 'x';
+	buf[len - 2] = '\r';
+	buf[len - 1] = '\n';
+loop:
+	len = sizeof buf;
+	ptr = buf;
+
+	while (len > 0) {
+		ret = tls_write(ctx, ptr, len);
+		if (ret <= 0)
+			printf("tls_write(%d) = %d\n", (int)len, (int)ret);
+		if (ret > 0) {
+			len -= ret;
+			ptr += ret;
+		} else if (ret == TLS_WANT_POLLIN) {
+			continue;
+		} else if (ret == TLS_WANT_POLLOUT) {
+			continue;
+		} else {
+			printf("tls_write: %s\n", tls_error(ctx));
+			break;
+		}
+	}
+	if (len == 0)
+		goto loop;
+	printf("final len: %d\n", (int)len);
+}
+
 int main(int argc, char *argv[])
 {
 	struct tls_config *conf;
@@ -98,6 +161,8 @@ int main(int argc, char *argv[])
 	} else if (res == TLS_NO_OCSP) {
 		printf("OCSP responder: No OCSP support in libtls\n");
 	}
+
+	if (0) test_context(ctx);
 
 	tls_close(ctx);
 	tls_free(ctx);
