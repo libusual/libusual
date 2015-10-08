@@ -310,6 +310,115 @@ int SSL_CTX_load_verify_mem(SSL_CTX *ctx, void *data, int data_len)
 
 #endif
 
+#ifndef HAVE_ASN1_TIME_PARSE
+
+static int
+parse2num(const char **str_p, int min, int max)
+{
+	const char *s = *str_p;
+	if (s && s[0] >= '0' && s[0] <= '9' && s[1] >= '0' && s[1] <= '9') {
+		int val = (s[0] - '0') * 10 + (s[1] - '0');
+		if (val >= min && val <= max) {
+			*str_p += 2;
+			return val;
+		}
+	}
+	*str_p = NULL;
+	return 0;
+}
+
+int
+asn1_time_parse(const char *src, size_t len, struct tm *tm, int mode)
+{
+	char buf[16];
+	const char *s = buf;
+	int utctime;
+	int year;
+
+	memset(tm, 0, sizeof tm);
+
+	if (mode != 0)
+		return -1;
+
+	/*
+	 * gentime: YYYYMMDDHHMMSSZ
+	 * utctime: YYMMDDHHMM(SS)(Z)
+	 */
+	if (len == 15) {
+		utctime = 0;
+	} else if (len > 8 && len < 15) {
+		utctime = 1;
+	} else {
+		return -1;
+	}
+	memcpy(buf, src, len);
+	buf[len] = '\0';
+
+	year = parse2num(&s, 0, 99);
+	if (utctime) {
+		if (year < 50)
+			year = 2000 + year;
+		else
+			year = 1900 + year;
+	} else {
+		year = year*100 + parse2num(&s, 0, 99);
+	}
+	tm->tm_year = year - 1900;
+	tm->tm_mon = parse2num(&s, 1, 12) - 1;
+	tm->tm_mday = parse2num(&s, 1, 31);
+	tm->tm_hour = parse2num(&s, 0, 23);
+	tm->tm_min = parse2num(&s, 0, 59);
+	if (utctime) {
+		if (s && s[0] != 'Z' && s[0] != '\0')
+			tm->tm_sec = parse2num(&s, 0, 61);
+	} else {
+		tm->tm_sec = parse2num(&s, 0, 61);
+	}
+
+	if (s) {
+		if (s[0] == '\0')
+			goto good;
+		if (s[0] == 'Z' && s[1] == '\0')
+			goto good;
+	}
+	return -1;
+ good:
+	return 0;
+}
+
+#endif /* HAVE_ASN1_TIME_PARSE */
+
+int
+tls_asn1_parse_time(struct tls *ctx, const ASN1_TIME *asn1time, time_t *dst)
+{
+	struct tm tm;
+	int res;
+	time_t tval;
+
+	*dst = 0;
+	if (!asn1time)
+		return 0;
+	if (asn1time->type != V_ASN1_GENERALIZEDTIME &&
+	    asn1time->type != V_ASN1_UTCTIME) {
+		tls_set_errorx(ctx, "Invalid time object type: %d", asn1time->type);
+		return -1;
+	}
+
+	res = asn1_time_parse((char*)asn1time->data, asn1time->length, &tm, 0);
+	if (res != 0) {
+		tls_set_errorx(ctx, "Invalid asn1 time");
+		return -1;
+	}
+
+	tval = timegm(&tm);
+	if (tval == (time_t)-1) {
+		tls_set_error(ctx, "Cannot convert asn1 time");
+		return -1;
+	}
+	*dst = tval;
+	return 0;
+}
+
 #else /* !USUAL_LIBSSL_FOR_TLS */
 
 #include <usual/tls/tls_cert.h>

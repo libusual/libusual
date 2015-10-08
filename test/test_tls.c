@@ -958,6 +958,7 @@ static const char *run_time(const char *val)
 	memset(&tmbuf, 0, sizeof tmbuf);
 
 	tmp.data = (unsigned char*)val+2;
+	tmp.length = strlen(val+2);
 	if (val[0] == 'G' && val[1] == ':') {
 		tmp.type = V_ASN1_GENERALIZEDTIME;
 	} else if (val[0] == 'U' && val[1] == ':') {

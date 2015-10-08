@@ -139,11 +139,9 @@ tls_get_peer_cert_times(struct tls *ctx, time_t *notbefore, time_t *notafter)
 			goto err;
 		if ((after = X509_get_notAfter(ctx->ssl_peer_cert)) == NULL)
 			goto err;
-		if (asn1_time_parse(before->data, before->length, &before_tm, 0)
-		    == -1)
+		if (asn1_time_parse((char*)before->data, before->length, &before_tm, 0) == -1)
 			goto err;
-		if (asn1_time_parse(after->data, after->length, &after_tm, 0)
-		    == -1)
+		if (asn1_time_parse((char*)after->data, after->length, &after_tm, 0) == -1)
 			goto err;
 		if ((*notbefore = timegm(&before_tm)) == -1)
 			goto err;

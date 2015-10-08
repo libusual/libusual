@@ -465,7 +465,7 @@ if test "$tls_support" = "auto" -o "$tls_support" = "libssl"; then
     [ tls_support=yes; AC_MSG_RESULT([found])],
     [ AC_MSG_ERROR([not found]) ])
   dnl check LibreSSL-only APIs
-  AC_CHECK_FUNCS(SSL_CTX_use_certificate_chain_mem SSL_CTX_load_verify_mem)
+  AC_CHECK_FUNCS(SSL_CTX_use_certificate_chain_mem SSL_CTX_load_verify_mem asn1_time_parse)
   CPPFLAGS="$tmp_CPPFLAGS"
   LDFLAGS="$tmp_LDFLAGS"
   LIBS="$tmp_LIBS"
