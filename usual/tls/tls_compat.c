@@ -25,6 +25,11 @@
 
 #include <usual/tls/tls_internal.h>
 
+#ifndef SSL_F_SSL_CTX_USE_CERTIFICATE_CHAIN_FILE
+#undef SSLerr
+#undef X509err
+#endif
+
 #ifndef SSLerr
 #define SSLerr(a,b) do {} while (0)
 #define X509err(a,b) do {} while (0)

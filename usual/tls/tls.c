@@ -329,8 +329,8 @@ tls_configure_ssl(struct tls *ctx)
 
 #ifdef X509_V_FLAG_NO_CHECK_TIME
 	if (ctx->config->verify_time == 0) {
-		X509_VERIFY_PARAM_set_flags(ctx->ssl_ctx->param,
-		    X509_V_FLAG_NO_CHECK_TIME);
+		X509_VERIFY_PARAM *vfp = SSL_CTX_get0_param(ctx->ssl_ctx);
+		X509_VERIFY_PARAM_set_flags(vfp, X509_V_FLAG_NO_CHECK_TIME);
 	}
 #endif
 
