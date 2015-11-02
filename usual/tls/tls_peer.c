@@ -64,8 +64,6 @@ tls_peer_cert_contains_name(struct tls *ctx, const char *name)
 	return (tls_check_name(ctx, ctx->ssl_peer_cert, name) == 0);
 }
 
-#endif /* USUAL_LIBSSL_FOR_TLS */
-
 time_t
 tls_peer_cert_notbefore(struct tls *ctx)
 {
@@ -85,4 +83,6 @@ tls_peer_cert_notafter(struct tls *ctx)
 		return (-1);
 	return (ctx->conninfo->notafter);
 }
+
+#endif /* USUAL_LIBSSL_FOR_TLS */
 

@@ -454,15 +454,11 @@ void tls_config_prefer_ciphers_server(struct tls_config *_config) {}
 
 void tls_config_insecure_noverifycert(struct tls_config *_config) {}
 void tls_config_insecure_noverifyname(struct tls_config *_config) {}
+void tls_config_insecure_noverifytime(struct tls_config *_config) {}
 void tls_config_verify(struct tls_config *_config) {}
 
 void tls_config_verify_client(struct tls_config *_config) {}
 void tls_config_verify_client_optional(struct tls_config *_config) {}
-
-int tls_peer_cert_provided(struct tls *ctx) { return 0; }
-int tls_peer_cert_contains_name(struct tls *ctx, const char *name) { return 0; }
-int tls_peer_cert_issuer(struct tls *ctx, char **name) { return -1; }
-int tls_peer_cert_subject(struct tls *ctx, char **subject) { return -1; }
 
 void tls_config_clear_keys(struct tls_config *_config) {}
 int tls_config_parse_protocols(uint32_t *_protocols, const char *_protostr) { return -1; }
@@ -484,20 +480,36 @@ ssize_t tls_read(struct tls *_ctx, void *_buf, size_t _buflen) { return -1; }
 ssize_t tls_write(struct tls *_ctx, const void *_buf, size_t _buflen) { return -1; }
 int tls_close(struct tls *_ctx) { return -1; }
 
-int tls_peer_cert_hash(struct tls *_ctx, char **_hash) { return -1; }
+int tls_peer_cert_provided(struct tls *ctx) { return 0; }
+int tls_peer_cert_contains_name(struct tls *ctx, const char *name) { return 0; }
+
+const char *tls_peer_cert_hash(struct tls *_ctx) { return NULL; }
+const char *tls_peer_cert_issuer(struct tls *ctx) { return NULL; }
+const char *tls_peer_cert_subject(struct tls *ctx) { return NULL; }
+time_t tls_peer_cert_notbefore(struct tls *ctx) { return (time_t)-1; }
+time_t tls_peer_cert_notafter(struct tls *ctx) { return (time_t)-1; }
+
+const char *tls_conn_version(struct tls *ctx) { return "n/a"; }
+const char *tls_conn_cipher(struct tls *ctx) { return "n/a"; }
 
 uint8_t *tls_load_file(const char *_file, size_t *_len, char *_password) { return NULL; }
 
 ssize_t tls_get_connection_info(struct tls *ctx, char *buf, size_t buflen) { return -1; }
 
-int tls_get_peer_cert(struct tls *ctx, struct tls_cert **cert_p, const char *algo) { *cert_p = NULL; return -1; }
-void tls_cert_free(struct tls_cert *cert) {}
-
 int tls_ocsp_refresh_stapling(struct tls **ocsp_ctx_p, int *async_fd_p, struct tls_config *config) { return -1; }
 int tls_ocsp_check_peer(struct tls **ocsp_ctx_p, int *async_fd_p, struct tls *client) { return -1; }
+int tls_get_ocsp_info(struct tls *ctx, int *response_status, int *cert_status, int *crl_reason,
+		      time_t *this_update, time_t *next_update, time_t *revoction_time,
+		      const char **result_text) { return -1; }
 
-struct tls_ocsp_info *tls_get_ocsp_info(struct tls *ctx) { return NULL; }
-void tls_ocsp_info_free(struct tls_ocsp_info *info) {}
+int tls_ocsp_check_peer_request(struct tls **ocsp_ctx_p, struct tls *target,
+				char **ocsp_url, void **request_blob, size_t *request_size) { return -1; }
+
+int tls_ocsp_refresh_stapling_request(struct tls **ocsp_ctx_p, struct tls_config *config,
+				      char **ocsp_url, void **request_blob, size_t *request_size) { return -1; }
+
+int tls_get_peer_cert(struct tls *ctx, struct tls_cert **cert_p, const char *algo) { *cert_p = NULL; return -1; }
+void tls_cert_free(struct tls_cert *cert) {}
 
 
 #endif /* !USUAL_LIBSSL_FOR_TLS */
