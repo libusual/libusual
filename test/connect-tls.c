@@ -58,7 +58,6 @@ static void test_context(struct tls *ctx)
 {
 	char buf[2*1024*1024], *ptr = buf;
 	ssize_t ret, len = sizeof buf;
-	struct pollfd pfd;
 
 	ignore_sigpipe();
 
