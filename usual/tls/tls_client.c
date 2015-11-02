@@ -114,6 +114,7 @@ tls_connect_servername(struct tls *ctx, const char *host, const char *port,
 	}
 
 	/* It was resolved somehow; now try connecting to what we got */
+	s = -1;
 	for (res = res0; res; res = res->ai_next) {
 		s = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
 		if (s == -1) {
@@ -130,6 +131,9 @@ tls_connect_servername(struct tls *ctx, const char *host, const char *port,
 		break;  /* Connected. */
 	}
 	freeaddrinfo(res0);
+
+	if (s == -1)
+		goto err;
 
 	if (servername == NULL)
 		servername = h;
