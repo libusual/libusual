@@ -1313,7 +1313,7 @@ define MakeDist
 	$(Q) $(RM) -r -- $(AM_DIST_BASE) $(AM_DIST_BASE).$(AM_DIST_$(1)_EXT)
 	$(Q) $(call MkDir,$(AM_DIST_BASE))
 	$(E) "COPY" $(AM_DIST_BASE)
-	$(Q) $(MAKE) -s am-show-distfiles | cpio -pmdL --quiet $(AM_DIST_BASE)
+	$(Q) $(MAKE) -s am-show-distfiles | cpio -pmduL --quiet $(AM_DIST_BASE)
 	$(E) "PACK" $(AM_DIST_BASE).$(AM_FORMAT_$(1)_EXT)
 	$(Q) $(AM_FORMAT_$(1)_CMD)
 	$(Q) $(RM) -r -- $(AM_DIST_BASE)
