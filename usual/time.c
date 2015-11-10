@@ -18,6 +18,8 @@
 
 #include <usual/time.h>
 
+#include <usual/string.h>
+
 #include <stdio.h>
 
 char *format_time_ms(usec_t time, char *dst, unsigned dstlen)
@@ -204,7 +206,7 @@ time_t timegm(struct tm *tm)
 	}
 	tzset();
 	if (old && old != buf)
-		free(old)
+		free(old);
 	return secs;
 }
 
