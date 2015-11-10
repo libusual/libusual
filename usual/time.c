@@ -183,6 +183,9 @@ int getrusage(int who, struct rusage *dst)
 
 time_t timegm(struct tm *tm)
 {
+#ifdef WIN32
+	return _mkgmtime(tm);
+#else
 	char buf[128], *tz, *old = NULL;
 	time_t secs;
 
@@ -208,6 +211,7 @@ time_t timegm(struct tm *tm)
 	if (old && old != buf)
 		free(old);
 	return secs;
+#endif
 }
 
 #endif /* HAVE_TIMEGM */
