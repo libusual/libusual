@@ -19,10 +19,9 @@
 #ifndef HEADER_TLS_INTERNAL_H
 #define HEADER_TLS_INTERNAL_H
 
-#include <arpa/inet.h>
-#include <netinet/in.h>
-
 #include <openssl/ssl.h>
+
+#include <usual/socket.h>
 
 #define _PATH_SSL_CA_FILE USUAL_TLS_CA_FILE
 

@@ -24,6 +24,7 @@
 
 #include <openssl/x509.h>
 
+#include "../time.h"
 #include "tls_internal.h"
 
 static int
