@@ -75,13 +75,6 @@ struct tm *localtime_r(const time_t *tp, struct tm *buf);
 
 #endif
 
-#ifndef HAVE_TIMEGM
-#define timegm(tm) usual_timegm(tm)
-
-/** Compat: timegm() */
-time_t timegm(struct tm *tm);
-
-#endif
 
 #ifndef HAVE_USLEEP
 #define usleep(x) usual_usleep(x)
@@ -106,6 +99,14 @@ struct rusage {
 int getrusage(int who, struct rusage *dst);
 
 #endif
+
+#endif
+
+#ifndef HAVE_TIMEGM
+#define timegm(tm) usual_timegm(tm)
+
+/** Compat: timegm() */
+time_t timegm(struct tm *tm);
 
 #endif
 
