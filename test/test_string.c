@@ -72,6 +72,26 @@ static void test_strlcat(void *ptr)
 end:;
 }
 
+
+/*
+ * strnlen()
+ */
+static void test_strnlen(void *p)
+{
+	tt_assert(strnlen("foobar", 0) == 0);
+	tt_assert(strnlen("foobar", 1) == 1);
+	tt_assert(strnlen("foobar", 2) == 2);
+	tt_assert(strnlen("foobar", 3) == 3);
+	tt_assert(strnlen("foobar", 4) == 4);
+	tt_assert(strnlen("foobar", 5) == 5);
+	tt_assert(strnlen("foobar", 6) == 6);
+	tt_assert(strnlen("foobar", 7) == 6);
+	tt_assert(strnlen("foobar", 8) == 6);
+	tt_assert(strnlen("foobar", 9) == 6);
+end:;
+}
+
+
 /*
  * strerror_r()
  */
@@ -607,6 +627,7 @@ end:;
 struct testcase_t string_tests[] = {
 	{ "strlcpy", test_strlcpy },
 	{ "strlcat", test_strlcat },
+	{ "strnlen", test_strnlen },
 	{ "strerror_r", test_strerror_r },
 	{ "memrchr", test_memrchr },
 	{ "memmem", test_memmem },
