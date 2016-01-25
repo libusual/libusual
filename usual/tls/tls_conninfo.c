@@ -156,6 +156,9 @@ tls_get_peer_cert_times(struct tls *ctx, time_t *notbefore, time_t *notafter)
 int
 tls_get_conninfo(struct tls *ctx) {
 	const char * tmp;
+
+	tls_free_conninfo(ctx->conninfo);
+
 	if (ctx->ssl_peer_cert != NULL) {
 		if (tls_get_peer_cert_hash(ctx, &ctx->conninfo->hash) == -1)
 			goto err;
