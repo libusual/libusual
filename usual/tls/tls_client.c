@@ -24,8 +24,6 @@
 #include <openssl/err.h>
 #include <openssl/x509.h>
 
-#include "../netdb.h"
-#include "../socket.h"
 #include "tls_internal.h"
 
 struct tls *

@@ -23,7 +23,6 @@
 #include <openssl/err.h>
 #include <openssl/dh.h>
 
-#include <usual/time.h>
 #include <usual/tls/tls_internal.h>
 
 #ifndef SSL_F_SSL_CTX_USE_CERTIFICATE_CHAIN_FILE

@@ -8,10 +8,8 @@
 
 #include <usual/string.h>
 #include <usual/socket.h>
-
-#ifndef HAVE_TIMEGM
-#include <usual/time.h>	/* needed for compat timegm() */
-#endif
+#include <usual/netdb.h>
+#include <usual/time.h>
 
 #include <openssl/ssl.h>
 
