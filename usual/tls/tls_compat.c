@@ -36,6 +36,7 @@
 #endif
 
 #ifndef SSL_CTX_set_dh_auto
+#define DH_CLEANUP
 
 /*
  * SKIP primes, used by OpenSSL and PostgreSQL.
@@ -135,14 +136,16 @@ long SSL_CTX_set_dh_auto(SSL_CTX *ctx, int onoff)
 #endif
 
 #ifndef SSL_CTX_set_ecdh_auto
+#define ECDH_CLEANUP
 
 /*
  * Use same curve as EC key, fallback to NIST P-256.
  */
 
+static EC_KEY *ecdh_cache;
+
 static EC_KEY *ecdh_auto_cb(SSL *ssl, int is_export, int keylength)
 {
-	static EC_KEY *ecdh;
 	int last_nid;
 	int nid = 0;
 	EVP_PKEY *pk;
@@ -166,16 +169,16 @@ static EC_KEY *ecdh_auto_cb(SSL *ssl, int is_export, int keylength)
 	if (ctx)
 		ctx->used_ecdh_nid = nid;
 
-	if (ecdh) {
-		last_nid = EC_GROUP_get_curve_name(EC_KEY_get0_group(ecdh));
+	if (ecdh_cache) {
+		last_nid = EC_GROUP_get_curve_name(EC_KEY_get0_group(ecdh_cache));
 		if (last_nid == nid)
-			return ecdh;
-		EC_KEY_free(ecdh);
-		ecdh = NULL;
+			return ecdh_cache;
+		EC_KEY_free(ecdh_cache);
+		ecdh_cache = NULL;
 	}
 
-	ecdh = EC_KEY_new_by_curve_name(nid);
-	return ecdh;
+	ecdh_cache = EC_KEY_new_by_curve_name(nid);
+	return ecdh_cache;
 }
 
 long SSL_CTX_set_ecdh_auto(SSL_CTX *ctx, int onoff)
@@ -188,6 +191,21 @@ long SSL_CTX_set_ecdh_auto(SSL_CTX *ctx, int onoff)
 }
 
 #endif
+
+void tls_compat_cleanup(void)
+{
+#ifdef DH_CLEANUP
+	if (dh1024) { DH_free(dh1024); dh1024 = NULL; }
+	if (dh2048) { DH_free(dh2048); dh2048 = NULL; }
+	if (dh4096) { DH_free(dh4096); dh4096 = NULL; }
+#endif
+#ifdef ECDH_CLEANUP
+	if (ecdh_cache) {
+		EC_KEY_free(ecdh_cache);
+		ecdh_cache = NULL;
+	}
+#endif
+}
 
 #ifndef HAVE_SSL_CTX_USE_CERTIFICATE_CHAIN_MEM
 

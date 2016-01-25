@@ -42,6 +42,8 @@ int SSL_CTX_load_verify_mem(SSL_CTX *ctx, void *buf, int len);
 #define SSL_set_tlsext_status_type(a,b) (1)
 #endif
 
+void tls_compat_cleanup(void);
+
 #endif /* USUAL_LIBSSL_FOR_TLS */
 
 #endif /* _USUAL_TLS_COMPAT_H_ */

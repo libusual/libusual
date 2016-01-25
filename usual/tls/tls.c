@@ -32,11 +32,11 @@
 
 static struct tls_config *tls_config_default;
 
+static int tls_initialised = 0;
+
 int
 tls_init(void)
 {
-	static int tls_initialised = 0;
-
 	if (tls_initialised)
 		return (0);
 
@@ -49,6 +49,25 @@ tls_init(void)
 	tls_initialised = 1;
 
 	return (0);
+}
+
+void
+tls_deinit(void)
+{
+	if (tls_initialised) {
+		tls_compat_cleanup();
+
+		tls_config_free(tls_config_default);
+		tls_config_default = NULL;
+
+		EVP_cleanup();
+		CRYPTO_cleanup_all_ex_data();
+		ERR_clear_error();
+		ERR_remove_thread_state(NULL);
+		ERR_free_strings();
+
+		tls_initialised = 0;
+	}
 }
 
 const char *
