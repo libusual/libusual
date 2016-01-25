@@ -302,6 +302,7 @@ tls_configure_ssl(struct tls *ctx)
 {
 	SSL_CTX_set_mode(ctx->ssl_ctx, SSL_MODE_ENABLE_PARTIAL_WRITE);
 	SSL_CTX_set_mode(ctx->ssl_ctx, SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER);
+	SSL_CTX_set_mode(ctx->ssl_ctx, SSL_MODE_RELEASE_BUFFERS);
 
 	SSL_CTX_set_options(ctx->ssl_ctx, SSL_OP_NO_SSLv2);
 	SSL_CTX_set_options(ctx->ssl_ctx, SSL_OP_NO_SSLv3);
