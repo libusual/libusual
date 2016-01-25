@@ -581,6 +581,12 @@ tls_write(struct tls *ctx, const void *buf, size_t buflen)
 	return (rv);
 }
 
+#ifdef WIN32
+#define SHUT_RDWR SD_BOTH
+#define ENOTCONN WSAENOTCONN
+#define ECONNRESET WSAECONNRESET
+#endif
+
 int
 tls_close(struct tls *ctx)
 {
