@@ -179,6 +179,9 @@ int getrusage(int who, struct rusage *dst)
 
 #endif /* !HAVE_GETRUSAGE */
 
+
+#endif /* WIN32 */
+
 #ifndef HAVE_TIMEGM
 
 time_t timegm(struct tm *tm)
@@ -215,5 +218,3 @@ time_t timegm(struct tm *tm)
 }
 
 #endif /* HAVE_TIMEGM */
-
-#endif /* WIN32 */

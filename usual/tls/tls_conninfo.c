@@ -17,6 +17,9 @@
  */
 
 #include "tls_compat.h"
+#ifndef HAVE_TIMEGM
+#include <usual/time.h>	/* needed for compat timegm() */
+#endif
 
 #ifdef USUAL_LIBSSL_FOR_TLS
 

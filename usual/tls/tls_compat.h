@@ -9,6 +9,10 @@
 #include <usual/string.h>
 #include <usual/socket.h>
 
+#ifndef HAVE_TIMEGM
+#include <usual/time.h>	/* needed for compat timegm() */
+#endif
+
 #include <openssl/ssl.h>
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
