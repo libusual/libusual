@@ -446,6 +446,7 @@ tls_asn1_parse_time(struct tls *ctx, const ASN1_TIME *asn1time, time_t *dst)
  */
 
 int tls_init(void) { return -1; }
+void tls_deinit(void) { }
 
 const char *tls_error(struct tls *_ctx) { return "No TLS support"; }
 
