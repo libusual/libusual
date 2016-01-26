@@ -20,7 +20,6 @@
 #ifdef USUAL_LIBSSL_FOR_TLS
 
 #include <limits.h>
-#include <netdb.h>
 
 #include <openssl/err.h>
 #include <openssl/x509.h>

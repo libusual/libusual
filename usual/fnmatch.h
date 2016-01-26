@@ -26,9 +26,10 @@
 
 #include <usual/base.h>
 
-#ifdef HAVE_FNMATCH_H
+#if defined(HAVE_FNMATCH_H) && defined(FNM_CASEFOLD)
 #include <fnmatch.h>
 #else
+	/* fnmatch missing or incomplete */
 #define NEED_USUAL_FNMATCH
 #endif
 

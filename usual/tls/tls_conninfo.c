@@ -20,8 +20,6 @@
 
 #ifdef USUAL_LIBSSL_FOR_TLS
 
-#include <stdio.h>
-
 #include <openssl/x509.h>
 
 #include "tls_internal.h"

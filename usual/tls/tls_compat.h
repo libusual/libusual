@@ -8,6 +8,8 @@
 
 #include <usual/string.h>
 #include <usual/socket.h>
+#include <usual/netdb.h>
+#include <usual/time.h>
 
 #include <openssl/ssl.h>
 
