@@ -144,6 +144,7 @@ long SSL_CTX_set_dh_auto(SSL_CTX *ctx, int onoff)
 
 static EC_KEY *ecdh_cache;
 
+#ifdef USE_LIBSSL_INTERNALS
 static EC_KEY *ecdh_auto_cb(SSL *ssl, int is_export, int keylength)
 {
 	int last_nid;
@@ -154,7 +155,7 @@ static EC_KEY *ecdh_auto_cb(SSL *ssl, int is_export, int keylength)
 
 	/* pick curve from EC key */
 	pk = SSL_get_privatekey(ssl);
-	if (pk && pk->type == EVP_PKEY_EC) {
+	if (pk && EVP_PKEY_id(pk) == EVP_PKEY_EC) {
 		ec = EVP_PKEY_get1_EC_KEY(pk);
 		if (ec) {
 			nid = EC_GROUP_get_curve_name(EC_KEY_get0_group(ec));
@@ -180,12 +181,15 @@ static EC_KEY *ecdh_auto_cb(SSL *ssl, int is_export, int keylength)
 	ecdh_cache = EC_KEY_new_by_curve_name(nid);
 	return ecdh_cache;
 }
+#endif
 
 long SSL_CTX_set_ecdh_auto(SSL_CTX *ctx, int onoff)
 {
 	if (onoff) {
 		SSL_CTX_set_options(ctx, SSL_OP_SINGLE_ECDH_USE);
+#ifdef USE_LIBSSL_INTERNALS
 		SSL_CTX_set_tmp_ecdh_callback(ctx, ecdh_auto_cb);
+#endif
 	}
 	return 1;
 }

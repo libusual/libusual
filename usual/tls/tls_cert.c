@@ -454,7 +454,7 @@ tls_get_key_usage(struct tls *ctx, struct tls_cert *cert, X509 *x509)
 		cert->ext_crit |= TLS_EXT_KEY_USAGE;
 	ASN1_BIT_STRING_free(ku);
 
-	cert->key_usage_flags = map_bits(ku_map, x509->ex_kusage);
+	cert->key_usage_flags = map_bits(ku_map, X509_get_key_usage(x509));
 	return 0;
 }
 
@@ -484,7 +484,7 @@ tls_get_ext_key_usage(struct tls *ctx, struct tls_cert *cert, X509 *x509)
 	if (crit)
 		cert->ext_crit |= TLS_EXT_EXTENDED_KEY_USAGE;
 
-	cert->extended_key_usage_flags = map_bits(xku_map, x509->ex_xkusage);
+	cert->extended_key_usage_flags = map_bits(xku_map, X509_get_extended_key_usage(x509));
 	return 0;
 }
 

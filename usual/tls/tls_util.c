@@ -188,11 +188,12 @@ tls_get_connection_info(struct tls *ctx, char *buf, size_t buflen)
 		if (ctx->flags & TLS_CLIENT) {
 			EVP_PKEY *pk = NULL;
 			int ok = SSL_get_server_tmp_key(conn, &pk);
+			int pk_type = EVP_PKEY_id(pk);
 			if (ok && pk) {
-				if (pk->type == EVP_PKEY_DH) {
+				if (pk_type == EVP_PKEY_DH) {
 					DH *dh = EVP_PKEY_get0(pk);
 					used_dh_bits = DH_size(dh) * 8;
-				} else if (pk->type == EVP_PKEY_EC) {
+				} else if (pk_type == EVP_PKEY_EC) {
 					EC_KEY *ecdh = EVP_PKEY_get0(pk);
 					const EC_GROUP *eg = EC_KEY_get0_group(ecdh);
 					used_ecdh_nid = EC_GROUP_get_curve_name(eg);

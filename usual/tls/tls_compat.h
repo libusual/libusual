@@ -13,8 +13,14 @@
 
 #include <openssl/ssl.h>
 
+/* OpenSSL 1.1+ has hidden struct fields */
 #if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
+
 #define USE_LIBSSL_INTERNALS
+
+#define X509_get_key_usage(x509) ((x509)->ex_kusage)
+#define X509_get_extended_key_usage(x509) ((x509)->ex_xkusage)
+#define SSL_CTX_get0_param(ssl_ctx) ((ssl_ctx)->param)
 #endif
 
 /* ecdh_auto is broken - ignores main EC key */
@@ -39,6 +45,7 @@ int SSL_CTX_use_certificate_chain_mem(SSL_CTX *ctx, void *buf, int len);
 int SSL_CTX_load_verify_mem(SSL_CTX *ctx, void *buf, int len);
 #endif
 
+/* BoringSSL has no OCSP support */
 #ifdef OPENSSL_IS_BORINGSSL
 #define SSL_CTX_set_tlsext_status_cb(a,b) (1)
 #define SSL_set_tlsext_status_type(a,b) (1)
