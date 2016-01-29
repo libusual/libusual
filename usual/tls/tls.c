@@ -43,6 +43,9 @@ tls_init(void)
 	SSL_load_error_strings();
 	SSL_library_init();
 
+	if (BIO_sock_init() != 1)
+		return (-1);
+
 	if ((tls_config_default = tls_config_new()) == NULL)
 		return (-1);
 
@@ -62,6 +65,7 @@ tls_deinit(void)
 
 		EVP_cleanup();
 		CRYPTO_cleanup_all_ex_data();
+		BIO_sock_cleanup();
 		ERR_clear_error();
 		ERR_remove_thread_state(NULL);
 		ERR_free_strings();
