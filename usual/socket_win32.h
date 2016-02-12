@@ -19,6 +19,10 @@
 #ifndef _USUAL_SOCKET_WIN32_H_
 #define _USUAL_SOCKET_WIN32_H_
 
+/* if found, likely a mistake */
+#undef HAVE_INET_NTOP
+#undef HAVE_INET_PTON
+
 typedef int socklen_t;
 
 #define in_addr_t   uint32_t
