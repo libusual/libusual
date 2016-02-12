@@ -51,6 +51,10 @@
 #define EAFNOSUPPORT ENOSYS
 #endif
 
+#ifndef AI_ADDRCONFIG
+#define AI_ADDRCONFIG 0
+#endif
+
 /* dummy types / functions */
 #define hstrerror strerror
 #define getuid() (6667)
