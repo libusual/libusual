@@ -357,7 +357,7 @@ asn1_time_parse(const char *src, size_t len, struct tm *tm, int mode)
 	int utctime;
 	int year;
 
-	memset(tm, 0, sizeof tm);
+	memset(tm, 0, sizeof *tm);
 
 	if (mode != 0)
 		return -1;
