@@ -80,6 +80,7 @@ tls_error(struct tls *ctx)
 	return ctx->errmsg;
 }
 
+_PRINTF(3,0)
 static int
 tls_set_verror(struct tls *ctx, int errnum, const char *fmt, va_list ap)
 {

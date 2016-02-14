@@ -601,6 +601,7 @@ static void test_asprintf(void *p)
 end:;
 }
 
+_PRINTF(2,3)
 static int tmp_asprintf(char **dst, const char *fmt, ...)
 {
 	int res;

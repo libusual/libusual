@@ -59,6 +59,7 @@ static void free_worker(struct Worker *w)
 	free(w);
 }
 
+_PRINTF(2,3)
 static const char *add_error(struct Worker *w, const char *s, ...)
 {
 	char buf[1024];
@@ -257,7 +258,7 @@ static void worker_cb(int fd, short flags, void *arg)
 
 	if (w->wstate == HANDSHAKE) {
 		err = do_handshake(w, fd);
-		add_error(w, err);
+		add_error(w, "%s", err);
 	} else if (w->wstate == CONNECTED) {
 		if (flags & EV_READ) {
 			res = tls_read(w->ctx, buf, sizeof buf);
