@@ -60,20 +60,18 @@ static void free_worker(struct Worker *w)
 }
 
 _PRINTF(2,3)
-static const char *add_error(struct Worker *w, const char *s, ...)
+static void add_error(struct Worker *w, const char *s, ...)
 {
 	char buf[1024];
 	va_list ap;
-
-	if (!s)
-		return s;
-	if (strcmp(s, "OK") == 0)
-		return s;
 
 	va_start(ap, s);
 	vsnprintf(buf, sizeof buf, s, ap);
 	va_end(ap);
 	s = buf;
+
+	if (strcmp(s, "OK") == 0)
+		return;
 
 	if (strstr(s, "SSL routines")) {
 		s = strrchr(s, ':') + 1;
@@ -94,7 +92,6 @@ static const char *add_error(struct Worker *w, const char *s, ...)
 		strlcat(w->errbuf, s, sizeof w->errbuf);
 	}
 	w->wstate = CLOSED;
-	return s;
 }
 
 static const char *check_errors(struct Worker *client, struct Worker *server)
@@ -466,7 +463,7 @@ static const char *wait_for_event(struct Worker *w, short flags)
 	w->pending = 1;
 	return "OK";
 end:
-	return add_error(w, "event_add failed");
+	return "event_add failed";
 }
 
 static const char *do_handshake(struct Worker *w, int fd)
