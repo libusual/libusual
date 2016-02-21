@@ -552,7 +552,7 @@ SourceObjs = $(trace1)$(call SourceObjsExt,$(1),$(OBJEXT),$(2))
 SourceObjsExt = $(addprefix $(call JoinPath,$(OBJDIR),$(1))/, $(call ReplaceExts,$(AM_SRCEXTS),$(2),$(3)))
 
 # dependency files from object files, must match OBJDEPS
-DepFiles = $(wildcard $(addsuffix .d,$(1)))
+DepFiles = $(sort $(wildcard $(addsuffix .d,$(1))))
 
 # per-target var override, 1=target, 2=varname
 # if foo_VAR exists, expand to:
