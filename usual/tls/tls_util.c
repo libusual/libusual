@@ -27,6 +27,12 @@
 
 #include "tls_internal.h"
 
+const char *
+tls_backend_version(void)
+{
+	return SSLeay_version(SSLEAY_VERSION);
+}
+
 /*
  * Extract the host and port from a colon separated value. For a literal IPv6
  * address the address must be contained with square braces. If a host and
