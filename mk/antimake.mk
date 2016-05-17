@@ -871,6 +871,12 @@ install_$(1): $(2)
 # hack to pass -rpath to LTLIBRARIES on build time (1)
 $(2): AM_DEST = $$($(1)_DEST)
 
+# simple uninstall - just remove files
+.PHONY: uninstall_$(1)
+uninstall: uninstall_$(1)
+uninstall_$(1):
+	$$(RM) $$(DESTDIR)$$($(1)_DEST)/$$(notdir $(2))
+
 endef
 
 # hack to pass -rpath to LTLIBRARIES on build time (2)
@@ -1096,13 +1102,14 @@ else
 all: sub-all all-local
 clean: sub-clean clean-local
 install: sub-install install-local
+uninstall: sub-uninstall uninstall-local
 distclean: sub-distclean distclean-local
 maintainer-clean: sub-maintainer-clean maintainer-clean-local
 .PHONY: all clean install dist distclean maintainer-clean
 
 # -local are empty targets by default
-.PHONY: all-local clean-local install-local distclean-local maintainer-clean-local
-all-local clean-local install-local distclean-local maintainer-clean-local:
+.PHONY: all-local clean-local install-local uninstall-local distclean-local maintainer-clean-local
+all-local clean-local install-local uninstall-local distclean-local maintainer-clean-local:
 
 ##
 ## Actual embedding starts
@@ -1274,7 +1281,7 @@ define SubTarget
 	$(E) "<--" "$(call JoinPath,$(SUBLOC),$(1))"
 endef
 
-sub-all sub-install sub-clean:
+sub-all sub-install sub-uninstall sub-clean:
 	$(foreach dir,$(SUBDIRS),$(call SubTarget,$(dir),$(subst sub-,,$@))$(NewLine))
 
 # Avoid double dirs in DIST_SUBDIRS, without changing order
