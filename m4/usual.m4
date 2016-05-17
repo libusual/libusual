@@ -191,7 +191,7 @@ AC_CHECK_HEADERS([sys/param.h sys/uio.h pwd.h grp.h])
 AC_CHECK_HEADERS([sys/wait.h sys/mman.h syslog.h netdb.h dlfcn.h])
 AC_CHECK_HEADERS([err.h pthread.h endian.h sys/endian.h byteswap.h])
 AC_CHECK_HEADERS([malloc.h regex.h getopt.h fnmatch.h])
-AC_CHECK_HEADERS([langinfo.h xlocale.h])
+AC_CHECK_HEADERS([langinfo.h xlocale.h linux/random.h])
 dnl ucred.h may have prereqs
 AC_CHECK_HEADERS([ucred.h sys/ucred.h], [], [], [
 #ifdef HAVE_SYS_TYPES_H
@@ -222,7 +222,7 @@ AC_CHECK_FUNCS(asprintf vasprintf timegm)
 ### Functions provided only on win32
 AC_CHECK_FUNCS(localtime_r gettimeofday recvmsg sendmsg usleep getrusage)
 ### Functions used by libusual itself
-AC_CHECK_FUNCS(syslog mmap getpeerucred arc4random_buf getentropy)
+AC_CHECK_FUNCS(syslog mmap getpeerucred arc4random_buf getentropy getrandom)
 ### win32: link with ws2_32
 AC_SEARCH_LIBS(WSAGetLastError, ws2_32)
 AC_FUNC_STRERROR_R

@@ -20,13 +20,24 @@
 #include <usual/err.h>
 #include <usual/string.h>
 
-#ifndef HAVE_GETENTROPY
+#ifdef HAVE_LINUX_RANDOM_H
+#include <sys/syscall.h>
+#include <linux/random.h>
+#endif
 
 /*
  * Load system entropy.
  */
 
+#ifndef HAVE_GETENTROPY
+
+/*
+ * win32
+ */
+
 #if defined(_WIN32) || defined(_WIN64)
+
+#define HAVE_getentropy_win32
 
 /*
  * Windows
@@ -42,7 +53,7 @@
 
 typedef BOOLEAN APIENTRY (*rtlgenrandom_t)(void *, ULONG);
 
-int getentropy(void *dst, size_t len)
+static int getentropy_win32(void *dst, size_t len)
 {
 	HMODULE lib;
 	rtlgenrandom_t fn;
@@ -60,27 +71,52 @@ int getentropy(void *dst, size_t len)
 	return res;
 }
 
-#elif defined(HAVE_GETRANDOM)
+#endif /* WIN32 */
 
-int getentropy(void *dst, size_t len)
+/*
+ * Linux getrandom()
+ */
+
+#if defined(HAVE_GETRANDOM) || (defined(GRND_RANDOM) && defined(SYS_getrandom))
+
+#define HAVE_getentropy_getrandom
+
+#ifndef HAVE_GETRANDOM
+static int getrandom(void *dst, size_t len, unsigned int flags)
+{
+	return syscall(SYS_getrandom, dst, len, flags);
+}
+#endif
+
+static int getentropy_getrandom(void *dst, size_t len)
 {
 	int res;
-
-	if (len > 256)
-		goto eio;
+retry:
 	res = getrandom(dst, len, 0);
-	if (res < 0)
+	if (res < 0) {
+		if (errno == EINTR)
+			goto retry;
 		return -1;
-	if (res == len)
+	}
+	if ((size_t)res == len)
 		return 0;
-eio:
 	errno = EIO;
 	return -1;
 }
 
-#else /* UNIX-like system */
+#endif /* getrandom */
+
+
+/*
+ * Generic /dev/urandom
+ */
+
+#ifndef HAVE_getentropy_win32
+
+#define HAVE_getentropy_devrandom
 
 #include <sys/stat.h>
+#include <sys/ioctl.h>
 #include <fcntl.h>
 
 /* open and check device node */
@@ -101,7 +137,12 @@ open_loop:
 	}
 
 #ifndef O_CLOEXEC
-	fcntl(fd, F_SETFD, fcntl(fd, F_GETFD) | FD_CLOEXEC);
+	{
+		int res;
+		res = fcntl(fd, F_SETFD, fcntl(fd, F_GETFD) | FD_CLOEXEC);
+		if (res != 0)
+			goto fail;
+	}
 #endif
 
 	/*
@@ -139,7 +180,7 @@ static const char *devlist[] = {
 	NULL,
 };
 
-int getentropy(void *dst, size_t bytes)
+static int getentropy_devrandom(void *dst, size_t bytes)
 {
 	uint8_t *d = dst;
 	size_t need = bytes;
@@ -178,7 +219,39 @@ int getentropy(void *dst, size_t bytes)
 	return -1;
 }
 
-#endif /* unix */
+#endif /* devrandom */
+
+/*
+ * Export BSD-style getentropy().
+ */
+
+int getentropy(void *dst, size_t bytes)
+{
+	int res = -1;
+	int old_errno = errno;
+	if (bytes > 256) {
+		errno = EIO;
+		return res;
+	}
+#ifdef HAVE_getentropy_win32
+	if (res != 0) {
+		res = getentropy_win32(dst, bytes);
+	}
+#endif
+#ifdef HAVE_getentropy_getrandom
+	if (res != 0) {
+		res = getentropy_getrandom(dst, bytes);
+	}
+#endif
+#ifdef HAVE_getentropy_devrandom
+	if (res != 0) {
+		res = getentropy_devrandom(dst, bytes);
+	}
+#endif
+	if (res == 0)
+		errno = old_errno;
+	return res;
+}
 
 #endif /* !HAVE_GETENTROPY */
 
