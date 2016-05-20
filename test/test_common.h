@@ -12,7 +12,14 @@
 	do { \
 		const char *res = (val); \
 		if (strcmp(res, a) && strcmp(res, b)) \
-			str_check(val, a); \
+			str_check(res, a); \
+	} while (0)
+
+#define str_any3(val, a, b, c) \
+	do { \
+		const char *res = (val); \
+		if (strcmp(res, a) && strcmp(res, b) && strcmp(res, c)) \
+			str_check(res, a); \
 	} while (0)
 
 extern struct testcase_t aatree_tests[];

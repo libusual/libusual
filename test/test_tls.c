@@ -49,10 +49,11 @@ static void free_worker(struct Worker *w)
 {
 	if (!w)
 		return;
-	event_del(&w->ev);
-	tls_config_free(w->config);
+	if (event_initialized(&w->ev))
+		event_del(&w->ev);
 	tls_free(w->ctx);
 	tls_free(w->base);
+	tls_config_free(w->config);
 	if (w->socket > 0)
 		close(w->socket);
 	memset(w, 0, sizeof *w);
@@ -128,12 +129,14 @@ static const char *create_worker(struct Worker **w_p, bool is_server, ...)
 	const char *mem = NULL;
 	void *fdata;
 	size_t flen;
+	const char *errmsg = NULL;
 
 	*w_p = NULL;
 
 	w = calloc(1, sizeof *w);
 	if (!w)
 		return "calloc";
+
 	w->wstate = HANDSHAKE;
 	w->is_server = is_server;
 	w->config = tls_config_new();
@@ -156,8 +159,10 @@ static const char *create_worker(struct Worker **w_p, bool is_server, ...)
 		if (!k)
 			break;
 		v = strchr(k, '=');
-		if (!v)
-			return k;
+		if (!v) {
+			errmsg = k;
+			break;
+		}
 		v++;
 		klen = v - k;
 		err = 0;
@@ -166,7 +171,10 @@ static const char *create_worker(struct Worker **w_p, bool is_server, ...)
 		} else if (!strncmp(k, "ca=", klen)) {
 			if (mem) {
 				fdata = load_file(v, &flen);
-				if (!fdata) return strerror(errno);
+				if (!fdata) {
+					errmsg = strerror(errno);
+					break;
+				}
 				err = tls_config_set_ca_mem(w->config, fdata, flen);
 				free(fdata);
 			} else {
@@ -175,7 +183,10 @@ static const char *create_worker(struct Worker **w_p, bool is_server, ...)
 		} else if (!strncmp(k, "cert=", klen)) {
 			if (mem) {
 				fdata = load_file(v, &flen);
-				if (!fdata) return strerror(errno);
+				if (!fdata) {
+					errmsg = strerror(errno);
+					break;
+				}
 				err = tls_config_set_cert_mem(w->config, fdata, flen);
 				free(fdata);
 			} else {
@@ -184,7 +195,10 @@ static const char *create_worker(struct Worker **w_p, bool is_server, ...)
 		} else if (!strncmp(k, "key=", klen)) {
 			if (mem) {
 				fdata = load_file(v, &flen);
-				if (!fdata) return strerror(errno);
+				if (!fdata) {
+					errmsg = strerror(errno);
+					break;
+				}
 				err = tls_config_set_key_mem(w->config, fdata, flen);
 				free(fdata);
 			} else {
@@ -209,7 +223,7 @@ static const char *create_worker(struct Worker **w_p, bool is_server, ...)
 		} else if (!strncmp(k, "protocols=", klen)) {
 			uint32_t protos;
 			err = tls_config_parse_protocols(&protos, v);
-			tls_config_set_protocols(w->config, TLS_PROTOCOLS_ALL);
+			tls_config_set_protocols(w->config, protos);
 		} else if (!strncmp(k, "peer-sha1=", klen)) {
 			w->peer_fingerprint_sha1 = v;
 		} else if (!strncmp(k, "peer-sha256=", klen)) {
@@ -221,14 +235,18 @@ static const char *create_worker(struct Worker **w_p, bool is_server, ...)
 		} else if (!strncmp(k, "aggressive-close=", klen)) {
 			w->aggressive_close = 1;
 		} else {
-			return k;
+			errmsg = k;
+			break;
 		}
 		if (err < 0) {
-			return k;
+			errmsg = k;
+			break;
 		}
 	}
 	va_end(ap);
 
+	if (errmsg)
+		return errmsg;
 	if (is_server) {
 		if (tls_configure(w->base, w->config) < 0)
 			return tls_error(w->base);
@@ -523,7 +541,7 @@ static const char *run_case(struct Worker *client, struct Worker *server)
 {
 	struct event_base *base = NULL;
 	int spair[2];
-	const char *res;
+	const char *res = "huh";
 	bool done = false;
 
 	ignore_sigpipe();
@@ -536,20 +554,18 @@ static const char *run_case(struct Worker *client, struct Worker *server)
 	tt_assert(socket_setup(spair[0], true));
 	tt_assert(socket_setup(spair[1], true));
 
-	str_check(start_worker(server, spair[0]), "OK");
 	str_check(start_worker(client, spair[1]), "OK");
+	str_check(start_worker(server, spair[0]), "OK");
 
 	while (client->ctx || server->ctx)
 		tt_assert(event_base_loop(base, EVLOOP_ONCE) == 0);
 
 	done = true;
 end:
-	event_del(&client->ev);
-	event_del(&server->ev);
-	event_base_free(base);
 	res = check_errors(client, server);
 	free_worker(client);
 	free_worker(server);
+	event_base_free(base);
 	return done ? res : "fail";
 }
 
@@ -580,7 +596,9 @@ static void test_verify(void *z)
 	/* default: client checks server cert, fails due to bad ca */
 	str_check(create_worker(&server, true, SERVER1, NULL), "OK");
 	str_check(create_worker(&client, false, CA2, "host=example.com", NULL), "OK");
-	str_check(run_case(client, server), "C:certificate verify failed - S:tlsv1 alert unknown ca");
+	str_any2(run_case(client, server),
+		 "C:certificate verify failed - S:tlsv1 alert unknown ca",
+		 "C:certificate verify failed - S:tlsv1 alert unknown ca,S:shutdown while in init");
 
 	/* default: client checks server cert, fails due to bad hostname */
 	str_check(create_worker(&server, true, SERVER1, NULL), "OK");
@@ -681,9 +699,10 @@ static void test_clientcert(void *z)
 				"verify-client=1",
 				NULL), "OK");
 	str_check(create_worker(&client, false, CLIENT2, CA1, "host=server1.com", NULL), "OK");
-	str_any2(run_case(client, server),
-		 "C:tlsv1 alert unknown ca - S:no certificate returned",
-		 "C:tlsv1 alert unknown ca - S:certificate verify failed");
+	str_any3(run_case(client, server),
+		"C:tlsv1 alert unknown ca - S:no certificate returned",
+		"C:tlsv1 alert unknown ca,C:shutdown while in init - S:certificate verify failed",
+		"C:tlsv1 alert unknown ca - S:certificate verify failed");
 
 	/* noverifycert: server allow invalid cert */
 	str_check(create_worker(&server, true, SERVER1, CA1,
@@ -697,7 +716,9 @@ static void test_clientcert(void *z)
 				"verify-client=1",
 				NULL), "OK");
 	str_check(create_worker(&client, false, CA1, "host=server1.com", NULL), "OK");
-	str_check(run_case(client, server), "C:sslv3 alert handshake failure - S:peer did not return a certificate");
+	str_any2(run_case(client, server),
+		 "C:sslv3 alert handshake failure - S:peer did not return a certificate",
+		 "C:sslv3 alert handshake failure,C:shutdown while in init - S:peer did not return a certificate");
 
 	/* verify-client-optional: allow client without cert */
 	str_check(create_worker(&server, true, SERVER1, CA2,
@@ -734,7 +755,9 @@ static void test_fingerprint(void *z)
 		"peer-sha256=ssl/ca2_client2.crt.sha256",
 		NULL), "OK");
 	str_check(create_worker(&client, false, CA1, "host=server1.com", NULL), "OK");
-	str_check(run_case(client, server), "C:sslv3 alert handshake failure - S:peer did not return a certificate");
+	str_any2(run_case(client, server),
+		 "C:sslv3 alert handshake failure - S:peer did not return a certificate",
+		 "C:sslv3 alert handshake failure,C:shutdown while in init - S:peer did not return a certificate");
 end:;
 }
 
