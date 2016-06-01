@@ -194,8 +194,8 @@ tls_get_connection_info(struct tls *ctx, char *buf, size_t buflen)
 		if (ctx->flags & TLS_CLIENT) {
 			EVP_PKEY *pk = NULL;
 			int ok = SSL_get_server_tmp_key(conn, &pk);
-			int pk_type = EVP_PKEY_id(pk);
-			if (ok && pk) {
+			if (ok) {
+				int pk_type = EVP_PKEY_id(pk);
 				if (pk_type == EVP_PKEY_DH) {
 					DH *dh = EVP_PKEY_get0(pk);
 					used_dh_bits = DH_size(dh) * 8;
