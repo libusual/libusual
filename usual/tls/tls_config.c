@@ -284,6 +284,8 @@ tls_config_set_cert_mem(struct tls_config *config, const uint8_t *cert,
 int
 tls_config_set_ciphers(struct tls_config *config, const char *ciphers)
 {
+	SSL_CTX *ssl_ctx = NULL;
+
 	if (ciphers == NULL ||
 	    strcasecmp(ciphers, "default") == 0 ||
 	    strcasecmp(ciphers, "secure") == 0)
@@ -299,7 +301,21 @@ tls_config_set_ciphers(struct tls_config *config, const char *ciphers)
 	else if (strcasecmp(ciphers, "fast") == 0)
 		ciphers = TLS_CIPHERS_FAST;
 
+	if ((ssl_ctx = SSL_CTX_new(SSLv23_method())) == NULL) {
+		tls_config_set_errorx(config, "out of memory");
+		goto fail;
+	}
+	if (SSL_CTX_set_cipher_list(ssl_ctx, ciphers) != 1) {
+		tls_config_set_errorx(config, "no ciphers for '%s'", ciphers);
+		goto fail;
+	}
+
+	SSL_CTX_free(ssl_ctx);
 	return set_string(&config->ciphers, ciphers);
+
+ fail:
+	SSL_CTX_free(ssl_ctx);
+	return -1;
 }
 
 int
