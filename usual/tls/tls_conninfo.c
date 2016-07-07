@@ -1,4 +1,4 @@
-/* $OpenBSD: tls_peer.c,v 1.3 2015/09/11 13:22:39 beck Exp $ */
+/* $OpenBSD$ */
 /*
  * Copyright (c) 2015 Joel Sing <jsing@openbsd.org>
  * Copyright (c) 2015 Bob Beck <beck@openbsd.org>

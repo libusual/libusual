@@ -1,4 +1,4 @@
-/* $OpenBSD: tls_server.c,v 1.6 2015/03/31 12:21:27 jsing Exp $ */
+/* $OpenBSD$ */
 /*
  * Copyright (c) 2014 Joel Sing <jsing@openbsd.org>
  *
