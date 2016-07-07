@@ -65,7 +65,7 @@ tls_configure_server(struct tls *ctx)
 
 	if (tls_configure_ssl(ctx) != 0)
 		goto err;
-	if (tls_configure_keypair(ctx, 1) != 0)
+	if (tls_configure_keypair(ctx, ctx->ssl_ctx, ctx->config->keypair, 1) != 0)
 		goto err;
 	if (ctx->config->verify_client != 0) {
 		int verify = SSL_VERIFY_PEER;

@@ -90,6 +90,11 @@ int tls_config_set_ecdhecurve(struct tls_config *_config, const char *_name);
 int tls_config_set_key_file(struct tls_config *_config, const char *_key_file);
 int tls_config_set_key_mem(struct tls_config *_config, const uint8_t *_key,
     size_t _len);
+int tls_config_set_keypair_file(struct tls_config *_config,
+    const char *_cert_file, const char *_key_file);
+int tls_config_set_keypair_mem(struct tls_config *_config, const uint8_t *_cert,
+    size_t _cert_len, const uint8_t *_key, size_t _key_len);
+
 int tls_config_set_ocsp_stapling_file(struct tls_config *_config, const char *_blob_file);
 int tls_config_set_ocsp_stapling_mem(struct tls_config *_config, const uint8_t *_blob, size_t _len);
 void tls_config_set_protocols(struct tls_config *_config, uint32_t _protocols);

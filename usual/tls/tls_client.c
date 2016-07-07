@@ -190,7 +190,7 @@ tls_connect_fds(struct tls *ctx, int fd_read, int fd_write,
 
 	if (tls_configure_ssl(ctx) != 0)
 		goto err;
-	if (tls_configure_keypair(ctx, 0) != 0)
+	if (tls_configure_keypair(ctx, ctx->ssl_ctx, ctx->config->keypair, 0) != 0)
 		goto err;
 
 	if (ctx->config->verify_name) {

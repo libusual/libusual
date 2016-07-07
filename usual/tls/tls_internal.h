@@ -70,6 +70,17 @@ struct tls_error {
 	int num;
 };
 
+struct tls_keypair {
+	struct tls_keypair *next;
+
+	const char *cert_file;
+	char *cert_mem;
+	size_t cert_len;
+	const char *key_file;
+	char *key_mem;
+	size_t key_len;
+};
+
 struct tls_config {
 	struct tls_error error;
 
@@ -77,16 +88,11 @@ struct tls_config {
 	const char *ca_path;
 	char *ca_mem;
 	size_t ca_len;
-	const char *cert_file;
-	char *cert_mem;
-	size_t cert_len;
 	const char *ciphers;
 	int ciphers_server;
 	int dheparams;
 	int ecdhecurve;
-	const char *key_file;
-	char *key_mem;
-	size_t key_len;
+	struct tls_keypair *keypair;
 	const char *ocsp_file;
 	char *ocsp_mem;
 	size_t ocsp_len;
@@ -159,7 +165,8 @@ struct tls *tls_new(void);
 struct tls *tls_server_conn(struct tls *ctx);
 
 int tls_check_name(struct tls *ctx, X509 *cert, const char *servername);
-int tls_configure_keypair(struct tls *ctx, int);
+int tls_configure_keypair(struct tls *ctx, SSL_CTX *ssl_ctx,
+    struct tls_keypair *keypair, int required);
 int tls_configure_server(struct tls *ctx);
 int tls_configure_ssl(struct tls *ctx);
 int tls_configure_ssl_verify(struct tls *ctx, int verify);
