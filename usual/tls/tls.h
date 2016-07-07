@@ -70,6 +70,7 @@ void tls_deinit(void);
 
 const char *tls_backend_version(void);
 
+const char *tls_config_error(struct tls_config *_config);
 const char *tls_error(struct tls *_ctx);
 
 struct tls_config *tls_config_new(void);

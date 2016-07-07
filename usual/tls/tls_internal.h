@@ -65,7 +65,14 @@ union tls_addr {
 	struct in6_addr ip6;
 };
 
+struct tls_error {
+	char *msg;
+	int num;
+};
+
 struct tls_config {
+	struct tls_error error;
+
 	const char *ca_file;
 	const char *ca_path;
 	char *ca_mem;
@@ -117,11 +124,10 @@ struct tls_ocsp_info;
 
 struct tls {
 	struct tls_config *config;
+	struct tls_error error;
+
 	uint32_t flags;
 	uint32_t state;
-
-	char *errmsg;
-	int errnum;
 
 	char *servername;
 	int socket;
@@ -160,6 +166,13 @@ int tls_configure_ssl_verify(struct tls *ctx, int verify);
 int tls_handshake_client(struct tls *ctx);
 int tls_handshake_server(struct tls *ctx);
 int tls_host_port(const char *hostport, char **host, char **port);
+
+int tls_set_config_error(struct tls_config *cfg, const char *fmt, ...)
+    __attribute__((__format__ (printf, 2, 3)))
+    __attribute__((__nonnull__ (2)));
+int tls_set_config_errorx(struct tls_config *cfg, const char *fmt, ...)
+    __attribute__((__format__ (printf, 2, 3)))
+    __attribute__((__nonnull__ (2)));
 int tls_set_error(struct tls *ctx, const char *fmt, ...)
     __attribute__((__format__ (printf, 2, 3)))
     __attribute__((__nonnull__ (2)));
@@ -169,6 +182,7 @@ int tls_set_errorx(struct tls *ctx, const char *fmt, ...)
 int tls_set_error_libssl(struct tls *ctx, const char *fmt, ...)
     __attribute__((__format__ (printf, 2, 3)))
     __attribute__((__nonnull__ (2)));
+
 int tls_ssl_error(struct tls *ctx, SSL *ssl_conn, int ssl_ret,
     const char *prefix);
 

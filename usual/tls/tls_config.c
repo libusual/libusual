@@ -100,6 +100,8 @@ tls_config_free(struct tls_config *config)
 
 	tls_config_clear_keys(config);
 
+	free(config->error.msg);
+
 	free((char *)config->ca_file);
 	free((char *)config->ca_path);
 	free((char *)config->cert_file);
@@ -109,6 +111,12 @@ tls_config_free(struct tls_config *config)
 	free(config->key_mem);
 
 	free(config);
+}
+
+const char *
+tls_config_error(struct tls_config *config)
+{
+	return config->error.msg;
 }
 
 void
@@ -240,8 +248,10 @@ tls_config_set_dheparams(struct tls_config *config, const char *params)
 		keylen = -1;
 	else if (strcasecmp(params, "legacy") == 0)
 		keylen = 1024;
-	else
+	else {
+		tls_set_config_errorx(config, "invalid dhe param '%s'", params);
 		return (-1);
+	}
 
 	config->dheparams = keylen;
 
@@ -257,8 +267,10 @@ tls_config_set_ecdhecurve(struct tls_config *config, const char *name)
 		nid = NID_undef;
 	else if (strcasecmp(name, "auto") == 0)
 		nid = -1;
-	else if ((nid = OBJ_txt2nid(name)) == NID_undef)
+	else if ((nid = OBJ_txt2nid(name)) == NID_undef) {
+		tls_set_config_errorx(config, "invalid ecdhe curve '%s'", name);
 		return (-1);
+	}
 
 	config->ecdhecurve = nid;
 
