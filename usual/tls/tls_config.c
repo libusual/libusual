@@ -168,6 +168,7 @@ tls_config_free(struct tls_config *config)
 	free(config->error.msg);
 
 	free((char *)config->ca_file);
+	free((char *)config->ca_mem);
 	free((char *)config->ca_path);
 	free((char *)config->ciphers);
 
