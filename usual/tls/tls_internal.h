@@ -174,10 +174,16 @@ int tls_handshake_client(struct tls *ctx);
 int tls_handshake_server(struct tls *ctx);
 int tls_host_port(const char *hostport, char **host, char **port);
 
-int tls_set_config_error(struct tls_config *cfg, const char *fmt, ...)
+int tls_error_set(struct tls_error *error, const char *fmt, ...)
     __attribute__((__format__ (printf, 2, 3)))
     __attribute__((__nonnull__ (2)));
-int tls_set_config_errorx(struct tls_config *cfg, const char *fmt, ...)
+int tls_error_setx(struct tls_error *error, const char *fmt, ...)
+    __attribute__((__format__ (printf, 2, 3)))
+    __attribute__((__nonnull__ (2)));
+int tls_config_set_error(struct tls_config *cfg, const char *fmt, ...)
+    __attribute__((__format__ (printf, 2, 3)))
+    __attribute__((__nonnull__ (2)));
+int tls_config_set_errorx(struct tls_config *cfg, const char *fmt, ...)
     __attribute__((__format__ (printf, 2, 3)))
     __attribute__((__nonnull__ (2)));
 int tls_set_error(struct tls *ctx, const char *fmt, ...)

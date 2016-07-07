@@ -82,7 +82,7 @@ tls_error(struct tls *ctx)
 
 _PRINTF(3,0)
 static int
-tls_set_verror(struct tls_error *error, int errnum, const char *fmt, va_list ap)
+tls_error_vset(struct tls_error *error, int errnum, const char *fmt, va_list ap)
 {
 	char *errmsg = NULL;
 	int rv = -1;
@@ -114,7 +114,7 @@ tls_set_verror(struct tls_error *error, int errnum, const char *fmt, va_list ap)
 }
 
 int
-tls_set_config_error(struct tls_config *config, const char *fmt, ...)
+tls_error_set(struct tls_error *error, const char *fmt, ...)
 {
 	va_list ap;
 	int errnum, rv;
@@ -122,20 +122,48 @@ tls_set_config_error(struct tls_config *config, const char *fmt, ...)
 	errnum = errno;
 
 	va_start(ap, fmt);
-	rv = tls_set_verror(&config->error, errnum, fmt, ap);
+	rv = tls_error_vset(error, errnum, fmt, ap);
 	va_end(ap);
 
 	return (rv);
 }
 
 int
-tls_set_config_errorx(struct tls_config *config, const char *fmt, ...)
+tls_error_setx(struct tls_error *error, const char *fmt, ...)
 {
 	va_list ap;
 	int rv;
 
 	va_start(ap, fmt);
-	rv = tls_set_verror(&config->error, -1, fmt, ap);
+	rv = tls_error_vset(error, -1, fmt, ap);
+	va_end(ap);
+
+	return (rv);
+}
+
+int
+tls_config_set_error(struct tls_config *config, const char *fmt, ...)
+{
+	va_list ap;
+	int errnum, rv;
+
+	errnum = errno;
+
+	va_start(ap, fmt);
+	rv = tls_error_vset(&config->error, errnum, fmt, ap);
+	va_end(ap);
+
+	return (rv);
+}
+
+int
+tls_config_set_errorx(struct tls_config *config, const char *fmt, ...)
+{
+	va_list ap;
+	int rv;
+
+	va_start(ap, fmt);
+	rv = tls_error_vset(&config->error, -1, fmt, ap);
 	va_end(ap);
 
 	return (rv);
@@ -150,7 +178,7 @@ tls_set_error(struct tls *ctx, const char *fmt, ...)
 	errnum = errno;
 
 	va_start(ap, fmt);
-	rv = tls_set_verror(&ctx->error, errnum, fmt, ap);
+	rv = tls_error_vset(&ctx->error, errnum, fmt, ap);
 	va_end(ap);
 
 	return (rv);
@@ -163,7 +191,7 @@ tls_set_errorx(struct tls *ctx, const char *fmt, ...)
 	int rv;
 
 	va_start(ap, fmt);
-	rv = tls_set_verror(&ctx->error, -1, fmt, ap);
+	rv = tls_error_vset(&ctx->error, -1, fmt, ap);
 	va_end(ap);
 
 	return (rv);
@@ -183,7 +211,7 @@ tls_set_error_libssl(struct tls *ctx, const char *fmt, ...)
 		msg = ERR_reason_error_string(err);
 
 	va_start(ap, fmt);
-	rv = tls_set_verror(&ctx->error, -1, fmt, ap);
+	rv = tls_error_vset(&ctx->error, -1, fmt, ap);
 	va_end(ap);
 	if (rv != 0 || msg == NULL)
 		return rv;
