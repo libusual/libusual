@@ -12,6 +12,7 @@
 #include <usual/time.h>
 
 #include <openssl/ssl.h>
+#include <openssl/err.h>
 
 /* OpenSSL 1.1+ has hidden struct fields */
 #if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
@@ -21,6 +22,50 @@
 #define X509_get_key_usage(x509) ((x509)->ex_kusage)
 #define X509_get_extended_key_usage(x509) ((x509)->ex_xkusage)
 #define SSL_CTX_get0_param(ssl_ctx) ((ssl_ctx)->param)
+#define ASN1_STRING_get0_data(x) ((const unsigned char*)ASN1_STRING_data(x))
+#define X509_OBJECT_get0_X509(x) ((x)->data.x509)
+
+#ifndef OPENSSL_VERSION
+#define OPENSSL_VERSION SSLEAY_VERSION
+#define OpenSSL_version(x) SSLeay_version(x)
+#endif
+
+static inline X509_OBJECT *X509_OBJECT_new(void)
+{
+	X509_OBJECT *obj = OPENSSL_malloc(sizeof(*obj));
+	if (obj) {
+		memset(obj, 0, sizeof(*obj));
+	} else {
+		X509err(X509_F_GET_CERT_BY_SUBJECT, ERR_R_MALLOC_FAILURE);
+	}
+	return obj;
+}
+
+static inline void X509_OBJECT_free(X509_OBJECT *obj)
+{
+	if (obj) {
+		if (obj->type == X509_LU_X509) {
+			X509_free(obj->data.x509);
+		} else if (obj->type == X509_LU_CRL) {
+			X509_CRL_free(obj->data.crl);
+		}
+		OPENSSL_free(obj);
+	}
+}
+
+static inline X509_OBJECT *X509_STORE_CTX_get_obj_by_subject(X509_STORE_CTX *ctx, int lookup, X509_NAME *name)
+{
+	X509_OBJECT *obj = X509_OBJECT_new();
+	if (obj) {
+		if (X509_STORE_get_by_subject(ctx, lookup, name, obj)) {
+			return obj;
+		}
+		X509_OBJECT_free(obj);
+	}
+	return NULL;
+}
+
+
 #endif
 
 /* ecdh_auto is broken - ignores main EC key */

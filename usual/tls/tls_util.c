@@ -30,7 +30,7 @@
 const char *
 tls_backend_version(void)
 {
-	return SSLeay_version(SSLEAY_VERSION);
+	return OpenSSL_version(OPENSSL_VERSION);
 }
 
 /*

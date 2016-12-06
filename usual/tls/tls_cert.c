@@ -86,7 +86,7 @@ tls_parse_bigint(struct tls *ctx, const ASN1_INTEGER *asn1int, const char **dst_
  */
 
 static int
-check_invalid_bytes(struct tls *ctx, unsigned char *data, unsigned int len,
+check_invalid_bytes(struct tls *ctx, const unsigned char *data, unsigned int len,
 		    int ascii_only, const char *desc)
 {
 	unsigned int i, c;
@@ -125,7 +125,7 @@ static int
 tls_parse_asn1string(struct tls *ctx, ASN1_STRING *a1str, const char **dst_p, int minchars, int maxchars, const char *desc)
 {
 	int format, len, ret = -1;
-	unsigned char *data;
+	const unsigned char *data;
 	ASN1_STRING *a1utf = NULL;
 	int ascii_only = 0;
 	char *cstr = NULL;
@@ -134,7 +134,7 @@ tls_parse_asn1string(struct tls *ctx, ASN1_STRING *a1str, const char **dst_p, in
 	*dst_p = NULL;
 
 	format = ASN1_STRING_type(a1str);
-	data = ASN1_STRING_data(a1str);
+	data = ASN1_STRING_get0_data(a1str);
 	len = ASN1_STRING_length(a1str);
 	if (len < minchars) {
 		tls_set_errorx(ctx, "invalid %s: string too short", desc);
@@ -188,7 +188,7 @@ tls_parse_asn1string(struct tls *ctx, ASN1_STRING *a1str, const char **dst_p, in
 			tls_set_errorx(ctx, "multibyte conversion failed: expected UTF8 result");
 			goto failed;
 		}
-		data = ASN1_STRING_data(a1utf);
+		data = ASN1_STRING_get0_data(a1utf);
 		len = ASN1_STRING_length(a1utf);
 	}
 
@@ -275,12 +275,12 @@ static int
 tls_load_alt_ipaddr(struct tls *ctx, ASN1_OCTET_STRING *bin, struct tls_cert *cert)
 {
 	struct tls_cert_general_name *slot;
-	void *data;
+	const void *data;
 	int len;
 
 	slot = &cert->subject_alt_names[cert->subject_alt_name_count];
 	len = ASN1_STRING_length(bin);
-	data = ASN1_STRING_data(bin);
+	data = ASN1_STRING_get0_data(bin);
 	if (len < 0) {
 		tls_set_errorx(ctx, "negative length for ipaddress");
 		return -1;

@@ -116,12 +116,12 @@ tls_check_subject_altname(struct tls *ctx, X509 *cert, const char *name)
 			continue;
 
 		if (type == GEN_DNS) {
-			void		*data;
+			const void	*data;
 			int		 format, len;
 
 			format = ASN1_STRING_type(altname->d.dNSName);
 			if (format == V_ASN1_IA5STRING) {
-				data = ASN1_STRING_data(altname->d.dNSName);
+				data = ASN1_STRING_get0_data(altname->d.dNSName);
 				len = ASN1_STRING_length(altname->d.dNSName);
 
 				if (len < 0 || len != (int)strlen(data)) {
@@ -161,11 +161,11 @@ tls_check_subject_altname(struct tls *ctx, X509 *cert, const char *name)
 			}
 
 		} else if (type == GEN_IPADD) {
-			unsigned char	*data;
+			const unsigned char *data;
 			int		 datalen;
 
 			datalen = ASN1_STRING_length(altname->d.iPAddress);
-			data = ASN1_STRING_data(altname->d.iPAddress);
+			data = ASN1_STRING_get0_data(altname->d.iPAddress);
 
 			if (datalen < 0) {
 				tls_set_errorx(ctx,

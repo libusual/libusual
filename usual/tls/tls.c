@@ -67,7 +67,9 @@ tls_deinit(void)
 		CRYPTO_cleanup_all_ex_data();
 		BIO_sock_cleanup();
 		ERR_clear_error();
+#ifdef USE_LIBSSL_INTERNALS
 		ERR_remove_thread_state(NULL);
+#endif
 		ERR_free_strings();
 
 		tls_initialised = 0;

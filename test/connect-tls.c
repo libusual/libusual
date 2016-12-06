@@ -106,7 +106,7 @@ int main(int argc, char *argv[])
 	host = argv[1];
 
 #ifdef USUAL_LIBSSL_FOR_TLS
-	printf("libssl: %s\n", SSLeay_version(SSLEAY_VERSION));
+	printf("libssl: %s\n", tls_backend_version());
 #endif
 	res = tls_init();
 	if (res < 0)
