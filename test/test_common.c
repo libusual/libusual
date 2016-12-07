@@ -45,6 +45,14 @@ struct testgroup_t groups[] = {
 	END_OF_GROUPS
 };
 
+const char *tdata(const char *fn)
+{
+	static char buf[256];
+	const char *dir = getenv("LIBUSUAL_TEST_DATA_DIR");
+	snprintf(buf, sizeof buf, "%s/%s", dir ? dir : ".", fn);
+	return buf;
+}
+
 int main(int argc, const char *argv[])
 {
 	if (getenv("USE_LOCALE"))

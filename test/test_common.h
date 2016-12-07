@@ -22,6 +22,8 @@
 			str_check(res, a); \
 	} while (0)
 
+const char *tdata(const char *fn);
+
 extern struct testcase_t aatree_tests[];
 extern struct testcase_t base_tests[];
 extern struct testcase_t bits_tests[];

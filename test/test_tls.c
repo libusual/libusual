@@ -175,7 +175,7 @@ static const char *create_worker(struct Worker **w_p, bool is_server, ...)
 			mem = v;
 		} else if (!strncmp(k, "ca=", klen)) {
 			if (mem) {
-				fdata = load_file(v, &flen);
+				fdata = load_file(tdata(v), &flen);
 				if (!fdata) {
 					errmsg = strerror(errno);
 					break;
@@ -183,11 +183,11 @@ static const char *create_worker(struct Worker **w_p, bool is_server, ...)
 				err = tls_config_set_ca_mem(w->config, fdata, flen);
 				free(fdata);
 			} else {
-				err = tls_config_set_ca_file(w->config, v);
+				err = tls_config_set_ca_file(w->config, tdata(v));
 			}
 		} else if (!strncmp(k, "cert=", klen)) {
 			if (mem) {
-				fdata = load_file(v, &flen);
+				fdata = load_file(tdata(v), &flen);
 				if (!fdata) {
 					errmsg = strerror(errno);
 					break;
@@ -195,11 +195,11 @@ static const char *create_worker(struct Worker **w_p, bool is_server, ...)
 				err = tls_config_set_cert_mem(w->config, fdata, flen);
 				free(fdata);
 			} else {
-				err = tls_config_set_cert_file(w->config, v);
+				err = tls_config_set_cert_file(w->config, tdata(v));
 			}
 		} else if (!strncmp(k, "key=", klen)) {
 			if (mem) {
-				fdata = load_file(v, &flen);
+				fdata = load_file(tdata(v), &flen);
 				if (!fdata) {
 					errmsg = strerror(errno);
 					break;
@@ -207,7 +207,7 @@ static const char *create_worker(struct Worker **w_p, bool is_server, ...)
 				err = tls_config_set_key_mem(w->config, fdata, flen);
 				free(fdata);
 			} else {
-				err = tls_config_set_key_file(w->config, v);
+				err = tls_config_set_key_file(w->config, tdata(v));
 			}
 		} else if (!strncmp(k, "show=", klen)) {
 			w->show = v;
@@ -345,7 +345,7 @@ static const char *hexcmp(const char *fn, const void *buf, unsigned int len)
 {
 	char hexbuf[256];
 	size_t flen;
-	char *fdata = load_file(fn, &flen);
+	char *fdata = load_file(tdata(fn), &flen);
 	int cmp;
 
 	if (!fdata)

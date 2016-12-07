@@ -61,7 +61,7 @@ static void test_abs(void *ptr)
 {
 	char buf[128];
 
-	int_check(1, cf_load_file(&cfdesc1, "test_cfparser.ini"));
+	int_check(1, cf_load_file(&cfdesc1, tdata("test_cfparser.ini")));
 
 	str_check(cf1.str1, "val1");
 	tt_assert(cf1.def1 == NULL);
@@ -118,12 +118,9 @@ static struct CfContext cfdesc2 = { rsects, &cf1 };
 static void test_rel(void *ptr)
 {
 	char buf[128];
-	const char *fn = "test_cfparser.ini";
+	const char *fn = tdata("test_cfparser.ini");
 
 	cleanup();
-
-	if (file_size(fn) < 0)
-		fn = "test/test_cfparser.ini";
 
 	int_check(1, cf_load_file(&cfdesc2, fn));
 
