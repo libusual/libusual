@@ -185,10 +185,14 @@ tls_get_connection_info(struct tls *ctx, char *buf, size_t buflen)
 	const char *proto = "-", *cipher = "-";
 	char dh[64];
 	int used_dh_bits = ctx->used_dh_bits, used_ecdh_nid = ctx->used_ecdh_nid;
+	const SSL_CIPHER *ciph_obj = NULL;
+
+	dh[0] = 0;
 
 	if (conn != NULL) {
 		proto = SSL_get_version(conn);
 		cipher = SSL_get_cipher(conn);
+		ciph_obj = SSL_get_current_cipher(conn);
 
 #ifdef SSL_get_server_tmp_key
 		if (ctx->flags & TLS_CLIENT) {
@@ -206,16 +210,24 @@ tls_get_connection_info(struct tls *ctx, char *buf, size_t buflen)
 				}
 				EVP_PKEY_free(pk);
 			}
-		}
+		} else
 #endif
+		if (ciph_obj && !used_ecdh_nid && !used_dh_bits) {
+#ifdef SSL_get_shared_curve
+			int kx = SSL_CIPHER_get_kx_nid(ciph_obj);
+			if (kx == NID_kx_ecdhe) {
+				used_ecdh_nid = SSL_get_shared_curve(conn, 0);
+			} else if (kx == NID_kx_dhe) {
+				snprintf(dh, sizeof dh, "/DH=?");
+			}
+#endif
+		}
 	}
 
 	if (used_dh_bits) {
 		snprintf(dh, sizeof dh, "/DH=%d", used_dh_bits);
 	} else if (used_ecdh_nid) {
 		snprintf(dh, sizeof dh, "/ECDH=%s", OBJ_nid2sn(used_ecdh_nid));
-	} else {
-		dh[0] = 0;
 	}
 
 	if (ctx->ocsp_result) {

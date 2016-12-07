@@ -19,6 +19,9 @@
 
 #define USE_LIBSSL_INTERNALS
 
+#define NID_kx_ecdhe (-90)
+#define NID_kx_dhe (-91)
+#define SSL_CIPHER_get_kx_nid(ciph) ( 0 )
 #define X509_get_key_usage(x509) ((x509)->ex_kusage)
 #define X509_get_extended_key_usage(x509) ((x509)->ex_xkusage)
 #define SSL_CTX_get0_param(ssl_ctx) ((ssl_ctx)->param)
