@@ -77,6 +77,10 @@ static void add_error(struct Worker *w, const char *s, ...)
 	if (strstr(s, "SSL routines")) {
 		s = strrchr(s, ':') + 1;
 	}
+	if (strcmp(s, "shutdown while in init") == 0) {
+		if (w->errbuf[0])
+			goto skip;
+	}
 	if (w->is_server) {
 		if (w->errbuf[0]) {
 			strlcat(w->errbuf, ",S:", sizeof w->errbuf);
@@ -92,6 +96,7 @@ static void add_error(struct Worker *w, const char *s, ...)
 		}
 		strlcat(w->errbuf, s, sizeof w->errbuf);
 	}
+skip:
 	w->wstate = CLOSED;
 }
 
@@ -786,7 +791,9 @@ static void test_cipher_nego(void *z)
 		"ciphers=AESGCM",
 		"host=server1.com",
 		NULL), "OK");
-	str_check(run_case(client, server), "TLSv1.2/ECDHE-ECDSA-AES256-GCM-SHA384/ECDH=secp384r1");
+	str_any2(run_case(client, server),
+		 "TLSv1.2/ECDHE-ECDSA-AES256-GCM-SHA384/ECDH=secp384r1",
+		 "TLSv1.2/ECDHE-ECDSA-AES256-GCM-SHA384");
 
 	/* server key is RSA - ECDHE-RSA */
 	str_check(create_worker(&server, true, "show=ciphers", SERVER2, NULL), "OK");
@@ -794,7 +801,9 @@ static void test_cipher_nego(void *z)
 		"ciphers=AESGCM",
 		"host=server2.com",
 		NULL), "OK");
-	str_check(run_case(client, server), "TLSv1.2/ECDHE-RSA-AES256-GCM-SHA384/ECDH=prime256v1");
+	str_any2(run_case(client, server),
+		 "TLSv1.2/ECDHE-RSA-AES256-GCM-SHA384/ECDH=prime256v1",
+		 "TLSv1.2/ECDHE-RSA-AES256-GCM-SHA384");
 
 	/* server key is RSA - DHE-RSA */
 	str_check(create_worker(&server, true, SERVER2,
@@ -815,7 +824,9 @@ static void test_cipher_nego(void *z)
 		"ciphers=EECDH+AES",
 		"host=server2.com",
 		NULL), "OK");
-	str_check(run_case(client, server), "TLSv1.2/ECDHE-RSA-AES256-GCM-SHA384/ECDH=prime256v1");
+	str_any2(run_case(client, server),
+		 "TLSv1.2/ECDHE-RSA-AES256-GCM-SHA384/ECDH=prime256v1",
+		 "TLSv1.2/ECDHE-RSA-AES256-GCM-SHA384");
 end:;
 }
 
