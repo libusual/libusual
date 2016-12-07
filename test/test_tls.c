@@ -601,9 +601,7 @@ static void test_verify(void *z)
 	/* default: client checks server cert, fails due to bad ca */
 	str_check(create_worker(&server, true, SERVER1, NULL), "OK");
 	str_check(create_worker(&client, false, CA2, "host=example.com", NULL), "OK");
-	str_any2(run_case(client, server),
-		 "C:certificate verify failed - S:tlsv1 alert unknown ca",
-		 "C:certificate verify failed - S:tlsv1 alert unknown ca,S:shutdown while in init");
+	str_check(run_case(client, server), "C:certificate verify failed - S:tlsv1 alert unknown ca");
 
 	/* default: client checks server cert, fails due to bad hostname */
 	str_check(create_worker(&server, true, SERVER1, NULL), "OK");
@@ -704,9 +702,8 @@ static void test_clientcert(void *z)
 				"verify-client=1",
 				NULL), "OK");
 	str_check(create_worker(&client, false, CLIENT2, CA1, "host=server1.com", NULL), "OK");
-	str_any3(run_case(client, server),
+	str_any2(run_case(client, server),
 		"C:tlsv1 alert unknown ca - S:no certificate returned",
-		"C:tlsv1 alert unknown ca,C:shutdown while in init - S:certificate verify failed",
 		"C:tlsv1 alert unknown ca - S:certificate verify failed");
 
 	/* noverifycert: server allow invalid cert */
@@ -721,9 +718,7 @@ static void test_clientcert(void *z)
 				"verify-client=1",
 				NULL), "OK");
 	str_check(create_worker(&client, false, CA1, "host=server1.com", NULL), "OK");
-	str_any2(run_case(client, server),
-		 "C:sslv3 alert handshake failure - S:peer did not return a certificate",
-		 "C:sslv3 alert handshake failure,C:shutdown while in init - S:peer did not return a certificate");
+	str_check(run_case(client, server), "C:sslv3 alert handshake failure - S:peer did not return a certificate");
 
 	/* verify-client-optional: allow client without cert */
 	str_check(create_worker(&server, true, SERVER1, CA2,
@@ -760,9 +755,8 @@ static void test_fingerprint(void *z)
 		"peer-sha256=ssl/ca2_client2.crt.sha256",
 		NULL), "OK");
 	str_check(create_worker(&client, false, CA1, "host=server1.com", NULL), "OK");
-	str_any2(run_case(client, server),
-		 "C:sslv3 alert handshake failure - S:peer did not return a certificate",
-		 "C:sslv3 alert handshake failure,C:shutdown while in init - S:peer did not return a certificate");
+	str_check(run_case(client, server),
+		 "C:sslv3 alert handshake failure - S:peer did not return a certificate");
 end:;
 }
 
@@ -791,8 +785,9 @@ static void test_cipher_nego(void *z)
 		"ciphers=AESGCM",
 		"host=server1.com",
 		NULL), "OK");
-	str_any2(run_case(client, server),
+	str_any3(run_case(client, server),
 		 "TLSv1.2/ECDHE-ECDSA-AES256-GCM-SHA384/ECDH=secp384r1",
+		 "TLSv1.2/ECDHE-ECDSA-AES256-GCM-SHA384/ECDH=X25519",
 		 "TLSv1.2/ECDHE-ECDSA-AES256-GCM-SHA384");
 
 	/* server key is RSA - ECDHE-RSA */
@@ -801,8 +796,9 @@ static void test_cipher_nego(void *z)
 		"ciphers=AESGCM",
 		"host=server2.com",
 		NULL), "OK");
-	str_any2(run_case(client, server),
+	str_any3(run_case(client, server),
 		 "TLSv1.2/ECDHE-RSA-AES256-GCM-SHA384/ECDH=prime256v1",
+		 "TLSv1.2/ECDHE-RSA-AES256-GCM-SHA384/ECDH=X25519",
 		 "TLSv1.2/ECDHE-RSA-AES256-GCM-SHA384");
 
 	/* server key is RSA - DHE-RSA */
@@ -824,8 +820,9 @@ static void test_cipher_nego(void *z)
 		"ciphers=EECDH+AES",
 		"host=server2.com",
 		NULL), "OK");
-	str_any2(run_case(client, server),
+	str_any3(run_case(client, server),
 		 "TLSv1.2/ECDHE-RSA-AES256-GCM-SHA384/ECDH=prime256v1",
+		 "TLSv1.2/ECDHE-RSA-AES256-GCM-SHA384/ECDH=X25519",
 		 "TLSv1.2/ECDHE-RSA-AES256-GCM-SHA384");
 end:;
 }
