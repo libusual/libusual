@@ -350,7 +350,7 @@ tls_info_callback(const SSL *ssl, int where, int rc)
 {
 	struct tls *ctx = SSL_get_app_data(ssl);
 
-#ifdef USE_LIBSSL_INTERNALS
+#if defined(USE_LIBSSL_INTERNALS) && (!defined(LIBRESSL_VERSION_NUMBER) || LIBRESSL_VERSION_NUMBER < 0x2050100fL)
 	if (!(ctx->state & TLS_HANDSHAKE_COMPLETE) && ssl->s3) {
 		/* steal info about used DH key */
 		if (ssl->s3->tmp.dh && !ctx->used_dh_bits) {
