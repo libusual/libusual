@@ -40,7 +40,7 @@ tls_init(void)
 	if (tls_initialised)
 		return (0);
 
-#ifdef USE_LIBSSL_INTERNALS
+#ifdef USE_LIBSSL_OLD
 	SSL_load_error_strings();
 	SSL_library_init();
 
@@ -65,7 +65,7 @@ tls_deinit(void)
 		tls_config_free(tls_config_default);
 		tls_config_default = NULL;
 
-#ifdef USE_LIBSSL_INTERNALS
+#ifdef USE_LIBSSL_OLD
 		EVP_cleanup();
 		CRYPTO_cleanup_all_ex_data();
 		BIO_sock_cleanup();
