@@ -98,6 +98,8 @@ static void sig_close(struct event_base *base);
 #ifdef CASSERT
 #include <usual/logging.h>
 #include <usual/time.h>
+
+_PRINTF(2, 3)
 static void base_dbg(struct event_base *base, const char *s, ...)
 {
 	va_list ap;
@@ -113,6 +115,7 @@ static void base_dbg(struct event_base *base, const char *s, ...)
 	       base->pfd_size, buf);
 }
 
+_PRINTF(2, 3)
 static void ev_dbg(struct event *ev, const char *s, ...)
 {
 	va_list ap;
