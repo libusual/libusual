@@ -156,15 +156,29 @@ typedef enum { true=1, false=0 } bool;
  */
 
 /** Pre-processor macro to check if compiler is GCC with high enough version */
-#define _COMPILER_GNUC(maj,min) (defined(__GNUC__) && \
-	  ((__GNUC__ > (maj)) || (__GNUC__ == (maj) && __GNUC_MINOR__ >= (min))))
+#if defined(__GNUC__)
+#define _COMPILER_GNUC(maj,min) ((__GNUC__ > (maj)) || (__GNUC__ == (maj) && __GNUC_MINOR__ >= (min)))
+#else
+#define _COMPILER_GNUC(maj,min) (0)
+#endif
 /** Pre-processor macro to check if compiler is CLANG with high enough version */
-#define _COMPILER_CLANG(maj,min) (defined(__clang__) && \
-	   ((__clang_major__ > (maj)) || (__clang_major__ == (maj) && __clang_minor__ >= (min))))
+#if defined(__clang__)
+#define _COMPILER_CLANG(maj,min) ((__clang_major__ > (maj)) || (__clang_major__ == (maj) && __clang_minor__ >= (min)))
+#else
+#define _COMPILER_CLANG(maj,min) (0)
+#endif
 /** Pre-processor macro to check if compiler is Visual C with high enough version */
-#define _COMPILER_MSC(ver) (defined(_MSC_VER) && (_MSC_VER >= (ver)))
+#if defined(_MSC_VER)
+#define _COMPILER_MSC(ver) (_MSC_VER >= (ver))
+#else
+#define _COMPILER_MSC(ver) (0)
+#endif
 /** Pre-processor macro to check if compiler is Intel CC with high enough version */
-#define _COMPILER_ICC(ver) (defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= (ver)))
+#if defined(__INTEL_COMPILER)
+#define _COMPILER_ICC(ver) (__INTEL_COMPILER >= (ver))
+#else
+#define _COMPILER_ICC(ver) (0)
+#endif
 
 /*
  * clang compat
