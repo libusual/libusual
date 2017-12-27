@@ -35,6 +35,8 @@ static void test_event(void *z)
 	int spair[2];
 	struct event ev[2];
 
+	memset(ev, 0, sizeof(ev));
+
 	base = event_init();
 
 	tt_assert(socketpair(AF_UNIX, SOCK_STREAM, 0, spair) == 0);
