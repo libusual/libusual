@@ -2,7 +2,8 @@ language: c
 compiler:
   - clang
   - gcc
-script:
-  - ./autogen.sh
-  - ./configure --enable-cassert --enable-werror
-  - make
+script: |
+  set -e
+  ./autogen.sh
+  ./configure --enable-cassert --enable-werror
+  make
