@@ -124,7 +124,7 @@ static const char *check_errors(struct Worker *client, struct Worker *server)
 	return buf;
 }
 
-static const char *create_worker(struct Worker **w_p, bool is_server, ...)
+static const char *create_worker(struct Worker **w_p, int is_server, ...)
 {
 	va_list ap;
 	const char *k, *v;
