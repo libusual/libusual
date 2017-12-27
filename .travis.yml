@@ -2,9 +2,15 @@ language: c
 compiler:
   - clang
   - gcc
+env:
+  matrix:
+    - configure_args=''
+    - configure_args='--enable-cassert'
+    - configure_args='--enable-cassert --with-uregex'
 script: |
   set -e
   ./autogen.sh
-  ./configure --enable-cassert --enable-werror
+  ./configure --prefix=$HOME/install --enable-werror $configure_args
   make
   make -C test run
+  make install
