@@ -7,3 +7,4 @@ script: |
   ./autogen.sh
   ./configure --enable-cassert --enable-werror
   make
+  make -C test run
