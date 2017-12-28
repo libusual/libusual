@@ -8,6 +8,7 @@ test/obj
 test/test_config.h
 test/regtest_*
 test/compile
+test/connect
 doc/html
 *.[oas]
 *.gc[odn][aov]
