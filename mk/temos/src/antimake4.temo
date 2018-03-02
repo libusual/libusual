@@ -58,7 +58,7 @@ cat_file Makefile <<"EOF"
 EOF
 
 msg Build the project
-run sh ./autogen.sh
+runq sh ./autogen.sh
 runq ./configure
 run make
 run ls

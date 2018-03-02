@@ -10,7 +10,6 @@ Install libusual and link against it.
 ---------------------------------
 $ git clone git://github.com/libusual/libusual.git libusual
 Cloning into 'libusual'...
-done.
 $ cd libusual
 $ ./autogen.sh
 [...]
@@ -132,6 +131,7 @@ Build the project
 
 ---------------------------------
 $ sh ./autogen.sh
+[...]
 $ PKG_CONFIG_PATH=`pwd`/inst/lib/pkgconfig ./configure
 [...]
 $ make

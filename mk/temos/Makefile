@@ -38,7 +38,7 @@ am:
 ftest: clean qtest
 qtest: $(OUT)
 	@diff -urN expected output > regressions.diff || { \
-		less regressions.diff; \
+		cat regressions.diff; \
 		echo "FAIL: Result does not match expected output"; \
 		exit 1; \
 	}

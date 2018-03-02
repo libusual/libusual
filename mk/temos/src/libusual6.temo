@@ -115,7 +115,7 @@ cat_file Makefile <<"EOF"
 EOF
 
 msg Build the project
-run sh ./autogen.sh
+runq sh ./autogen.sh
 runq 'PKG_CONFIG_PATH=`pwd`/inst/lib/pkgconfig ./configure'
 run make
 run ls

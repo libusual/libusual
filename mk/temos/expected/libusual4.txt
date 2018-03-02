@@ -10,7 +10,6 @@ Install libusual and link against it.
 ---------------------------------
 $ git clone git://github.com/libusual/libusual.git libusual
 Cloning into 'libusual'...
-done.
 $ cd libusual
 $ ./autogen.sh
 [...]
@@ -34,12 +33,17 @@ inst/include/usual/cfparser.h
 inst/include/usual/config.h
 inst/include/usual/config_msvc.h
 inst/include/usual/crypto
+inst/include/usual/crypto/chacha.h
+inst/include/usual/crypto/csrandom.h
 inst/include/usual/crypto/digest.h
+inst/include/usual/crypto/entropy.h
 inst/include/usual/crypto/hmac.h
 inst/include/usual/crypto/keccak.h
+inst/include/usual/crypto/keccak_prng.h
 inst/include/usual/crypto/md5.h
 inst/include/usual/crypto/sha1.h
 inst/include/usual/crypto/sha256.h
+inst/include/usual/crypto/sha3.h
 inst/include/usual/crypto/sha512.h
 inst/include/usual/ctype.h
 inst/include/usual/cxalloc.h
@@ -54,9 +58,13 @@ inst/include/usual/getopt.h
 inst/include/usual/hashing
 inst/include/usual/hashing/crc32.h
 inst/include/usual/hashing/lookup3.h
+inst/include/usual/hashing/memhash.h
 inst/include/usual/hashing/siphash.h
+inst/include/usual/hashing/spooky.h
+inst/include/usual/hashing/xxhash.h
 inst/include/usual/hashtab-impl.h
 inst/include/usual/heap.h
+inst/include/usual/json.h
 inst/include/usual/list.h
 inst/include/usual/logging.h
 inst/include/usual/mbuf.h
@@ -65,7 +73,7 @@ inst/include/usual/mempool.h
 inst/include/usual/misc.h
 inst/include/usual/netdb.h
 inst/include/usual/pgutil.h
-inst/include/usual/pgutil_kwlookup.h
+inst/include/usual/psrandom.h
 inst/include/usual/pthread.h
 inst/include/usual/regex.h
 inst/include/usual/safeio.h
@@ -77,11 +85,18 @@ inst/include/usual/socket_win32.h
 inst/include/usual/statlist.h
 inst/include/usual/string.h
 inst/include/usual/strpool.h
+inst/include/usual/talloc.h
 inst/include/usual/time.h
+inst/include/usual/tls
+inst/include/usual/tls/tls.h
+inst/include/usual/tls/tls_cert.h
 inst/include/usual/utf8.h
 inst/include/usual/wchar.h
 inst/lib
-inst/lib/libusual.a
+inst/lib/libusual.la
+inst/lib/libusual.so
+inst/lib/libusual.so.0
+inst/lib/libusual.so.0.0.0
 inst/lib/pkgconfig
 inst/lib/pkgconfig/libusual.pc
 inst/share

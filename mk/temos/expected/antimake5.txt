@@ -92,6 +92,7 @@ Build the project
 
 ---------------------------------
 $ sh ./autogen.sh
+[...]
 $ ./configure
 [...]
 $ make

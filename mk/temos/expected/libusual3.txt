@@ -12,7 +12,6 @@ Here we close libusual repo, but do not configure nor build it.
 ---------------------------------
 $ git clone git://github.com/libusual/libusual.git lib
 Cloning into 'lib'...
-done.
 ---------------------------------
 
 Autoconf setup
@@ -95,12 +94,13 @@ Build the project
 
 ---------------------------------
 $ sh ./autogen.sh
+[...]
 $ ./configure
 [...]
 $ make
      CC       prog.c
-     CC       lib/usual/hashing/crc32.c
      CC       lib/usual/base.c
+     CC       lib/usual/hashing/crc32.c
      CCLD     prog
 $ ls
 Makefile	autogen.sh    config.status  configure.ac  prog

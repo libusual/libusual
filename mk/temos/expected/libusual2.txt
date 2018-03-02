@@ -20,7 +20,6 @@ Here we configure libusual, but do not build it.
 ---------------------------------
 $ git clone git://github.com/libusual/libusual.git lib
 Cloning into 'lib'...
-done.
 $ cd lib
 $ ./autogen.sh
 [...]
@@ -86,8 +85,8 @@ Build the project
 ---------------------------------
 $ make
      CC       prog.c
-     CC       lib/usual/hashing/crc32.c
      CC       lib/usual/base.c
+     CC       lib/usual/hashing/crc32.c
      CCLD     prog
 $ ls
 Makefile  lib  prog  prog.c

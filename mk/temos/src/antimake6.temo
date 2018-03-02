@@ -205,7 +205,7 @@ cat_file esub/esub/Makefile.am <<"EOF"
 EOF
 
 msg Build the project
-run sh ./autogen.sh
+runq sh ./autogen.sh
 runq ./configure
 #run make esub/prog
 run make
