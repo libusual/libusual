@@ -1,4 +1,3 @@
-
 #include <usual/bits.h>
 
 #include "test_common.h"
@@ -194,4 +193,3 @@ struct testcase_t bits_tests[] = {
 	{ "safe_mul", test_safe_mul },
 	END_OF_TESTCASES
 };
-

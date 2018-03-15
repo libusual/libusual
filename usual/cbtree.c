@@ -14,7 +14,7 @@
  * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- */ 
+ */
 
 /*
  * Associates a C string with user pointer (called "obj").
@@ -344,4 +344,3 @@ bool cbtree_walk(struct CBTree *tree, cbtree_walker_func cb_func, void *cb_arg)
 		return true;
 	return walk(tree->root, cb_func, cb_arg);
 }
-

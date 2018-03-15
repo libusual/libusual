@@ -29,4 +29,3 @@ echo 'Result: test/lcov/index.html'
 rm -f coverage.info.tmp coverage.info
 rm -f covtest
 rm -rf .objs/covtest
-

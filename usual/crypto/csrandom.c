@@ -174,4 +174,3 @@ uint32_t csrandom_range(uint32_t upper_bound)
 }
 
 #endif /* !HAVE_ARC4RANDOM_BUF */
-

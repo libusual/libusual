@@ -14,7 +14,7 @@
  * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- */ 
+ */
 
 /*
  * Wrappers around regular I/O functions (send/recv/read/write)
@@ -194,4 +194,3 @@ loop:
 		log_noise("safe_accept(%d) = %d (%s)", fd, res, sa2str(sa, buf, sizeof(buf)));
 	return res;
 }
-

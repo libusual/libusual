@@ -1,4 +1,3 @@
-
 #include <usual/wchar.h>
 #include <string.h>
 
@@ -136,4 +135,3 @@ struct testcase_t wchar_tests[] = {
 	{ "mbstr_decode", test_mbstr_decode },
 	END_OF_TESTCASES
 };
-

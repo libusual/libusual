@@ -33,4 +33,3 @@ bool mbuf_make_room(struct MBuf *buf, unsigned len)
 	buf->alloc_len = new_alloc;
 	return true;
 }
-

@@ -42,4 +42,3 @@ bool pg_quote_fqident(char *_dst, const char *_src, int dstlen);
 struct StrList *pg_parse_array(const char *pgarr, CxMem *cx);
 
 #endif
-

@@ -167,4 +167,3 @@ static inline struct SHList *shlist_pop(struct SHList *list)
 
 
 #endif
-

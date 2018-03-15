@@ -671,8 +671,8 @@ int vasprintf(char **dst_p, const char *fmt, va_list ap)
 #ifndef HAVE_STRNLEN
 
 size_t strnlen(const char *string, size_t maxlen)
-{ 
-	const char *end = memchr(string, '\0', maxlen); 
+{
+	const char *end = memchr(string, '\0', maxlen);
 	return end ? (size_t)(end - string) : maxlen;
 }
 

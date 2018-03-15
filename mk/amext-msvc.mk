@@ -49,4 +49,3 @@ define ar_lib
 	$(E) "LIB" $@
 	$(Q) $(AR) $(ARFLAGS) -out:$(call vcFixPath,$@) $^
 endef
-

@@ -1414,4 +1414,3 @@ void keccak_forget(struct KeccakContext *ctx)
 	}
 	ctx->pos = 0;
 }
-

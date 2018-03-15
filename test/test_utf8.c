@@ -1,4 +1,3 @@
-
 #include <usual/utf8.h>
 
 #include "test_common.h"
@@ -219,4 +218,3 @@ struct testcase_t utf8_tests[] = {
 	{ "utf8_validate_seq", test_utf8_validate_seq },
 	END_OF_TESTCASES
 };
-

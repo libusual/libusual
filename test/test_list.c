@@ -1,4 +1,3 @@
-
 #include "test_common.h"
 
 #include <usual/psrandom.h>
@@ -71,7 +70,7 @@ static bool test_sort(void (*sort)(struct List *list, list_cmp_f cmp), int n)
 	struct List list[1];
 	bool ok;
 	int i;
-	
+
 	/* random */
 	list_init(list);
 	for (i = 0; i < n; i++) {
@@ -154,4 +153,3 @@ struct testcase_t list_tests[] = {
 #endif
 	END_OF_TESTCASES
 };
-

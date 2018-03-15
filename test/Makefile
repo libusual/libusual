@@ -1,4 +1,3 @@
-
 AM_FEATURES = libusual
 
 SUBLOC = test
@@ -89,4 +88,3 @@ run:
 .PHONY: tags
 tags:
 	ctags $(regtest_system_SOURCES)
-

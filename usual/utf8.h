@@ -59,4 +59,3 @@ int utf8_validate_seq(const char *src, const char *srcend);
 bool utf8_validate_string(const char *src, const char *end);
 
 #endif
-

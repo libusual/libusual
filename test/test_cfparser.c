@@ -147,4 +147,3 @@ struct testcase_t cfparser_tests[] = {
 	{ "rel", test_rel },
 	END_OF_TESTCASES
 };
-

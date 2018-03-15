@@ -14,4 +14,3 @@
 void spookyhash(const void *message, size_t length, uint64_t *hash1, uint64_t *hash2);
 
 #endif
-

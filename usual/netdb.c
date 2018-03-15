@@ -119,7 +119,7 @@ static void *gaia_lookup_thread(void *arg)
 static int gaia_post_request(struct GAIAContext *ctx, struct gaicb *list[], int nitems, struct sigevent *sevp)
 {
 	struct GAIARequest *rq;
-	
+
 	rq = malloc(RQ_SIZE(nitems));
 	if (!rq)
 		return EAI_MEMORY;
@@ -214,4 +214,3 @@ int getaddrinfo_a(int mode, struct gaicb *list[], int nitems, struct sigevent *s
 
 #endif /* !HAVE_PTHREAD_H */
 #endif /* !HAVE_GETADDRINFO_A */
-

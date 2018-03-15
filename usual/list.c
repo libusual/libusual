@@ -79,4 +79,3 @@ void list_sort(struct List *list, list_cmp_f cmp_func)
 	list->prev = p;
 	p->next = list;
 }
-

@@ -239,4 +239,3 @@ tls_get_connection_info(struct tls *ctx, char *buf, size_t buflen)
 }
 
 #endif /* USUAL_LIBSSL_FOR_TLS */
-

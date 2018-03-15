@@ -64,4 +64,3 @@ void strpool_decref(struct PStr *str);
 int strpool_total(struct StrPool *sp);
 
 #endif
-

@@ -1,4 +1,3 @@
-
 #include <usual/time.h>
 
 #include <string.h>
@@ -54,4 +53,3 @@ struct testcase_t time_tests[] = {
 	{ "format", test_time_format },
 	END_OF_TESTCASES
 };
-

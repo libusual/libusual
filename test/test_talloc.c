@@ -457,4 +457,3 @@ struct testcase_t talloc_tests[] = {
 	{ "reparent", test_talloc_reparent },
 	END_OF_TESTCASES
 };
-

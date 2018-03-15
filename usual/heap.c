@@ -112,7 +112,7 @@ static void rebalance(struct Heap *h, unsigned pos)
 struct Heap *heap_create(heap_is_better_f is_better_cb, heap_save_pos_f save_pos_cb, CxMem *cx)
 {
 	struct Heap *h;
-	
+
 	h = cx_alloc0(cx, sizeof(*h));
 	if (!h)
 		return NULL;
@@ -209,4 +209,3 @@ void *heap_get_obj(struct Heap *h, unsigned pos)
 		return h->data[pos];
 	return NULL;
 }
-

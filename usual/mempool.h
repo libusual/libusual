@@ -33,4 +33,3 @@ void *mempool_alloc(struct MemPool **pool, unsigned size) _MALLOC;
 void mempool_destroy(struct MemPool **pool);
 
 #endif
-

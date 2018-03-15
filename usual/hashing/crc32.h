@@ -28,4 +28,3 @@
 uint32_t calc_crc32(const void *data, size_t len, uint32_t init);
 
 #endif
-

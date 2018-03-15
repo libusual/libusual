@@ -254,4 +254,3 @@ int getentropy(void *dst, size_t bytes)
 }
 
 #endif /* !HAVE_GETENTROPY */
-

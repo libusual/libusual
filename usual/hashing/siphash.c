@@ -87,4 +87,3 @@ uint64_t siphash24_secure(const void *data, size_t len)
 
 	return siphash24(data, len, k0, k1);
 }
-

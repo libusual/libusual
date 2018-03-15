@@ -63,4 +63,3 @@ endef
 AM_TARGET_HOOKS += EmbedLibUsual
 
 EXTRA_DIST += $(_USUAL_DIR)/find_modules.sh $(_USUAL_DIR)/usual/config.h.in
-

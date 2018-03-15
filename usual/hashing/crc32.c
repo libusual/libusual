@@ -67,4 +67,3 @@ uint32_t calc_crc32(const void *data, size_t len, uint32_t init)
 		crc = crc32(crc, *p++);
 	return crc ^ (~0);
 }
-

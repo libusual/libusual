@@ -1,4 +1,3 @@
-
 #include <usual/cbtree.h>
 
 #include <usual/string.h>
@@ -175,4 +174,3 @@ struct testcase_t cbtree_tests[] = {
 	{ "random", test_cbtree_random },
 	END_OF_TESTCASES
 };
-

@@ -100,4 +100,3 @@ unsigned heap_size(struct Heap *h);
 void *heap_get_obj(struct Heap *h, unsigned pos);
 
 #endif
-

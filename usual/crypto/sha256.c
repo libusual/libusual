@@ -221,4 +221,3 @@ const struct DigestInfo *digest_SHA256(void)
 	};
 	return &info;
 }
-

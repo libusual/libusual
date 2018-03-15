@@ -1,5 +1,3 @@
-
-
 #include "test_common.h"
 
 #include <locale.h>
@@ -65,4 +63,3 @@ int main(int argc, const char *argv[])
 
 	return tinytest_main(argc, argv, groups);
 }
-

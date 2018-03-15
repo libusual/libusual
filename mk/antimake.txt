@@ -471,4 +471,3 @@ Paul's Rules of Makefiles: http://make.mad-scientist.us/rules.html[]
 Small BSD-ish build system: https://webkeks.org/hg/buildsys/[]
 
 GNU Make Standard Library: http://sourceforge.net/projects/gmsl/[]
-

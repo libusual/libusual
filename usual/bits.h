@@ -224,4 +224,3 @@ static inline bool safe_mul_size(size_t *res_p, size_t a, size_t b)
 #undef _USUAL_MUL_SAFE_
 
 #endif
-

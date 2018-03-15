@@ -44,4 +44,3 @@ const char *dlerror(void);
 
 #endif /* _WIN32 */
 #endif /* !_USUAL_DLFCN_H_ */
-

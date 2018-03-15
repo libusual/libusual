@@ -1,4 +1,3 @@
-
 dnl
 dnl  AMK_INIT: Generate initial makefile
 dnl
@@ -11,4 +10,3 @@ if test "$srcdir" != "."; then
 fi
 
 ])
-

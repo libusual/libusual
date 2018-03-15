@@ -92,4 +92,3 @@ bool mdict_urldecode(struct MDict *dict, const char *str, unsigned len);
 bool mdict_urlencode(struct MDict *dict, struct MBuf *dst);
 
 #endif
-

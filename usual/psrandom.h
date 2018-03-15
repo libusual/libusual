@@ -58,4 +58,3 @@ uint64_t xorshift128plus(uint64_t *s0, uint64_t *s1);
 uint64_t xorshift1024plus(uint64_t state[16], unsigned int counter);
 
 #endif
-

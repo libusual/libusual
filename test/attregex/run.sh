@@ -17,4 +17,3 @@ for t in $tests; do
 done
 
 #$rxtest < data/categorize.dat | tail -n +4
-

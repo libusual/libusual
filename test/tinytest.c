@@ -365,4 +365,3 @@ _tinytest_set_test_skipped(void)
 	if (cur_test_outcome==OK)
 		cur_test_outcome = SKIP;
 }
-

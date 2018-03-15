@@ -69,4 +69,3 @@ html/index.html: index.txt
 html/antimake.html: ../antimake.txt
 	@mkdir -p html
 	asciidoc -a toc -o - $< | grep -v '^Last updated ' > $@
-

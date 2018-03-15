@@ -12,7 +12,7 @@
  * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- */ 
+ */
 
 /** @file
  *
@@ -36,7 +36,7 @@ struct CBTree;
  *
  * @param obj_key_cb    callback to get the key for a object
  * @param obj_free_cb   callback to free the object when tree node is freed (optional)
- * @param cb_ctx 	extra pointer passed to callbacks
+ * @param cb_ctx	extra pointer passed to callbacks
  * @param cx            memory context where from allocate
  */
 struct CBTree *cbtree_create(cbtree_getkey_func obj_key_cb,
@@ -70,4 +70,3 @@ void *cbtree_lookup(struct CBTree *tree, const void *key, size_t klen);
 bool cbtree_walk(struct CBTree *tree, cbtree_walker_func cb_func, void *cb_arg);
 
 #endif
-

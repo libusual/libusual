@@ -1,12 +1,12 @@
 /*
  * Primitive slab allocator.
- * 
+ *
  * Copyright (c) 2007-2009  Marko Kreen, Skype Technologies OÜ
- * 
+ *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -65,11 +65,10 @@ int slab_active_count(const struct Slab *slab);
 
 /** Signature for stat info callback */
 typedef void (*slab_stat_fn)(void *arg, const char *slab_name,
-			     unsigned size, unsigned free, 
+			     unsigned size, unsigned free,
 			     unsigned total);
 
 /** Run stat info callback on all slabs */
 void slab_stats(slab_stat_fn cb_func, void *cb_arg);
 
 #endif
-

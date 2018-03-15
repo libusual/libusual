@@ -51,4 +51,3 @@ bool keccak_prng_extract(struct KeccakPRNG *prng, void *data, size_t len)
 	keccak_squeeze(&prng->ctx, data, len);
 	return true;
 }
-

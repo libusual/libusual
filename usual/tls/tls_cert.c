@@ -676,4 +676,3 @@ tls_cert_free(struct tls_cert *cert)
 }
 
 #endif /* USUAL_LIBSSL_FOR_TLS */
-

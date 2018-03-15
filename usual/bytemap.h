@@ -99,4 +99,3 @@ static inline bool bitmap256_is_set(const struct Bitmap256 *bmap, uint8_t byte)
 
 
 #endif
-

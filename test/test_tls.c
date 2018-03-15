@@ -1046,4 +1046,3 @@ struct testcase_t tls_tests[] = {
 	END_OF_TESTCASES,
 	{ "servername", test_servername },
 };
-

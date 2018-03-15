@@ -1,4 +1,3 @@
-
 #include <usual/netdb.h>
 
 #include <usual/string.h>
@@ -51,4 +50,3 @@ struct testcase_t netdb_tests[] = {
 	{ "getaddrinfo_a", test_gai },
 	END_OF_TESTCASES
 };
-

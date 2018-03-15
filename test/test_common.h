@@ -1,4 +1,3 @@
-
 #include <usual/base.h>
 
 #include "tinytest.h"
@@ -58,4 +57,3 @@ extern struct testcase_t utf8_tests[];
 extern struct testcase_t wchar_tests[];
 
 extern unsigned long long test_seed1, test_seed2;
-

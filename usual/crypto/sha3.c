@@ -185,4 +185,3 @@ const struct DigestInfo *digest_SHAKE256(void)
 {
 	return &shake256_info;
 }
-

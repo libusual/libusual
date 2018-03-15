@@ -1,4 +1,3 @@
-
 #include <usual/psrandom.h>
 #include <usual/string.h>
 #include <usual/endian.h>
@@ -183,4 +182,3 @@ struct testcase_t psrandom_tests[] = {
 	{ "range", test_range },
 	END_OF_TESTCASES
 };
-

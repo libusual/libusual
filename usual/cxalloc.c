@@ -168,5 +168,3 @@ const struct CxMem cx_libc_allocator = {
 	&libc_alloc_ops,
 	NULL,
 };
-
-

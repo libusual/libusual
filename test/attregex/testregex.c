@@ -214,8 +214,8 @@ T("  implementation. If the first character is not [BEASKLP] then the\n");
 T("  specification is a global control line. One or more of [BEASKLP] may be\n");
 T("  specified; the test will be repeated for each mode.\n");
 T("\n");
-T("    B 	basic			BRE	(grep, ed, sed)\n");
-T("    E 	REG_EXTENDED		ERE	(egrep)\n");
+T("    B	basic			BRE	(grep, ed, sed)\n");
+T("    E	REG_EXTENDED		ERE	(egrep)\n");
 T("    A	REG_AUGMENTED		ARE	(egrep with negation)\n");
 T("    S	REG_SHELL		SRE	(sh glob)\n");
 T("    K	REG_SHELL|REG_AUGMENTED	KRE	(ksh glob)\n");
@@ -2124,7 +2124,7 @@ main(int argc, char** argv)
 			else
 #endif
 				fun = "regexec";
-			
+
 			for (i = 0; i < elementsof(match); i++)
 				match[i] = state.NOMATCH;
 

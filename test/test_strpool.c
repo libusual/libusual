@@ -1,4 +1,3 @@
-
 #include <usual/strpool.h>
 
 #include "test_common.h"
@@ -61,4 +60,3 @@ struct testcase_t strpool_tests[] = {
 	{ "strpool", test_strpool },
 	END_OF_TESTCASES
 };
-

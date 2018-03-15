@@ -316,4 +316,3 @@ void spookyhash(const void *message, size_t length, uint64_t *hash1, uint64_t *h
 	*hash1 = h0;
 	*hash2 = h1;
 }
-

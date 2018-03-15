@@ -85,4 +85,3 @@ tls_peer_cert_notafter(struct tls *ctx)
 }
 
 #endif /* USUAL_LIBSSL_FOR_TLS */
-

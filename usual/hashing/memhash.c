@@ -53,4 +53,3 @@ uint32_t memhash_string(const char *s)
 {
 	return memhash(s, strlen(s));
 }
-

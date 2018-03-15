@@ -167,4 +167,3 @@ void chacha_keystream_xor(struct ChaCha *ctx, const void *plain, void *encrypted
 		ctx->pos += n;
 	}
 }
-

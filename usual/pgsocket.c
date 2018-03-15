@@ -405,4 +405,3 @@ bool pgs_waiting_for_reply(struct PgSocket *db)
 		return false;
 	return (db->wait_type == W_SOCK) && (db->wait_event == EV_READ);
 }
-

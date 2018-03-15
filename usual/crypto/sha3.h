@@ -109,4 +109,3 @@ void shake_update(struct SHA3Context *ctx, const void *ptr, unsigned len);
 void shake_extract(struct SHA3Context *ctx, void *dst, unsigned count);
 
 #endif
-

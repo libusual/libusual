@@ -15,7 +15,7 @@
  * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- */ 
+ */
 
 #ifndef _USUAL_DAEMON_H_
 #define _USUAL_DAEMON_H_
@@ -33,4 +33,3 @@ bool signal_pidfile(const char *pidfile, int sig);
 void daemonize(const char *pidfile, bool go_background);
 
 #endif
-

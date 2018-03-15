@@ -238,4 +238,3 @@ const struct DigestInfo *digest_SHA512(void)
 	};
 	return &info;
 }
-

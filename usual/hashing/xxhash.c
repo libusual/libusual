@@ -92,4 +92,3 @@ uint32_t xxhash(const void *input, size_t len, uint32_t seed)
 
 	return h32;
 }
-

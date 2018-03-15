@@ -322,4 +322,3 @@ bool mdict_urlencode(struct MDict *dict, struct MBuf *dst)
 	ctx.dst = dst;
 	return mdict_walk(dict, urlenc_elem, &ctx);
 }
-

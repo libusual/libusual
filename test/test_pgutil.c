@@ -1,4 +1,3 @@
-
 #include <usual/pgutil.h>
 
 #include "test_common.h"
@@ -190,4 +189,3 @@ struct testcase_t pgutil_tests[] = {
 	{ "pg_parse_array", test_parse_array },
 	END_OF_TESTCASES
 };
-

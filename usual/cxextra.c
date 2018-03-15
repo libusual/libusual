@@ -386,4 +386,3 @@ CxMem *cx_new_tree(CxMem *cx)
 
 	return &t->this;
 }
-

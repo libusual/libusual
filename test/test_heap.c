@@ -1,4 +1,3 @@
-
 #include <usual/heap.h>
 
 #include <string.h>
@@ -225,4 +224,3 @@ struct testcase_t heap_tests[] = {
 	/* { "random", test_aatree_random }, */
 	END_OF_TESTCASES
 };
-

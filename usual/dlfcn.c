@@ -49,4 +49,3 @@ const char *dlerror(void)
 }
 
 #endif
-

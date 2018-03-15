@@ -1,4 +1,3 @@
-
 SUBLOC = test/attregex
 
 AM_FEATURES = libusual
@@ -28,4 +27,3 @@ EXTRA_DIST = Makefile run.sh \
 test: $(EXTRA_PROGRAMS)
 
 include ../../build.mk
-

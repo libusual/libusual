@@ -1,4 +1,3 @@
-
 #include <usual/tls/tls.h>
 #include <usual/tls/tls_cert.h>
 #include <usual/tls/tls_internal.h>
@@ -170,4 +169,3 @@ int main(int argc, char *argv[])
 
 	return 0;
 }
-

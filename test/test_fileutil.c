@@ -72,4 +72,3 @@ struct testcase_t fileutil_tests[] = {
 	{ "getline", test_getline },
 	END_OF_TESTCASES
 };
-

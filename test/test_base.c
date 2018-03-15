@@ -1,4 +1,3 @@
-
 #include <usual/base.h>
 
 #include "test_common.h"
@@ -88,4 +87,3 @@ struct testcase_t base_tests[] = {
 	{ "reallocarray", test_reallocarray },
 	END_OF_TESTCASES
 };
-

@@ -47,4 +47,3 @@ struct testcase_t ctype_tests[] = {
 	{ "ctype_char", test_ctype_char },
 	END_OF_TESTCASES
 };
-

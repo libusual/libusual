@@ -1782,4 +1782,3 @@ void json_set_options(struct JsonContext *ctx, unsigned int options)
 {
 	ctx->options = options;
 }
-

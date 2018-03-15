@@ -127,4 +127,3 @@ _WRAP_CTYPE_FN(toupper)
 #undef _WRAP_CTYPE_FN
 
 #endif /* _USUAL_CTYPE_H_ */
-

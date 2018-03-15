@@ -289,4 +289,3 @@ tls_handshake_client(struct tls *ctx)
 }
 
 #endif /* USUAL_LIBSSL_FOR_TLS */
-

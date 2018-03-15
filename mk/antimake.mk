@@ -161,8 +161,8 @@ PACKAGE_NAME ?= package
 PACKAGE_TARNAME ?= $(PACKAGE_NAME)
 PACKAGE_VERSION ?= 0.0
 PACKAGE_STRING ?= $(PACKAGE_NAME) $(PACKAGE_VERSION)
-PACKAGE_URL ?= 
-PACKAGE_BUGREPORT ?= 
+PACKAGE_URL ?=
+PACKAGE_BUGREPORT ?=
 
 PORTNAME ?= unix
 EXEEXT ?=
@@ -1497,4 +1497,3 @@ help-dests:
 	$(foreach dst,$(AM_USED_DESTS),@$(call Printf,"  $(dst)dir = $($(dst)dir)\n") $(NewLine))
 
 endif # O=empty
-

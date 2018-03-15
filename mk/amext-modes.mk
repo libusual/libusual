@@ -16,7 +16,7 @@
 #   prog-debug - compiled with -O0 -g
 #
 
-AM_MODES ?= 
+AM_MODES ?=
 
 # Variables that can be overrided with $(var)_$(mode)
 AM_MODE_OVERRIDE += CC CXX CFLAGS CPPFLAGS DEFS LDFLAGS LIBS
@@ -79,5 +79,3 @@ AddModes = $(trace5)$(if $(filter $(3),$(AM_BIG_PRIMARIES)),$(call AddModes2,$(1
 
 # Install hook
 AM_TARGET_HOOKS += AddModes
-
-

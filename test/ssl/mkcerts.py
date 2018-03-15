@@ -285,4 +285,3 @@ complex2 = Leaf(ca2, 'rsa:4096',
         usage=['server'])
 complex2.write('ca2_complex2')
 set_string_mask("utf8only")
-

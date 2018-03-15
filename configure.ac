@@ -40,4 +40,3 @@ AC_USUAL_TLS
 
 dnl Output findings
 AC_OUTPUT([config.mak mk/libusual.pc build.mk])
-

@@ -51,4 +51,3 @@ void sha1_update(struct sha1_ctx *ctx, const void *data, unsigned int len);
 void sha1_final(struct sha1_ctx *ctx, uint8_t *dst);
 
 #endif
-

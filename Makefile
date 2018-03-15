@@ -1,4 +1,3 @@
-
 AM_CPPFLAGS = -I$(builddir) -I$(srcdir) $(TLS_CPPFLAGS)
 AM_LDFLAGS = $(TLS_LDFLAGS)
 AM_LIBS = $(TLS_LIBS)
@@ -192,4 +191,3 @@ nodoc:
 
 deb:
 	debuild -us -uc -b
-

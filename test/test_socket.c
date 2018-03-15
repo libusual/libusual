@@ -61,4 +61,3 @@ struct testcase_t socket_tests[] = {
 	{ "inet_pton", test_pton },
 	END_OF_TESTCASES
 };
-

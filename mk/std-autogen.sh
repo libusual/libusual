@@ -69,7 +69,7 @@ if test "x$LIBTOOLIZE" = "x"; then
     || LIBTOOLIZE=libtoolize
 fi
 
-# 
+#
 # Workarounds for libtoolize randomness - it does not update
 # the files if they exist, except it requires install-sh.
 #
@@ -95,4 +95,3 @@ ${AUTOCONF}
 
 # clean junk
 rm -rf autom4te.* aclocal*
-

@@ -1,4 +1,3 @@
-
 #include <usual/json.h>
 
 #include <usual/string.h>
@@ -432,4 +431,3 @@ struct testcase_t json_tests[] = {
 	{ "relax", test_json_relax },
 	END_OF_TESTCASES
 };
-

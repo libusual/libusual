@@ -125,4 +125,3 @@ const struct DigestInfo *digest_SHAKE128(void);
 const struct DigestInfo *digest_SHAKE256(void);
 
 #endif
-

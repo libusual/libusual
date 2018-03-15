@@ -704,4 +704,3 @@ tls_close(struct tls *ctx)
 }
 
 #endif /* USUAL_LIBSSL_FOR_TLS */
-

@@ -1,4 +1,3 @@
-
 #
 # Support for C++ language
 #
@@ -43,4 +42,3 @@ AM_TARGET_VARIABLES += CXXFLAGS
 
 # register new language
 AM_LANGUAGES += CXX
-

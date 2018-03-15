@@ -19,4 +19,3 @@ Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Description: Modern C Environment, shared library
  Shared library
-

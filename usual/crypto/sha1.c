@@ -161,4 +161,3 @@ const struct DigestInfo *digest_SHA1(void)
 {
 	return &sha1_info;
 }
-

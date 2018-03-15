@@ -126,4 +126,3 @@ char *xstrdup(const char *s)
 		err(1, "no mem");
 	return s2;
 }
-

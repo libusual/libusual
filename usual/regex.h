@@ -268,4 +268,3 @@ void regfree(regex_t *rx);
 #endif /* !USE_SYSTEM_REGEX */
 
 #endif /* _USUAL_REGEX_H_ */
-

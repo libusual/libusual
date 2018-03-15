@@ -336,4 +336,3 @@ static inline bool mbuf_slice(struct MBuf *src, unsigned len, struct MBuf *dst)
 }
 
 #endif
-

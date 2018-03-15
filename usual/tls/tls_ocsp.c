@@ -973,4 +973,3 @@ tls_ocsp_refresh_stapling(struct tls **ocsp_ctx_p, int *async_fd_p, struct tls_c
 
 #endif /* OPENSSL_NO_OCSP */
 #endif /* USUAL_LIBSSL_FOR_TLS */
-

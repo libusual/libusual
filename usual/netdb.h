@@ -82,4 +82,3 @@ int getaddrinfo_a(int mode, struct gaicb *list[], int nitems, struct sigevent *s
 #endif /* HAVE_GETADDRINFO_A */
 
 #endif /* _USUAL_NETDB_H_ */
-

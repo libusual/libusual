@@ -122,4 +122,3 @@ unsigned hmac_result_len(struct HMAC *ctx)
 {
 	return digest_result_len(ctx->hash);
 }
-

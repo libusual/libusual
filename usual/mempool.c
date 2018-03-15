@@ -71,4 +71,3 @@ void mempool_destroy(struct MemPool **pool)
 		cur = tmp;
 	}
 }
-

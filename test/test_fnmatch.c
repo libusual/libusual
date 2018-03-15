@@ -1,4 +1,3 @@
-
 #include <usual/fnmatch.h>
 
 #include <usual/string.h>
@@ -217,4 +216,3 @@ struct testcase_t fnmatch_tests[] = {
 	{ "weird", test_fnmatch_weird },
 	END_OF_TESTCASES
 };
-

@@ -68,4 +68,3 @@ void chacha_keystream(struct ChaCha *ctx, void *stream, size_t bytes);
 void chacha_keystream_xor(struct ChaCha *ctx, const void *plain, void *encrypted, size_t bytes);
 
 #endif
-

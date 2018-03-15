@@ -141,4 +141,3 @@ struct testcase_t cxalloc_tests[] = {
 	{ "util", test_cxalloc_util },
 	END_OF_TESTCASES
 };
-

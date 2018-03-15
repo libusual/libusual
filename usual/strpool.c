@@ -144,4 +144,3 @@ void strpool_decref(struct PStr *s)
 	cbtree_delete(sp->tree, s->str, s->len);
 	free_str(NULL, s);
 }
-

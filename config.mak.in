@@ -57,5 +57,3 @@ nosub_top_srcdir ?= @top_srcdir@
 nosub_top_builddir ?= @top_builddir@
 
 enable_debug = @enable_debug@
-
-

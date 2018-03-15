@@ -286,4 +286,3 @@ bool pg_is_reserved_word(const char *str)
 	const char *kw = pg_keyword_lookup_real(str, strlen(str));
 	return kw != NULL;
 }
-

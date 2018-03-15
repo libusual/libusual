@@ -258,4 +258,3 @@ tls_check_name(struct tls *ctx, X509 *cert, const char *name)
 }
 
 #endif /* USUAL_LIBSSL_FOR_TLS */
-

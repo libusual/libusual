@@ -115,4 +115,3 @@ void tls_compat_cleanup(void);
 #endif /* USUAL_LIBSSL_FOR_TLS */
 
 #endif /* _USUAL_TLS_COMPAT_H_ */
-

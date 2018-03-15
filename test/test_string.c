@@ -1,4 +1,3 @@
-
 #include <usual/base.h>
 #include <string.h>
 #ifdef HAVE_LIBGEN_H
@@ -650,4 +649,3 @@ struct testcase_t string_tests[] = {
 	{ "vasprintf", test_vasprintf },
 	END_OF_TESTCASES
 };
-

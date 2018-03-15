@@ -71,4 +71,3 @@ uint64_t hash_lookup3(const void *data, size_t len)
 done:
 	return ((uint64_t)b << 32) | c;
 }
-

@@ -1,4 +1,3 @@
-
 #include <usual/string.h>
 
 #include "test_common.h"
@@ -114,7 +113,7 @@ static const char *run_hash(const char *str, const char *hexstr, const struct Di
 
 	if (memcmp(res, res2, reslen) != 0)
 		return "FAIL";
-	
+
 	return mkhex(res, reslen);
 }
 
@@ -756,4 +755,3 @@ struct testcase_t crypto_tests[] = {
 	{ "csrandom", test_csrandom },
 	END_OF_TESTCASES
 };
-

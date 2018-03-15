@@ -29,4 +29,3 @@ want simplest overview.
 - link:libusual4.html[libusual4] - Installed libusual: Plain make
 - link:libusual5.html[libusual5] - Installed libusual: Antimake
 - link:libusual6.html[libusual6] - Installed libusual: Autoconf
-

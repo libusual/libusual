@@ -58,5 +58,3 @@ struct testcase_t mdict_tests[] = {
 	{ "basic", test_mdict },
 	END_OF_TESTCASES
 };
-
-

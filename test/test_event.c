@@ -62,4 +62,3 @@ struct testcase_t event_tests[] = {
 	{ "event", test_event },
 	END_OF_TESTCASES
 };
-

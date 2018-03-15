@@ -217,4 +217,3 @@ bool utf8_validate_string(const char *src, const char *end)
 	}
 	return true;
 }
-

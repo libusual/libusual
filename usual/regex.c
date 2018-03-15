@@ -1260,4 +1260,3 @@ size_t regerror(int err, const regex_t *rx, char *dst, size_t dstlen)
 }
 
 #endif /* !USE_SYSTEM_REGEX */
-

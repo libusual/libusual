@@ -30,4 +30,3 @@ uint64_t siphash24(const void *data, size_t len, uint64_t k0, uint64_t k1);
 uint64_t siphash24_secure(const void *data, size_t len);
 
 #endif
-

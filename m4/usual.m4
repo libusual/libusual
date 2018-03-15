@@ -1,4 +1,3 @@
-
 dnl Those depend on correct order:
 dnl  AC_USUAL_INIT
 dnl  AC_USUAL_PROGRAM_CHECK
@@ -113,7 +112,7 @@ if test x"$GCC" = xyes; then
   for f in $flags; do
     CFLAGS="$good_CFLAGS $WFLAGS $f"
     AC_COMPILE_IFELSE([AC_LANG_SOURCE([void foo(void){}])],
-	[WFLAGS="$WFLAGS $f"])
+                      [WFLAGS="$WFLAGS $f"])
   done
 
   # avoid -Wextra if missing-field.initializers does not work
@@ -178,7 +177,7 @@ AC_SYS_LARGEFILE
 AC_TYPE_PID_T
 AC_TYPE_UID_T
 AC_TYPE_SIZE_T
-]) 
+])
 
 dnl
 dnl  AC_USUAL_HEADER_CHECK:  Basic headers
@@ -502,5 +501,3 @@ AC_SUBST(TLS_LDFLAGS)
 AC_SUBST(TLS_LIBS)
 
 ]) dnl  AC_USUAL_TLS
-
-

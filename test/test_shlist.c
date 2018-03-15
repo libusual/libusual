@@ -164,4 +164,3 @@ struct testcase_t shlist_tests[] = {
 	{ "basic", test_shlist },
 	END_OF_TESTCASES
 };
-

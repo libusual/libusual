@@ -1,4 +1,3 @@
-
 #include <usual/hashtab-impl.h>
 
 #include <usual/list.h>
@@ -122,4 +121,3 @@ struct testcase_t hashtab_tests[] = {
 	{ "basic", test_hash_basic },
 	END_OF_TESTCASES
 };
-

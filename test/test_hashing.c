@@ -54,4 +54,3 @@ struct testcase_t hashing_tests[] = {
 	{ "lookup3", test_lookup3 },
 	END_OF_TESTCASES
 };
-

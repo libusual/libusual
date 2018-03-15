@@ -116,4 +116,3 @@ struct testcase_t endian_tests[] = {
 	{ "encdec", test_encdec },
 	END_OF_TESTCASES
 };
-

@@ -1,4 +1,3 @@
-
 #include <usual/aatree.h>
 #include <usual/psrandom.h>
 #include <usual/time.h>
@@ -217,4 +216,3 @@ struct testcase_t aatree_tests[] = {
 	{ "random", test_aatree_random },
 	END_OF_TESTCASES
 };
-

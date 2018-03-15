@@ -1,4 +1,3 @@
-
 AM_FEATURES = libusual
 USUAL_DIR = .
 
@@ -10,4 +9,3 @@ covtest_LDFLAGS =
 covtest_EMBED_LIBUSUAL = 1
 
 include build.mk
-

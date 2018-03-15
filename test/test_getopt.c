@@ -1,4 +1,3 @@
-
 #include <usual/getopt.h>
 
 #include "test_common.h"
@@ -96,4 +95,3 @@ struct testcase_t getopt_tests[] = {
 	{ "getopt_long", test_getopt_long },
 	END_OF_TESTCASES
 };
-

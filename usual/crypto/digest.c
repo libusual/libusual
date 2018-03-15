@@ -30,7 +30,7 @@ struct DigestContext *digest_new(const struct DigestInfo *impl, CxMem *cx)
 {
 	struct DigestContext *ctx;
 	unsigned alloc;
-	
+
 	alloc = offsetof(struct DigestContext, state) + impl->state_len;
 	ctx = cx_alloc(cx, alloc);
 	if (!ctx)
@@ -75,4 +75,3 @@ unsigned digest_result_len(struct DigestContext *ctx)
 {
 	return ctx->impl->result_len;
 }
-

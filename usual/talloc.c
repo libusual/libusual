@@ -1632,4 +1632,3 @@ CxMem *talloc_as_cx(const void *parent, const char *name)
 	cx->ctx = cx;
 	return cx;
 }
-

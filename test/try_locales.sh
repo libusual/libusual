@@ -25,4 +25,3 @@ for lc in $lclist; do
     echo "### $lc not available ###"
   fi
 done
-

@@ -1,4 +1,3 @@
-
 LANG=C
 LC_ALL=C
 export LANG LC_ALL
@@ -119,4 +118,3 @@ cat_file() {
   cat $1
   echo "-----------------------------------"
 }
-

@@ -50,4 +50,3 @@ CxMem *cx_new_pool_from_area(CxMem *parent, void *buf, size_t size, bool allow_f
 CxMem *cx_new_tree(CxMem *parent);
 
 #endif
-

@@ -159,4 +159,3 @@ uint32_t pseudo_random_range(uint32_t upper_bound)
 			return val % upper_bound;
 	}
 }
-

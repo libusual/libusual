@@ -119,4 +119,3 @@ struct testcase_t regex_tests[] = {
 	{ "minimal", test_regex },
 	END_OF_TESTCASES
 };
-
