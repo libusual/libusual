@@ -60,6 +60,7 @@ static struct CfContext cfdesc1 = { sects, NULL };
 static void test_abs(void *ptr)
 {
 	char buf[128];
+	enum LogLevel save_level;
 
 	int_check(1, cf_load_file(&cfdesc1, tdata("test_cfparser.ini")));
 
@@ -74,6 +75,11 @@ static void test_abs(void *ptr)
 	str_check("val1", cf_get(&cfdesc1, "one", "str1", buf, sizeof(buf)));
 	int_check(1, cf_set(&cfdesc1, "one", "str1", "val2"));
 	str_check("val2", cf_get(&cfdesc1, "one", "str1", buf, sizeof(buf)));
+
+	save_level = cf_stderr_level;
+	cf_stderr_level = LG_FATAL;
+	int_check(0, cf_set(&cfdesc1, "one", "nonexistent", "foo"));
+	cf_stderr_level = save_level;
 end:
 	cleanup();
 }

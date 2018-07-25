@@ -215,7 +215,7 @@ static const struct CfKey *find_key(const struct CfSect *s, const char *key)
 		if (strcmp(k->key_name, key) == 0)
 			return k;
 	}
-	return k;
+	return NULL;
 }
 
 const char *cf_get(const struct CfContext *cf, const char *sect, const char *key,
