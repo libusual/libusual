@@ -204,6 +204,7 @@ loop:
 			if (*p == '\0')
 				return FNM_NOMATCH;
 		}
+		/* fallthrough */
 	default:
 		/* match single char */
 		if (*s == '/' && *p == '\0' && (flags & FNM_LEADING_DIR))

@@ -923,6 +923,7 @@ static bool parse_tokens(struct JsonContext *ctx, const char *src, const char *e
 		case '/':
 			if (relaxed && skip_comment(ctx, &src, end))
 				continue;
+			/* fallthrough */
 		default:
 			return err_false(ctx, "Invalid symbol: '%c'", c);
 		}
