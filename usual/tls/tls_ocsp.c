@@ -904,7 +904,7 @@ static int
 tls_ocsp_common_query(struct tls **ocsp_ctx_p, int *fd_p, struct tls_config *config, struct tls *target)
 {
 	struct tls *ctx = NULL;
-	int ret, fd;
+	int ret, fd = -1;
 
 	/* async path */
 	if (fd_p)
