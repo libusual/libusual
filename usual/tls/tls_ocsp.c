@@ -539,7 +539,7 @@ tls_ocsp_setup(struct tls **ocsp_ctx_p, struct tls_config *config, struct tls *t
 {
 	struct tls *ctx;
 	struct tls_ocsp_query *q;
-	int ret;
+	int ret = -1;
 	STACK_OF(OPENSSL_STRING) *ocsp_urls;
 
 	ctx = tls_ocsp_client_new();
