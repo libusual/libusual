@@ -95,7 +95,7 @@ fail:
 		goto intr_loop;
 	if (errno == ENOENT || errno == ESRCH)
 		return false;
-	fatal_perror("signal_pidfile: Unexpected error");
+	fatal_perror("signal_pidfile: unexpected error");
 }
 
 static void check_pidfile(const char *pidfile)
@@ -103,7 +103,7 @@ static void check_pidfile(const char *pidfile)
 	if (signal_pidfile(pidfile, 0))
 		fatal("pidfile exists, another instance running?");
 	if (errno == ESRCH) {
-		log_info("Stale pidfile, removing");
+		log_info("stale pidfile, removing");
 		unlink(pidfile);
 	}
 }
@@ -134,14 +134,14 @@ static void write_pidfile(const char *pidfile, bool first_write)
 
 	fd = open(pidfile, flags, 0644);
 	if (fd < 0)
-		fatal_perror("Cannot write pidfile: '%s'", pidfile);
+		fatal_perror("cannot write pidfile: '%s'", pidfile);
 	len = strlen(buf);
 loop:
 	res = write(fd, buf, len);
 	if (res < 0) {
 		if (errno == EINTR)
 			goto loop;
-		fatal_perror("Write to pidfile failed: '%s'", pidfile);
+		fatal_perror("write to pidfile failed: '%s'", pidfile);
 	} else if (res < len) {
 		len -= res;
 		goto loop;

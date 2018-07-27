@@ -268,7 +268,7 @@ bool cf_set(const struct CfContext *cf, const char *sect, const char *key, const
 	/* find section */
 	s = find_sect(cf, sect);
 	if (!s) {
-		log_error("Unknown section: %s", sect);
+		log_error("unknown section: %s", sect);
 		return false;
 	}
 
@@ -284,7 +284,7 @@ bool cf_set(const struct CfContext *cf, const char *sect, const char *key, const
 	/* set fixed key */
 	k = find_key(s, key);
 	if (!k) {
-		log_error("Unknown parameter: %s/%s", sect, key);
+		log_error("unknown parameter: %s/%s", sect, key);
 		return false;
 	}
 	if (!k->op.setter || (k->flags & CF_READONLY)) {
@@ -297,7 +297,7 @@ bool cf_set(const struct CfContext *cf, const char *sect, const char *key, const
 	}
 	p = get_dest(base, k);
 	if (!p) {
-		log_error("Bug - no base for relative key: %s/%s", sect, key);
+		log_error("bug - no base for relative key: %s/%s", sect, key);
 		return false;
 	}
 	cv.key_name = k->key_name;
