@@ -169,7 +169,7 @@ const char *sa2str(const struct sockaddr *sa, char *dst, int dstlen)
 		tmp = inet_ntop(AF_INET6, &in6->sin6_addr, buf, sizeof(buf));
 		if (!tmp)
 			return NULL;
-		snprintf(dst, dstlen, "%s/%d", tmp, ntohs(in6->sin6_port));
+		snprintf(dst, dstlen, "[%s]:%d", tmp, ntohs(in6->sin6_port));
 		break;
 	case AF_UNIX:
 		un = (struct sockaddr_un *)sa;
