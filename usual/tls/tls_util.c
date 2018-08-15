@@ -182,7 +182,7 @@ tls_get_connection_info(struct tls *ctx, char *buf, size_t buflen)
 {
 	SSL *conn = ctx->ssl_conn;
 	const char *ocsp_pfx = "", *ocsp_info = "";
-	const char *proto = "-", *cipher = "-";
+	const char *proto = "-", *cipher = "-", *compression = "";
 	char dh[64];
 	int used_dh_bits = ctx->used_dh_bits, used_ecdh_nid = ctx->used_ecdh_nid;
 	const SSL_CIPHER *ciph_obj = NULL;
@@ -235,7 +235,13 @@ tls_get_connection_info(struct tls *ctx, char *buf, size_t buflen)
 		ocsp_pfx = "/OCSP=";
 	}
 
-	return snprintf(buf, buflen, "%s/%s%s%s%s", proto, cipher, dh, ocsp_pfx, ocsp_info);
+	if (SSL_get_current_compression(conn)) {
+		compression = "compression=on";
+	} else {
+		compression = "compression=off";
+	}
+
+	return snprintf(buf, buflen, "%s/%s%s%s%s/%s", proto, cipher, dh, ocsp_pfx, ocsp_info, compression);
 }
 
 #endif /* USUAL_LIBSSL_FOR_TLS */
