@@ -12,6 +12,7 @@ import ipaddress
 import datetime
 import uuid
 
+
 #
 # CA utilities
 #
@@ -30,9 +31,11 @@ def set_string_mask(mask):
     from cryptography.hazmat.backends.openssl import backend
     backend._lib.ASN1_STRING_set_default_mask_asc(mask)
 
+
 def get_backend():
     from cryptography.hazmat.backends import default_backend
     return default_backend()
+
 
 def new_key(keydesc):
     from cryptography.hazmat.primitives.asymmetric import ec, rsa
@@ -45,6 +48,7 @@ def new_key(keydesc):
         return rsa.generate_private_key(key_size=int(v), public_exponent=65537, backend=get_backend())
     else:
         raise Exception('Bad key type')
+
 
 def _load_name(vals):
     from cryptography.x509.oid import NameOID
@@ -75,6 +79,7 @@ def _load_name(vals):
         attlist.append(n)
     return x509.Name(attlist)
 
+
 def _load_alt_names(alt_names):
     from cryptography.x509.general_name import RFC822Name, DNSName, IPAddress, UniformResourceIdentifier, RegisteredID
 
@@ -102,19 +107,21 @@ def _load_alt_names(alt_names):
         gnames.append(gn)
     return x509.SubjectAlternativeName(gnames)
 
+
 # why no defaults?
 def _wrapKeyUsage(digital_signature=False, content_commitment=False, key_encipherment=False,
                   data_encipherment=False, key_agreement=False, key_cert_sign=False,
                   crl_sign=False, encipher_only=False,  decipher_only=False):
     return x509.KeyUsage(digital_signature=digital_signature,
-            content_commitment=content_commitment,
-            key_encipherment=key_encipherment,
-            data_encipherment=data_encipherment,
-            key_agreement=key_agreement,
-            key_cert_sign=key_cert_sign,
-            crl_sign=crl_sign,
-            encipher_only=encipher_only,
-            decipher_only=decipher_only)
+                         content_commitment=content_commitment,
+                         key_encipherment=key_encipherment,
+                         data_encipherment=data_encipherment,
+                         key_agreement=key_agreement,
+                         key_cert_sign=key_cert_sign,
+                         crl_sign=crl_sign,
+                         encipher_only=encipher_only,
+                         decipher_only=decipher_only)
+
 
 def x509_sign(privkey, pubkey, subject, issuer, ca=False, alt_names=None, usage=None):
     from cryptography.hazmat.primitives import hashes
@@ -127,12 +134,12 @@ def x509_sign(privkey, pubkey, subject, issuer, ca=False, alt_names=None, usage=
     serial = int(hashlib.sha1(subject[0]).hexdigest(), 16)
 
     builder = (x509.CertificateBuilder()
-            .subject_name(_load_name(subject))
-            .issuer_name(_load_name(issuer))
-            .not_valid_before(dt_start)
-            .not_valid_after(dt_end)
-            .serial_number(serial)
-            .public_key(pubkey))
+               .subject_name(_load_name(subject))
+               .issuer_name(_load_name(issuer))
+               .not_valid_before(dt_start)
+               .not_valid_after(dt_end)
+               .serial_number(serial)
+               .public_key(pubkey))
 
     # BasicConstraints, critical
     if ca:
@@ -181,13 +188,14 @@ def x509_sign(privkey, pubkey, subject, issuer, ca=False, alt_names=None, usage=
     cert = builder.sign(private_key=privkey, algorithm=hashes.SHA256(), backend=get_backend())
     return cert
 
+
 class Base:
     def write_key(self, fn):
         from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat, NoEncryption
 
-        data = self.key.private_bytes(encoding = Encoding.PEM,
-                format = PrivateFormat.TraditionalOpenSSL,
-                encryption_algorithm = NoEncryption())
+        data = self.key.private_bytes(encoding=Encoding.PEM,
+                                      format=PrivateFormat.TraditionalOpenSSL,
+                                      encryption_algorithm=NoEncryption())
         with open(fn, 'w') as f:
             f.write(data)
 
@@ -212,6 +220,7 @@ class Base:
         self.write_cert(pfx+'.crt')
         self.write_fp(pfx+'.crt')
 
+
 class CA(Base):
     def __init__(self, keydesc, name, master_ca=None, usage=None):
         self.key = new_key(keydesc)
@@ -224,11 +233,13 @@ class CA(Base):
     def sign(self, pubkey, subject_name, alt_names=None, ca=False, usage=None):
         return x509_sign(self.key, pubkey, subject_name, self.name, ca=ca, alt_names=alt_names, usage=usage)
 
+
 class Leaf(Base):
     def __init__(self, master_ca, keydesc, name, alt_names=None, usage=None):
         self.key = new_key(keydesc)
         self.name = name
         self.cert = master_ca.sign(self.key.public_key(), name, alt_names=alt_names, usage=usage)
+
 
 #
 # CA1 - EC keys
@@ -246,17 +257,18 @@ client1 = Leaf(ca1, 'ec:secp192r1', ['CN=client1'], ['822:client@company.com'], 
 client1.write('ca1_client1')
 
 complex1 = Leaf(ca1, 'ec:secp384r1',
-        name = ['CN=complex1.com', 'L=Kõzzä', 'ST=様々な論争を引き起こしてきた。'],
-        #name = ['CN=complex1.com', 'C=QQ', 'L=Loc1', 'ST=Foo', 'O=Aorg2', 'OU=Unit1'],
-        alt_names = ['dns:complex1.com', 'dns:www.complex1.com',
-             'ip4:127.0.0.1', 'ip6:fffe::1',
-             #'i4n:192.168.1.0/24', 'i6n:::1/128',
-             'uri:http://localhost/',
-             '822:fooxa@example.com'],
-        usage=['server'])
+                name=['CN=complex1.com', 'L=Kõzzä', 'ST=様々な論争を引き起こしてきた。'],
+                #name=['CN=complex1.com', 'C=QQ', 'L=Loc1', 'ST=Foo', 'O=Aorg2', 'OU=Unit1'],
+                alt_names=['dns:complex1.com', 'dns:www.complex1.com',
+                           'ip4:127.0.0.1', 'ip6:fffe::1',
+                           #'i4n:192.168.1.0/24', 'i6n:::1/128',
+                           'uri:http://localhost/',
+                           '822:fooxa@example.com'],
+                usage=['server'])
 complex1.write('ca1_complex1')
 
 set_string_mask("utf8only")
+
 
 #
 # CA2 - RSA keys
@@ -269,19 +281,19 @@ server2 = Leaf(ca2, 'rsa:2048', ['CN=server2.com'], ['dns:server2.com', 'dns:www
 server2.write('ca2_server2')
 
 client2 = Leaf(ca2, 'rsa:1024',
-        name = ['CN=client2', 'C=XX', 'L=City2', 'ST=State2', 'O=Org2'],
-        alt_names = ['822:client2@company.com'],
-        usage=['client'])
+               name=['CN=client2', 'C=XX', 'L=City2', 'ST=State2', 'O=Org2'],
+               alt_names=['822:client2@company.com'],
+               usage=['client'])
 client2.write('ca2_client2')
 
 # create cert with old string types
 set_string_mask("default")
 complex2 = Leaf(ca2, 'rsa:4096',
-        name = ['CN=complex2.com', 'L=Kõzzä', 'ST=様々な論争を引き起こしてきた。'],
-        alt_names = ['dns:complex2.com', 'dns:www.complex2.com',
-             'ip4:127.0.0.1', 'ip6:fffe::1',
-             'uri:http://localhost/',
-             '822:fooxa@example.com'],
-        usage=['server'])
+                name=['CN=complex2.com', 'L=Kõzzä', 'ST=様々な論争を引き起こしてきた。'],
+                alt_names=['dns:complex2.com', 'dns:www.complex2.com',
+                           'ip4:127.0.0.1', 'ip6:fffe::1',
+                           'uri:http://localhost/',
+                           '822:fooxa@example.com'],
+                usage=['server'])
 complex2.write('ca2_complex2')
 set_string_mask("utf8only")
