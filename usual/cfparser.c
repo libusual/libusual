@@ -109,9 +109,12 @@ static bool parse_ini_file_internal(const char *fn, cf_handler_f user_handler, v
 
 			log_debug("parse_ini_file: [%s]", key);
 			ok = user_handler(arg, true, key, NULL);
-			*p++ = o1;
-			if (!ok)
+			if (!ok) {
+				log_error("invalid section \"%s\" in configuration (%s:%d)",
+					  key, fn, count_lines(buf, p));
 				goto failed;
+			}
+			*p++ = o1;
 			continue;
 		}
 
@@ -155,6 +158,10 @@ static bool parse_ini_file_internal(const char *fn, cf_handler_f user_handler, v
 		ok = user_handler(arg, false, key, val);
 
 		log_debug("parse_ini_file: '%s' = '%s' ok:%d", key, val, ok);
+
+		if (!ok)
+			log_error("invalid value \"%s\" for parameter %s in configuration (%s:%d)",
+				  val, key, fn, count_lines(buf, p));
 
 		/* restore data, to keep count_lines() working */
 		key[klen] = o1;
