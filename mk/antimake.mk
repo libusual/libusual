@@ -1317,7 +1317,7 @@ define MakeDist
 	$(E) "CHECK" $@
 	$(Q) $(MAKE) -s am-check-distfiles
 	$(E) "MKDIR" $(AM_DIST_BASE)
-	$(Q) $(RM) -r -- $(AM_DIST_BASE) $(AM_DIST_BASE).$(AM_DIST_$(1)_EXT)
+	$(Q) $(RM) -r -- $(AM_DIST_BASE) $(AM_DIST_BASE).$(AM_FORMAT_$(1)_EXT)
 	$(Q) $(call MkDir,$(AM_DIST_BASE))
 	$(E) "COPY" $(AM_DIST_BASE)
 	$(Q) $(MAKE) -s am-show-distfiles | cpio -pmduL --quiet $(AM_DIST_BASE)
