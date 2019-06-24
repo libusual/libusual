@@ -231,6 +231,8 @@ tls_config_parse_protocols(uint32_t *protocols, const char *protostr)
 			proto = TLS_PROTOCOL_TLSv1_1;
 		else if (strcasecmp(p, "tlsv1.2") == 0)
 			proto = TLS_PROTOCOL_TLSv1_2;
+		else if (strcasecmp(p, "tlsv1.3") == 0)
+			proto = TLS_PROTOCOL_TLSv1_3;
 
 		if (proto == 0) {
 			free(s);

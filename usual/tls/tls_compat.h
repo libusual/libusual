@@ -112,6 +112,10 @@ int SSL_CTX_load_verify_mem(SSL_CTX *ctx, void *buf, int len);
 
 void tls_compat_cleanup(void);
 
+#ifndef SSL_OP_NO_TLSv1_3
+#define SSL_OP_NO_TLSv1_3 0
+#endif
+
 #ifndef TLS1_3_VERSION
 #define TLS1_3_VERSION 0x0304
 #endif

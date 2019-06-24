@@ -404,6 +404,7 @@ tls_configure_ssl(struct tls *ctx)
 	SSL_CTX_clear_options(ctx->ssl_ctx, SSL_OP_NO_TLSv1);
 	SSL_CTX_clear_options(ctx->ssl_ctx, SSL_OP_NO_TLSv1_1);
 	SSL_CTX_clear_options(ctx->ssl_ctx, SSL_OP_NO_TLSv1_2);
+	SSL_CTX_clear_options(ctx->ssl_ctx, SSL_OP_NO_TLSv1_3);
 
 	if ((ctx->config->protocols & TLS_PROTOCOL_TLSv1_0) == 0)
 		SSL_CTX_set_options(ctx->ssl_ctx, SSL_OP_NO_TLSv1);
@@ -411,6 +412,8 @@ tls_configure_ssl(struct tls *ctx)
 		SSL_CTX_set_options(ctx->ssl_ctx, SSL_OP_NO_TLSv1_1);
 	if ((ctx->config->protocols & TLS_PROTOCOL_TLSv1_2) == 0)
 		SSL_CTX_set_options(ctx->ssl_ctx, SSL_OP_NO_TLSv1_2);
+	if ((ctx->config->protocols & TLS_PROTOCOL_TLSv1_3) == 0)
+		SSL_CTX_set_options(ctx->ssl_ctx, SSL_OP_NO_TLSv1_3);
 
 	if (ctx->config->ciphers != NULL) {
 		if (SSL_CTX_set_cipher_list(ctx->ssl_ctx,
