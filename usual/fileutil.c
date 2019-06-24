@@ -37,17 +37,19 @@ void *load_file(const char *fn, size_t *len_p)
 	int res;
 	FILE *f;
 
-	res = stat(fn, &st);
-	if (res < 0)
+	f = fopen(fn, "r");
+	if (!f)
 		return NULL;
+
+	res = fstat(fileno(f), &st);
+	if (res < 0) {
+		fclose(f);
+		return NULL;
+	}
 
 	buf = malloc(st.st_size + 1);
-	if (!buf)
-		return NULL;
-
-	f = fopen(fn, "r");
-	if (!f) {
-		free(buf);
+	if (!buf) {
+		fclose(f);
 		return NULL;
 	}
 
