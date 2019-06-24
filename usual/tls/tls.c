@@ -318,14 +318,26 @@ tls_configure_keypair(struct tls *ctx, SSL_CTX *ssl_ctx,
 	if (keypair->cert_file != NULL) {
 		if (SSL_CTX_use_certificate_chain_file(ssl_ctx,
 		    keypair->cert_file) != 1) {
-			tls_set_errorx(ctx, "failed to load certificate file");
+			const char *errstr = "unknown error";
+			unsigned long err;
+
+			if ((err = ERR_peek_error()) != 0)
+				errstr = ERR_reason_error_string(err);
+			tls_set_errorx(ctx, "failed to load certificate file \"%s\": %s",
+				       keypair->cert_file, errstr);
 			goto err;
 		}
 	}
 	if (keypair->key_file != NULL) {
 		if (SSL_CTX_use_PrivateKey_file(ssl_ctx,
 		    keypair->key_file, SSL_FILETYPE_PEM) != 1) {
-			tls_set_errorx(ctx, "failed to load private key file");
+			const char *errstr = "unknown error";
+			unsigned long err;
+
+			if ((err = ERR_peek_error()) != 0)
+				errstr = ERR_reason_error_string(err);
+			tls_set_errorx(ctx, "failed to load private key file \"%s\": %s",
+				       keypair->key_file, errstr);
 			goto err;
 		}
 	}
@@ -456,7 +468,12 @@ tls_configure_ssl_verify(struct tls *ctx, int verify)
 		}
 	} else if (SSL_CTX_load_verify_locations(ctx->ssl_ctx,
 	    ctx->config->ca_file, ctx->config->ca_path) != 1) {
-		tls_set_errorx(ctx, "ssl verify setup failure");
+		const char *errstr = "unknown error";
+		unsigned long err;
+
+		if ((err = ERR_peek_error()) != 0)
+			errstr = ERR_reason_error_string(err);
+		tls_set_errorx(ctx, "failed to load CA: %s", errstr);
 		goto err;
 	}
 	if (ctx->config->verify_depth >= 0)
