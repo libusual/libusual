@@ -361,10 +361,17 @@ tls_info_callback(const SSL *ssl, int where, int rc)
 	}
 #endif
 
-	/* detect renegotation on established connection */
-	if (where & SSL_CB_HANDSHAKE_START) {
-		if (ctx->state & TLS_HANDSHAKE_COMPLETE)
-			ctx->state |= TLS_DO_ABORT;
+	/*
+	 * Detect renegotation on established connection.  With
+	 * TLSv1.3 this is no longer applicable, and the code below
+	 * would erroneously abort with OpenSSL 1.1.1 and 1.1.1a if
+	 * using TLSv1.3, so skip it altogether in that case.
+	 */
+	if (SSL_version(ssl) < TLS1_3_VERSION) {
+		if (where & SSL_CB_HANDSHAKE_START) {
+			if (ctx->state & TLS_HANDSHAKE_COMPLETE)
+				ctx->state |= TLS_DO_ABORT;
+		}
 	}
 }
 
