@@ -183,6 +183,9 @@ tls_ocsp_get_certid(X509 *main_cert, STACK_OF(X509) *extra_certs, SSL_CTX *ssl_c
 	store = SSL_CTX_get_cert_store(ssl_ctx);
 	if (!store)
 		goto error;
+	storectx = X509_STORE_CTX_new();
+	if (!storectx)
+		goto error;
 	ok = X509_STORE_CTX_init(storectx, store, main_cert, extra_certs);
 	if (ok != 1)
 		goto error;
