@@ -847,7 +847,7 @@ static void test_cert_info(void *z)
 	str_check(run_case(client, server),
 		  "Subject: /CN=client2/C=XX/ST=State2/L=City2/O=Org2"
 		  " Issuer: /CN=TestCA2"
-		  " Serial: 1387724136048036785122419970010419099185643835502"
+		  " Serial: 693862068024018392561209985005209549592821917751"
 		  " NotBefore: 2010-01-01T08:05:00Z"
 		  " NotAfter: 2060-12-31T23:55:00Z");
 
@@ -857,7 +857,7 @@ static void test_cert_info(void *z)
 	str_check(run_case(client, server),
 		  "Subject: /CN=complex1.com/ST=様々な論争を引き起こしてきた。/L=Kõzzä"
 		  " Issuer: /CN=TestCA1/C=AA/ST=State1/L=City1/O=Org1"
-		  " Serial: 1113692385315072860785465640275941003895485612482"
+		  " Serial: 556846192657536430392732820137970501947742806241"
 		  " NotBefore: 2010-01-01T08:05:00Z"
 		  " NotAfter: 2060-12-31T23:55:00Z");
 
@@ -867,7 +867,7 @@ static void test_cert_info(void *z)
 	str_check(run_case(client, server),
 		  "Subject: /CN=complex2.com/ST=様々な論争を引き起こしてきた。/L=Kõzzä"
 		  " Issuer: /CN=TestCA2"
-		  " Serial: 344032136906054686761742495217219742691739762030"
+		  " Serial: 172016068453027343380871247608609871345869881015"
 		  " NotBefore: 2010-01-01T08:05:00Z"
 		  " NotAfter: 2060-12-31T23:55:00Z");
 end:;

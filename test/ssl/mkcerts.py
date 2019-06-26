@@ -131,7 +131,7 @@ def x509_sign(privkey, pubkey, subject, issuer, ca=False, alt_names=None, usage=
     dt_start = datetime.datetime(2010, 1, 1, 8, 5, 0)
     dt_end = datetime.datetime(2060, 12, 31, 23, 55)
     #serial = int(uuid.uuid4())
-    serial = int(hashlib.sha1(subject[0]).hexdigest(), 16)
+    serial = int(hashlib.sha1(subject[0]).hexdigest(), 16) // 2  # max 159 bits
 
     builder = (x509.CertificateBuilder()
                .subject_name(_load_name(subject))
