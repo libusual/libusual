@@ -73,7 +73,7 @@ myprog
 
 This works but the problem is that although the Makefile is local,
 it still sees files from top-Makefile-level.  So that is what `EMBED_SUBDIRS`
-helps with - it allow to use local filenames in Makefile fragment,
+helps with - it allows using local filenames in Makefile fragment,
 and it converts them to top-level filenames when including.  It knows
 only few type of variables it needs to convert:
 
