@@ -1,10 +1,7 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/env python3
 
 """Generate x509 keys and certs.
 """
-
-from __future__ import absolute_import, division, print_function, unicode_literals
 
 from cryptography import x509
 
@@ -26,7 +23,7 @@ def set_string_mask(mask):
     nombstr - "default" without bmp and utf8
     MASK:<int> - bitmask as integer
     """
-    if isinstance(mask, unicode):
+    if isinstance(mask, str):
         mask = mask.encode('utf8')
     from cryptography.hazmat.backends.openssl import backend
     backend._lib.ASN1_STRING_set_default_mask_asc(mask)
@@ -131,7 +128,7 @@ def x509_sign(privkey, pubkey, subject, issuer, ca=False, alt_names=None, usage=
     dt_start = datetime.datetime(2010, 1, 1, 8, 5, 0)
     dt_end = datetime.datetime(2060, 12, 31, 23, 55)
     #serial = int(uuid.uuid4())
-    serial = int(hashlib.sha1(subject[0]).hexdigest(), 16) // 2  # max 159 bits
+    serial = int(hashlib.sha1(subject[0].encode("utf8")).hexdigest(), 16) // 2
 
     builder = (x509.CertificateBuilder()
                .subject_name(_load_name(subject))
@@ -196,24 +193,24 @@ class Base:
         data = self.key.private_bytes(encoding=Encoding.PEM,
                                       format=PrivateFormat.TraditionalOpenSSL,
                                       encryption_algorithm=NoEncryption())
-        with open(fn, 'w') as f:
+        with open(fn, 'wb') as f:
             f.write(data)
 
     def write_cert(self, fn):
         from cryptography.hazmat.primitives.serialization import Encoding
 
         data = self.cert.public_bytes(Encoding.PEM)
-        with open(fn, 'w') as f:
+        with open(fn, 'wb') as f:
             f.write(data)
 
     def write_fp(self, pfx):
         from cryptography.hazmat.primitives import hashes
 
         h_sha1 = self.cert.fingerprint(hashes.SHA1())
-        open(pfx+'.sha1', 'w').write(h_sha1.encode('hex'))
+        open(pfx+'.sha1', 'w').write(h_sha1.hex())
 
         h_sha256 = self.cert.fingerprint(hashes.SHA256())
-        open(pfx+'.sha256', 'w').write(h_sha256.encode('hex'))
+        open(pfx+'.sha256', 'w').write(h_sha256.hex())
 
     def write(self, pfx):
         self.write_key(pfx+'.key')
