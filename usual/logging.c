@@ -197,10 +197,10 @@ void log_generic(enum LogLevel level, void *ctx, const char *fmt, ...)
 	}
 
 	if (!cf_quiet && level <= cf_stderr_level)
-		fprintf(stderr, "%s %u %s %s\n", timebuf, pid, lev->tag, msg);
+		fprintf(stderr, "%s [%u] %s %s\n", timebuf, pid, lev->tag, msg);
 
 	if (log_file && level <= cf_logfile_level)
-		fprintf(log_file, "%s %u %s %s\n", timebuf, pid, lev->tag, msg);
+		fprintf(log_file, "%s [%u] %s %s\n", timebuf, pid, lev->tag, msg);
 
 	if (cf_syslog && level <= cf_syslog_level) {
 		if (!syslog_started)
