@@ -37,10 +37,11 @@ char *format_time_ms(usec_t time, char *dest, unsigned destlen)
 
 	sec = tv.tv_sec;
 	tm = localtime_r(&sec, &tmbuf);
-	snprintf(dest, destlen, "%04d-%02d-%02d %02d:%02d:%02d.%03d",
+	snprintf(dest, destlen, "%04d-%02d-%02d %02d:%02d:%02d.%03d %s",
 		 tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday,
 		 tm->tm_hour, tm->tm_min, tm->tm_sec,
-		 (int)(tv.tv_usec / 1000));
+		 (int)(tv.tv_usec / 1000),
+		 tzname[tm->tm_isdst > 0 ? 1 : 0]);
 	return dest;
 }
 
@@ -56,9 +57,10 @@ char *format_time_s(usec_t time, char *dest, unsigned destlen)
 		s = time / USEC;
 	}
 	tm = localtime_r(&s, &tbuf);
-	snprintf(dest, destlen, "%04d-%02d-%02d %02d:%02d:%02d",
+	snprintf(dest, destlen, "%04d-%02d-%02d %02d:%02d:%02d %s",
 		 tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday,
-		 tm->tm_hour, tm->tm_min, tm->tm_sec);
+		 tm->tm_hour, tm->tm_min, tm->tm_sec,
+		 tzname[tm->tm_isdst > 0 ? 1 : 0]);
 	return dest;
 }
 

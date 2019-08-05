@@ -43,8 +43,8 @@ static void test_time_format(void *p)
 #endif
 
 	t = 1226059006841546;
-	str_check(format_time_ms(t, buf, sizeof(buf)), "2008-11-07 11:56:46.841");
-	str_check(format_time_s(t, buf, sizeof(buf)), "2008-11-07 11:56:46");
+	str_check(format_time_ms(t, buf, sizeof(buf)), "2008-11-07 11:56:46.841 GMT");
+	str_check(format_time_s(t, buf, sizeof(buf)), "2008-11-07 11:56:46 GMT");
 end:;
 }
 

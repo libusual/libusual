@@ -42,9 +42,9 @@ typedef uint64_t usec_t;
 /** How many microseconds in a second. */
 #define USEC ((usec_t)1000000)
 
-/** Convert usec timestamp to ISO timestamp with millisecond precision: YYYY-mm-dd hh:mm:ss.SSS */
+/** Convert usec timestamp to ISO timestamp with millisecond precision: YYYY-mm-dd hh:mm:ss.SSS TZ */
 char *format_time_ms(usec_t time, char *dest, unsigned destlen);
-/** Convert usec timestamp to ISO timestamp with second precision: YYYY-mm-dd hh:mm:ss */
+/** Convert usec timestamp to ISO timestamp with second precision: YYYY-mm-dd hh:mm:ss TZ */
 char *format_time_s(usec_t time, char *dest, unsigned destlen);
 
 /** Query system time */
