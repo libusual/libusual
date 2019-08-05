@@ -59,7 +59,7 @@ int main(int argc, const char *argv[])
 	test_seed1 = pseudo_random();
 	test_seed2 = pseudo_random();
 	pseudo_random_seed(test_seed1, test_seed2);
-	printf("inital seed: %llu %llu\n", test_seed1, test_seed2);
+	printf("inital seed: %" PRIu64 " %" PRIu64 "\n", (uint64_t)test_seed1, (uint64_t)test_seed2);
 
 	return tinytest_main(argc, argv, groups);
 }

@@ -30,7 +30,7 @@ static const char *simple_value(const char *json)
 		if (!json_value_as_int(obj, &val)) {
 			res = "ELONG";
 		} else {
-			snprintf(buf, sizeof(buf), "INT:%lld", (long long)val);
+			snprintf(buf, sizeof(buf), "INT:%" PRId64, val);
 			res = buf;
 		}
 	} else if (json_value_is_float(obj)) {

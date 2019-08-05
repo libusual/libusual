@@ -500,7 +500,7 @@ static const char *wrap_strtonum(const char *s, long long minval, long long maxv
 	if (res1 != res)
 		return "EH";
 	if (!err) {
-		snprintf(buf, sizeof buf, "%lld", res);
+		snprintf(buf, sizeof buf, "%" PRId64, (int64_t)res);
 		return buf;
 	}
 	snprintf(buf, sizeof buf, "E:%s", err);
