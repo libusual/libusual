@@ -409,14 +409,14 @@ static void show_dname(char *buf, size_t buflen, const struct tls_cert_dname *dn
 static const char *isotime(char *dst, size_t max, time_t t)
 {
 	static char buf[32];
-	struct tm tm;
+	struct tm *tm;
 	if (!dst) {
 		dst = buf;
 		max = sizeof buf;
 	}
 	memset(&tm, 0, sizeof tm);
-	gmtime_r(&t, &tm);
-	strftime(dst, max, "%Y-%m-%dT%H:%M:%SZ", &tm);
+	tm = gmtime(&t);
+	strftime(dst, max, "%Y-%m-%dT%H:%M:%SZ", tm);
 	return dst;
 }
 
@@ -979,12 +979,11 @@ static const char *run_time(const char *val)
 	ASN1_TIME tmp;
 	time_t t = 0;
 	static char buf[128];
-	struct tm *tm, tmbuf;
+	struct tm *tm;
 	struct tls *ctx;
 	int err;
 
 	memset(&tmp, 0, sizeof tmp);
-	memset(&tmbuf, 0, sizeof tmbuf);
 
 	tmp.data = (unsigned char*)val+2;
 	tmp.length = strlen(val+2);
@@ -1007,7 +1006,7 @@ static const char *run_time(const char *val)
 	}
 	tls_free(ctx);
 
-	tm = gmtime_r(&t, &tmbuf);
+	tm = gmtime(&t);
 	if (!tm)
 		return "E-GMTIME";
 	strftime(buf, sizeof buf, "%Y-%m-%d %H:%M:%S GMT", tm);
