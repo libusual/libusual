@@ -459,7 +459,7 @@ if test "$tls_support" = "auto" -o "$tls_support" = "libssl"; then
   LIBS="$TLS_LIBS $LIBS"
   AC_LINK_IFELSE([
     AC_LANG_PROGRAM([[#include <openssl/ssl.h>]],
-                    [[SSL_CTX *ctx = SSL_CTX_new(TLSv1_2_method());]])],
+                    [[SSL_CTX *ctx = SSL_CTX_new(SSLv23_method());]])],
     [ tls_support=yes; AC_MSG_RESULT([found])],
     [ AC_MSG_ERROR([not found]) ])
   dnl check LibreSSL-only APIs
