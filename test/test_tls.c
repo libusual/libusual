@@ -158,6 +158,12 @@ static const char *create_worker(struct Worker **w_p, int is_server, ...)
 			return "tls_client failed";
 	}
 
+	/*
+	 * use TLSv1.2 unless overridden below, for consistent
+	 * messages, ciphers, etc.
+	 */
+	tls_config_set_protocols(w->config, TLS_PROTOCOL_TLSv1_2);
+
 	va_start(ap, is_server);
 	while (1) {
 		k = va_arg(ap, char *);
