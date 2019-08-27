@@ -20,7 +20,9 @@
 #include <usual/err.h>
 #include <usual/string.h>
 
-#ifdef HAVE_LINUX_RANDOM_H
+#if defined(HAVE_GETRANDOM)
+#include <sys/random.h>
+#elif defined(HAVE_LINUX_RANDOM_H)
 #include <sys/syscall.h>
 #include <linux/random.h>
 #endif
