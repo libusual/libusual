@@ -576,6 +576,10 @@ static void test_strsep(void *p)
 end:;
 }
 
+#pragma GCC diagnostic push
+#if defined(__GNUC__) && !defined(__clang__) && __GNUC__ >= 7
+#pragma GCC diagnostic ignored "-Wformat-truncation"
+#endif
 
 static void test_snprintf(void *p)
 {
@@ -589,6 +593,8 @@ static void test_snprintf(void *p)
 	int_check(snprintf(buf, 12, "%s", longstr), 10);
 end:;
 }
+
+#pragma GCC diagnostic pop
 
 static void test_asprintf(void *p)
 {
