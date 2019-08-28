@@ -6,6 +6,8 @@
 #include <usual/socket.h>
 #include <usual/signal.h>
 
+#include <string.h>
+
 #ifdef USUAL_LIBSSL_FOR_TLS
 #include <openssl/crypto.h>
 #endif
