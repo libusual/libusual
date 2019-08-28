@@ -18,11 +18,6 @@
 
 #include <usual/string.h>
 
-#include <usual/mbuf.h>
-#include <usual/statlist.h>
-#include <usual/ctype.h>
-#include <usual/bytemap.h>
-
 #include <locale.h>
 #ifdef HAVE_XLOCALE_H
 #include <xlocale.h>
@@ -30,6 +25,11 @@
 #ifdef HAVE_LANGINFO_H
 #include <langinfo.h>
 #endif
+
+#include <usual/mbuf.h>
+#include <usual/statlist.h>
+#include <usual/ctype.h>
+#include <usual/bytemap.h>
 
 /*
  * Dynamic list of strings.
