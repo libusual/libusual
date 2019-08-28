@@ -258,7 +258,7 @@ static inline char *plain_copy(char *dst, const char *src, const char *endptr)
 _PRINTF(2,0)
 static void format_err(struct JsonContext *ctx, const char *errmsg, va_list ap)
 {
-	char buf[128];
+	char buf[119];
 	if (ctx->lasterr)
 		return;
 	vsnprintf(buf, sizeof(buf), errmsg, ap);
