@@ -191,3 +191,6 @@ nodoc:
 
 deb:
 	debuild -us -uc -b
+
+check: all
+	$(MAKE) -C test check

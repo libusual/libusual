@@ -78,7 +78,7 @@ clean: clean-local
 clean-local:
 	$(Q) $(RM) -r fmod_test
 
-run:
+check run:
 	@echo CC=$(CC) CFLAGS=$(CFLAGS)
 	$(MAKE) -C ..
 	$(MAKE) all regtest_system regtest_compat

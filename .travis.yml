@@ -13,5 +13,5 @@ script: |
   ./autogen.sh
   ./configure --prefix=$HOME/install --enable-werror $configure_args
   make
-  make -C test run
+  make check
   make install
