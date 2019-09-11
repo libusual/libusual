@@ -48,14 +48,6 @@ EXTRA_$(1)_SOURCES := $$(EXTRA_$(1)_SOURCES) \
 
 $(1)_CPPFLAGS += -I$$(USUAL_DIR)
 
-# add libusual to vpath
-$(IFEQ) ($$(filter $$(USUAL_DIR),$$(VPATH)),)
-VPATH += $$(USUAL_DIR)
-$(IFNEQ) ($$(srcdir),$$(builddir),)
-VPATH += $$(call JoinPath,$$(srcdir),$$(USUAL_DIR))
-$(ENDIF)
-$(ENDIF)
-
 $(ENDIF)
 
 endef
