@@ -47,7 +47,7 @@ void *cx_realloc(CxMem *cx, void *ptr, size_t len)
 	return cx->ops->c_realloc(cx->ctx, ptr, len);
 }
 
-void cx_free(CxMem *cx, const void *ptr)
+void cx_free(CxMem *cx, void *ptr)
 {
 	if (!cx)
 		cx = USUAL_ALLOC;
@@ -153,7 +153,7 @@ static void *libc_realloc(void *ctx, void *ptr, size_t len)
 	return realloc(ptr, len);
 }
 
-static void libc_free(void *ctx, const void *ptr)
+static void libc_free(void *ctx, void *ptr)
 {
 	free(ptr);
 }

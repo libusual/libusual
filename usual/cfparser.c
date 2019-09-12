@@ -321,7 +321,7 @@ bool cf_set(const struct CfContext *cf, const char *sect, const char *key, const
 
 struct LoaderCtx {
 	const struct CfContext *cf;
-	const char *cur_sect;
+	char *cur_sect;
 	void *top_base;
 	bool got_main_sect;
 };

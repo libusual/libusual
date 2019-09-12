@@ -65,7 +65,7 @@ struct CxOps {
 	 * Free existing allocation.
 	 * p will not be 0
 	 */
-	void (*c_free)(void *ctx, const void *p);
+	void (*c_free)(void *ctx, void *p);
 	/**
 	 * Release all memory in context.
 	 * This is not supported by all allocators.
@@ -108,7 +108,7 @@ void *cx_realloc(CxMem *cx, void *ptr, size_t len);
  *
  * Does nothing if ptr is NULL.
  */
-void cx_free(CxMem *cx, const void *ptr);
+void cx_free(CxMem *cx, void *ptr);
 
 /**
  * Release all memory allocated in context.

@@ -206,7 +206,7 @@ bool mdict_urldecode(struct MDict *dict, const char *str, unsigned len)
 {
 	const char *s = str;
 	const char *end = s + len;
-	const char *k, *v;
+	char *k, *v;
 	unsigned klen, vlen;
 	struct MDictElem *el;
 

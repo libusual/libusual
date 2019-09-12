@@ -44,11 +44,11 @@ bool strlist_empty(struct StrList *slist);
 /** Append copy of string. */
 bool strlist_append(struct StrList *slist, const char *str);
 /** Append reference, strlist now owns it. */
-bool strlist_append_ref(struct StrList *slist, const char *str);
+bool strlist_append_ref(struct StrList *slist, char *str);
 /** Call function on each element */
 bool strlist_foreach(const struct StrList *slist, str_cb cb_func, void *cb_arg);
 /** Remove and return first element */
-const char *strlist_pop(struct StrList *slist);
+char *strlist_pop(struct StrList *slist);
 /* @} */
 
 /** Parse comma-separated elements from string and launch callback for each of them. */

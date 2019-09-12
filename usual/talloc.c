@@ -1595,7 +1595,7 @@ static void *cxt_alloc(void *ctx, size_t size)
 	return talloc_size(ctx, size);
 }
 
-static void cxt_free(void *ctx, const void *ptr)
+static void cxt_free(void *ctx, void *ptr)
 {
 	if (talloc_unlink(ctx, ptr) != 0)
 		do_log("cxt_free: talloc_unlink failed\n");

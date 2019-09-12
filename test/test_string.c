@@ -369,7 +369,7 @@ static const char *lshow(const struct StrList *sl)
 static void test_strlist(void *p)
 {
 	struct StrList *sl = NULL;
-	const char *s;
+	char *s;
 	sl = strlist_new(NULL);
 	str_check(lshow(sl), "");
 	strlist_append(sl, "1");

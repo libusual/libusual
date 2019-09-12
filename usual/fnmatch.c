@@ -237,7 +237,7 @@ nomatch_retry:
  */
 int fnmatch(const char *pat, const char *str, int flags)
 {
-	const wchar_t *wpat, *wstr;
+	wchar_t *wpat, *wstr;
 	wchar_t pbuf[128];
 	wchar_t sbuf[128];
 	int plen = strlen(pat);

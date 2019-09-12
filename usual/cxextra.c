@@ -39,7 +39,7 @@ static void *nofail_realloc(void *next, void *ptr, size_t len)
 	return p;
 }
 
-static void nofail_free(void *next, const void *ptr)
+static void nofail_free(void *next, void *ptr)
 {
 	cx_free(next, ptr);
 }
@@ -131,7 +131,7 @@ static void *pool_alloc(void *ctx, size_t size)
 }
 
 /* free only last item */
-static void pool_free(void *ctx, const void *ptr)
+static void pool_free(void *ctx, void *ptr)
 {
 	struct CxPool *pool = ctx;
 	struct CxPoolSeg *cur = pool->last;
@@ -311,7 +311,7 @@ static void *tree_realloc(void *ctx, void *ptr, size_t len)
 	}
 }
 
-static void tree_free(void *ctx, const void *ptr)
+static void tree_free(void *ctx, void *ptr)
 {
 	struct CxTree *t = ctx;
 	struct CxTreeItem *item;

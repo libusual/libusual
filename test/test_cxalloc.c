@@ -47,7 +47,7 @@ static void *log_realloc(void *ctx, void *ptr, size_t len)
 	return p + 8;
 }
 
-static void log_free(void *ctx, const void *ptr)
+static void log_free(void *ctx, void *ptr)
 {
 	char *p = (char *)ptr - 8;
 	int len = *(int*)p;

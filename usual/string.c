@@ -42,7 +42,7 @@ struct StrList {
 
 struct StrItem {
 	struct List node;
-	const char *str;
+	char *str;
 };
 
 bool strlist_empty(struct StrList *slist)
@@ -52,7 +52,7 @@ bool strlist_empty(struct StrList *slist)
 
 bool strlist_append(struct StrList *slist, const char *str)
 {
-	const char *nstr = NULL;
+	char *nstr = NULL;
 	bool ok;
 	if (str) {
 		nstr = cx_strdup(slist->ca, str);
@@ -65,7 +65,7 @@ bool strlist_append(struct StrList *slist, const char *str)
 	return ok;
 }
 
-bool strlist_append_ref(struct StrList *slist, const char *str)
+bool strlist_append_ref(struct StrList *slist, char *str)
 {
 	struct StrItem *item = cx_alloc(slist->ca, sizeof(*item));
 	if (!item)
@@ -76,11 +76,11 @@ bool strlist_append_ref(struct StrList *slist, const char *str)
 	return true;
 }
 
-const char *strlist_pop(struct StrList *slist)
+char *strlist_pop(struct StrList *slist)
 {
 	struct StrItem *item;
 	struct List *el;
-	const char *str;
+	char *str;
 
 	el = statlist_pop(&slist->list);
 	if (!el)
@@ -104,7 +104,7 @@ struct StrList *strlist_new(CxMem *ca)
 
 void strlist_free(struct StrList *slist)
 {
-	const char *s;
+	char *s;
 	if (!slist)
 		return;
 	while (!strlist_empty(slist)) {

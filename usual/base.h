@@ -327,14 +327,6 @@ void log_fatal(const char *file, int line, const char *func, bool show_perror, v
 #endif
 #endif
 
-/* Fix posix bug by accepting const pointer.  */
-static inline void _const_free(const void *p)
-{
-	free((void *)p);
-}
-/** Compat: make free() accept const pointer */
-#define free(x) _const_free(x)
-
 /** Zeroing malloc */
 _MUSTCHECK
 static inline void *zmalloc(size_t len)

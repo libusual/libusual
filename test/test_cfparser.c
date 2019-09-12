@@ -7,15 +7,15 @@
 #include "test_common.h"
 
 struct Config1 {
-	const char *str1;
-	const char *def1;
+	char *str1;
+	char *def1;
 	int int1;
 	int bool1;
 };
 
 struct Config2 {
-	const char *str2;
-	const char *def2;
+	char *str2;
+	char *def2;
 	double time_double;
 	usec_t time_usec;
 };
