@@ -63,7 +63,7 @@
 #define setuid(x) (-1)
 #define fork() (-1)
 #define geteuid() getuid()
-#define setgroups(s, p) (-1)
+static inline int setgroups(int ngroups, const gid_t *gidsets) { errno = EINVAL; return -1; }
 #define chown(f, u, g) (-1)
 
 #define srandom(s) srand(s)
