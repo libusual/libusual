@@ -1,5 +1,4 @@
 #include <usual/tls/tls.h>
-#include <usual/event.h>
 #include <usual/socket.h>
 #include <usual/string.h>
 #include <usual/signal.h>
@@ -9,6 +8,8 @@
 
 #include <string.h>
 #include <stdarg.h>
+
+#include <event.h>
 
 #include "test_common.h"
 

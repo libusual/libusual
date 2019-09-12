@@ -9,7 +9,6 @@ dnl  AC_USUAL_CASSERT
 dnl  AC_USUAL_WERROR
 dnl  AC_USUAL_DEBUG
 dnl Optional features:
-dnl  AC_USUAL_LIBEVENT / AC_USUAL_LIBEVENT_OPT
 dnl  AC_USUAL_UREGEX
 dnl  AC_USUAL_GETADDRINFO_A
 dnl  AC_USUAL_TLS
@@ -296,66 +295,6 @@ fi
 AC_SUBST(enable_debug)
 ])
 
-
-dnl
-dnl  AC_USUAL_LIBEVENT:  --with-libevent
-dnl
-dnl  AC_USUAL_LIBEVENT - prefer-yes:
-dnl     default   - search for libevent, error if not found
-dnl     --with    - search for libevent, error if not found
-dnl     --without - use libusual
-dnl
-dnl  AC_USUAL_LIBEVENT_OPT - prefer-no:
-dnl     default   - use libusual
-dnl     --with    - search for libevent, error if not found
-dnl     --without - use libusual
-dnl
-AC_DEFUN([AC_USUAL_LIBEVENT_OPT], [AC_USUAL_LIBEVENT(1)])
-AC_DEFUN([AC_USUAL_LIBEVENT], [
-ifelse([$#], [0], [levent=yes], [levent=no])
-AC_MSG_CHECKING([for libevent])
-AC_ARG_WITH(libevent,
-  AC_HELP_STRING([--with-libevent=prefix],[Specify where libevent is installed]),
-  [ if test "$withval" = "no"; then
-      levent=no
-    elif test "$withval" = "yes"; then
-      levent=yes
-    else
-      levent=yes
-      CPPFLAGS="$CPPFLAGS -I$withval/include"
-      LDFLAGS="$LDFLAGS -L$withval/lib"
-    fi
-  ], [])
-
-if test "$levent" = "no"; then
-  AC_MSG_RESULT([using usual/event])
-  AC_DEFINE(HAVE_EVENT_LOOPBREAK, 1, [usual/event.h has it.])
-  AC_DEFINE(HAVE_EVENT_BASE_NEW, 1, [usual/event.h has it.])
-  have_libevent=no
-else # libevent
-AC_DEFINE(HAVE_LIBEVENT, 1, [Use real libevent.])
-LIBS="-levent $LIBS"
-AC_LINK_IFELSE([AC_LANG_SOURCE([
-  #include <sys/types.h>
-  #include <sys/time.h>
-  #include <stdio.h>
-  #include <event.h>
-  int main(void) {
-    struct event ev;
-    event_init();
-    event_set(&ev, 1, EV_READ, NULL, NULL);
-    /* this checks for 1.2+ */
-    event_base_free(NULL);
-  } ])],
-[AC_MSG_RESULT([found])],
-[AC_MSG_ERROR([not found, cannot proceed])])
-
-AC_CHECK_FUNCS(event_loopbreak event_base_new evdns_base_new)
-have_libevent=yes
-fi # libevent
-AC_SUBST(have_libevent)
-
-]) dnl  AC_USUAL_LIBEVENT
 
 dnl
 dnl  AC_USUAL_UREGEX:  --with-uregex

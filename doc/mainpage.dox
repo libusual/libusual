@@ -92,7 +92,6 @@
  * <tr><td>  <usual/slab.h>          </td><td>  Slab allocator for same-size objects   </td></tr>
  * <tr><td>  <usual/talloc.h>        </td><td>  Hierarchical allocator   </td></tr>
  * <tr><th colspan=2>  OS support  </th></tr>
- * <tr><td>  <usual/event.h>         </td><td>  libevent compat   </td></tr>
  * <tr><td>  <usual/daemon.h>        </td><td>  Process daemonization   </td></tr>
  * <tr><td>  <usual/fileutil.h>      </td><td>  Various file I/O tools   </td></tr>
  * <tr><td>  <usual/logging.h>       </td><td>  Logging framework for daemons   </td></tr>

@@ -17,7 +17,6 @@ struct testgroup_t groups[] = {
 	{ "ctype/", ctype_tests },
 	{ "cxalloc/", cxalloc_tests },
 	{ "endian/", endian_tests },
-	{ "event/", event_tests },
 	{ "fileutil/", fileutil_tests },
 	{ "fnmatch/", fnmatch_tests },
 	{ "getopt/", getopt_tests },

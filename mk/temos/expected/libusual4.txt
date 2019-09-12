@@ -51,7 +51,6 @@ inst/include/usual/cxextra.h
 inst/include/usual/daemon.h
 inst/include/usual/endian.h
 inst/include/usual/err.h
-inst/include/usual/event.h
 inst/include/usual/fileutil.h
 inst/include/usual/fnmatch.h
 inst/include/usual/getopt.h

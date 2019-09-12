@@ -6,7 +6,6 @@
 #include <usual/daemon.h>
 #include <usual/endian.h>
 #include <usual/err.h>
-#include <usual/event.h>
 #include <usual/fileutil.h>
 #include <usual/hashtab-impl.h>
 #include <usual/heap.h>
@@ -50,8 +49,6 @@ int main(void)
 	cbtree_destroy(cbtree);
 	daemonize(NULL, false);
 	hash_lookup3("foo", 3);
-	if (!event_init())
-		log_debug("test");
 	if (!parse_ini_file("foo", NULL, NULL))
 		log_debug("test");
 	log_stats("1");

@@ -41,7 +41,6 @@ libusual_la_SOURCES = usual/config.h.in \
 	usual/daemon.h usual/daemon.c \
 	usual/endian.h \
 	usual/err.h usual/err.c \
-	usual/event.h usual/event.c \
 	usual/fileutil.h usual/fileutil.c \
 	usual/fnmatch.h usual/fnmatch.c \
 	usual/getopt.h usual/getopt.c \

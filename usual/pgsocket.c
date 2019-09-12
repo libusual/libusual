@@ -18,10 +18,11 @@
 
 #include <usual/pgsocket.h>
 
-#include <usual/event.h>
 #include <usual/logging.h>
 #include <usual/time.h>
 #include <usual/string.h>
+
+#include <event.h>
 
 #define MAX_QRY_ARGS 32
 

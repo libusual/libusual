@@ -1,10 +1,4 @@
 
-/* Define to 1 if you have the `event_base_new' function. */
-#define HAVE_EVENT_BASE_NEW 1
-
-/* Define to 1 if you have the `event_loopbreak' function. */
-#define HAVE_EVENT_LOOPBREAK 1
-
 /* Define to 1 if you have the <malloc.h> header file. */
 #define HAVE_MALLOC_H 1
 
