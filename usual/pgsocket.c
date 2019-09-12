@@ -90,7 +90,7 @@ static void wait_event(struct PgSocket *db, short ev, libev_cb fn)
 }
 
 /* wait timeout from libevent */
-static void timeout_cb(int sock, short flags, void *arg)
+static void timeout_cb(evutil_socket_t sock, short flags, void *arg)
 {
 	struct PgSocket *db = arg;
 
@@ -140,7 +140,7 @@ static void report_last_result(struct PgSocket *db)
  * Because the callback may want to close the connection when processing
  * last resultset, the PGresult handover is delayed one step.
  */
-static void result_cb(int sock, short flags, void *arg)
+static void result_cb(evutil_socket_t sock, short flags, void *arg)
 {
 	struct PgSocket *db = arg;
 	PGresult *res;
@@ -174,7 +174,7 @@ static void result_cb(int sock, short flags, void *arg)
 
 static void flush(struct PgSocket *db);
 
-static void send_cb(int sock, short flags, void *arg)
+static void send_cb(evutil_socket_t sock, short flags, void *arg)
 {
 	struct PgSocket *db = arg;
 
@@ -184,7 +184,7 @@ static void send_cb(int sock, short flags, void *arg)
 }
 
 /* handle connect states */
-static void connect_cb(int sock, short flags, void *arg)
+static void connect_cb(evutil_socket_t sock, short flags, void *arg)
 {
 	struct PgSocket *db = arg;
 	PostgresPollingStatusType poll_res;

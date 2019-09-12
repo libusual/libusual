@@ -274,7 +274,7 @@ static const char *create_worker(struct Worker **w_p, int is_server, ...)
 static const char *do_handshake(struct Worker *w, int fd);
 static const char *wait_for_event(struct Worker *w, short flag);
 
-static void worker_cb(int fd, short flags, void *arg)
+static void worker_cb(evutil_socket_t fd, short flags, void *arg)
 {
 	struct Worker *w = arg;
 	const char *err;
