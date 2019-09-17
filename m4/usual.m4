@@ -13,6 +13,9 @@ dnl  AC_USUAL_UREGEX
 dnl  AC_USUAL_GETADDRINFO_A
 dnl  AC_USUAL_TLS
 
+dnl Catching missing pkg-config
+m4_pattern_forbid([^PKG_])dnl
+
 dnl
 dnl  AC_USUAL_INIT:
 dnl    - Sets PORTNAME=win32/unix
