@@ -308,7 +308,7 @@ AC_DEFUN([AC_USUAL_UREGEX], [
 AC_MSG_CHECKING([whether to force internal regex])
 uregex=no
 AC_ARG_WITH(uregex,
-  AC_HELP_STRING([--with-uregex],[Force use of internal regex]),
+  AC_HELP_STRING([--with-uregex],[force use of internal regex]),
   [ if test "$withval" = "yes"; then
       uregex=yes
     fi ], [])
@@ -371,7 +371,8 @@ TLS_LIBS=""
 
 AC_MSG_CHECKING([for OpenSSL])
 AC_ARG_WITH(openssl,
-  AC_HELP_STRING([--with-openssl=prefix], [Specify where OpenSSL is installed]),
+  [AC_HELP_STRING([--without-openssl], [do not build with OpenSSL support])
+AC_HELP_STRING([--with-openssl@<:@=PREFIX@:>@], [specify where OpenSSL is installed])],
   [ if test "$withval" = "no"; then
       tls_support=no
     elif test "$withval" = "yes"; then
@@ -414,7 +415,7 @@ if test "$tls_support" = "auto" -o "$tls_support" = "libssl"; then
   cafile=auto
   AC_MSG_CHECKING([for root CA certs])
   AC_ARG_WITH(root-ca-file,
-    AC_HELP_STRING([--with-root-ca-file=cafile], [Specify where root CA certs are.]),
+    AC_HELP_STRING([--with-root-ca-file=FILE], [specify where the root CA certificates are]),
     [ if test "$withval" = "no"; then
         :
       elif test "$withval" = "yes"; then
