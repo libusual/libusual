@@ -176,12 +176,14 @@ static void *urldec_str(CxMem *cx, const char **src_p, const char *end, unsigned
 	/* write out */
 	for (s = *src_p; s < end; ) {
 		if (*s == '%') {
+			int h1, h2;
 			if (s + 3 > end)
 				goto err;
-			c = gethex(s[1]) << 4;
-			c |= gethex(s[2]);
-			if (c < 0)
+			h1 = gethex(s[1]);
+			h2 = gethex(s[2]);
+			if (h1 < 0 || h2 < 0)
 				goto err;
+			c = (h1 << 4) | h2;
 			s += 3;
 			*d++ = c;
 		} else if (*s == '+') {
