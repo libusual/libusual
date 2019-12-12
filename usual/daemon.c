@@ -101,7 +101,7 @@ fail:
 static void check_pidfile(const char *pidfile)
 {
 	if (signal_pidfile(pidfile, 0))
-		fatal("pidfile exists, another instance running?");
+		die("pidfile exists, another instance running?");
 	if (errno == ESRCH) {
 		log_info("stale pidfile, removing");
 		unlink(pidfile);
@@ -123,7 +123,7 @@ static void write_pidfile(const char *pidfile, bool first_write)
 		free(g_pidfile);
 	g_pidfile = strdup(pidfile);
 	if (!g_pidfile)
-		fatal_perror("cannot alloc pidfile");
+		die("out of memory");
 
 	pid = getpid();
 	snprintf(buf, sizeof(buf), "%u\n", (unsigned)pid);
@@ -134,14 +134,14 @@ static void write_pidfile(const char *pidfile, bool first_write)
 
 	fd = open(pidfile, flags, 0644);
 	if (fd < 0)
-		fatal_perror("cannot write pidfile: '%s'", pidfile);
+		die("could not open pidfile '%s': %s", pidfile, strerror(errno));
 	len = strlen(buf);
 loop:
 	res = write(fd, buf, len);
 	if (res < 0) {
 		if (errno == EINTR)
 			goto loop;
-		fatal_perror("write to pidfile failed: '%s'", pidfile);
+		die("write to pidfile '%s' failed: %s", pidfile, strerror(errno));
 	} else if (res < len) {
 		len -= res;
 		goto loop;
@@ -185,7 +185,7 @@ void daemonize(const char *pidfile, bool go_background)
 	/* send stdin, stdout, stderr to /dev/null */
 	fd = open("/dev/null", O_RDWR);
 	if (fd < 0)
-		fatal_perror("/dev/null");
+		die("could not open /dev/null: %s", strerror(errno));
 	dup2(fd, 0);
 	dup2(fd, 1);
 	dup2(fd, 2);
@@ -195,19 +195,19 @@ void daemonize(const char *pidfile, bool go_background)
 	/* fork new process */
 	pid = fork();
 	if (pid < 0)
-		fatal_perror("fork");
+		die("fork failed: %s", strerror(errno));
 	if (pid > 0)
 		_exit(0);
 
 	/* create new session */
 	pid = setsid();
 	if (pid < 0)
-		fatal_perror("setsid");
+		die("setsid: %s", strerror(errno));
 
 	/* fork again to avoid being session leader */
 	pid = fork();
 	if (pid < 0)
-		fatal_perror("fork");
+		die("fork failed; %s", strerror(errno));
 	if (pid > 0)
 		_exit(0);
 

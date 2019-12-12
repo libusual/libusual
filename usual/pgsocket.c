@@ -83,7 +83,7 @@ static void wait_event(struct PgSocket *db, short ev, libev_cb fn)
 	if (db->base)
 		event_base_set(db->base, &db->ev);
 	if (event_add(&db->ev, NULL) < 0)
-		fatal_perror("event_add");
+		die("event_add failed: %s", strerror(errno));
 
 	db->wait_type = W_SOCK;
 	db->wait_event = ev;
@@ -328,7 +328,7 @@ void pgs_sleep(struct PgSocket *db, double timeout)
 	if (db->base)
 		event_base_set(db->base, &db->ev);
 	if (evtimer_add(&db->ev, &tv) < 0)
-		fatal_perror("event_add");
+		die("evtimer_add failed: %s", strerror(errno));
 
 	db->wait_type = W_TIME;
 }
