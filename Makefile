@@ -188,8 +188,5 @@ nodoc:
 	  grep -q "$$hdr" doc/mainpage.dox || echo "$$hdr" ; \
 	done
 
-deb:
-	debuild -us -uc -b
-
 check: all
 	$(MAKE) -C test check

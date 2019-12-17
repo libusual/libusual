@@ -35,6 +35,3 @@ tags
 
 mk/temos/html
 mk/temos/output
-debian/libusual-dev/
-debian/libusual0/
-debian/files

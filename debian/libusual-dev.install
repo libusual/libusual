@@ -1,7 +1,0 @@
-usr/include/usual/*.h
-usr/include/usual/*/*.h
-usr/share/aclocal
-usr/share/libusual
-usr/lib/pkgconfig
-usr/lib/lib*.a
-usr/lib/lib*.so
