@@ -33,7 +33,7 @@ html: $(HTML)
 
 am:
 	rm -f html/anti*
-	make
+	$(MAKE)
 
 ftest: clean qtest
 qtest: $(OUT)
