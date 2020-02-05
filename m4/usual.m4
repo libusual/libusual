@@ -412,7 +412,7 @@ if test "$tls_support" = "auto" -o "$tls_support" = "libssl"; then
   LIBS="$tmp_LIBS"
 
   dnl Pick default root CA file
-  cafile=auto
+  cafile=
   AC_MSG_CHECKING([for root CA certs])
   AC_ARG_WITH(root-ca-file,
     AC_HELP_STRING([--with-root-ca-file=FILE], [specify where the root CA certificates are]),
@@ -424,14 +424,9 @@ if test "$tls_support" = "auto" -o "$tls_support" = "libssl"; then
         cafile="$withval"
       fi
     ])
-  if test "$cafile" = "auto"; then
-    for cafile in /etc/ssl/certs/ca-certificates.crt /etc/ssl/cert.pem; do
-      if test -f "$cafile"; then
-        break
-      fi
-    done
+  if test -n "$cafile"; then
+    AC_DEFINE_UNQUOTED(USUAL_TLS_CA_FILE, ["$cafile"], [Path to root CA certs.])
   fi
-  AC_DEFINE_UNQUOTED(USUAL_TLS_CA_FILE, ["$cafile"], [Path to root CA certs.])
   AC_MSG_RESULT([$cafile])
 else
   AC_MSG_RESULT([no])
