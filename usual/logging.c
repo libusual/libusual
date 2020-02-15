@@ -43,7 +43,7 @@
 static inline void openlog(const char *ident, int opt, int fac) {}
 #define syslog win32_eventlog
 #define closelog()
-static void win32_eventlog(int level, const char *fmt, ...);
+static void win32_eventlog(int level, const char *fmt, ...) _PRINTF(2, 3);
 #endif
 
 int cf_quiet = 0;
