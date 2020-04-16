@@ -229,6 +229,11 @@ struct CfLookup {
 	{ name, ops, flags | CF_VAL_REL, offsetof(CF_REL_BASE, var), def }
 
 /**
+ * Check config from file.
+ */
+bool cf_check_file(const struct CfContext *cf, const char *fn) _MUSTCHECK;
+
+/**
  * Load config from file.
  */
 bool cf_load_file(const struct CfContext *cf, const char *fn) _MUSTCHECK;
