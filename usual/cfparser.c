@@ -384,8 +384,7 @@ static bool empty_handler(void *arg, bool is_sect, const char *key, const char *
 	struct LoaderCtx *ctx = arg;
 	const struct CfSect *s;
 	const struct CfKey *k;
-	void *base, *p;
-	struct CfValue cv;
+	void *base;
 
 	if (is_sect) {
 		if (ctx->cur_sect)
