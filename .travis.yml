@@ -13,6 +13,7 @@ jobs:
   - compiler: clang
   - dist: trusty
   - dist: xenial
+  - dist: focal
   - arch: arm64
   - arch: ppc64le
 script: |
