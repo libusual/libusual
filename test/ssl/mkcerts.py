@@ -277,7 +277,7 @@ ca2.write('ca2_root')
 server2 = Leaf(ca2, 'rsa:2048', ['CN=server2.com'], ['dns:server2.com', 'dns:www.server2.com'], usage=['server'])
 server2.write('ca2_server2')
 
-client2 = Leaf(ca2, 'rsa:1024',
+client2 = Leaf(ca2, 'rsa:2048',
                name=['CN=client2', 'C=XX', 'L=City2', 'ST=State2', 'O=Org2'],
                alt_names=['822:client2@company.com'],
                usage=['client'])
