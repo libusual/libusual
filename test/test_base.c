@@ -73,6 +73,11 @@ static void test_misc(void *_p)
 end:;
 }
 
+#pragma GCC diagnostic push
+#if defined(__GNUC__) && !defined(__clang__) && __GNUC__ >= 9
+#pragma GCC diagnostic ignored "-Walloc-size-larger-than="
+#endif
+
 static void test_reallocarray(void *_p)
 {
 	void *p;
@@ -80,6 +85,8 @@ static void test_reallocarray(void *_p)
 	p = reallocarray(NULL, SIZE_MAX, SIZE_MAX); tt_assert(p == NULL);
 end:;
 }
+
+#pragma GCC diagnostic pop
 
 struct testcase_t base_tests[] = {
 	{ "ptr", test_ptr },
