@@ -18,6 +18,8 @@
 
 #include <usual/logging.h>
 
+#include <sys/stat.h>
+
 #include <usual/ctype.h>
 #include <usual/string.h>
 #include <usual/time.h>
@@ -25,6 +27,11 @@
 
 #ifdef HAVE_SYSLOG_H
 #include <syslog.h>
+#endif
+
+#ifdef USE_SYSTEMD
+#define SD_JOURNAL_SUPPRESS_LOCATION
+#include <systemd/sd-journal.h>
 #endif
 
 #ifdef WIN32
@@ -196,8 +203,32 @@ void log_generic(enum LogLevel level, void *ctx, const char *fmt, ...)
 		}
 	}
 
-	if (!cf_quiet && level <= cf_stderr_level)
-		fprintf(stderr, "%s [%u] %s %s\n", timebuf, pid, lev->tag, msg);
+	if (!cf_quiet && level <= cf_stderr_level) {
+#ifdef USE_SYSTEMD
+		static bool journal_stream_checked = false;
+		static bool use_systemd_journal = false;
+
+		if (!journal_stream_checked) {
+			if (getenv("JOURNAL_STREAM")) {
+				long long unsigned int f1, f2;
+				if (sscanf(getenv("JOURNAL_STREAM"), "%llu:%llu", &f1, &f2) == 2) {
+					struct stat st;
+					dev_t js_dev = f1;
+					ino_t js_ino = f2;
+					if (fstat(fileno(stderr), &st) >= 0)
+						if (js_dev == st.st_dev && js_ino == st.st_ino)
+							use_systemd_journal = true;
+				}
+
+			}
+			journal_stream_checked = true;
+		}
+		if (use_systemd_journal)
+			sd_journal_print(lev->syslog_prio, "%s", msg);
+		else
+#endif
+			fprintf(stderr, "%s [%u] %s %s\n", timebuf, pid, lev->tag, msg);
+	}
 
 	if (log_file && level <= cf_logfile_level)
 		fprintf(log_file, "%s [%u] %s %s\n", timebuf, pid, lev->tag, msg);
