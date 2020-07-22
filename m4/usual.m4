@@ -394,6 +394,8 @@ AC_HELP_STRING([--with-openssl@<:@=PREFIX@:>@], [specify where OpenSSL is instal
 dnl check if libssl works
 if test "$tls_support" = "auto" -o "$tls_support" = "libssl"; then
   AC_DEFINE(USUAL_LIBSSL_FOR_TLS, 1, [Use libssl for TLS.])
+  AC_DEFINE(OPENSSL_API_COMPAT, [0x00908000L],
+            [Define to the OpenSSL API version in use. This avoids deprecation warnings from newer OpenSSL versions.])
   tmp_LIBS="$LIBS"
   tmp_LDFLAGS="$LDFLAGS"
   tmp_CPPFLAGS="$CPPFLAGS"
