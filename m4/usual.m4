@@ -253,7 +253,7 @@ dnl
 dnl  AC_USUAL_CASSERT:  --enable-cassert switch to set macro CASSERT
 dnl
 AC_DEFUN([AC_USUAL_CASSERT], [
-AC_ARG_ENABLE(cassert, AC_HELP_STRING([--enable-cassert],[turn on assert checking in code]))
+AC_ARG_ENABLE(cassert, AS_HELP_STRING([--enable-cassert],[turn on assert checking in code]))
 AC_MSG_CHECKING([whether to enable asserts])
 if test "$enable_cassert" = "yes"; then
   AC_DEFINE(CASSERT, 1, [Define to enable assert checking])
@@ -268,7 +268,7 @@ dnl
 dnl  AC_USUAL_WERROR:  --enable-werror switch to turn warnings into errors
 dnl
 AC_DEFUN([AC_USUAL_WERROR], [
-AC_ARG_ENABLE(werror, AC_HELP_STRING([--enable-werror],[add -Werror to CFLAGS]))
+AC_ARG_ENABLE(werror, AS_HELP_STRING([--enable-werror],[add -Werror to CFLAGS]))
 AC_MSG_CHECKING([whether to fail on warnings])
 if test "$enable_werror" = "yes"; then
   CFLAGS="$CFLAGS -Werror"
@@ -284,7 +284,7 @@ dnl  AC_USUAL_DEBUG:  --disable-debug switch to strip binary
 dnl
 AC_DEFUN([AC_USUAL_DEBUG], [
 AC_ARG_ENABLE(debug,
-  AC_HELP_STRING([--disable-debug],[strip binary]),
+  AS_HELP_STRING([--disable-debug],[strip binary]),
   [], [enable_debug=yes])
 AC_MSG_CHECKING([whether to build debug binary])
 if test "$enable_debug" = "yes"; then
@@ -308,7 +308,7 @@ AC_DEFUN([AC_USUAL_UREGEX], [
 AC_MSG_CHECKING([whether to force internal regex])
 uregex=no
 AC_ARG_WITH(uregex,
-  AC_HELP_STRING([--with-uregex],[force use of internal regex]),
+  AS_HELP_STRING([--with-uregex],[force use of internal regex]),
   [ if test "$withval" = "yes"; then
       uregex=yes
     fi ], [])
@@ -371,8 +371,8 @@ TLS_LIBS=""
 
 AC_MSG_CHECKING([for OpenSSL])
 AC_ARG_WITH(openssl,
-  [AC_HELP_STRING([--without-openssl], [do not build with OpenSSL support])
-AC_HELP_STRING([--with-openssl@<:@=PREFIX@:>@], [specify where OpenSSL is installed])],
+  [AS_HELP_STRING([--without-openssl], [do not build with OpenSSL support])
+AS_HELP_STRING([--with-openssl@<:@=PREFIX@:>@], [specify where OpenSSL is installed])],
   [ if test "$withval" = "no"; then
       tls_support=no
     elif test "$withval" = "yes"; then
@@ -417,7 +417,7 @@ if test "$tls_support" = "auto" -o "$tls_support" = "libssl"; then
   cafile=auto
   AC_MSG_CHECKING([for root CA certs])
   AC_ARG_WITH(root-ca-file,
-    AC_HELP_STRING([--with-root-ca-file=FILE], [specify where the root CA certificates are]),
+    AS_HELP_STRING([--with-root-ca-file=FILE], [specify where the root CA certificates are]),
     [ if test "$withval" = "no"; then
         :
       elif test "$withval" = "yes"; then
