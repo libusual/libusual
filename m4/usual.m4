@@ -31,6 +31,8 @@ if test "$srcdir" != "."; then
   echo "include $srcdir/Makefile" > Makefile
 fi
 
+AC_CANONICAL_HOST
+
 AC_MSG_CHECKING([target host type])
 xhost="$host_alias"
 if test "x$xhost" = "x"; then
