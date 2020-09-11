@@ -24,19 +24,19 @@
 #include <usual/socket.h>
 
 /** read */
-int safe_read(int fd, void *buf, int len)                       _MUSTCHECK;
+ssize_t safe_read(int fd, void *buf, size_t len)                _MUSTCHECK;
 /** write */
-int safe_write(int fd, const void *buf, int len)                _MUSTCHECK;
+ssize_t safe_write(int fd, const void *buf, size_t len)         _MUSTCHECK;
 /** recv */
-int safe_recv(int fd, void *buf, int len, int flags)            _MUSTCHECK;
+ssize_t safe_recv(int fd, void *buf, size_t len, int flags)     _MUSTCHECK;
 /** send */
-int safe_send(int fd, const void *buf, int len, int flags)      _MUSTCHECK;
+ssize_t safe_send(int fd, const void *buf, size_t len, int flags) _MUSTCHECK;
 /** close */
 int safe_close(int fd);
 /** recvmsg */
-int safe_recvmsg(int fd, struct msghdr *msg, int flags)         _MUSTCHECK;
+ssize_t safe_recvmsg(int fd, struct msghdr *msg, int flags)     _MUSTCHECK;
 /** sendmsg */
-int safe_sendmsg(int fd, const struct msghdr *msg, int flags)   _MUSTCHECK;
+ssize_t safe_sendmsg(int fd, const struct msghdr *msg, int flags) _MUSTCHECK;
 /** connect */
 int safe_connect(int fd, const struct sockaddr *sa, socklen_t sa_len)   _MUSTCHECK;
 /** accept */

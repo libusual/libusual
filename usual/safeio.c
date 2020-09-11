@@ -28,9 +28,9 @@
 #include <usual/string.h>
 #include <usual/time.h>
 
-int safe_read(int fd, void *buf, int len)
+ssize_t safe_read(int fd, void *buf, size_t len)
 {
-	int res;
+	ssize_t res;
 loop:
 	res = read(fd, buf, len);
 	if (res < 0 && errno == EINTR)
@@ -38,9 +38,9 @@ loop:
 	return res;
 }
 
-int safe_write(int fd, const void *buf, int len)
+ssize_t safe_write(int fd, const void *buf, size_t len)
 {
-	int res;
+	ssize_t res;
 loop:
 	res = write(fd, buf, len);
 	if (res < 0 && errno == EINTR)
@@ -48,35 +48,35 @@ loop:
 	return res;
 }
 
-int safe_recv(int fd, void *buf, int len, int flags)
+ssize_t safe_recv(int fd, void *buf, size_t len, int flags)
 {
-	int res;
+	ssize_t res;
 	char ebuf[128];
 loop:
 	res = recv(fd, buf, len, flags);
 	if (res < 0 && errno == EINTR)
 		goto loop;
 	if (res < 0)
-		log_noise("safe_recv(%d, %d) = %s", fd, len,
+		log_noise("safe_recv(%d, %" PRIuZ ") = %s", fd, len,
 			  strerror_r(errno, ebuf, sizeof(ebuf)));
 	else if (cf_verbose > 2)
-		log_noise("safe_recv(%d, %d) = %d", fd, len, res);
+		log_noise("safe_recv(%d, %" PRIuZ ") = %" PRIdZ, fd, len, res);
 	return res;
 }
 
-int safe_send(int fd, const void *buf, int len, int flags)
+ssize_t safe_send(int fd, const void *buf, size_t len, int flags)
 {
-	int res;
+	ssize_t res;
 	char ebuf[128];
 loop:
 	res = send(fd, buf, len, flags);
 	if (res < 0 && errno == EINTR)
 		goto loop;
 	if (res < 0)
-		log_noise("safe_send(%d, %d) = %s", fd, len,
+		log_noise("safe_send(%d, %" PRIuZ ") = %s", fd, len,
 			  strerror_r(errno, ebuf, sizeof(ebuf)));
 	else if (cf_verbose > 2)
-		log_noise("safe_send(%d, %d) = %d", fd, len, res);
+		log_noise("safe_send(%d, %" PRIuZ ") = %" PRIdZ, fd, len, res);
 	return res;
 }
 
@@ -114,9 +114,9 @@ int safe_close(int fd)
 	return res;
 }
 
-int safe_recvmsg(int fd, struct msghdr *msg, int flags)
+ssize_t safe_recvmsg(int fd, struct msghdr *msg, int flags)
 {
-	int res;
+	ssize_t res;
 	char ebuf[128];
 loop:
 	res = recvmsg(fd, msg, flags);
@@ -126,13 +126,13 @@ loop:
 		log_warning("safe_recvmsg(%d, msg, %d) = %s", fd, flags,
 			    strerror_r(errno, ebuf, sizeof(ebuf)));
 	else if (cf_verbose > 2)
-		log_noise("safe_recvmsg(%d, msg, %d) = %d", fd, flags, res);
+		log_noise("safe_recvmsg(%d, msg, %d) = %" PRIdZ, fd, flags, res);
 	return res;
 }
 
-int safe_sendmsg(int fd, const struct msghdr *msg, int flags)
+ssize_t safe_sendmsg(int fd, const struct msghdr *msg, int flags)
 {
-	int res;
+	ssize_t res;
 	int msgerr_count = 0;
 	char ebuf[128];
 loop:
@@ -156,7 +156,7 @@ loop:
 			goto loop;
 		}
 	} else if (cf_verbose > 2)
-		log_noise("safe_sendmsg(%d, msg, %d) = %d", fd, flags, res);
+		log_noise("safe_sendmsg(%d, msg, %d) = %" PRIdZ, fd, flags, res);
 	return res;
 }
 

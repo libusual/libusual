@@ -149,7 +149,7 @@ bool socket_set_keepalive(int fd, int onoff, int keepidle, int keepintvl, int ke
 /*
  * Convert sockaddr to string.  Supports ipv4, ipv6 and unix sockets.
  */
-const char *sa2str(const struct sockaddr *sa, char *dst, int dstlen)
+const char *sa2str(const struct sockaddr *sa, char *dst, size_t dstlen)
 {
 	const struct sockaddr_in *in;
 	const struct sockaddr_in6 *in6;

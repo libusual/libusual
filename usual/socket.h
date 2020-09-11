@@ -100,7 +100,7 @@ bool socket_set_keepalive(int fd, int onoff, int keepidle, int keepintvl, int ke
  *
  * Supports: ipv4, ipv5, unix sockets.
  */
-const char *sa2str(const struct sockaddr *sa, char *buf, int buflen);
+const char *sa2str(const struct sockaddr *sa, char *buf, size_t buflen);
 
 #ifndef HAVE_INET_NTOP
 #define inet_ntop(a,b,c,d) usual_inet_ntop(a,b,c,d)
