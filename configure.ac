@@ -31,6 +31,8 @@ AC_USUAL_GETADDRINFO_A
 
 
 dnl search for common libraries
+# Required for infinite() on FreeBSD:
+AC_CHECK_LIB(m, main)
 AC_SEARCH_LIBS(clock_gettime, rt)
 AC_SEARCH_LIBS(getsockname, socket)
 AC_SEARCH_LIBS(gethostbyname, nsl)
