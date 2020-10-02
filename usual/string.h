@@ -55,18 +55,21 @@ char *strlist_pop(struct StrList *slist);
 bool parse_word_list(const char *s, str_cb cb_func, void *cb_arg);
 
 #ifndef HAVE_STRNLEN
+#undef strnlen
 #define strnlen(a,b) usual_strnlen(a,b)
 /** Compat: determine the length of a fixed-size string */
 size_t strnlen(const char *string, size_t maxlen);
 #endif
 
 #ifndef HAVE_STRLCPY
+#undef strlcpy
 #define strlcpy(a,b,c) usual_strlcpy(a,b,c)
 /** Compat: Safely copy string to fixed-length buffer.  */
 size_t strlcpy(char *dst, const char *src, size_t n);
 #endif
 
 #ifndef HAVE_STRLCAT
+#undef strlcat
 #define strlcat(a,b,c) usual_strlcat(a,b,c)
 /** Compat: Safely append string to fixed-length buffer. */
 size_t strlcat(char *dst, const char *src, size_t n);
@@ -98,18 +101,21 @@ char *strpcat(char *dst, const char *src, size_t dstlen);
 
 
 #ifndef HAVE_MEMRCHR
+#undef memrchr
 #define memrchr(a,b,c) usual_memrchr(a,b,c)
 /** Compat: find byte in reverse direction */
 void *memrchr(const void *s, int c, size_t n);
 #endif
 
 #ifndef HAVE_MEMMEM
+#undef memmem
 #define memmem(a,b,c,d) usual_memmem(a,b,c,d)
 /** Compat: find memory area */
 void *memmem(const void *s, size_t slen, const void *q, size_t qlen);
 #endif
 
 #ifndef HAVE_MEMPCPY
+#undef mempcpy
 #define mempcpy(a,b,c) usual_mempcpy(a,b,c)
 /** Copy memory, return pointer to end. */
 void *mempcpy(void *dst, const void *src, size_t len);
@@ -168,6 +174,7 @@ double strtod_dot(const char *s, char **tokend);
 ssize_t dtostr_dot(char *buf, size_t buflen, double val);
 
 #ifndef HAVE_STRTONUM
+#undef strtonum
 #define strtonum(a,b,c,d) usual_strtonum(a,b,c,d)
 /**
  * Convert string to integer, check limits.
@@ -196,11 +203,13 @@ char *strsep(char **stringp, const char *delim);
 #endif
 
 #ifndef HAVE_ASPRINTF
+#undef asprintf
 #define asprintf(dst_p, fmt, ...) usual_asprintf(dst_p, fmt, __VA_ARGS__)
 int asprintf(char **dst_p, const char *fmt, ...) _PRINTF(2, 3);
 #endif
 
 #ifndef HAVE_VASPRINTF
+#undef vasprintf
 #define vasprintf(dst_p, fmt, ap) usual_vasprintf(dst_p, fmt, ap)
 int vasprintf(char **dst_p, const char *fmt, va_list ap) _PRINTF(2, 0);
 #endif
