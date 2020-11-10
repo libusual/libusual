@@ -232,7 +232,11 @@ typedef enum { true=1, false=0 } bool;
 
 /** Check printf-style format and arg sanity */
 #if _COMPILER_GNUC(4,0) || __has_attribute(printf)
+#ifdef __MINGW32__
+#define _PRINTF(fmtpos, argpos) __attribute__((format(__MINGW_PRINTF_FORMAT, fmtpos, argpos)))
+#else
 #define _PRINTF(fmtpos, argpos) __attribute__((format(printf, fmtpos, argpos)))
+#endif
 #else
 #define _PRINTF(fmtpos, argpos)
 #endif
