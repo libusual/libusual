@@ -57,10 +57,10 @@ loop:
 	if (res < 0 && errno == EINTR)
 		goto loop;
 	if (res < 0)
-		log_noise("safe_recv(%d, %" PRIuZ ") = %s", fd, len,
+		log_noise("safe_recv(%d, %zu) = %s", fd, len,
 			  strerror_r(errno, ebuf, sizeof(ebuf)));
 	else if (cf_verbose > 2)
-		log_noise("safe_recv(%d, %" PRIuZ ") = %" PRIdZ, fd, len, res);
+		log_noise("safe_recv(%d, %zu) = %zd", fd, len, res);
 	return res;
 }
 
@@ -73,10 +73,10 @@ loop:
 	if (res < 0 && errno == EINTR)
 		goto loop;
 	if (res < 0)
-		log_noise("safe_send(%d, %" PRIuZ ") = %s", fd, len,
+		log_noise("safe_send(%d, %zu) = %s", fd, len,
 			  strerror_r(errno, ebuf, sizeof(ebuf)));
 	else if (cf_verbose > 2)
-		log_noise("safe_send(%d, %" PRIuZ ") = %" PRIdZ, fd, len, res);
+		log_noise("safe_send(%d, %zu) = %zd", fd, len, res);
 	return res;
 }
 
@@ -126,7 +126,7 @@ loop:
 		log_warning("safe_recvmsg(%d, msg, %d) = %s", fd, flags,
 			    strerror_r(errno, ebuf, sizeof(ebuf)));
 	else if (cf_verbose > 2)
-		log_noise("safe_recvmsg(%d, msg, %d) = %" PRIdZ, fd, flags, res);
+		log_noise("safe_recvmsg(%d, msg, %d) = %zd", fd, flags, res);
 	return res;
 }
 
@@ -156,7 +156,7 @@ loop:
 			goto loop;
 		}
 	} else if (cf_verbose > 2)
-		log_noise("safe_sendmsg(%d, msg, %d) = %" PRIdZ, fd, flags, res);
+		log_noise("safe_sendmsg(%d, msg, %d) = %zd", fd, flags, res);
 	return res;
 }
 

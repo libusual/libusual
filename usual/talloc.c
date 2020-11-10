@@ -1522,7 +1522,7 @@ static void report_cb(const void *ptr, int depth, int max_depth, int is_ref, voi
 	limitbuf[0] = 0;
 	if (name == MEMLIMIT_NAME) {
 		struct TLimit *lim = hdr2ptr(t);
-		snprintf(limitbuf, sizeof(limitbuf), "%s [cur=%" PRIuZ " max=%" PRIuZ "]",
+		snprintf(limitbuf, sizeof(limitbuf), "%s [cur=%zu max=%zu]",
 			 name, lim->cur_size, lim->max_size);
 		name = limitbuf;
 	}
@@ -1531,7 +1531,7 @@ static void report_cb(const void *ptr, int depth, int max_depth, int is_ref, voi
 	talloc_report_depth_cb(ptr, 0, TALLOC_MAX_DEPTH, calc_bytes_and_count, &state);
 
 	if (depth == 0) {
-		fprintf(f, "talloc report on '%s' (total %" PRIuZ " bytes in %" PRIuZ " blocks)%s\n",
+		fprintf(f, "talloc report on '%s' (total %zu bytes in %zu blocks)%s\n",
 			name, state.bytes, state.count, limitbuf);
 		return;
 	}
@@ -1539,7 +1539,7 @@ static void report_cb(const void *ptr, int depth, int max_depth, int is_ref, voi
 		fprintf(f, "%*sreference to %s\n", indent, " ", name);
 		return;
 	}
-	fprintf(f, "%*s%-*s contains %6" PRIuZ " bytes in %6" PRIuZ " blocks%s\n",
+	fprintf(f, "%*s%-*s contains %6zu bytes in %6zu blocks%s\n",
 		indent, " ",
 		indent < 40 ? 40 - indent : 0, name,
 		state.bytes, state.count,
