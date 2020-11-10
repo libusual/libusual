@@ -175,25 +175,25 @@ int tls_handshake_server(struct tls *ctx);
 int tls_host_port(const char *hostport, char **host, char **port);
 
 int tls_error_set(struct tls_error *error, const char *fmt, ...)
-    __attribute__((__format__ (printf, 2, 3)))
+    _PRINTF(2, 3)
     __attribute__((__nonnull__ (2)));
 int tls_error_setx(struct tls_error *error, const char *fmt, ...)
-    __attribute__((__format__ (printf, 2, 3)))
+    _PRINTF(2, 3)
     __attribute__((__nonnull__ (2)));
 int tls_config_set_error(struct tls_config *cfg, const char *fmt, ...)
-    __attribute__((__format__ (printf, 2, 3)))
+    _PRINTF(2, 3)
     __attribute__((__nonnull__ (2)));
 int tls_config_set_errorx(struct tls_config *cfg, const char *fmt, ...)
-    __attribute__((__format__ (printf, 2, 3)))
+    _PRINTF(2, 3)
     __attribute__((__nonnull__ (2)));
 int tls_set_error(struct tls *ctx, const char *fmt, ...)
-    __attribute__((__format__ (printf, 2, 3)))
+    _PRINTF(2, 3)
     __attribute__((__nonnull__ (2)));
 int tls_set_errorx(struct tls *ctx, const char *fmt, ...)
-    __attribute__((__format__ (printf, 2, 3)))
+    _PRINTF(2, 3)
     __attribute__((__nonnull__ (2)));
 int tls_set_error_libssl(struct tls *ctx, const char *fmt, ...)
-    __attribute__((__format__ (printf, 2, 3)))
+    _PRINTF(2, 3)
     __attribute__((__nonnull__ (2)));
 
 int tls_ssl_error(struct tls *ctx, SSL *ssl_conn, int ssl_ret,
