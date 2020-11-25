@@ -1,4 +1,4 @@
-dist: bionic
+dist: focal
 language: c
 jobs:
   include:
@@ -9,7 +9,7 @@ jobs:
   - compiler: clang
   - dist: trusty
   - dist: xenial
-  - dist: focal
+  - dist: bionic
   - arch: arm64
   - arch: ppc64le
 before_install: |
