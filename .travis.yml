@@ -12,6 +12,7 @@ jobs:
   - dist: bionic
   - arch: arm64
   - arch: ppc64le
+  - env: CFLAGS='-fno-sanitize-recover=all -fsanitize=undefined -fsanitize-address-use-after-scope -fno-sanitize=shift'
 before_install: |
   set -e
   sudo apt-get update
