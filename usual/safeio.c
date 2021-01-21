@@ -190,7 +190,24 @@ loop:
 	if (res < 0)
 		log_noise("safe_accept(%d) = %s", fd,
 			  strerror_r(errno, ebuf, sizeof(ebuf)));
-	else if (cf_verbose > 2)
-		log_noise("safe_accept(%d) = %d (%s)", fd, res, sa2str(sa, buf, sizeof(buf)));
+	else if (cf_verbose > 2) {
+		// For UNIX sockets we cannot use sa2str here. The reason is that
+		// sun_path is not available on UNIX sockets created by accept.
+		// To still log a useful address we get the use getsockname to get
+		// the path.
+		if (sa->sa_family == AF_UNIX) {
+			struct sockaddr_storage ss;
+			socklen_t sslen = sizeof(struct sockaddr_storage);
+			if (getsockname(res, (struct sockaddr *)&ss, &sslen) == 0) {
+				struct sockaddr_un *un = (struct sockaddr_un *)&ss;
+				log_noise("safe_accept(%d) = %d (unix:%s)", fd, res, un->sun_path);
+            } else {
+				log_noise("safe_accept(%d) = %d (unix:unknown)", fd, res);
+			}
+		} else {
+			log_noise("safe_accept(%d) = %d (%s)", fd, res, sa2str(sa, buf, sizeof(buf)));
+		}
+	}
+
 	return res;
 }
