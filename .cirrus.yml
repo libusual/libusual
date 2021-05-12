@@ -1,0 +1,57 @@
+env:
+  DEBIAN_FRONTEND: noninteractive
+  LANG: C
+
+task:
+  name: Linux (Debian/Ubuntu)
+  matrix:
+    - container:
+        image: ubuntu:20.04
+    - container:
+        image: ubuntu:20.04
+      env:
+        configure_args: '--enable-cassert'
+    - container:
+        image: ubuntu:20.04
+      env:
+        configure_args: '--enable-cassert --with-uregex'
+    - container:
+        image: ubuntu:20.04
+      env:
+        CPPFLAGS: -DUSE_SYSTEMD
+        LIBS: -lsystemd
+    - container:
+        image: ubuntu:20.04
+      env:
+        CC: clang
+    - container:
+        image: ubuntu:20.04
+      env:
+        CFLAGS: -fno-sanitize-recover=all -fsanitize=undefined -fsanitize-address-use-after-scope -fno-sanitize=shift
+    - container:
+        image: ubuntu:18.04
+    - container:
+        image: ubuntu:16.04
+    - container:
+        image: ubuntu:14.04
+    - container:
+        image: debian:stable
+    - container:
+        image: debian:oldstable
+  setup_script:
+    - apt-get update
+    - apt-get -y install autoconf automake libevent-dev libssl-dev libtool make pkg-config
+    - case $CC in clang) apt-get -y install clang;; esac
+    - case $CPPFLAGS in *USE_SYSTEMD*) apt-get -y install libsystemd-dev;; esac
+  build_script:
+    - ./autogen.sh
+    - ./configure --prefix=$HOME/install --enable-werror $configure_args
+    - make
+  test_script:
+    - make check
+  install_script:
+    - make install
+  always:
+    configure_artifacts:
+      path: "config.log"
+      type: text/plain
