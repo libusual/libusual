@@ -7,7 +7,6 @@ jobs:
   - env: configure_args='--enable-cassert --with-uregex'
   - env: configure_args='CPPFLAGS=-DUSE_SYSTEMD LIBS=-lsystemd'
   - compiler: clang
-  - dist: trusty
   - dist: xenial
   - dist: bionic
   - arch: arm64
