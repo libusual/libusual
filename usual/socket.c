@@ -173,7 +173,10 @@ const char *sa2str(const struct sockaddr *sa, char *dst, size_t dstlen)
 		break;
 	case AF_UNIX:
 		un = (struct sockaddr_un *)sa;
-		snprintf(dst, dstlen, "unix:%s", un->sun_path);
+		if (un->sun_path[0] == '\0' && un->sun_path[1] != '\0')
+			snprintf(dst, dstlen, "unix:@%s", un->sun_path + 1);
+		else
+			snprintf(dst, dstlen, "unix:%s", un->sun_path);
 		break;
 	default:
 		snprintf(dst, dstlen, "sa2str(%d): unknown proto", sa->sa_family);
