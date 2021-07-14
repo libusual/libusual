@@ -53,8 +53,10 @@ static bool parse_ini_file_internal(const char *fn, cf_handler_f user_handler, v
 	bool ok;
 
 	buf = load_file(fn, NULL);
-	if (buf == NULL)
+	if (buf == NULL) {
+		log_error("could not load file \"%s\": %s", fn, strerror(errno));
 		return false;
+	}
 
 	p = buf;
 	while (*p) {
@@ -87,8 +89,10 @@ static bool parse_ini_file_internal(const char *fn, cf_handler_f user_handler, v
 			log_debug("processing include: %s", val);
 			ok = parse_ini_file_internal(val, user_handler, arg, inclevel + 1);
 			val[vlen] = o1;
-			if (!ok)
+			if (!ok) {
+				log_error("error processing include file in configuration (%s:%d), stopping loading", fn, count_lines(buf, p));
 				goto failed;
+			}
 			log_debug("returned to processing file %s", fn);
 			continue;
 		}
