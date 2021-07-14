@@ -403,6 +403,34 @@ tls_do_abort(struct tls *ctx)
 	return -1;
 }
 
+#ifndef USE_LIBSSL_OLD
+static int
+get_min_ssl_version(uint32_t protocols) {
+    if (protocols & TLS_PROTOCOL_TLSv1_0)
+        return TLS1_VERSION;
+    if (protocols & TLS_PROTOCOL_TLSv1_1)
+        return TLS1_1_VERSION;
+    if (protocols & TLS_PROTOCOL_TLSv1_2)
+        return TLS1_2_VERSION;
+    if (protocols & TLS_PROTOCOL_TLSv1_3)
+        return TLS1_3_VERSION;
+    return TLS1_VERSION;
+}
+
+static int
+get_max_ssl_version(uint32_t protocols) {
+    if (protocols & TLS_PROTOCOL_TLSv1_3)
+        return TLS1_3_VERSION;
+    if (protocols & TLS_PROTOCOL_TLSv1_2)
+        return TLS1_2_VERSION;
+    if (protocols & TLS_PROTOCOL_TLSv1_1)
+        return TLS1_1_VERSION;
+    if (protocols & TLS_PROTOCOL_TLSv1_0)
+        return TLS1_VERSION;
+    return TLS1_3_VERSION;
+}
+#endif
+
 int
 tls_configure_ssl(struct tls *ctx)
 {
@@ -418,6 +446,11 @@ tls_configure_ssl(struct tls *ctx)
 	SSL_CTX_clear_options(ctx->ssl_ctx, SSL_OP_NO_TLSv1_2);
 	SSL_CTX_clear_options(ctx->ssl_ctx, SSL_OP_NO_TLSv1_3);
 
+#ifndef USE_LIBSSL_OLD
+	SSL_CTX_set_min_proto_version(ctx->ssl_ctx, get_min_ssl_version(ctx->config->protocols));
+	SSL_CTX_set_max_proto_version(ctx->ssl_ctx, get_max_ssl_version(ctx->config->protocols));
+#endif
+
 	if ((ctx->config->protocols & TLS_PROTOCOL_TLSv1_0) == 0)
 		SSL_CTX_set_options(ctx->ssl_ctx, SSL_OP_NO_TLSv1);
 	if ((ctx->config->protocols & TLS_PROTOCOL_TLSv1_1) == 0)
@@ -426,6 +459,7 @@ tls_configure_ssl(struct tls *ctx)
 		SSL_CTX_set_options(ctx->ssl_ctx, SSL_OP_NO_TLSv1_2);
 	if ((ctx->config->protocols & TLS_PROTOCOL_TLSv1_3) == 0)
 		SSL_CTX_set_options(ctx->ssl_ctx, SSL_OP_NO_TLSv1_3);
+
 
 	if (ctx->config->ciphers != NULL) {
 		if (SSL_CTX_set_cipher_list(ctx->ssl_ctx,
