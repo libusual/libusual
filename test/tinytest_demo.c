@@ -158,8 +158,7 @@ test_memcpy(void *ptr)
 
  end:
 	/* This time our end block has something to do. */
-	if (mem)
-		free(mem);
+	free(mem);
 }
 
 /* ============================================================ */

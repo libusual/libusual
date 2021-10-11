@@ -930,8 +930,7 @@ static const char *do_verify(const char *hostname, const char *commonName, ...)
 	va_end(ap);
 
 	ret = tls_check_servername(&ctx, &cert, hostname);
-	if (ctx.errmsg)
-		free(ctx.errmsg);
+	free(ctx.errmsg);
 	if (ret == 0)
 		return "OK";
 	if (ret == -1)

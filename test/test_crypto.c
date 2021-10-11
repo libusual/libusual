@@ -108,8 +108,7 @@ static const char *run_hash(const char *str, const char *hexstr, const struct Di
 
 	digest_free(ctx);
 
-	if (buf)
-		free(buf);
+	free(buf);
 
 	if (memcmp(res, res2, reslen) != 0)
 		return "FAIL";

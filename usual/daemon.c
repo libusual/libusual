@@ -119,8 +119,7 @@ static void write_pidfile(const char *pidfile, bool first_write)
 	if (!pidfile || !pidfile[0])
 		return;
 
-	if (g_pidfile)
-		free(g_pidfile);
+	free(g_pidfile);
 	g_pidfile = strdup(pidfile);
 	if (!g_pidfile)
 		die("out of memory");

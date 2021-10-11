@@ -369,8 +369,7 @@ static bool load_handler(void *arg, bool is_sect, const char *key, const char *v
 	struct LoaderCtx *ctx = arg;
 
 	if (is_sect) {
-		if (ctx->cur_sect)
-			free(ctx->cur_sect);
+		free(ctx->cur_sect);
 		ctx->cur_sect = strdup(key);
 		if (!ctx->cur_sect)
 			return false;
@@ -391,8 +390,7 @@ bool cf_load_file(const struct CfContext *cf, const char *fn)
 	ctx.cf = cf;
 
 	ok = parse_ini_file(fn, load_handler, &ctx);
-	if (ctx.cur_sect)
-		free(ctx.cur_sect);
+	free(ctx.cur_sect);
 	if (ok && !ctx.got_main_sect) {
 		log_error("load_init_file: main section missing from config file");
 		return false;
@@ -449,8 +447,7 @@ bool cf_set_str(struct CfValue *cv, const char *value)
 		log_error("cf_set_str: no mem");
 		return false;
 	}
-	if (*dst_p)
-		free(*dst_p);
+	free(*dst_p);
 	*dst_p = tmp;
 	return true;
 }
@@ -506,8 +503,7 @@ bool cf_set_filename(struct CfValue *cv, const char *value)
 
 	log_debug("expanded '%s' -> '%s'", value, tmp);
 
-	if (*dst_p)
-		free(*dst_p);
+	free(*dst_p);
 	*dst_p = tmp;
 	return true;
 fail:
