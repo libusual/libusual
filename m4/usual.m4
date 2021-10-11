@@ -71,7 +71,7 @@ AC_PROG_CC_STDC
 AC_PROG_CPP
 dnl Check if compiler supports __func__
 AC_CACHE_CHECK([whether compiler supports __func__], pgac_cv_funcname_func,
-  [AC_TRY_COMPILE([#include <stdio.h>], [printf("%s\n", __func__);],
+  [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <stdio.h>]], [[printf("%s\n", __func__);]])],
     [pgac_cv_funcname_func=yes], [pgac_cv_funcname_func=no])])
 if test x"$pgac_cv_funcname_func" = xyes ; then
   AC_DEFINE(HAVE_FUNCNAME__FUNC, 1,
@@ -329,18 +329,19 @@ dnl
 AC_DEFUN([AC_USUAL_GETADDRINFO_A], [
 AC_SEARCH_LIBS(getaddrinfo_a, anl)
 AC_CACHE_CHECK([whether to use native getaddinfo_a], ac_cv_usual_glibc_gaia,
-  [AC_TRY_LINK([
+  [AC_LINK_IFELSE(
+  [AC_LANG_PROGRAM([[
 #include <stdio.h>
 #ifdef HAVE_NETDB_H
 #include <netdb.h>
 #endif
-], [
+]], [[
 #if __GLIBC_PREREQ(2,9)
 	getaddrinfo_a(0,NULL,0,NULL);
 #else
 	none or broken
 #endif
-], [ac_cv_usual_glibc_gaia=yes], [ac_cv_usual_glibc_gaia=no])])
+]])], [ac_cv_usual_glibc_gaia=yes], [ac_cv_usual_glibc_gaia=no])])
 
 if test x"$ac_cv_usual_glibc_gaia" = xyes ; then
   AC_DEFINE(HAVE_GETADDRINFO_A, 1, [Define to 1 if you have the getaddrinfo_a() function.])
