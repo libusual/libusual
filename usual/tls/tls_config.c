@@ -19,9 +19,22 @@
 
 #ifdef USUAL_LIBSSL_FOR_TLS
 
+#include <sys/types.h>
+#include <sys/stat.h>
+
 #include <ctype.h>
+#include <unistd.h>
 
 #include "tls_internal.h"
+
+static const char* path_ssl_ca_files[] = {
+#ifdef USUAL_TLS_CA_FILE
+	USUAL_TLS_CA_FILE,
+#endif
+	"/etc/ssl/certs/ca-certificates.crt",
+	"/etc/ssl/cert.pem",
+	NULL,
+};
 
 static int
 set_string(const char **dest, const char *src)
@@ -119,6 +132,8 @@ struct tls_config *
 tls_config_new(void)
 {
 	struct tls_config *config;
+	struct stat sb;
+	const char **ca;
 
 	if ((config = calloc(1, sizeof(*config))) == NULL)
 		return (NULL);
@@ -129,8 +144,12 @@ tls_config_new(void)
 	/*
 	 * Default configuration.
 	 */
-	if (tls_config_set_ca_file(config, _PATH_SSL_CA_FILE) != 0)
+	for (ca = path_ssl_ca_files; ca[1] != NULL; ca++)
+		if (stat(*ca, &sb) == 0 && sb.st_mode & S_IFREG)
+			break;
+	if (tls_config_set_ca_file(config, *ca) != 0)
 		goto err;
+
 	if (tls_config_set_dheparams(config, "none") != 0)
 		goto err;
 	if (tls_config_set_ecdhecurve(config, "auto") != 0)

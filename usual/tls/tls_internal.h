@@ -23,8 +23,6 @@
 
 #include <usual/socket.h>
 
-#define _PATH_SSL_CA_FILE USUAL_TLS_CA_FILE
-
 /*
  * Anything that is not completely broken.
  *
