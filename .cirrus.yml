@@ -29,6 +29,10 @@ task:
       env:
         CFLAGS: -fno-sanitize-recover=all -fsanitize=undefined -fsanitize-address-use-after-scope -fno-sanitize=shift
     - container:
+        image: ubuntu:20.04
+      env:
+        use_scan_build: yes
+    - container:
         image: ubuntu:18.04
     - container:
         image: ubuntu:16.04
@@ -40,13 +44,15 @@ task:
         image: debian:oldstable
   setup_script:
     - apt-get update
-    - apt-get -y install autoconf automake libevent-dev libssl-dev libtool make pkg-config
-    - case $CC in clang) apt-get -y install clang;; esac
-    - case $CPPFLAGS in *USE_SYSTEMD*) apt-get -y install libsystemd-dev;; esac
+    - pkgs="autoconf automake libevent-dev libssl-dev libtool make pkg-config"
+    - case $CC in clang) pkgs="$pkgs clang";; esac
+    - case $CPPFLAGS in *USE_SYSTEMD*) pkgs="$pkgs libsystemd-dev";; esac
+    - if [ x"$use_scan_build" = x"yes" ]; then pkgs="$pkgs clang-tools"; fi
+    - apt-get -y install $pkgs
   build_script:
     - ./autogen.sh
-    - ./configure --prefix=$HOME/install --enable-werror $configure_args
-    - make
+    - ${use_scan_build:+scan-build} ./configure --prefix=$HOME/install --enable-werror $configure_args
+    - ${use_scan_build:+scan-build} make
   test_script:
     - make check
   install_script:
