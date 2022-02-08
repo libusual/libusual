@@ -738,11 +738,11 @@ static bool parse_string(struct JsonContext *ctx, const char **src_p, const char
 
 static bool skip_comment(struct JsonContext *ctx, const char **src_p, const char *end)
 {
-	const char *s, *start;
+	const char *s;
 	char c;
 	size_t lnr;
 
-	s = start = *src_p;
+	s = *src_p;
 	if (s >= end)
 		return false;
 	c = *s++;
