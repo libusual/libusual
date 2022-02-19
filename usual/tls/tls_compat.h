@@ -79,8 +79,15 @@ static inline X509_OBJECT *X509_STORE_CTX_get_obj_by_subject(X509_STORE_CTX *ctx
 	return NULL;
 }
 
+/*
+ * We need these specific functions for OpenSSL 3.0.0 because the
+ * generic function no longer works.  But the new ones only exist in
+ * 1.1.0, so in older versions we still use the older one.
+ */
+#define EVP_PKEY_get0_DH(pkey) EVP_PKEY_get0(pkey)
+#define EVP_PKEY_get0_EC_KEY(pkey) EVP_PKEY_get0(pkey)
 
-#endif
+#endif /* OpenSSL <1.1 */
 
 /* ecdh_auto is broken - ignores main EC key */
 #undef SSL_CTX_set_ecdh_auto
