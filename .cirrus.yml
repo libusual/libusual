@@ -32,6 +32,8 @@ task:
         image: ubuntu:20.04
       env:
         use_scan_build: yes
+    - arm_container:
+        image: ubuntu:20.04
     - container:
         image: ubuntu:18.04
     - container:
