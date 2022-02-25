@@ -430,7 +430,14 @@ if test "$tls_support" = "auto" -o "$tls_support" = "libssl"; then
       fi
     ])
   if test "$cafile" = "auto"; then
-    for cafile in /etc/ssl/certs/ca-certificates.crt /etc/ssl/cert.pem; do
+    for cafile in \
+      /etc/ssl/certs/ca-certificates.crt \
+      /etc/pki/tls/certs/ca-bundle.crt \
+      /etc/ssl/ca-bundle.pem \
+      /etc/pki/tls/cacert.pem \
+      /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem \
+      /etc/ssl/cert.pem
+    do
       if test -f "$cafile"; then
         break
       fi
