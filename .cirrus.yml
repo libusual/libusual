@@ -48,7 +48,7 @@ task:
         image: debian:oldstable
   setup_script:
     - apt-get update
-    - pkgs="autoconf automake libevent-dev libssl-dev libtool make pkg-config"
+    - pkgs="autoconf automake ca-certificates libevent-dev libssl-dev libtool make pkg-config"
     - case $CC in clang) pkgs="$pkgs clang";; esac
     - case $CPPFLAGS in *USE_SYSTEMD*) pkgs="$pkgs libsystemd-dev";; esac
     - if [ x"$use_scan_build" = x"yes" ]; then pkgs="$pkgs clang-tools"; fi
