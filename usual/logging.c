@@ -152,10 +152,6 @@ static void start_syslog(void)
 void log_generic(enum LogLevel level, void *ctx, const char *fmt, ...)
 {
 	char buf[2048], buf2[2048];
-	char ebuf[256];
-	char timebuf[64];
-	const struct LevelInfo *lev = &log_level_list[level];
-	unsigned pid = getpid();
 	va_list ap;
 	int pfxlen = 0;
 	int old_errno = errno;
@@ -171,8 +167,6 @@ void log_generic(enum LogLevel level, void *ctx, const char *fmt, ...)
 	va_start(ap, fmt);
 	vsnprintf(buf + pfxlen, sizeof(buf) - pfxlen, fmt, ap);
 	va_end(ap);
-
-	/* replace '\n' in message with '\n\t', strip trailing whitespace */
 	if (strchr(msg, '\n')) {
 		char *dst = buf2;
 		for (; *msg && dst - buf2 < (int)sizeof(buf2) - 2; msg++) {
@@ -185,6 +179,18 @@ void log_generic(enum LogLevel level, void *ctx, const char *fmt, ...)
 		*dst = 0;
 		msg = buf2;
 	}
+	log_generic_msg(level, ctx, msg);
+done:
+	if (old_errno != errno)
+		errno = old_errno;
+}
+
+void log_generic_msg(enum LogLevel level, void *ctx, const char *msg) {
+	/* replace '\n' in message with '\n\t', strip trailing whitespace */
+	char ebuf[256];
+	char timebuf[64];
+	unsigned pid = getpid();
+	const struct LevelInfo *lev = &log_level_list[level];
 
 	format_time_ms(0, timebuf, sizeof(timebuf));
 
@@ -238,9 +244,6 @@ void log_generic(enum LogLevel level, void *ctx, const char *fmt, ...)
 			start_syslog();
 		syslog(lev->syslog_prio, "%s", msg);
 	}
-done:
-	if (old_errno != errno)
-		errno = old_errno;
 }
 
 

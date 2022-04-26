@@ -116,6 +116,8 @@ extern enum LogLevel cf_stderr_level;
 /* non-fatal logging */
 void log_generic(enum LogLevel level, void *ctx, const char *s, ...) _PRINTF(3, 4);
 
+void log_generic_msg(enum LogLevel level, void *ctx, const char *msg);
+
 /* this is also defined in base.h for Assert() */
 void log_fatal(const char *file, int line, const char *func, bool show_perror,
 	       void *ctx, const char *s, ...) _PRINTF(6, 7);
