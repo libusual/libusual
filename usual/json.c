@@ -456,7 +456,7 @@ static enum ParseState close_container(struct JsonContext *ctx, enum ParseState 
 
 /* parse 4-char token */
 static bool parse_char4(struct JsonContext *ctx, const char **src_p, const char *end,
-			        uint32_t t_exp, enum JsonValueType type, bool val)
+			uint32_t t_exp, enum JsonValueType type, bool val)
 {
 	const char *src;
 	uint32_t t_got;

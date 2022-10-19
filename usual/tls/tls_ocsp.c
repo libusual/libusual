@@ -193,7 +193,7 @@ tls_ocsp_get_certid(X509 *main_cert, STACK_OF(X509) *extra_certs, SSL_CTX *ssl_c
 	tmpobj = X509_STORE_CTX_get_obj_by_subject(storectx, X509_LU_X509, issuer_name);
 	if (!tmpobj)
 		goto error;
-        cid = OCSP_cert_to_id(NULL, main_cert, X509_OBJECT_get0_X509(tmpobj));
+	cid = OCSP_cert_to_id(NULL, main_cert, X509_OBJECT_get0_X509(tmpobj));
 	X509_OBJECT_free(tmpobj);
 	X509_STORE_CTX_free(storectx);
 	return cid;
