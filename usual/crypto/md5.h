@@ -33,12 +33,21 @@
 /** Result length for MD5 */
 #define MD5_DIGEST_LENGTH	16
 
+#ifndef OPENSSL_API_COMPAT
 /** MD5 state */
 struct md5_ctx {
 	uint64_t nbytes;
 	uint32_t a, b, c, d;
 	uint32_t buf[16];
 };
+#else
+#include <openssl/evp.h>
+#include <openssl/err.h>
+#include <usual/logging.h>
+struct md5_ctx {
+	    EVP_MD_CTX *evpctx;
+};
+#endif
 
 /** Clean state */
 void md5_reset(struct md5_ctx *ctx);

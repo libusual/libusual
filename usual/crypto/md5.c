@@ -22,6 +22,7 @@
 #include <usual/endian.h>
 #include <usual/bits.h>
 
+#ifndef OPENSSL_API_COMPAT
 /*
  * Support functions.
  */
@@ -211,3 +212,4 @@ const struct DigestInfo *digest_MD5(void)
 {
 	return &md5;
 }
+#endif

@@ -31,6 +31,7 @@ libusual_la_SOURCES = usual/config.h.in \
 	usual/crypto/keccak.h usual/crypto/keccak.c \
 	usual/crypto/keccak_prng.h usual/crypto/keccak_prng.c \
 	usual/crypto/md5.h usual/crypto/md5.c \
+	usual/crypto/md5_openssl.c \
 	usual/crypto/sha1.h usual/crypto/sha1.c \
 	usual/crypto/sha256.h usual/crypto/sha256.c \
 	usual/crypto/sha512.h usual/crypto/sha512.c \
