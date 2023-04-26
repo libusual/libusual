@@ -44,8 +44,18 @@ struct md5_ctx {
 #include <openssl/evp.h>
 #include <openssl/err.h>
 #include <usual/logging.h>
+
+/* Set of error states */
+typedef enum md5_errno
+{
+	MD5_ERROR_NONE = 0,
+	MD5_ERROR_OPENSSL
+} md5_errno;
+
 struct md5_ctx {
-	    EVP_MD_CTX *evpctx;
+	md5_errno error;
+	const char *errreason;
+	EVP_MD_CTX *evpctx;
 };
 #endif
 

@@ -7,18 +7,21 @@
 #ifdef OPENSSL_API_COMPAT
 static void md5_crypt_cleanup(struct md5_ctx *ctx)
 {
-	log_error("MD5 authentication: %s",ERR_reason_error_string(ERR_get_error()));
+	ctx->errreason = ERR_reason_error_string(ERR_get_error());
+	ctx->error = MD5_ERROR_OPENSSL;
 	EVP_MD_CTX_destroy(ctx->evpctx);
 	ctx->evpctx = NULL;
 	ERR_clear_error();
 }
 
-static void  md5_init(struct md5_ctx *ctx)
+static void md5_init(struct md5_ctx *ctx)
 {
-	if (ctx->evpctx != NULL &&
-		EVP_DigestInit_ex(ctx->evpctx, EVP_md5(), NULL) <= 0)
+	if (ctx->evpctx != NULL)
 	{
-		md5_crypt_cleanup(ctx);
+		ctx->error = MD5_ERROR_NONE;
+		ctx->errreason = NULL;
+		if (EVP_DigestInit_ex(ctx->evpctx, EVP_md5(), NULL) <= 0)
+			md5_crypt_cleanup(ctx);
 	}
 }
 void md5_reset(struct md5_ctx *ctx)
@@ -27,9 +30,12 @@ void md5_reset(struct md5_ctx *ctx)
 	ctx->evpctx = EVP_MD_CTX_create();
 
 	if (ctx->evpctx == NULL)
-		log_error("MD5 authentication: out of memory");
-
-	md5_init(ctx);
+	{
+		ctx->errreason = "out of memory";
+		ctx->error = MD5_ERROR_OPENSSL;
+	}
+	else
+		md5_init(ctx);
 }
 
 void md5_update(struct md5_ctx *ctx, const void *data, unsigned int len)
@@ -43,14 +49,12 @@ void md5_update(struct md5_ctx *ctx, const void *data, unsigned int len)
 
 void md5_final(struct md5_ctx *ctx, uint8_t *dst)
 {
-	if (ctx->evpctx != NULL &&
-		EVP_DigestFinal_ex(ctx->evpctx, dst, 0) <= 0)
+	if (ctx->evpctx != NULL)
 	{
-		md5_crypt_cleanup(ctx);
-	}
-	else
-	{
-		EVP_MD_CTX_destroy(ctx->evpctx);
+		if (EVP_DigestFinal_ex(ctx->evpctx, dst, 0) <= 0)
+			md5_crypt_cleanup(ctx);
+		else
+			EVP_MD_CTX_destroy(ctx->evpctx);
 	}
 }
 
