@@ -44,13 +44,6 @@
  * https://tools.ietf.org/html/draft-ietf-ipsec-skip-06
  */
 
-static const char file_dh1024[] =
-"-----BEGIN DH PARAMETERS-----\n"
-"MIGHAoGBAPSI/VhOSdvNILSd5JEHNmszbDgNRR0PfIizHHxbLY7288kjwEPwpVsY\n"
-"jY67VYy4XTjTNP18F1dDox0YbN4zISy1Kv884bEpQBgRjXyEpwpy1obEAxnIByl6\n"
-"ypUM2Zafq9AKUJsCRtMIPWakXUGfnHy9iUsiGSa6q6Jew1XpL3jHAgEC\n"
-"-----END DH PARAMETERS-----\n";
-
 static const char file_dh2048[] =
 "-----BEGIN DH PARAMETERS-----\n"
 "MIIBCAKCAQEA9kJXtwh/CBdyorrWqULzBej5UxE5T7bxbrlLOCDaAadWoxTpj0BV\n"
@@ -77,7 +70,7 @@ static const char file_dh4096[] =
 "-----END DH PARAMETERS-----\n";
 
 
-static DH *dh1024, *dh2048, *dh4096;
+static DH *dh2048, *dh4096;
 
 static DH *load_dh_buffer(struct tls *ctx, DH **dhp, const char *buf)
 {
@@ -109,23 +102,13 @@ static DH *dh_auto_cb(SSL *s, int is_export, int keylength)
 	bits = EVP_PKEY_bits(pk);
 	if (bits >= 3072)
 		return load_dh_buffer(ctx, &dh4096, file_dh4096);
-	if (bits >= 1536)
-		return load_dh_buffer(ctx, &dh2048, file_dh2048);
-	return load_dh_buffer(ctx, &dh1024, file_dh1024);
-}
-
-static DH *dh_legacy_cb(SSL *s, int is_export, int keylength)
-{
-	struct tls *ctx = SSL_get_app_data(s);
-	return load_dh_buffer(ctx, &dh1024, file_dh1024);
+	return load_dh_buffer(ctx, &dh2048, file_dh2048);
 }
 
 long SSL_CTX_set_dh_auto(SSL_CTX *ctx, int onoff)
 {
-	if (onoff == 0)
+	if (onoff == 0) {
 		return 1;
-	if (onoff == 2) {
-		SSL_CTX_set_tmp_dh_callback(ctx, dh_legacy_cb);
 	} else {
 		SSL_CTX_set_tmp_dh_callback(ctx, dh_auto_cb);
 	}
@@ -199,7 +182,6 @@ long SSL_CTX_set_ecdh_auto(SSL_CTX *ctx, int onoff)
 void tls_compat_cleanup(void)
 {
 #ifdef DH_CLEANUP
-	if (dh1024) { DH_free(dh1024); dh1024 = NULL; }
 	if (dh2048) { DH_free(dh2048); dh2048 = NULL; }
 	if (dh4096) { DH_free(dh4096); dh4096 = NULL; }
 #endif

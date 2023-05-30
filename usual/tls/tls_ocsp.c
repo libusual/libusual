@@ -767,7 +767,6 @@ tls_ocsp_connection_setup(struct tls *ctx)
 
 		SSL_CTX_set_options(q->ssl_ctx, SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3);
 		SSL_CTX_clear_options(q->ssl_ctx, SSL_OP_NO_TLSv1 | SSL_OP_NO_TLSv1_1 | SSL_OP_NO_TLSv1_2 | SSL_OP_NO_TLSv1_3);
-		SSL_CTX_set_cipher_list(q->ssl_ctx, TLS_CIPHERS_COMPAT);
 		SSL_CTX_set_mode(q->ssl_ctx, SSL_MODE_AUTO_RETRY);
 
 		q->bio = BIO_new_ssl_connect(q->ssl_ctx);

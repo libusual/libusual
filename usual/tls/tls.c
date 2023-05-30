@@ -427,14 +427,25 @@ tls_configure_ssl(struct tls *ctx)
 	if ((ctx->config->protocols & TLS_PROTOCOL_TLSv1_3) == 0)
 		SSL_CTX_set_options(ctx->ssl_ctx, SSL_OP_NO_TLSv1_3);
 
+	/*
+	 * obsolete outdated keywords, turn them to default.
+	 * For default, don't call SSL_CTX_set_cipher_list()
+	 * so we inherit openssl's default, which can also
+	 * include a system-wide policy, such as on rhel/fedora
+	 * https://docs.fedoraproject.org/en-US/packaging-guidelines/CryptoPolicies/
+	 */
 	if (ctx->config->ciphers != NULL) {
-		if (SSL_CTX_set_cipher_list(ctx->ssl_ctx,
-		    ctx->config->ciphers) != 1) {
-			tls_set_errorx(ctx, "failed to set ciphers");
-			goto err;
+		if (strcasecmp(ctx->config->ciphers, "secure") != 0 &&
+		    strcasecmp(ctx->config->ciphers, "normal") != 0 &&
+		    strcasecmp(ctx->config->ciphers, "fast") != 0) {
+
+			if (SSL_CTX_set_cipher_list(ctx->ssl_ctx,
+				ctx->config->ciphers) != 1) {
+					tls_set_errorx(ctx, "failed to set ciphers");
+					goto err;
+			}
 		}
 	}
-
 	SSL_CTX_set_info_callback(ctx->ssl_ctx, tls_info_callback);
 
 #ifdef X509_V_FLAG_NO_CHECK_TIME
