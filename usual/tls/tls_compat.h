@@ -117,6 +117,12 @@ int SSL_CTX_load_verify_mem(SSL_CTX *ctx, void *buf, int len);
 #define SSL_set_tlsext_status_type(a,b) (1)
 #endif
 
+/* AWS-LC does not currently have OCSP support */
+#if defined(OPENSSL_IS_AWSLC) && defined(OPENSSL_NO_OCSP)
+#define SSL_CTX_set_tlsext_status_cb(a,b) (1)
+#define SSL_set_tlsext_status_type(a,b) (1)
+#endif
+
 void tls_compat_cleanup(void);
 
 #ifndef SSL_OP_NO_TLSv1_3
