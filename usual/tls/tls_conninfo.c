@@ -190,9 +190,9 @@ tls_free_conninfo(struct tls_conninfo *conninfo) {
 	if (conninfo != NULL) {
 		free(conninfo->hash);
 		conninfo->hash = NULL;
-		free(conninfo->subject);
+		OPENSSL_free(conninfo->subject);
 		conninfo->subject = NULL;
-		free(conninfo->issuer);
+		OPENSSL_free(conninfo->issuer);
 		conninfo->issuer = NULL;
 		free(conninfo->version);
 		conninfo->version = NULL;
