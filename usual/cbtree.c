@@ -179,6 +179,8 @@ void *cbtree_lookup(struct CBTree *tree, const void *key, size_t klen)
 static struct Node *new_node(struct CBTree *tree)
 {
 	struct Node *node = cx_alloc(tree->cx, sizeof(*node));
+	if (!node)
+		return NULL;
 	memset(node, 0, sizeof(*node));
 	return node;
 }
