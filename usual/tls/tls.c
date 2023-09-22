@@ -435,7 +435,8 @@ tls_configure_ssl(struct tls *ctx)
 	 * https://docs.fedoraproject.org/en-US/packaging-guidelines/CryptoPolicies/
 	 */
 	if (ctx->config->ciphers != NULL) {
-		if (strcasecmp(ctx->config->ciphers, "secure") != 0 &&
+		if (strcasecmp(ctx->config->ciphers, "default") != 0 &&
+		    strcasecmp(ctx->config->ciphers, "secure") != 0 &&
 		    strcasecmp(ctx->config->ciphers, "normal") != 0 &&
 		    strcasecmp(ctx->config->ciphers, "fast") != 0) {
 
