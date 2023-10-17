@@ -56,7 +56,7 @@ struct PgSocket {
 	void *handler_arg;
 
 	/* saved connect string */
-	const char *connstr;
+	char *connstr;
 
 	/* custom base or NULL */
 	struct event_base *base;
