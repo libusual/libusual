@@ -56,7 +56,7 @@ struct PgSocket {
 	void *handler_arg;
 
 	/* saved connect string */
-	const char *connstr;
+	char *connstr;
 
 	/* custom base or NULL */
 	struct event_base *base;
@@ -123,6 +123,7 @@ static void report_last_result(struct PgSocket *db)
 	switch (PQresultStatus(res)) {
 	default:
 		log_error("%s: %s", PQdb(db->con), PQresultErrorMessage(res));
+		/* fallthrough */
 	case PGRES_COMMAND_OK:
 	case PGRES_TUPLES_OK:
 	case PGRES_COPY_OUT:
