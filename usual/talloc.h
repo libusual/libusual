@@ -313,7 +313,7 @@ void *talloc_array_size(const void *parent, size_t size, size_t count);
 type *talloc_ptrtype(const void *parent, type *ptr);
 #else
 #define talloc_ptrtype(parent, ptr) \
-	(typeof(ptr))_talloc_const_name(parent, sizeof(*(ptr)), 1, \
+	(__typeof__(ptr))_talloc_const_name(parent, sizeof(*(ptr)), 1, \
 				      false, TALLOC_POS("talloc_ptrtype"))
 #endif
 
@@ -408,7 +408,7 @@ const struct CxMem *talloc_as_cx(const void *parent, const char *name);
 void talloc_set_destructor(const void *ptr, talloc_destructor_f destructor);
 #ifndef DOXYGEN
 #define talloc_set_destructor(ptr, dfn) \
-	do {	int (*_dfn)(typeof(ptr)) = (dfn); \
+	do {	int (*_dfn)(__typeof__(ptr)) = (dfn); \
 		talloc_set_destructor(ptr, (talloc_destructor_f)(_dfn)); \
 	} while (0)
 #endif
@@ -641,7 +641,7 @@ type *talloc_find_parent_bytype(const void *ptr, #type);
 void *talloc_reference(const void *new_parent, const void *ptr);
 #else
 #define talloc_reference(new_parent, ptr) \
-	(typeof(ptr))_talloc_reference_named(new_parent, ptr, TALLOC_POS("talloc_reference"))
+	(__typeof__(ptr))_talloc_reference_named(new_parent, ptr, TALLOC_POS("talloc_reference"))
 #endif
 
 /**
