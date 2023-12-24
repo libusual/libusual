@@ -127,10 +127,10 @@ static bool parse_ini_file_internal(const char *fn, cf_handler_f user_handler, v
 			break;
 
 		/* read key val */
-		if (*p && *p == '\"'){
+		if (*p && *p == '\''){
 			key = ++p;
-			while (*p && *p != '\"') p++;
-			if (*p != '\"'){
+			while (*p && *p != '\'') p++;
+			if (*p != '\''){
 				goto syntax_error;
 			} else{
 				klen = p - key;
