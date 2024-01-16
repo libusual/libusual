@@ -467,7 +467,7 @@ tls_ocsp_client_new(void)
 
 	ctx->ocsp_query = calloc(1, sizeof (struct tls_ocsp_query));
 	if (!ctx->ocsp_query) {
-		tls_free(ctx);
+		usual_tls_free(ctx);
 		return NULL;
 	}
 	return ctx;
@@ -895,7 +895,7 @@ tls_ocsp_query_async(struct tls **ocsp_ctx_p, int *fd_p, struct tls_config *conf
 	}
 	return tls_ocsp_evloop(ctx, fd_p, config);
 failed:
-	tls_free(ctx);
+	usual_tls_free(ctx);
 	return -1;
 }
 
