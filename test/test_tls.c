@@ -52,8 +52,8 @@ static void free_worker(struct Worker *w)
 		return;
 	if (event_initialized(&w->ev))
 		event_del(&w->ev);
-	tls_free(w->ctx);
-	tls_free(w->base);
+	usual_tls_free(w->ctx);
+	usual_tls_free(w->base);
 	tls_config_free(w->config);
 	if (w->socket > 0)
 		close(w->socket);
@@ -318,7 +318,7 @@ static void worker_cb(evutil_socket_t fd, short flags, void *arg)
 			res = tls_close(w->ctx);
 		}
 		if (res == 0) {
-			tls_free(w->ctx);
+			usual_tls_free(w->ctx);
 			w->ctx = NULL;
 		} else if (res == TLS_WANT_POLLIN) {
 			wait_for_event(w, EV_READ);
@@ -326,7 +326,7 @@ static void worker_cb(evutil_socket_t fd, short flags, void *arg)
 			wait_for_event(w, EV_WRITE);
 		} else {
 			add_error(w, "close error: res=%d err=%s", res, tls_error(w->ctx));
-			tls_free(w->ctx);
+			usual_tls_free(w->ctx);
 			w->ctx = NULL;
 		}
 	}
@@ -1007,10 +1007,10 @@ static const char *run_time(const char *val)
 	err = tls_asn1_parse_time(ctx, &tmp, &t);
 	if (err) {
 		strlcpy(buf, tls_error(ctx), sizeof buf);
-		tls_free(ctx);
+		usual_tls_free(ctx);
 		return buf;
 	}
-	tls_free(ctx);
+	usual_tls_free(ctx);
 
 	tm = gmtime(&t);
 	if (!tm)

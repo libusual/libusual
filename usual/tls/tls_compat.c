@@ -474,7 +474,7 @@ struct tls *tls_client(void) { return NULL; }
 struct tls *tls_server(void) { return NULL; }
 int tls_configure(struct tls *_ctx, struct tls_config *_config) { return -1; }
 void tls_reset(struct tls *_ctx) {}
-void tls_free(struct tls *_ctx) {}
+void usual_tls_free(struct tls *_ctx) {}
 
 int tls_accept_fds(struct tls *_ctx, struct tls **_cctx, int _fd_read, int _fd_write) { return -1; }
 int tls_accept_socket(struct tls *_ctx, struct tls **_cctx, int _socket) { return -1; }

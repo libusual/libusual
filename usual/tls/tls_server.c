@@ -160,7 +160,7 @@ tls_accept_fds(struct tls *ctx, struct tls **cctx, int fd_read, int fd_write)
 	return (0);
 
  err:
-	tls_free(conn_ctx);
+	usual_tls_free(conn_ctx);
 
 	*cctx = NULL;
 
