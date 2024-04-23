@@ -56,6 +56,7 @@ int
 tls_configure_server(struct tls *ctx)
 {
 	EC_KEY *ecdh_key;
+	STACK_OF(X509_NAME) * cert_stack;
 	unsigned char sid[SSL_MAX_SSL_SESSION_ID_LENGTH];
 
 	if ((ctx->ssl_ctx = SSL_CTX_new(SSLv23_server_method())) == NULL) {
@@ -113,6 +114,9 @@ tls_configure_server(struct tls *ctx)
 		tls_set_errorx(ctx, "failed to set session id context");
 		goto err;
 	}
+
+	cert_stack = SSL_load_client_CA_file(ctx->config->ca_file);
+    	SSL_CTX_set_client_CA_list(ctx->ssl_ctx, cert_stack);
 
 	return (0);
 
