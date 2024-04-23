@@ -157,7 +157,7 @@ int main(int argc, char *argv[])
 	res = tls_ocsp_check_peer(&ocsp, NULL, ctx);
 	if (ocsp) {
 		show_ocsp_info("OCSP responder", ocsp);
-		tls_free(ocsp);
+		usual_tls_free(ocsp);
 	} else if (res == TLS_NO_OCSP) {
 		printf("OCSP responder: No OCSP support in libtls\n");
 	}
@@ -165,7 +165,7 @@ int main(int argc, char *argv[])
 	if (0) test_context(ctx);
 
 	tls_close(ctx);
-	tls_free(ctx);
+	usual_tls_free(ctx);
 	tls_config_free(conf);
 	tls_cert_free(cert);
 

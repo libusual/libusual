@@ -217,8 +217,7 @@ tls_config_parse_protocols(uint32_t *protocols, const char *protostr)
 			protos = TLS_PROTOCOLS_ALL;
 
 		proto = 0;
-		if (strcasecmp(p, "all") == 0 ||
-		    strcasecmp(p, "legacy") == 0)
+		if (strcasecmp(p, "all") == 0)
 			proto = TLS_PROTOCOLS_ALL;
 		else if (strcasecmp(p, "default") == 0 ||
 		    strcasecmp(p, "secure") == 0)
@@ -288,20 +287,25 @@ tls_config_set_ciphers(struct tls_config *config, const char *ciphers)
 {
 	SSL_CTX *ssl_ctx = NULL;
 
+	/*
+	 * obsolete outdated keywords, turn them to default.
+	 * For default, don't call SSL_CTX_set_cipher_list()
+	 * so we inherit openssl's default, which can also
+	 * include a system-wide policy, such as on rhel/fedora
+	 * https://docs.fedoraproject.org/en-US/packaging-guidelines/CryptoPolicies/
+	 */
 	if (ciphers == NULL ||
 	    strcasecmp(ciphers, "default") == 0 ||
-	    strcasecmp(ciphers, "secure") == 0)
-		ciphers = TLS_CIPHERS_DEFAULT;
-	else if (strcasecmp(ciphers, "compat") == 0 ||
-	    strcasecmp(ciphers, "legacy") == 0)
-		ciphers = TLS_CIPHERS_COMPAT;
-	else if (strcasecmp(ciphers, "insecure") == 0 ||
-	    strcasecmp(ciphers, "all") == 0)
-		ciphers = TLS_CIPHERS_ALL;
-	else if (strcasecmp(ciphers, "normal") == 0)
-		ciphers = TLS_CIPHERS_NORMAL;
-	else if (strcasecmp(ciphers, "fast") == 0)
-		ciphers = TLS_CIPHERS_FAST;
+	    strcasecmp(ciphers, "secure") == 0 ||
+	    strcasecmp(ciphers, "normal") == 0 ||
+	    strcasecmp(ciphers, "fast") == 0)
+	{
+		return set_string(&config->ciphers, ciphers);
+	}
+	/*
+	 * At this point, these are custom supplied openssl compatible
+	 * cipher strings.
+	 */
 
 	if ((ssl_ctx = SSL_CTX_new(SSLv23_method())) == NULL) {
 		tls_config_set_errorx(config, "out of memory");
@@ -329,8 +333,6 @@ tls_config_set_dheparams(struct tls_config *config, const char *params)
 		keylen = 0;
 	else if (strcasecmp(params, "auto") == 0)
 		keylen = -1;
-	else if (strcasecmp(params, "legacy") == 0)
-		keylen = 1024;
 	else {
 		tls_config_set_errorx(config, "invalid dhe param '%s'", params);
 		return (-1);

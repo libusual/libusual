@@ -193,7 +193,7 @@ tls_ocsp_get_certid(X509 *main_cert, STACK_OF(X509) *extra_certs, SSL_CTX *ssl_c
 	tmpobj = X509_STORE_CTX_get_obj_by_subject(storectx, X509_LU_X509, issuer_name);
 	if (!tmpobj)
 		goto error;
-        cid = OCSP_cert_to_id(NULL, main_cert, X509_OBJECT_get0_X509(tmpobj));
+	cid = OCSP_cert_to_id(NULL, main_cert, X509_OBJECT_get0_X509(tmpobj));
 	X509_OBJECT_free(tmpobj);
 	X509_STORE_CTX_free(storectx);
 	return cid;
@@ -467,7 +467,7 @@ tls_ocsp_client_new(void)
 
 	ctx->ocsp_query = calloc(1, sizeof (struct tls_ocsp_query));
 	if (!ctx->ocsp_query) {
-		tls_free(ctx);
+		usual_tls_free(ctx);
 		return NULL;
 	}
 	return ctx;
@@ -767,7 +767,6 @@ tls_ocsp_connection_setup(struct tls *ctx)
 
 		SSL_CTX_set_options(q->ssl_ctx, SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3);
 		SSL_CTX_clear_options(q->ssl_ctx, SSL_OP_NO_TLSv1 | SSL_OP_NO_TLSv1_1 | SSL_OP_NO_TLSv1_2 | SSL_OP_NO_TLSv1_3);
-		SSL_CTX_set_cipher_list(q->ssl_ctx, TLS_CIPHERS_COMPAT);
 		SSL_CTX_set_mode(q->ssl_ctx, SSL_MODE_AUTO_RETRY);
 
 		q->bio = BIO_new_ssl_connect(q->ssl_ctx);
@@ -896,7 +895,7 @@ tls_ocsp_query_async(struct tls **ocsp_ctx_p, int *fd_p, struct tls_config *conf
 	}
 	return tls_ocsp_evloop(ctx, fd_p, config);
 failed:
-	tls_free(ctx);
+	usual_tls_free(ctx);
 	return -1;
 }
 

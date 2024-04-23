@@ -37,39 +37,39 @@ static const char *mkhex(const uint8_t *src, int len)
 
 static int hexval(char v)
 {
-        if (v >= '0' && v <= '9')
-                return v - '0';
-        if (v >= 'a' && v <= 'f')
-                return v - 'a' + 10;
-        if (v >= 'A' && v <= 'F')
-                return v - 'A' + 10;
-        return -1;
+	if (v >= '0' && v <= '9')
+		return v - '0';
+	if (v >= 'a' && v <= 'f')
+		return v - 'a' + 10;
+	if (v >= 'A' && v <= 'F')
+		return v - 'A' + 10;
+	return -1;
 }
 
 static uint8_t *fromhex(const char *input, int len)
 {
-        uint8_t *res;
-        const char *s = input;
-        int i, b, b1, b2;
+	uint8_t *res;
+	const char *s = input;
+	int i, b, b1, b2;
 
-        res = malloc(len+1);
-        if (!res)
-                return NULL;
+	res = malloc(len+1);
+	if (!res)
+		return NULL;
 
-        for (i = 0; i < len; i++) {
-                if (*s == '\0')
-                        s = input;
-                b1 = hexval(*s++);
-                b2 = hexval(*s++);
-                b = (b1 << 4) | b2;
-                if (b < 0) {
+	for (i = 0; i < len; i++) {
+		if (*s == '\0')
+			s = input;
+		b1 = hexval(*s++);
+		b2 = hexval(*s++);
+		b = (b1 << 4) | b2;
+		if (b < 0) {
 			free(res);
 			return NULL;
 		}
-                res[i] = b;
-        }
+		res[i] = b;
+	}
 
-        return res;
+	return res;
 }
 
 static const char *run_hash(const char *str, const char *hexstr, const struct DigestInfo *impl)

@@ -119,7 +119,7 @@ struct tls *tls_client(void);
 struct tls *tls_server(void);
 int tls_configure(struct tls *_ctx, struct tls_config *_config);
 void tls_reset(struct tls *_ctx);
-void tls_free(struct tls *_ctx);
+void usual_tls_free(struct tls *_ctx);
 
 int tls_accept_fds(struct tls *_ctx, struct tls **_cctx, int _fd_read,
     int _fd_write);
