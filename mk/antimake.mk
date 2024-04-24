@@ -477,7 +477,10 @@ endef
 # 1-tgt, 2-name, 3-srcext
 define LangObjTarget
 $(trace3)
-$$(OBJDIR)/$(1)/%$(OBJEXT) $$(OBJDIR)/$(1)/%.lo: %$(3)
+$$(OBJDIR)/$(1)/%$(OBJEXT): %$(3)
+	@$$(call MkDir,$$(dir $$@))
+	$$(AM_LANG_$(2)_COMPILE)
+$$(OBJDIR)/$(1)/%.lo: %$(3)
 	@$$(call MkDir,$$(dir $$@))
 	$$(AM_LANG_$(2)_COMPILE)
 endef
