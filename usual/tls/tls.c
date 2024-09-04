@@ -742,4 +742,58 @@ tls_close(struct tls *ctx)
 	return (rv);
 }
 
+static bool
+tls_config_keypair_equal(struct tls_keypair *left_tls_keypair, struct tls_keypair *right_tls_keypair)
+{
+	return (strings_equal(left_tls_keypair->cert_file, right_tls_keypair->cert_file) &&
+		memcmp(left_tls_keypair->cert_mem, right_tls_keypair->cert_mem, left_tls_keypair->cert_len) == 0 &&
+		strings_equal(left_tls_keypair->key_file, right_tls_keypair->key_file) &&
+		memcmp(left_tls_keypair->key_mem, right_tls_keypair->key_mem, left_tls_keypair->key_len) == 0);
+}
+
+static bool
+tls_config_keypairs_equal(struct tls_keypair *tls_keypair_left, struct tls_keypair *tls_keypair_right)
+{
+	bool keypair_unchanged;
+	struct tls_keypair *tls_kp_lt, *next_tls_kp_lt, *tls_kp_rt, *next_tls_kp_rt;
+
+	keypair_unchanged = tls_config_keypair_equal(tls_keypair_left, tls_keypair_right);
+
+	if (keypair_unchanged == false) {
+		return false;
+	}
+
+	for (tls_kp_lt = tls_keypair_left; tls_kp_lt != NULL; tls_kp_lt = next_tls_kp_lt) {
+		next_tls_kp_lt = tls_kp_lt->next;
+		for (tls_kp_rt = tls_keypair_right; tls_kp_rt != NULL; tls_kp_rt = next_tls_kp_rt) {
+			next_tls_kp_rt = tls_kp_rt->next;
+
+			keypair_unchanged = tls_config_keypair_equal(tls_kp_lt, tls_kp_rt);
+		}
+	}
+
+	return keypair_unchanged;
+}
+
+bool
+tls_configs_equal(struct tls_config *tls_config_left, struct tls_config *tls_config_right)
+{
+	return (strings_equal(tls_config_left->ca_file, tls_config_right->ca_file) &&
+		strings_equal(tls_config_left->ca_path, tls_config_right->ca_path) &&
+		memcmp(tls_config_left->ca_mem, tls_config_right->ca_mem, tls_config_left->ca_len) == 0 &&
+		strings_equal(tls_config_left->ciphers, tls_config_right->ciphers) &&
+		(tls_config_left->ciphers_server == tls_config_right->ciphers_server) &&
+		(tls_config_left->dheparams == tls_config_right->dheparams) &&
+		(tls_config_left->ecdhecurve == tls_config_right->ecdhecurve) &&
+		tls_config_keypairs_equal(tls_config_left->keypair, tls_config_right->keypair) &&
+		strings_equal(tls_config_left->ocsp_file, tls_config_right->ocsp_file) &&
+		memcmp(tls_config_left->ocsp_mem, tls_config_right->ocsp_mem, tls_config_left->ocsp_len) == 0 &&
+		(tls_config_left->protocols == tls_config_right->protocols) &&
+		(tls_config_left->verify_cert == tls_config_right->verify_cert) &&
+		(tls_config_left->verify_client == tls_config_right->verify_client) &&
+		(tls_config_left->verify_depth == tls_config_right->verify_depth) &&
+		(tls_config_left->verify_name == tls_config_right->verify_name) &&
+		(tls_config_left->verify_time == tls_config_right->verify_time));
+}
+
 #endif /* USUAL_LIBSSL_FOR_TLS */

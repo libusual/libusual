@@ -594,6 +594,21 @@ end:
 #define COMPLEX1 "key=ssl/ca1_complex1.key", "cert=ssl/ca1_complex1.crt"
 #define COMPLEX2 "key=ssl/ca2_complex2.key", "cert=ssl/ca2_complex2.crt"
 
+static void test_tls_configs_equal(void *z)
+{
+	struct Worker *server = NULL;
+	struct Worker *server_unchanged = NULL;
+	struct Worker *server_changed = NULL;
+
+	str_check(create_worker(&server, true, SERVER1, NULL), "OK");
+	str_check(create_worker(&server_unchanged, true, SERVER1, NULL), "OK");
+	str_check(create_worker(&server_changed, true, SERVER2, NULL), "OK");
+
+	tt_assert(tls_configs_equal(server->config, server_unchanged->config) == true);
+	tt_assert(tls_configs_equal(server->config, server_changed->config) == false);
+end:;
+}
+
 static void test_verify(void *z)
 {
 	struct Worker *server = NULL, *client = NULL;
@@ -1048,6 +1063,7 @@ struct testcase_t tls_tests[] = {
 	{ "set-mem", test_set_mem },
 	{ "cipher-nego", test_cipher_nego },
 	{ "cert-info", test_cert_info },
+	{ "tls_configs_equal", test_tls_configs_equal },
 	END_OF_TESTCASES,
 	{ "servername", test_servername },
 };
