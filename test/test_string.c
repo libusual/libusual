@@ -103,6 +103,21 @@ static void test_strerror_r(void *p)
 	tt_assert(strlen(strerror_r(EINTR, buf, sizeof(buf))) != 0);
 end:;
 }
+/*
+ * strings_equal
+ */
+
+static void test_strings_equal(void *ptr)
+{
+	tt_assert(strings_equal("foo", "foo") == true);
+	tt_assert(strings_equal(NULL, NULL) == true);
+
+	tt_assert(strings_equal("foo", "bar") == false);
+	tt_assert(strings_equal("foo", NULL) == false);
+	tt_assert(strings_equal(NULL, "foo") == false);
+end:;
+}
+
 
 /*
  * memrchr
@@ -635,6 +650,7 @@ struct testcase_t string_tests[] = {
 	{ "strlcat", test_strlcat },
 	{ "strnlen", test_strnlen },
 	{ "strerror_r", test_strerror_r },
+	{ "strings_equal", test_strings_equal },
 	{ "memrchr", test_memrchr },
 	{ "memmem", test_memmem },
 	{ "mempbrk", test_mempbrk },
