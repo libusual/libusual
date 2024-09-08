@@ -745,25 +745,25 @@ tls_close(struct tls *ctx)
 static bool
 tls_mems_equal(char *mem1, char *mem2, size_t len1, size_t len2)
 {
-  if (len1 != len2)
-    return false;
-  if (mem1 && mem2 && memcmp(mem1, mem2, len1) != 0)
-    return false;
-  return true;
+	if (len1 != len2)
+		return false;
+	if (mem1 && mem2 && memcmp(mem1, mem2, len1) != 0)
+		return false;
+	return true;
 }
 
 static bool
 keypair_equal(struct tls_keypair *tkp1, struct tls_keypair *tkp2)
 {
-  if (!strcmpeq(tkp1->cert_file, tkp2->cert_file))
-    return false;
-  if (!tls_mems_equal(tkp1->cert_mem, tkp2->cert_mem, tkp1->cert_len, tkp2->cert_len))
-    return false;
-  if (!strcmpeq(tkp1->key_file, tkp2->key_file))
-    return false;
-  if (!tls_mems_equal(tkp1->key_mem, tkp2->key_mem, tkp1->key_len, tkp2->key_len))
-    return false;
-  return true;
+	if (!strcmpeq(tkp1->cert_file, tkp2->cert_file))
+		return false;
+	if (!tls_mems_equal(tkp1->cert_mem, tkp2->cert_mem, tkp1->cert_len, tkp2->cert_len))
+		return false;
+	if (!strcmpeq(tkp1->key_file, tkp2->key_file))
+		return false;
+	if (!tls_mems_equal(tkp1->key_mem, tkp2->key_mem, tkp1->key_len, tkp2->key_len))
+		return false;
+	return true;
 }
 
 bool
@@ -778,8 +778,8 @@ keypair_list_equal(struct tls_keypair *tkp1, struct tls_keypair *tkp2)
 		return false;
 	}
 
-  for (tls_kp_lt = tkp1, tls_kp_rt = tkp2 ; tls_kp_lt != NULL && tls_kp_rt != NULL; tls_kp_lt = tls_kp_lt->next, tls_kp_rt = tls_kp_rt->next) {
-    kp_unchanged = keypair_equal(tls_kp_lt, tls_kp_rt);
+	for (tls_kp_lt = tkp1, tls_kp_rt = tkp2 ; tls_kp_lt != NULL && tls_kp_rt != NULL; tls_kp_lt = tls_kp_lt->next, tls_kp_rt = tls_kp_rt->next) {
+		kp_unchanged = keypair_equal(tls_kp_lt, tls_kp_rt);
 	}
 
 	return kp_unchanged;
@@ -788,39 +788,39 @@ keypair_list_equal(struct tls_keypair *tkp1, struct tls_keypair *tkp2)
 bool
 tls_config_equal(struct tls_config *tc1, struct tls_config *tc2)
 {
-  if (!strcmpeq(tc1->ca_file, tc2->ca_file))
-    return false;
-  if (!strcmpeq(tc1->ca_path, tc2->ca_path))
-    return false;
-  if (!tls_mems_equal(tc1->ca_mem, tc2->ca_mem, tc1->ca_len, tc2->ca_len))
-    return false;
-  if (!strcmpeq(tc1->ciphers, tc2->ciphers))
-    return false;
-  if (tc1->ciphers_server != tc2->ciphers_server)
-    return false;
-  if (tc1->dheparams != tc2->dheparams)
-    return false;
-  if (tc1->ecdhecurve != tc2->ecdhecurve)
-    return false;
-  if (!(keypair_list_equal(tc1->keypair, tc2->keypair)))
-    return false;
-  if (!strcmpeq(tc1->ocsp_file, tc2->ocsp_file))
-    return false;
-  if (!tls_mems_equal(tc1->ocsp_mem, tc2->ocsp_mem, tc1->ocsp_len, tc2->ocsp_len))
-    return false;
-  if (tc1->protocols != tc2->protocols)
-    return false;
-  if (tc1->verify_cert != tc2->verify_cert)
-    return false;
-  if (tc1->verify_client != tc2->verify_client)
-    return false;
-  if (tc1->verify_depth != tc2->verify_depth)
-    return false;
-  if (tc1->verify_name != tc2->verify_name)
-    return false;
-  if (tc1->verify_time != tc2->verify_time)
-    return false;
-  return true;
+	if (!strcmpeq(tc1->ca_file, tc2->ca_file))
+		return false;
+	if (!strcmpeq(tc1->ca_path, tc2->ca_path))
+		return false;
+	if (!tls_mems_equal(tc1->ca_mem, tc2->ca_mem, tc1->ca_len, tc2->ca_len))
+		return false;
+	if (!strcmpeq(tc1->ciphers, tc2->ciphers))
+		return false;
+	if (tc1->ciphers_server != tc2->ciphers_server)
+		return false;
+	if (tc1->dheparams != tc2->dheparams)
+		return false;
+	if (tc1->ecdhecurve != tc2->ecdhecurve)
+		return false;
+	if (!(keypair_list_equal(tc1->keypair, tc2->keypair)))
+		return false;
+	if (!strcmpeq(tc1->ocsp_file, tc2->ocsp_file))
+		return false;
+	if (!tls_mems_equal(tc1->ocsp_mem, tc2->ocsp_mem, tc1->ocsp_len, tc2->ocsp_len))
+		return false;
+	if (tc1->protocols != tc2->protocols)
+		return false;
+	if (tc1->verify_cert != tc2->verify_cert)
+		return false;
+	if (tc1->verify_client != tc2->verify_client)
+		return false;
+	if (tc1->verify_depth != tc2->verify_depth)
+		return false;
+	if (tc1->verify_name != tc2->verify_name)
+		return false;
+	if (tc1->verify_time != tc2->verify_time)
+		return false;
+	return true;
 }
 
 #endif /* USUAL_LIBSSL_FOR_TLS */
