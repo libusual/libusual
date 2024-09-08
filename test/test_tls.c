@@ -629,6 +629,24 @@ static void test_tls_keypair_list_equal(void *z)
 end:;
 }
 
+static void test_tls_keypair_list_length(void *z)
+{
+	struct tls_keypair *kp1a, *kp1b, *kp2a;
+	kp1a = tls_keypair_new();
+	kp1b = tls_keypair_new();
+	kp2a = tls_keypair_new();
+
+  /* this keypair list is one keypair longer */
+	kp1a->next = kp1b;
+
+	tls_keypair_set_cert_file(kp1a, "ssl/ca1_server1.crt");
+	tls_keypair_set_cert_file(kp1b, "ssl/ca1_server2.crt");
+	tls_keypair_set_cert_file(kp2a, "ssl/ca1_server1.crt");
+
+	tt_assert(tls_keypair_list_equal(kp1a, kp2a) == false);
+end:;
+}
+
 static void test_verify(void *z)
 {
 	struct Worker *server = NULL, *client = NULL;
@@ -1085,6 +1103,7 @@ struct testcase_t tls_tests[] = {
 	{ "cert-info", test_cert_info },
 	{ "tls_config_equal", test_tls_config_equal },
 	{ "tls_keypair_list_equal", test_tls_keypair_list_equal },
+	{ "tls_keypair_list_length", test_tls_keypair_list_length },
 	END_OF_TESTCASES,
 	{ "servername", test_servername },
 };

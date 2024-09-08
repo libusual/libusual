@@ -769,20 +769,12 @@ tls_keypair_equal(struct tls_keypair *tkp1, struct tls_keypair *tkp2)
 bool
 tls_keypair_list_equal(struct tls_keypair *tkp1, struct tls_keypair *tkp2)
 {
-	bool kp_unchanged;
-	struct tls_keypair *tls_kp_lt, *tls_kp_rt;
-
-	kp_unchanged = tls_keypair_equal(tkp1, tkp2);
-
-	if (kp_unchanged == false) {
-		return false;
+	for (; tkp1 != NULL && tkp2 != NULL; tkp1 = tkp1->next, tkp2 = tkp2->next) {
+		if (!tls_keypair_equal(tkp1, tkp2))
+			return false;
 	}
 
-	for (tls_kp_lt = tkp1, tls_kp_rt = tkp2 ; tls_kp_lt != NULL && tls_kp_rt != NULL; tls_kp_lt = tls_kp_lt->next, tls_kp_rt = tls_kp_rt->next) {
-		kp_unchanged = tls_keypair_equal(tls_kp_lt, tls_kp_rt);
-	}
-
-	return kp_unchanged;
+	return tkp1 == NULL && tkp2 == NULL;
 }
 
 bool
