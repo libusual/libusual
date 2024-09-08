@@ -743,9 +743,11 @@ tls_close(struct tls *ctx)
 }
 
 static bool
-tls_mems_equal(char *left_cert_mem, char *right_cert_mem, size_t cert_len)
+tls_mems_equal(char *left_cert_mem, char *right_cert_mem, size_t left_cert_len, size_t right_cert_len)
 {
-  if (left_cert_mem && right_cert_mem && memcmp(left_cert_mem, right_cert_mem, cert_len) != 0)
+  if (left_cert_mem != right_cert_mem)
+    return false;
+  if (left_cert_mem && right_cert_mem && memcmp(left_cert_mem, right_cert_mem, left_cert_len) != 0)
     return false;
   return true;
 }
@@ -755,11 +757,11 @@ tls_config_keypair_equal(struct tls_keypair *left_tls_keypair, struct tls_keypai
 {
   if (!strings_equal(left_tls_keypair->cert_file, right_tls_keypair->cert_file))
     return false;
-  if (!tls_mems_equal(left_tls_keypair->cert_mem, right_tls_keypair->cert_mem, left_tls_keypair->cert_len))
+  if (!tls_mems_equal(left_tls_keypair->cert_mem, right_tls_keypair->cert_mem, left_tls_keypair->cert_len, right_tls_keypair->cert_len))
     return false;
   if (!strings_equal(left_tls_keypair->key_file, right_tls_keypair->key_file))
     return false;
-  if (!tls_mems_equal(left_tls_keypair->key_mem, right_tls_keypair->key_mem, left_tls_keypair->key_len))
+  if (!tls_mems_equal(left_tls_keypair->key_mem, right_tls_keypair->key_mem, left_tls_keypair->key_len, right_tls_keypair->key_len))
     return false;
   return true;
 }
@@ -795,7 +797,7 @@ tls_configs_equal(struct tls_config *tls_config_left, struct tls_config *tls_con
     return false;
   if (!strings_equal(tls_config_left->ca_path, tls_config_right->ca_path))
     return false;
-  if (!tls_mems_equal(tls_config_left->ca_mem, tls_config_right->ca_mem, tls_config_left->ca_len))
+  if (!tls_mems_equal(tls_config_left->ca_mem, tls_config_right->ca_mem, tls_config_left->ca_len, tls_config_right->ca_len))
     return false;
   if (!strings_equal(tls_config_left->ciphers, tls_config_right->ciphers))
     return false;
@@ -809,7 +811,7 @@ tls_configs_equal(struct tls_config *tls_config_left, struct tls_config *tls_con
     return false;
   if (!strings_equal(tls_config_left->ocsp_file, tls_config_right->ocsp_file))
     return false;
-  if (!tls_mems_equal(tls_config_left->ocsp_mem, tls_config_right->ocsp_mem, tls_config_left->ocsp_len))
+  if (!tls_mems_equal(tls_config_left->ocsp_mem, tls_config_right->ocsp_mem, tls_config_left->ocsp_len, tls_config_right->ocsp_len))
     return false;
   if (tls_config_left->protocols != tls_config_right->protocols)
     return false;
