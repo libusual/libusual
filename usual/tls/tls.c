@@ -767,7 +767,7 @@ keypair_equal(struct tls_keypair *tkp1, struct tls_keypair *tkp2)
 }
 
 static bool
-keypairs_equal(struct tls_keypair *tkp1, struct tls_keypair *tkp2)
+keypair_list_equal(struct tls_keypair *tkp1, struct tls_keypair *tkp2)
 {
 	bool kp_unchanged;
 	struct tls_keypair *tls_kp_lt, *next_tls_kp_lt, *tls_kp_rt, *next_tls_kp_rt;
@@ -807,7 +807,7 @@ tls_config_equal(struct tls_config *tc1, struct tls_config *tc2)
     return false;
   if (tc1->ecdhecurve != tc2->ecdhecurve)
     return false;
-  if (!(keypairs_equal(tc1->keypair, tc2->keypair)))
+  if (!(keypair_list_equal(tc1->keypair, tc2->keypair)))
     return false;
   if (!strcmpeq(tc1->ocsp_file, tc2->ocsp_file))
     return false;
