@@ -104,17 +104,17 @@ static void test_strerror_r(void *p)
 end:;
 }
 /*
- * strings_equal
+ * strcmpeq
  */
 
-static void test_strings_equal(void *ptr)
+static void test_strcmpeq(void *ptr)
 {
-	tt_assert(strings_equal("foo", "foo") == true);
-	tt_assert(strings_equal(NULL, NULL) == true);
+	tt_assert(strcmpeq("foo", "foo") == true);
+	tt_assert(strcmpeq(NULL, NULL) == true);
 
-	tt_assert(strings_equal("foo", "bar") == false);
-	tt_assert(strings_equal("foo", NULL) == false);
-	tt_assert(strings_equal(NULL, "foo") == false);
+	tt_assert(strcmpeq("foo", "bar") == false);
+	tt_assert(strcmpeq("foo", NULL) == false);
+	tt_assert(strcmpeq(NULL, "foo") == false);
 end:;
 }
 
@@ -650,7 +650,7 @@ struct testcase_t string_tests[] = {
 	{ "strlcat", test_strlcat },
 	{ "strnlen", test_strnlen },
 	{ "strerror_r", test_strerror_r },
-	{ "strings_equal", test_strings_equal },
+	{ "strcmpeq", test_strcmpeq },
 	{ "memrchr", test_memrchr },
 	{ "memmem", test_memmem },
 	{ "mempbrk", test_mempbrk },

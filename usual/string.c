@@ -681,7 +681,7 @@ size_t strnlen(const char *string, size_t maxlen)
 /*
  * Same as strcmp, but handles NULLs. If both sides are NULL, returns "true".
  */
-bool strings_equal(const char *str_left, const char *str_right)
+bool strcmpeq(const char *str_left, const char *str_right)
 {
 	if (str_left == NULL && str_right == NULL)
 		return true;
