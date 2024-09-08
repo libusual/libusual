@@ -743,87 +743,87 @@ tls_close(struct tls *ctx)
 }
 
 static bool
-tls_mems_equal(char *left_cert_mem, char *right_cert_mem, size_t left_cert_len, size_t right_cert_len)
+tls_mems_equal(char *mem1, char *mem2, size_t len1, size_t len2)
 {
-  if (left_cert_mem != right_cert_mem)
+  if (mem1 != mem2)
     return false;
-  if (left_cert_mem && right_cert_mem && memcmp(left_cert_mem, right_cert_mem, left_cert_len) != 0)
+  if (mem1 && mem2 && memcmp(mem1, mem2, len1) != 0)
     return false;
   return true;
 }
 
 static bool
-tls_config_keypair_equal(struct tls_keypair *left_tls_keypair, struct tls_keypair *right_tls_keypair)
+tls_config_keypair_equal(struct tls_keypair *tkp1, struct tls_keypair *tkp2)
 {
-  if (!strings_equal(left_tls_keypair->cert_file, right_tls_keypair->cert_file))
+  if (!strings_equal(tkp1->cert_file, tkp2->cert_file))
     return false;
-  if (!tls_mems_equal(left_tls_keypair->cert_mem, right_tls_keypair->cert_mem, left_tls_keypair->cert_len, right_tls_keypair->cert_len))
+  if (!tls_mems_equal(tkp1->cert_mem, tkp2->cert_mem, tkp1->cert_len, tkp2->cert_len))
     return false;
-  if (!strings_equal(left_tls_keypair->key_file, right_tls_keypair->key_file))
+  if (!strings_equal(tkp1->key_file, tkp2->key_file))
     return false;
-  if (!tls_mems_equal(left_tls_keypair->key_mem, right_tls_keypair->key_mem, left_tls_keypair->key_len, right_tls_keypair->key_len))
+  if (!tls_mems_equal(tkp1->key_mem, tkp2->key_mem, tkp1->key_len, tkp2->key_len))
     return false;
   return true;
 }
 
 static bool
-tls_config_keypairs_equal(struct tls_keypair *tls_keypair_left, struct tls_keypair *tls_keypair_right)
+tls_config_keypairs_equal(struct tls_keypair *tkp1, struct tls_keypair *tkp2)
 {
-	bool keypair_unchanged;
+	bool kp_unchanged;
 	struct tls_keypair *tls_kp_lt, *next_tls_kp_lt, *tls_kp_rt, *next_tls_kp_rt;
 
-	keypair_unchanged = tls_config_keypair_equal(tls_keypair_left, tls_keypair_right);
+	kp_unchanged = tls_config_keypair_equal(tkp1, tkp2);
 
-	if (keypair_unchanged == false) {
+	if (kp_unchanged == false) {
 		return false;
 	}
 
-	for (tls_kp_lt = tls_keypair_left; tls_kp_lt != NULL; tls_kp_lt = next_tls_kp_lt) {
+	for (tls_kp_lt = tkp1; tls_kp_lt != NULL; tls_kp_lt = next_tls_kp_lt) {
 		next_tls_kp_lt = tls_kp_lt->next;
-		for (tls_kp_rt = tls_keypair_right; tls_kp_rt != NULL; tls_kp_rt = next_tls_kp_rt) {
+		for (tls_kp_rt = tkp2; tls_kp_rt != NULL; tls_kp_rt = next_tls_kp_rt) {
 			next_tls_kp_rt = tls_kp_rt->next;
 
-			keypair_unchanged = tls_config_keypair_equal(tls_kp_lt, tls_kp_rt);
+			kp_unchanged = tls_config_keypair_equal(tls_kp_lt, tls_kp_rt);
 		}
 	}
 
-	return keypair_unchanged;
+	return kp_unchanged;
 }
 
 bool
-tls_configs_equal(struct tls_config *tls_config_left, struct tls_config *tls_config_right)
+tls_configs_equal(struct tls_config *tc1, struct tls_config *tc2)
 {
-  if (!strings_equal(tls_config_left->ca_file, tls_config_right->ca_file))
+  if (!strings_equal(tc1->ca_file, tc2->ca_file))
     return false;
-  if (!strings_equal(tls_config_left->ca_path, tls_config_right->ca_path))
+  if (!strings_equal(tc1->ca_path, tc2->ca_path))
     return false;
-  if (!tls_mems_equal(tls_config_left->ca_mem, tls_config_right->ca_mem, tls_config_left->ca_len, tls_config_right->ca_len))
+  if (!tls_mems_equal(tc1->ca_mem, tc2->ca_mem, tc1->ca_len, tc2->ca_len))
     return false;
-  if (!strings_equal(tls_config_left->ciphers, tls_config_right->ciphers))
+  if (!strings_equal(tc1->ciphers, tc2->ciphers))
     return false;
-  if (tls_config_left->ciphers_server != tls_config_right->ciphers_server)
+  if (tc1->ciphers_server != tc2->ciphers_server)
     return false;
-  if (tls_config_left->dheparams != tls_config_right->dheparams)
+  if (tc1->dheparams != tc2->dheparams)
     return false;
-  if (tls_config_left->ecdhecurve != tls_config_right->ecdhecurve)
+  if (tc1->ecdhecurve != tc2->ecdhecurve)
     return false;
-  if (!(tls_config_keypairs_equal(tls_config_left->keypair, tls_config_right->keypair)))
+  if (!(tls_config_keypairs_equal(tc1->keypair, tc2->keypair)))
     return false;
-  if (!strings_equal(tls_config_left->ocsp_file, tls_config_right->ocsp_file))
+  if (!strings_equal(tc1->ocsp_file, tc2->ocsp_file))
     return false;
-  if (!tls_mems_equal(tls_config_left->ocsp_mem, tls_config_right->ocsp_mem, tls_config_left->ocsp_len, tls_config_right->ocsp_len))
+  if (!tls_mems_equal(tc1->ocsp_mem, tc2->ocsp_mem, tc1->ocsp_len, tc2->ocsp_len))
     return false;
-  if (tls_config_left->protocols != tls_config_right->protocols)
+  if (tc1->protocols != tc2->protocols)
     return false;
-  if (tls_config_left->verify_cert != tls_config_right->verify_cert)
+  if (tc1->verify_cert != tc2->verify_cert)
     return false;
-  if (tls_config_left->verify_client != tls_config_right->verify_client)
+  if (tc1->verify_client != tc2->verify_client)
     return false;
-  if (tls_config_left->verify_depth != tls_config_right->verify_depth)
+  if (tc1->verify_depth != tc2->verify_depth)
     return false;
-  if (tls_config_left->verify_name != tls_config_right->verify_name)
+  if (tc1->verify_name != tc2->verify_name)
     return false;
-  if (tls_config_left->verify_time != tls_config_right->verify_time)
+  if (tc1->verify_time != tc2->verify_time)
     return false;
   return true;
 }
