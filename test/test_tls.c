@@ -609,7 +609,7 @@ static void test_tls_config_equal(void *z)
 end:;
 }
 
-static void test_keypair_list_equal(void *z)
+static void test_tls_keypair_list_equal(void *z)
 {
 	struct tls_keypair *kp1a, *kp1b, *kp2a, *kp2b;
 	kp1a = tls_keypair_new();
@@ -625,7 +625,7 @@ static void test_keypair_list_equal(void *z)
 	tls_keypair_set_cert_file(kp2a, "ssl/ca1_server1.crt");
 	tls_keypair_set_cert_file(kp2b, "ssl/different_ca1_server2.crt");
 
-	tt_assert(keypair_list_equal(kp1a, kp2a) == false);
+	tt_assert(tls_keypair_list_equal(kp1a, kp2a) == false);
 end:;
 }
 
@@ -1084,7 +1084,7 @@ struct testcase_t tls_tests[] = {
 	{ "cipher-nego", test_cipher_nego },
 	{ "cert-info", test_cert_info },
 	{ "tls_config_equal", test_tls_config_equal },
-	{ "keypair_list_equal", test_keypair_list_equal },
+	{ "tls_keypair_list_equal", test_tls_keypair_list_equal },
 	END_OF_TESTCASES,
 	{ "servername", test_servername },
 };

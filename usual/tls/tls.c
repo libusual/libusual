@@ -753,7 +753,7 @@ tls_mems_equal(char *mem1, char *mem2, size_t len1, size_t len2)
 }
 
 static bool
-keypair_equal(struct tls_keypair *tkp1, struct tls_keypair *tkp2)
+tls_keypair_equal(struct tls_keypair *tkp1, struct tls_keypair *tkp2)
 {
 	if (!strcmpeq(tkp1->cert_file, tkp2->cert_file))
 		return false;
@@ -767,19 +767,19 @@ keypair_equal(struct tls_keypair *tkp1, struct tls_keypair *tkp2)
 }
 
 bool
-keypair_list_equal(struct tls_keypair *tkp1, struct tls_keypair *tkp2)
+tls_keypair_list_equal(struct tls_keypair *tkp1, struct tls_keypair *tkp2)
 {
 	bool kp_unchanged;
 	struct tls_keypair *tls_kp_lt, *tls_kp_rt;
 
-	kp_unchanged = keypair_equal(tkp1, tkp2);
+	kp_unchanged = tls_keypair_equal(tkp1, tkp2);
 
 	if (kp_unchanged == false) {
 		return false;
 	}
 
 	for (tls_kp_lt = tkp1, tls_kp_rt = tkp2 ; tls_kp_lt != NULL && tls_kp_rt != NULL; tls_kp_lt = tls_kp_lt->next, tls_kp_rt = tls_kp_rt->next) {
-		kp_unchanged = keypair_equal(tls_kp_lt, tls_kp_rt);
+		kp_unchanged = tls_keypair_equal(tls_kp_lt, tls_kp_rt);
 	}
 
 	return kp_unchanged;
@@ -802,7 +802,7 @@ tls_config_equal(struct tls_config *tc1, struct tls_config *tc2)
 		return false;
 	if (tc1->ecdhecurve != tc2->ecdhecurve)
 		return false;
-	if (!(keypair_list_equal(tc1->keypair, tc2->keypair)))
+	if (!(tls_keypair_list_equal(tc1->keypair, tc2->keypair)))
 		return false;
 	if (!strcmpeq(tc1->ocsp_file, tc2->ocsp_file))
 		return false;

@@ -178,6 +178,6 @@ int asn1_time_parse(const char *, size_t, struct tm *, int);
 
 struct tls_keypair * tls_keypair_new(void);
 int tls_keypair_set_cert_file(struct tls_keypair *keypair, const char *cert_file);
-bool keypair_list_equal(struct tls_keypair *tkp1, struct tls_keypair *tkp2);
+bool tls_keypair_list_equal(struct tls_keypair *tkp1, struct tls_keypair *tkp2);
 
 #endif /* HEADER_TLS_INTERNAL_H */
