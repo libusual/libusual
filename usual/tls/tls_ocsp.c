@@ -564,6 +564,9 @@ tls_ocsp_setup(struct tls **ocsp_ctx_p, struct tls_config *config, struct tls *t
 		q->cert_ssl_ctx = ctx->ssl_ctx;
 		SSL_CTX_get_extra_chain_certs(ctx->ssl_ctx, &q->extra_certs);
 	} else {
+		if (!target)
+			return -1;
+
 		/* steal state from target struct */
 		q->main_cert = SSL_get_peer_certificate(target->ssl_conn);
 		q->extra_certs = SSL_get_peer_cert_chain(target->ssl_conn);
