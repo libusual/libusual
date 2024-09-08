@@ -745,7 +745,7 @@ tls_close(struct tls *ctx)
 static bool
 tls_mems_equal(char *mem1, char *mem2, size_t len1, size_t len2)
 {
-  if (mem1 != mem2)
+  if (len1 != len2)
     return false;
   if (mem1 && mem2 && memcmp(mem1, mem2, len1) != 0)
     return false;
