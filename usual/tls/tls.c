@@ -743,7 +743,7 @@ tls_close(struct tls *ctx)
 }
 
 static bool
-tls_mems_equal(char *mem1, char *mem2, size_t len1, size_t len2)
+tls_mem_equal(char *mem1, char *mem2, size_t len1, size_t len2)
 {
 	if (len1 != len2)
 		return false;
@@ -757,11 +757,11 @@ tls_keypair_equal(struct tls_keypair *tkp1, struct tls_keypair *tkp2)
 {
 	if (!strcmpeq(tkp1->cert_file, tkp2->cert_file))
 		return false;
-	if (!tls_mems_equal(tkp1->cert_mem, tkp2->cert_mem, tkp1->cert_len, tkp2->cert_len))
+	if (!tls_mem_equal(tkp1->cert_mem, tkp2->cert_mem, tkp1->cert_len, tkp2->cert_len))
 		return false;
 	if (!strcmpeq(tkp1->key_file, tkp2->key_file))
 		return false;
-	if (!tls_mems_equal(tkp1->key_mem, tkp2->key_mem, tkp1->key_len, tkp2->key_len))
+	if (!tls_mem_equal(tkp1->key_mem, tkp2->key_mem, tkp1->key_len, tkp2->key_len))
 		return false;
 	return true;
 }
@@ -784,7 +784,7 @@ tls_config_equal(struct tls_config *tc1, struct tls_config *tc2)
 		return false;
 	if (!strcmpeq(tc1->ca_path, tc2->ca_path))
 		return false;
-	if (!tls_mems_equal(tc1->ca_mem, tc2->ca_mem, tc1->ca_len, tc2->ca_len))
+	if (!tls_mem_equal(tc1->ca_mem, tc2->ca_mem, tc1->ca_len, tc2->ca_len))
 		return false;
 	if (!strcmpeq(tc1->ciphers, tc2->ciphers))
 		return false;
@@ -794,11 +794,11 @@ tls_config_equal(struct tls_config *tc1, struct tls_config *tc2)
 		return false;
 	if (tc1->ecdhecurve != tc2->ecdhecurve)
 		return false;
-	if (!(tls_keypair_list_equal(tc1->keypair, tc2->keypair)))
+	if (!tls_keypair_list_equal(tc1->keypair, tc2->keypair))
 		return false;
 	if (!strcmpeq(tc1->ocsp_file, tc2->ocsp_file))
 		return false;
-	if (!tls_mems_equal(tc1->ocsp_mem, tc2->ocsp_mem, tc1->ocsp_len, tc2->ocsp_len))
+	if (!tls_mem_equal(tc1->ocsp_mem, tc2->ocsp_mem, tc1->ocsp_len, tc2->ocsp_len))
 		return false;
 	if (tc1->protocols != tc2->protocols)
 		return false;
