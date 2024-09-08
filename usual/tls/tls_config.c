@@ -58,13 +58,13 @@ set_mem(char **dest, size_t *destlen, const void *src, size_t srclen)
 	return 0;
 }
 
-static struct tls_keypair *
+struct tls_keypair *
 tls_keypair_new(void)
 {
 	return calloc(1, sizeof(struct tls_keypair));
 }
 
-static int
+int
 tls_keypair_set_cert_file(struct tls_keypair *keypair, const char *cert_file)
 {
 	return set_string(&keypair->cert_file, cert_file);

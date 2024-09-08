@@ -594,6 +594,59 @@ end:
 #define COMPLEX1 "key=ssl/ca1_complex1.key", "cert=ssl/ca1_complex1.crt"
 #define COMPLEX2 "key=ssl/ca2_complex2.key", "cert=ssl/ca2_complex2.crt"
 
+static void test_tls_config_equal(void *z)
+{
+	struct Worker *server = NULL;
+	struct Worker *server_unchanged = NULL;
+	struct Worker *server_changed = NULL;
+
+	str_check(create_worker(&server, true, SERVER1, NULL), "OK");
+	str_check(create_worker(&server_unchanged, true, SERVER1, NULL), "OK");
+	str_check(create_worker(&server_changed, true, SERVER2, NULL), "OK");
+
+	tt_assert(tls_config_equal(server->config, server_unchanged->config) == true);
+	tt_assert(tls_config_equal(server->config, server_changed->config) == false);
+end:;
+}
+
+static void test_tls_keypair_list_equal(void *z)
+{
+	struct tls_keypair *kp1a, *kp1b, *kp2a, *kp2b;
+	kp1a = tls_keypair_new();
+	kp1b = tls_keypair_new();
+	kp2a = tls_keypair_new();
+	kp2b = tls_keypair_new();
+
+	kp1a->next = kp1b;
+	kp2a->next = kp2b;
+
+	tls_keypair_set_cert_file(kp1a, "ssl/ca1_server1.crt");
+	tls_keypair_set_cert_file(kp1b, "ssl/ca1_server2.crt");
+	tls_keypair_set_cert_file(kp2a, "ssl/ca1_server1.crt");
+	tls_keypair_set_cert_file(kp2b, "ssl/different_ca1_server2.crt");
+
+	tt_assert(tls_keypair_list_equal(kp1a, kp2a) == false);
+end:;
+}
+
+static void test_tls_keypair_list_length(void *z)
+{
+	struct tls_keypair *kp1a, *kp1b, *kp2a;
+	kp1a = tls_keypair_new();
+	kp1b = tls_keypair_new();
+	kp2a = tls_keypair_new();
+
+  /* this keypair list is one keypair longer */
+	kp1a->next = kp1b;
+
+	tls_keypair_set_cert_file(kp1a, "ssl/ca1_server1.crt");
+	tls_keypair_set_cert_file(kp1b, "ssl/ca1_server2.crt");
+	tls_keypair_set_cert_file(kp2a, "ssl/ca1_server1.crt");
+
+	tt_assert(tls_keypair_list_equal(kp1a, kp2a) == false);
+end:;
+}
+
 static void test_verify(void *z)
 {
 	struct Worker *server = NULL, *client = NULL;
@@ -1048,6 +1101,9 @@ struct testcase_t tls_tests[] = {
 	{ "set-mem", test_set_mem },
 	{ "cipher-nego", test_cipher_nego },
 	{ "cert-info", test_cert_info },
+	{ "tls_config_equal", test_tls_config_equal },
+	{ "tls_keypair_list_equal", test_tls_keypair_list_equal },
+	{ "tls_keypair_list_length", test_tls_keypair_list_length },
 	END_OF_TESTCASES,
 	{ "servername", test_servername },
 };

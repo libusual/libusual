@@ -164,6 +164,7 @@ int tls_ocsp_refresh_stapling_request(struct tls **ocsp_ctx_p, struct tls_config
 		char **ocsp_url, void **request_blob, size_t *request_size);
 
 int tls_ocsp_process_response(struct tls *ctx, const void *response_blob, size_t size);
+bool tls_config_equal(struct tls_config *server_connect_conf_left, struct tls_config *server_connect_conf_right);
 
 #ifdef __cplusplus
 }
