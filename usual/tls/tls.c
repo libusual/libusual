@@ -766,11 +766,11 @@ keypair_equal(struct tls_keypair *tkp1, struct tls_keypair *tkp2)
   return true;
 }
 
-static bool
+bool
 keypair_list_equal(struct tls_keypair *tkp1, struct tls_keypair *tkp2)
 {
 	bool kp_unchanged;
-	struct tls_keypair *tls_kp_lt, *next_tls_kp_lt, *tls_kp_rt, *next_tls_kp_rt;
+	struct tls_keypair *tls_kp_lt, *tls_kp_rt;
 
 	kp_unchanged = keypair_equal(tkp1, tkp2);
 
@@ -778,13 +778,8 @@ keypair_list_equal(struct tls_keypair *tkp1, struct tls_keypair *tkp2)
 		return false;
 	}
 
-	for (tls_kp_lt = tkp1; tls_kp_lt != NULL; tls_kp_lt = next_tls_kp_lt) {
-		next_tls_kp_lt = tls_kp_lt->next;
-		for (tls_kp_rt = tkp2; tls_kp_rt != NULL; tls_kp_rt = next_tls_kp_rt) {
-			next_tls_kp_rt = tls_kp_rt->next;
-
-			kp_unchanged = keypair_equal(tls_kp_lt, tls_kp_rt);
-		}
+  for (tls_kp_lt = tkp1, tls_kp_rt = tkp2 ; tls_kp_lt != NULL && tls_kp_rt != NULL; tls_kp_lt = tls_kp_lt->next, tls_kp_rt = tls_kp_rt->next) {
+    kp_unchanged = keypair_equal(tls_kp_lt, tls_kp_rt);
 	}
 
 	return kp_unchanged;
