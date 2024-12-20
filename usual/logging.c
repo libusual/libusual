@@ -189,7 +189,12 @@ void log_generic(enum LogLevel level, void *ctx, const char *fmt, ...)
 	format_time_ms(0, timebuf, sizeof(timebuf));
 
 	if (!log_file && cf_logfile && cf_logfile[0]) {
-		log_file = fopen(cf_logfile, "a");
+		char filename[80];
+		time_t rawtime;
+		struct tm *info;
+		info = localtime( &rawtime );
+		strftime(filename, 80, cf_logfile, info);
+		log_file = fopen(filename, "a");
 		if (log_file) {
 			/* Got the file, disable buffering */
 			setvbuf(log_file, NULL, _IONBF, 0);
