@@ -358,6 +358,19 @@ static bool fill_defaults(struct LoaderCtx *ctx)
 		if (!cf_set(ctx->cf, ctx->cur_sect, k->key_name, k->def_value))
 			goto fail;
 	}
+
+	// Check env vars
+	for (k = s->key_list; k->key_name; k++) {
+		char* env_value = getenv(k->key_name);
+		if (!env_value || (k->flags & CF_READONLY))
+			continue;
+		if ((k->flags & CF_NO_RELOAD) && ctx->cf->loaded)
+			continue;
+
+		if (!cf_set(ctx->cf, ctx->cur_sect, k->key_name, env_value))
+			goto fail;
+	}
+
 	return true;
 fail:
 	log_error("fill_defaults fail");
