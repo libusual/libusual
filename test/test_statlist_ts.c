@@ -1,0 +1,85 @@
+#include "test_common.h"
+#include <usual/statlist_ts.h>
+#include <usual/string.h>
+#include <usual/pthread.h>
+
+
+static void test_thread_safe_statlist_simple(void *p) {
+    struct ThreadSafeStatList ts_list;
+    thread_safe_statlist_init(&ts_list, "test_list");
+
+    pthread_mutex_lock(&ts_list.mutex);
+    str_check(statlist_count(&ts_list.list) == 0 ? "OK" : "FAIL", "OK");
+    pthread_mutex_unlock(&ts_list.mutex);
+
+    struct List node1, node2, node3;
+    list_init(&node1);
+    list_init(&node2);
+    list_init(&node3);
+
+    thread_safe_statlist_append(&ts_list, &node1);
+    thread_safe_statlist_append(&ts_list, &node2);
+    thread_safe_statlist_append(&ts_list, &node3);
+    
+    pthread_mutex_lock(&ts_list.mutex);
+    str_check(statlist_count(&ts_list.list) == 3 ? "OK" : "FAIL", "OK");
+    pthread_mutex_unlock(&ts_list.mutex);
+
+    struct List *popped_node = thread_safe_statlist_pop(&ts_list);
+    tt_assert(popped_node == &node1);
+    
+    pthread_mutex_lock(&ts_list.mutex);
+    str_check(statlist_count(&ts_list.list) == 2 ? "OK" : "FAIL", "OK");
+    pthread_mutex_unlock(&ts_list.mutex);
+
+    thread_safe_statlist_destroy(&ts_list);
+end:;
+}
+
+
+/* multithread */
+
+#define NUM_ITERATIONS 1000
+#define NUM_THREADS 4
+
+static struct ThreadSafeStatList ts_list;
+
+static void *thread_worker(void *arg) {
+    for (int i = 0; i < NUM_ITERATIONS; i++) {
+        struct List *node = malloc(sizeof(struct List));
+        if (!node) continue;
+        list_init(node);
+        thread_safe_statlist_append(&ts_list, node);
+        usleep(rand() % 1000);  // Simulate work
+        struct List *popped_node = thread_safe_statlist_pop(&ts_list);
+        if (popped_node) free(popped_node);
+    }
+    return NULL;
+}
+
+static void test_thread_safe_statlist_multithreaded(void *p) {
+    thread_safe_statlist_init(&ts_list, "test_list");
+    srand(time(NULL));
+
+    pthread_t threads[NUM_THREADS];
+    for (int i = 0; i < NUM_THREADS; i++) {
+        pthread_create(&threads[i], NULL, thread_worker, NULL);
+    }
+
+    for (int i = 0; i < NUM_THREADS; i++) {
+        pthread_join(threads[i], NULL);
+    }
+
+    pthread_mutex_lock(&ts_list.mutex);
+    str_check(statlist_count(&ts_list.list) == 0 ? "OK" : "FAIL", "OK");
+    pthread_mutex_unlock(&ts_list.mutex);
+
+    thread_safe_statlist_destroy(&ts_list);
+end:;
+}
+
+struct testcase_t statlist_ts_tests[] = {
+    { "simple", test_thread_safe_statlist_simple },
+    { "multithread", test_thread_safe_statlist_multithreaded },
+    END_OF_TESTCASES
+};
