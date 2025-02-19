@@ -107,15 +107,23 @@ static inline void thread_safe_statlist_put_after(struct ThreadSafeStatList *lis
 }
 
 /** Loop over thread-safe list */
-#define thread_safe_statlist_for_each(item, list) \
-    pthread_mutex_lock(&(list)->mutex); \
-    list_for_each(item, &((list)->list.head)); \
-    pthread_mutex_unlock(&(list)->mutex);
+static inline void thread_safe_statlist_iterate(struct ThreadSafeStatList *list, void (*func)(struct List *)) {
+    pthread_mutex_lock(&list->mutex);
+    struct List *item;
+    statlist_for_each(item, &list->list) {
+        func(item);
+    }
+    pthread_mutex_unlock(&list->mutex);
+}
 
 /** Loop over thread-safe list backwards */
-#define thread_safe_statlist_for_each_reverse(item, list) \
-    pthread_mutex_lock(&(list)->mutex); \
-    list_for_each_reverse(item, &((list)->list.head)); \
-    pthread_mutex_unlock(&(list)->mutex);
+static inline void thread_safe_statlist_iterate_reverse(struct ThreadSafeStatList *list, void (*func)(struct List *)) {
+    pthread_mutex_lock(&list->mutex);
+    struct List *item;
+    statlist_for_each_reverse(item, &list->list) {
+        func(item);
+    }
+    pthread_mutex_unlock(&list->mutex);
+}
 
 #endif /* _USUAL_THREAD_SAFE_STATLIST_H_ */
