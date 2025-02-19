@@ -13,13 +13,6 @@ struct ThreadSafeStatList {
     pthread_mutex_t mutex;
 };
 
-/** Define and initialize ThreadSafeStatList head */
-#ifdef LIST_DEBUG
-#define THREAD_SAFE_STATLIST(var) struct ThreadSafeStatList var = { { {&var.list.head, &var.list.head}, 0, #var }, PTHREAD_MUTEX_INITIALIZER }
-#else
-#define THREAD_SAFE_STATLIST(var) struct ThreadSafeStatList var = { { {&var.list.head, &var.list.head}, 0 }, PTHREAD_MUTEX_INITIALIZER }
-#endif
-
 /** Initialize ThreadSafeStatList head */
 static inline void thread_safe_statlist_init(struct ThreadSafeStatList *list, const char *name) {
     statlist_init(&list->list, name);
