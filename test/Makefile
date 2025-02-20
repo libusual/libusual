@@ -29,6 +29,7 @@ regtest_system_SOURCES = \
 	test_psrandom.c \
 	test_regex.c \
 	test_shlist.c \
+	test_slab_ts.c \
 	test_socket.c \
 	test_string.c \
 	test_strpool.c \
