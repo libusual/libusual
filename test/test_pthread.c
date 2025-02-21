@@ -44,17 +44,22 @@ static void test_pthread_key_destructor(void *value) {
 static void *test_pthread_key_func(void *arg) {
     int thread_index = *(int *)arg;
     int *thread_specific_value = malloc(sizeof(int));
+    int *retrieved;
+
     *thread_specific_value = thread_index;
     pthread_setspecific(test_key, thread_specific_value);
     usleep(1000);
-    int *retrieved = pthread_getspecific(test_key);
+
+    retrieved = pthread_getspecific(test_key);
     thread_data[thread_index] = *retrieved;
     return NULL;
 }
 
 static void test_pthread_key(void *p) {
-    tt_assert(pthread_key_create(&test_key, test_pthread_key_destructor) == 0);
     pthread_t threads[NUM_THREADS];
+    
+    tt_assert(pthread_key_create(&test_key, test_pthread_key_destructor) == 0);
+    
     for (int i = 0; i < NUM_THREADS; i++) {
         thread_data[i] = i;
         tt_assert(pthread_create(&threads[i], NULL, test_pthread_key_func, &thread_data[i]) == 0);
