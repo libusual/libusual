@@ -57,22 +57,25 @@ void thread_safe_slab_free(struct ThreadSafeSlab *ts_slab, void *obj) {
 }
 
 int thread_safe_slab_total_count(struct ThreadSafeSlab *ts_slab) {
+    int count;  // ✅ Declare variables at the beginning
     pthread_mutex_lock(&ts_slab->mutex);
-    int count = slab_total_count(ts_slab->slab);
+    count = slab_total_count(ts_slab->slab);
     pthread_mutex_unlock(&ts_slab->mutex);
     return count;
 }
 
 int thread_safe_slab_free_count(struct ThreadSafeSlab *ts_slab) {
+    int count;
     pthread_mutex_lock(&ts_slab->mutex);
-    int count = slab_free_count(ts_slab->slab);
+    count = slab_free_count(ts_slab->slab);
     pthread_mutex_unlock(&ts_slab->mutex);
     return count;
 }
 
 int thread_safe_slab_active_count(struct ThreadSafeSlab *ts_slab) {
+    int count;
     pthread_mutex_lock(&ts_slab->mutex);
-    int count = slab_active_count(ts_slab->slab);
+    count = slab_active_count(ts_slab->slab);
     pthread_mutex_unlock(&ts_slab->mutex);
     return count;
 }
