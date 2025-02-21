@@ -47,40 +47,45 @@ static inline void thread_safe_statlist_remove(struct ThreadSafeStatList *list, 
 
 /** Remove and return first element */
 static inline struct List *thread_safe_statlist_pop(struct ThreadSafeStatList *list) {
+    struct List *item;
     pthread_mutex_lock(&list->mutex);
-    struct List *item = statlist_pop(&list->list);
+    item = statlist_pop(&list->list);
     pthread_mutex_unlock(&list->mutex);
     return item;
 }
 
 /** Return first element */
 static inline struct List *thread_safe_statlist_first(struct ThreadSafeStatList *list) {
+    struct List *item;
     pthread_mutex_lock(&list->mutex);
-    struct List *item = statlist_first(&list->list);
+    item = statlist_first(&list->list);
     pthread_mutex_unlock(&list->mutex);
     return item;
 }
 
 /** Return last element */
 static inline struct List *thread_safe_statlist_last(struct ThreadSafeStatList *list) {
+    struct List *item;
     pthread_mutex_lock(&list->mutex);
-    struct List *item = statlist_last(&list->list);
+    item = statlist_last(&list->list);
     pthread_mutex_unlock(&list->mutex);
     return item;
 }
 
 /** Is list empty */
 static inline bool thread_safe_statlist_empty(struct ThreadSafeStatList *list) {
+    bool empty;
     pthread_mutex_lock(&list->mutex);
-    bool empty = statlist_empty(&list->list);
+    empty = statlist_empty(&list->list);
     pthread_mutex_unlock(&list->mutex);
     return empty;
 }
 
 /** Return number of elements currently in list */
 static inline int thread_safe_statlist_count(struct ThreadSafeStatList *list) {
+    int count;
     pthread_mutex_lock(&list->mutex);
-    int count = statlist_count(&list->list);
+    count = statlist_count(&list->list);
     pthread_mutex_unlock(&list->mutex);
     return count;
 }
@@ -101,8 +106,8 @@ static inline void thread_safe_statlist_put_after(struct ThreadSafeStatList *lis
 
 /** Loop over thread-safe list */
 static inline void thread_safe_statlist_iterate(struct ThreadSafeStatList *list, void (*func)(struct List *)) {
-    pthread_mutex_lock(&list->mutex);
     struct List *item;
+    pthread_mutex_lock(&list->mutex);
     statlist_for_each(item, &list->list) {
         func(item);
     }
@@ -111,8 +116,8 @@ static inline void thread_safe_statlist_iterate(struct ThreadSafeStatList *list,
 
 /** Loop over thread-safe list backwards */
 static inline void thread_safe_statlist_iterate_reverse(struct ThreadSafeStatList *list, void (*func)(struct List *)) {
-    pthread_mutex_lock(&list->mutex);
     struct List *item;
+    pthread_mutex_lock(&list->mutex);
     statlist_for_each_reverse(item, &list->list) {
         func(item);
     }
