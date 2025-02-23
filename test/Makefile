@@ -27,6 +27,7 @@ regtest_system_SOURCES = \
 	test_netdb.c \
 	test_pgutil.c \
 	test_psrandom.c \
+	test_pthread.c \
 	test_regex.c \
 	test_shlist.c \
 	test_socket.c \

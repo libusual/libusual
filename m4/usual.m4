@@ -345,14 +345,16 @@ AC_CACHE_CHECK([whether to use native getaddinfo_a], ac_cv_usual_glibc_gaia,
 
 if test x"$ac_cv_usual_glibc_gaia" = xyes ; then
   AC_DEFINE(HAVE_GETADDRINFO_A, 1, [Define to 1 if you have the getaddrinfo_a() function.])
-else
-  AX_PTHREAD(, [AC_MSG_RESULT([Threads not available and fallback getaddrinfo_a() non-functional.])])
-  CC="$PTHREAD_CC"
-  CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
-  LIBS="$LIBS $PTHREAD_LIBS"
 fi
 ])
 
+dnl Check and add -lpthread
+AC_DEFUN([AC_PTHREAD], [
+  AX_PTHREAD(, [AC_MSG_RESULT([Threads not available.])])
+  CC="$PTHREAD_CC"
+  CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
+  LIBS="$LIBS $PTHREAD_LIBS"
+])
 
 dnl
 dnl  AC_USUAL_TLS:  --with-openssl [ / --with-gnutls ? ]
