@@ -98,6 +98,12 @@ static const char *xdel(struct SHList *list, int v)
 	return xshow(list);
 }
 
+#if (defined __GNUC__) && (__GNUC__ >= 12)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Warray-bounds"
+#pragma GCC diagnostic ignored "-Wstringop-overread"
+#endif
+
 static void test_shlist(void *p)
 {
 	struct SHList rlist, *list = &rlist;
@@ -141,6 +147,9 @@ static void test_shlist(void *p)
 	int_check(shlist_empty(list), 1);
 end:;
 }
+#if (defined __GNUC__) && (__GNUC__ >= 12)
+#pragma GCC diagnostic pop
+#endif
 
 static void test_shlist_remove(void *p)
 {

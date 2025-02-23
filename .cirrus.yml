@@ -37,12 +37,6 @@ task:
     - container:
         image: ubuntu:22.04
     - container:
-        image: ubuntu:18.04
-    - container:
-        image: ubuntu:16.04
-    - container:
-        image: ubuntu:14.04
-    - container:
         image: debian:stable
     - container:
         image: debian:oldstable
@@ -72,7 +66,6 @@ task:
     matrix:
       - image: rockylinux:9
       - image: rockylinux:8
-      - image: centos:centos7
   setup_script:
     - yum -y install autoconf automake diffutils file libevent-devel libtool make openssl-devel pkg-config
   build_script:
@@ -112,7 +105,7 @@ task:
 task:
   name: FreeBSD
   freebsd_instance:
-    image_family: freebsd-13-2
+    image_family: freebsd-14-2
   setup_script:
     - pkg install -y autoconf automake gmake libevent libtool pkgconf
   env:

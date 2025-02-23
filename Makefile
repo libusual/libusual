@@ -157,20 +157,14 @@ dox:
 
 PG_CONFIG ?= pg_config
 KWLIST = $(shell $(PG_CONFIG) --includedir-server)/parser/kwlist.h
-GPERF = gperf -m5
 
 # requires 8.4+
 kws:
 	@test -f "$(KWLIST)" || { echo "kwlist.h not found"; exit 1; }
-	grep '^PG_KEYWORD' "$(KWLIST)" \
-	| grep -v UNRESERVED \
-	| sed 's/.*"\(.*\)",.*, *\(.*\)[)].*/\1/' \
-	>> usual/pgutil_kwlookup.gp
+	./mk/gen-pgutil_kwlookup_gp.sh "$(KWLIST)" >> usual/pgutil_kwlookup.gp
 
-kwh:
-	$(GPERF) usual/pgutil_kwlookup.g \
-	| sed '/^#line/d' \
-	> usual/pgutil_kwlookup.h
+kwh: usual/pgutil_kwlookup.g
+	./mk/gen-pgutil_kwlookup_h.sh $^ > usual/pgutil_kwlookup.h
 
 sizes: all
 	size `find .objs -name '.libs' -prune -o -name '*.o' -print | sort`

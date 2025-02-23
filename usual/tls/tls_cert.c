@@ -329,7 +329,7 @@ tls_cert_get_altnames(struct tls *ctx, struct tls_cert *cert, X509 *x509_cert)
 		goto out;
 	}
 
-	cert->subject_alt_names = calloc(sizeof (struct tls_cert_general_name), count);
+	cert->subject_alt_names = calloc(count, sizeof(struct tls_cert_general_name));
 	if (cert->subject_alt_names == NULL) {
 		tls_set_error(ctx, "calloc");
 		goto out;
@@ -588,7 +588,7 @@ tls_parse_cert(struct tls *ctx, struct tls_cert **cert_p, const char *fingerprin
 		return -1;
 	}
 
-	cert = calloc(sizeof *cert, 1);
+	cert = calloc(1, sizeof(*cert));
 	if (!cert) {
 		tls_set_error(ctx, "calloc");
 		goto failed;
