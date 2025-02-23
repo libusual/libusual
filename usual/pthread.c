@@ -94,7 +94,7 @@ int compat_pthread_key_create(pthread_key_t *key, void (*destructor)(void*))
 {
 	if (!key) return EINVAL;
 	*key = TlsAlloc();
-    return (*key == TLS_OUT_OF_INDEXES) ? EINVAL : 0;
+	return (*key == TLS_OUT_OF_INDEXES) ? EINVAL : 0;
 }
 
 int compat_pthread_key_delete(pthread_key_t key)
