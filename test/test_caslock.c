@@ -1,5 +1,5 @@
-#include <usual/caslock.h>
 #include <usual/pthread.h>
+#include <usual/caslock.h>
 #include "test_common.h"
 
 /*

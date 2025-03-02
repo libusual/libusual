@@ -1,5 +1,5 @@
-#include <usual/caslock.h>
 #include <usual/logging.h>
+#include <usual/caslock.h>
 
 #define CAS_LOCK_UNLOCKED 0
 #define CAS_LOCK_LOCKED 1
