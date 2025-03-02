@@ -23,6 +23,5 @@ typedef struct {
 void cas_lock_init(CasLock *lock);
 void cas_lock_acquire(CasLock *lock);
 void cas_lock_release(CasLock *lock);
-void cas_lock_destroy(CasLock *lock);
 
 #endif /* _CAS_LOCK_H_ */

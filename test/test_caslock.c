@@ -23,7 +23,7 @@ end:;
  * Multithreading stress test
  */
 #define NUM_THREADS 10
-#define NUM_ITERATIONS 1000
+#define NUM_ITERATIONS 10000
 
 static CasLock shared_lock;
 static int shared_counter = 0;
