@@ -36,24 +36,28 @@
 #define pthread_mutex_lock(a)		compat_pthread_mutex_lock(a)
 #define pthread_mutex_unlock(a)		compat_pthread_mutex_unlock(a)
 #define pthread_join(a,b)		compat_pthread_join(a,b)
-#define pthread_once(a,b)		compat_pthread_once(a,b)
+#define pthread_key_create(a,b)     compat_pthread_key_create(a,b)
+#define pthread_key_delete(a)       compat_pthread_key_delete(a)
+#define pthread_getspecific(a)      compat_pthread_getspecific(a)
+#define pthread_setspecific(a,b)    compat_pthread_setspecific(a,b)
 
 typedef HANDLE pthread_t;
 typedef HANDLE pthread_mutex_t;
 typedef int pthread_attr_t;
+typedef DWORD pthread_key_t;
 
-int pthread_create(pthread_t *t, pthread_attr_t *attr, void *(*fn)(void *), void *arg);
-int pthread_mutex_init(pthread_mutex_t *lock, void *unused);
-int pthread_mutex_destroy(pthread_mutex_t *lock);
-int pthread_mutex_lock(pthread_mutex_t *lock);
-int pthread_mutex_unlock(pthread_mutex_t *lock);
-int pthread_join(pthread_t *t, void **ret);
+int compat_pthread_create(pthread_t *t, pthread_attr_t *attr, void *(*fn)(void *), void *arg);
+int compat_pthread_mutex_init(pthread_mutex_t *lock, void *unused);
+int compat_pthread_mutex_destroy(pthread_mutex_t *lock);
+int compat_pthread_mutex_lock(pthread_mutex_t *lock);
+int compat_pthread_mutex_unlock(pthread_mutex_t *lock);
+int compat_pthread_join(pthread_t *t, void **ret);
+int compat_pthread_key_create(pthread_key_t *key, void (*destructor)(void*));
+int compat_pthread_key_delete(pthread_key_t key);
+void* compat_pthread_getspecific(pthread_key_t key);
+int compat_pthread_setspecific(pthread_key_t key, const void *value);
 
-#ifdef INIT_ONCE_STATIC_INIT
-#define PTHREAD_ONCE_INIT INIT_ONCE_STATIC_INIT
-typedef INIT_ONCE pthread_once_t;
-int pthread_once(pthread_once_t *once, void (*once_func)(void));
-#endif
+
 
 #endif /* WIN32 */
 

@@ -46,6 +46,7 @@ extern struct testcase_t mdict_tests[];
 extern struct testcase_t netdb_tests[];
 extern struct testcase_t pgutil_tests[];
 extern struct testcase_t psrandom_tests[];
+extern struct testcase_t pthread_tests[];
 extern struct testcase_t regex_tests[];
 extern struct testcase_t shlist_tests[];
 extern struct testcase_t socket_tests[];
