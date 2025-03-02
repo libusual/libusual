@@ -1,5 +1,6 @@
 #include <usual/aatree.h>
 #include <usual/base.h>
+#include <usual/caslock.h>
 #include <usual/cbtree.h>
 #include <usual/cfparser.h>
 #include <usual/hashing/crc32.h>
