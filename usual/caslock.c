@@ -3,7 +3,6 @@
 
 #define CAS_LOCK_UNLOCKED 0
 #define CAS_LOCK_LOCKED 1
-#define CAS_LOCK_UNINITIALIZED 0
 #define CAS_LOCK_INITIALIZED 1
 
 void cas_lock_init(CasLock *lock) {
@@ -53,8 +52,4 @@ void cas_lock_release(CasLock *lock) {
 #else
     __sync_bool_compare_and_swap(&lock->lock, CAS_LOCK_LOCKED, CAS_LOCK_UNLOCKED);
 #endif
-}
-
-void cas_lock_destroy(CasLock *lock) {
-    // No cleanup required
 }
