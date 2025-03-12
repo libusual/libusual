@@ -214,4 +214,6 @@ int asprintf(char **dst_p, const char *fmt, ...) _PRINTF(2, 3);
 int vasprintf(char **dst_p, const char *fmt, va_list ap) _PRINTF(2, 0);
 #endif
 
+bool strcmpeq(const char *str_left, const char *str_right);
+
 #endif

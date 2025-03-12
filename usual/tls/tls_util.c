@@ -201,10 +201,10 @@ tls_get_connection_info(struct tls *ctx, char *buf, size_t buflen)
 			if (ok) {
 				int pk_type = EVP_PKEY_id(pk);
 				if (pk_type == EVP_PKEY_DH) {
-					DH *dh = EVP_PKEY_get0(pk);
+					const DH *dh = EVP_PKEY_get0_DH(pk);
 					used_dh_bits = DH_size(dh) * 8;
 				} else if (pk_type == EVP_PKEY_EC) {
-					EC_KEY *ecdh = EVP_PKEY_get0(pk);
+					const EC_KEY *ecdh = EVP_PKEY_get0_EC_KEY(pk);
 					const EC_GROUP *eg = EC_KEY_get0_group(ecdh);
 					used_ecdh_nid = EC_GROUP_get_curve_name(eg);
 				}

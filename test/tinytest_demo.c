@@ -158,8 +158,7 @@ test_memcpy(void *ptr)
 
  end:
 	/* This time our end block has something to do. */
-	if (mem)
-		free(mem);
+	free(mem);
 }
 
 /* ============================================================ */
@@ -189,7 +188,7 @@ struct testgroup_t groups[] = {
 	/* Every group has a 'prefix', and an array of tests.  That's it. */
 	{ "demo/", demo_tests },
 
-        END_OF_GROUPS
+	END_OF_GROUPS
 };
 
 

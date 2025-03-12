@@ -52,8 +52,8 @@ static void free_worker(struct Worker *w)
 		return;
 	if (event_initialized(&w->ev))
 		event_del(&w->ev);
-	tls_free(w->ctx);
-	tls_free(w->base);
+	usual_tls_free(w->ctx);
+	usual_tls_free(w->base);
 	tls_config_free(w->config);
 	if (w->socket > 0)
 		close(w->socket);
@@ -318,7 +318,7 @@ static void worker_cb(evutil_socket_t fd, short flags, void *arg)
 			res = tls_close(w->ctx);
 		}
 		if (res == 0) {
-			tls_free(w->ctx);
+			usual_tls_free(w->ctx);
 			w->ctx = NULL;
 		} else if (res == TLS_WANT_POLLIN) {
 			wait_for_event(w, EV_READ);
@@ -326,7 +326,7 @@ static void worker_cb(evutil_socket_t fd, short flags, void *arg)
 			wait_for_event(w, EV_WRITE);
 		} else {
 			add_error(w, "close error: res=%d err=%s", res, tls_error(w->ctx));
-			tls_free(w->ctx);
+			usual_tls_free(w->ctx);
 			w->ctx = NULL;
 		}
 	}
@@ -594,6 +594,59 @@ end:
 #define COMPLEX1 "key=ssl/ca1_complex1.key", "cert=ssl/ca1_complex1.crt"
 #define COMPLEX2 "key=ssl/ca2_complex2.key", "cert=ssl/ca2_complex2.crt"
 
+static void test_tls_config_equal(void *z)
+{
+	struct Worker *server = NULL;
+	struct Worker *server_unchanged = NULL;
+	struct Worker *server_changed = NULL;
+
+	str_check(create_worker(&server, true, SERVER1, NULL), "OK");
+	str_check(create_worker(&server_unchanged, true, SERVER1, NULL), "OK");
+	str_check(create_worker(&server_changed, true, SERVER2, NULL), "OK");
+
+	tt_assert(tls_config_equal(server->config, server_unchanged->config) == true);
+	tt_assert(tls_config_equal(server->config, server_changed->config) == false);
+end:;
+}
+
+static void test_tls_keypair_list_equal(void *z)
+{
+	struct tls_keypair *kp1a, *kp1b, *kp2a, *kp2b;
+	kp1a = tls_keypair_new();
+	kp1b = tls_keypair_new();
+	kp2a = tls_keypair_new();
+	kp2b = tls_keypair_new();
+
+	kp1a->next = kp1b;
+	kp2a->next = kp2b;
+
+	tls_keypair_set_cert_file(kp1a, "ssl/ca1_server1.crt");
+	tls_keypair_set_cert_file(kp1b, "ssl/ca1_server2.crt");
+	tls_keypair_set_cert_file(kp2a, "ssl/ca1_server1.crt");
+	tls_keypair_set_cert_file(kp2b, "ssl/different_ca1_server2.crt");
+
+	tt_assert(tls_keypair_list_equal(kp1a, kp2a) == false);
+end:;
+}
+
+static void test_tls_keypair_list_length(void *z)
+{
+	struct tls_keypair *kp1a, *kp1b, *kp2a;
+	kp1a = tls_keypair_new();
+	kp1b = tls_keypair_new();
+	kp2a = tls_keypair_new();
+
+  /* this keypair list is one keypair longer */
+	kp1a->next = kp1b;
+
+	tls_keypair_set_cert_file(kp1a, "ssl/ca1_server1.crt");
+	tls_keypair_set_cert_file(kp1b, "ssl/ca1_server2.crt");
+	tls_keypair_set_cert_file(kp2a, "ssl/ca1_server1.crt");
+
+	tt_assert(tls_keypair_list_equal(kp1a, kp2a) == false);
+end:;
+}
+
 static void test_verify(void *z)
 {
 	struct Worker *server = NULL, *client = NULL;
@@ -725,7 +778,7 @@ static void test_clientcert(void *z)
 				"verify-client=1",
 				NULL), "OK");
 	str_check(create_worker(&client, false, CA1, "host=server1.com", NULL), "OK");
-	str_check(run_case(client, server), "C:sslv3 alert handshake failure - S:peer did not return a certificate");
+	str_contains_check(run_case(client, server), "alert handshake failure - S:peer did not return a certificate");
 
 	/* verify-client-optional: allow client without cert */
 	str_check(create_worker(&server, true, SERVER1, CA2,
@@ -762,8 +815,8 @@ static void test_fingerprint(void *z)
 		"peer-sha256=ssl/ca2_client2.crt.sha256",
 		NULL), "OK");
 	str_check(create_worker(&client, false, CA1, "host=server1.com", NULL), "OK");
-	str_check(run_case(client, server),
-		 "C:sslv3 alert handshake failure - S:peer did not return a certificate");
+	str_contains_check(run_case(client, server),
+		 " alert handshake failure - S:peer did not return a certificate");
 end:;
 }
 
@@ -930,8 +983,7 @@ static const char *do_verify(const char *hostname, const char *commonName, ...)
 	va_end(ap);
 
 	ret = tls_check_servername(&ctx, &cert, hostname);
-	if (ctx.errmsg)
-		free(ctx.errmsg);
+	free(ctx.errmsg);
 	if (ret == 0)
 		return "OK";
 	if (ret == -1)
@@ -1008,10 +1060,10 @@ static const char *run_time(const char *val)
 	err = tls_asn1_parse_time(ctx, &tmp, &t);
 	if (err) {
 		strlcpy(buf, tls_error(ctx), sizeof buf);
-		tls_free(ctx);
+		usual_tls_free(ctx);
 		return buf;
 	}
-	tls_free(ctx);
+	usual_tls_free(ctx);
 
 	tm = gmtime(&t);
 	if (!tm)
@@ -1049,6 +1101,9 @@ struct testcase_t tls_tests[] = {
 	{ "set-mem", test_set_mem },
 	{ "cipher-nego", test_cipher_nego },
 	{ "cert-info", test_cert_info },
+	{ "tls_config_equal", test_tls_config_equal },
+	{ "tls_keypair_list_equal", test_tls_keypair_list_equal },
+	{ "tls_keypair_list_length", test_tls_keypair_list_length },
 	END_OF_TESTCASES,
 	{ "servername", test_servername },
 };

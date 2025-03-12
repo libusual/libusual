@@ -25,41 +25,6 @@
 
 #define _PATH_SSL_CA_FILE USUAL_TLS_CA_FILE
 
-/*
- * Anything that is not completely broken.
- *
- * Also fixes 3DES ordering bug in older OpenSSLs.
- */
-#define TLS_CIPHERS_COMPAT	"HIGH:+3DES:!aNULL"
-
-/*
- * All==insecure.
- */
-#define TLS_CIPHERS_ALL		"ALL:!aNULL:!eNULL"
-
-/*
- * TLSv1.2+AEAD+ECDHE/DHE.  CBC modes are dubious due to spec bugs in TLS.
- */
-#define TLS_CIPHERS_DEFAULT	"HIGH+EECDH:HIGH+EDH:!SSLv3:!SHA384:!SHA256:!DSS:!aNULL"
-
-/*
- * Compact subset of reasonable suites only.
- *
- * Priorities, in order:
- * - ECDHE > DHE > RSA
- * - AESGCM > CBC
- * - TLSv1.2 > TLSv1.0
- * - AES256 > AES128.
- */
-#define TLS_CIPHERS_NORMAL	"HIGH+EECDH:HIGH+EDH:HIGH+RSA:+SHA384:+SHA256:+SSLv3:+EDH:+RSA:-3DES:3DES+RSA:!CAMELLIA:!DSS:!aNULL"
-
-/*
- * Prefer performance if it does not affect security.
- *
- * Same as "normal" but prefers AES128 to AES256.
- */
-#define TLS_CIPHERS_FAST	"HIGH+EECDH:HIGH+EDH:HIGH+RSA:+AES256:+SHA256:+SHA384:+SSLv3:+EDH:+RSA:-3DES:3DES+RSA:!CAMELLIA:!DSS:!aNULL"
-
 union tls_addr {
 	struct in_addr ip4;
 	struct in6_addr ip6;
@@ -210,5 +175,9 @@ void tls_ocsp_info_free(struct tls_ocsp_info *info);
 int tls_asn1_parse_time(struct tls *ctx, const ASN1_TIME *asn1time, time_t *dst);
 
 int asn1_time_parse(const char *, size_t, struct tm *, int);
+
+struct tls_keypair * tls_keypair_new(void);
+int tls_keypair_set_cert_file(struct tls_keypair *keypair, const char *cert_file);
+bool tls_keypair_list_equal(struct tls_keypair *tkp1, struct tls_keypair *tkp2);
 
 #endif /* HEADER_TLS_INTERNAL_H */

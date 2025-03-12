@@ -68,7 +68,7 @@ tls_connect_servername(struct tls *ctx, const char *host, const char *port,
 	 * If port is NULL try to extract a port from the specified host,
 	 * otherwise use the default.
 	 */
-	if ((p = (char *)port) == NULL) {
+	if (port == NULL) {
 		ret = tls_host_port(host, &hs, &ps);
 		if (ret == -1) {
 			tls_set_errorx(ctx, "memory allocation failure");

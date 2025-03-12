@@ -36,6 +36,7 @@ void *load_file(const char *fn, size_t *len_p)
 	char *buf = NULL;
 	int res;
 	FILE *f;
+	int save_errno;
 
 	f = fopen(fn, "r");
 	if (!f)
@@ -43,19 +44,25 @@ void *load_file(const char *fn, size_t *len_p)
 
 	res = fstat(fileno(f), &st);
 	if (res < 0) {
+		save_errno = errno;
 		fclose(f);
+		errno = save_errno;
 		return NULL;
 	}
 
 	buf = malloc(st.st_size + 1);
 	if (!buf) {
+		save_errno = errno;
 		fclose(f);
+		errno = save_errno;
 		return NULL;
 	}
 
 	if ((res = fread(buf, 1, st.st_size, f)) < 0) {
+		save_errno = errno;
 		free(buf);
 		fclose(f);
+		errno = save_errno;
 		return NULL;
 	}
 

@@ -190,7 +190,12 @@ loop:
 	if (res < 0)
 		log_noise("safe_accept(%d) = %s", fd,
 			  strerror_r(errno, ebuf, sizeof(ebuf)));
-	else if (cf_verbose > 2)
-		log_noise("safe_accept(%d) = %d (%s)", fd, res, sa2str(sa, buf, sizeof(buf)));
+	else if (cf_verbose > 2) {
+		if (sa->sa_family == AF_UNIX)
+			/* sa2str() won't work here since accept() doesn't set sun_path */
+			log_noise("safe_accept(%d) = %d (unix)", fd, res);
+		else
+			log_noise("safe_accept(%d) = %d (%s)", fd, res, sa2str(sa, buf, sizeof(buf)));
+	}
 	return res;
 }

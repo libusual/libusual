@@ -27,7 +27,7 @@ AUTOHEADER=${AUTOHEADER:-autoheader}
 
 if test "$AUTOCONF_VERSION" = ""; then
   if test "$AUTOCONF" = "autoconf"; then
-    for ac in 70 69 68 67 66 65 64 63 62 61 60 59; do
+    for ac in 75 74 73 72 71 70 69 68 67 66 65 64 63 62 61 60 59; do
       ac="2.$ac"
       if which autoconf-$ac > /dev/null 2>&1; then
         AUTOCONF_VERSION="$ac"
@@ -45,7 +45,7 @@ fi
 
 if test "$AUTOMAKE_VERSION" = ""; then
   if test "$ACLOCAL" = "aclocal"; then
-    for am in 1.16 1.15 1.14 1.13 1.12 1.11 1.10 1.9; do
+    for am in 1.19 1.18 1.17 1.16 1.15 1.14 1.13 1.12 1.11 1.10 1.9; do
       if which aclocal-$am > /dev/null 2>&1; then
         AUTOMAKE_VERSION="$am"
         echo "Using aclocal: $AUTOMAKE_VERSION"

@@ -53,8 +53,10 @@ static bool parse_ini_file_internal(const char *fn, cf_handler_f user_handler, v
 	bool ok;
 
 	buf = load_file(fn, NULL);
-	if (buf == NULL)
+	if (buf == NULL) {
+		log_error("could not load file \"%s\": %s", fn, strerror(errno));
 		return false;
+	}
 
 	p = buf;
 	while (*p) {
@@ -87,8 +89,10 @@ static bool parse_ini_file_internal(const char *fn, cf_handler_f user_handler, v
 			log_debug("processing include: %s", val);
 			ok = parse_ini_file_internal(val, user_handler, arg, inclevel + 1);
 			val[vlen] = o1;
-			if (!ok)
+			if (!ok) {
+				log_error("error processing include file in configuration (%s:%d), stopping loading", fn, count_lines(buf, p));
 				goto failed;
+			}
 			log_debug("returned to processing file %s", fn);
 			continue;
 		}
@@ -123,9 +127,22 @@ static bool parse_ini_file_internal(const char *fn, cf_handler_f user_handler, v
 			break;
 
 		/* read key val */
-		key = p;
-		while (*p && (isalnum(*p) || strchr("_.-*", *p))) p++;
-		klen = p - key;
+		if (*p && *p == '\''){
+			key = ++p;
+			while (*p && *p != '\'') p++;
+			if (*p != '\''){
+				goto syntax_error;
+			} else{
+				klen = p - key;
+				if (klen <= 0)
+					goto syntax_error;
+				p++;
+			}
+		} else {
+			key = p;
+			while (*p && (isalnum(*p) || strchr("_.-*", *p))) p++;
+			klen = p - key;
+		}
 
 		/* expect '=', skip it */
 		while (*p && (*p == ' ' || *p == '\t')) p++;
@@ -365,8 +382,7 @@ static bool load_handler(void *arg, bool is_sect, const char *key, const char *v
 	struct LoaderCtx *ctx = arg;
 
 	if (is_sect) {
-		if (ctx->cur_sect)
-			free(ctx->cur_sect);
+		free(ctx->cur_sect);
 		ctx->cur_sect = strdup(key);
 		if (!ctx->cur_sect)
 			return false;
@@ -387,8 +403,7 @@ bool cf_load_file(const struct CfContext *cf, const char *fn)
 	ctx.cf = cf;
 
 	ok = parse_ini_file(fn, load_handler, &ctx);
-	if (ctx.cur_sect)
-		free(ctx.cur_sect);
+	free(ctx.cur_sect);
 	if (ok && !ctx.got_main_sect) {
 		log_error("load_init_file: main section missing from config file");
 		return false;
@@ -445,8 +460,7 @@ bool cf_set_str(struct CfValue *cv, const char *value)
 		log_error("cf_set_str: no mem");
 		return false;
 	}
-	if (*dst_p)
-		free(*dst_p);
+	free(*dst_p);
 	*dst_p = tmp;
 	return true;
 }
@@ -502,8 +516,7 @@ bool cf_set_filename(struct CfValue *cv, const char *value)
 
 	log_debug("expanded '%s' -> '%s'", value, tmp);
 
-	if (*dst_p)
-		free(*dst_p);
+	free(*dst_p);
 	*dst_p = tmp;
 	return true;
 fail:

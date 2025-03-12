@@ -18,6 +18,7 @@ struct Config2 {
 	char *def2;
 	double time_double;
 	usec_t time_usec;
+	char *value2;
 };
 
 static struct Config1 cf1;
@@ -46,6 +47,7 @@ static const struct CfKey keys2 [] = {
 	CF_ABS("def2", CF_STR, cf2.def2, 0, "somedefault"),
 	CF_ABS("time1", CF_TIME_USEC, cf2.time_usec, 0, NULL),
 	CF_ABS("time2", CF_TIME_DOUBLE, cf2.time_double, 0, NULL),
+	CF_ABS("test key", CF_STR, cf2.value2, 0, NULL),
 	{ NULL },
 };
 
@@ -104,6 +106,7 @@ static const struct CfKey rkeys2 [] = {
 	CF_REL("def2", CF_STR, def2, 0, "somedefault"),
 	CF_REL("time1", CF_TIME_USEC, time_usec, 0, NULL),
 	CF_REL("time2", CF_TIME_DOUBLE, time_double, 0, NULL),
+	CF_REL("test key", CF_STR, value2, 0, NULL),
 	{ NULL },
 };
 #undef CF_REL_BASE
