@@ -1,5 +1,6 @@
 #include <usual/aatree.h>
 #include <usual/base.h>
+#include <usual/caslock.h>
 #include <usual/cbtree.h>
 #include <usual/cfparser.h>
 #include <usual/hashing/crc32.h>
@@ -23,6 +24,7 @@
 #include <usual/slab.h>
 #include <usual/socket.h>
 #include <usual/statlist.h>
+#include <usual/statlist_ts.h>
 #include <usual/string.h>
 #include <usual/tls/tls.h>
 #include <usual/time.h>

@@ -9,6 +9,7 @@ regtest_system_SOURCES = \
 	test_aatree.c \
 	test_base.c \
 	test_bits.c \
+	test_caslock.c \
 	test_cbtree.c \
 	test_cfparser.c \
 	test_crypto.c \
@@ -31,6 +32,7 @@ regtest_system_SOURCES = \
 	test_regex.c \
 	test_shlist.c \
 	test_socket.c \
+	test_statlist_ts.c \
 	test_string.c \
 	test_strpool.c \
 	test_talloc.c \
