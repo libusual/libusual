@@ -9,7 +9,7 @@ regtest_system_SOURCES = \
 	test_aatree.c \
 	test_base.c \
 	test_bits.c \
-	test_caslock.c \
+	test_spinlock.c \
 	test_cbtree.c \
 	test_cfparser.c \
 	test_crypto.c \
