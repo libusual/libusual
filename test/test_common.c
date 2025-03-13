@@ -11,7 +11,7 @@ struct testgroup_t groups[] = {
 	{ "aatree/", aatree_tests },
 	{ "base/", base_tests },
 	{ "bits/", bits_tests },
-	{ "caslock/", caslock_tests },
+	{ "spinlock/", spinlock_tests },
 	{ "cbtree/", cbtree_tests },
 	{ "cfparser/", cfparser_tests },
 	{ "crypto/", crypto_tests },
