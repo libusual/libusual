@@ -127,9 +127,22 @@ static bool parse_ini_file_internal(const char *fn, cf_handler_f user_handler, v
 			break;
 
 		/* read key val */
-		key = p;
-		while (*p && (isalnum(*p) || strchr("_.-*", *p))) p++;
-		klen = p - key;
+		if (*p && *p == '\''){
+			key = ++p;
+			while (*p && *p != '\'') p++;
+			if (*p != '\''){
+				goto syntax_error;
+			} else{
+				klen = p - key;
+				if (klen <= 0)
+					goto syntax_error;
+				p++;
+			}
+		} else {
+			key = p;
+			while (*p && (isalnum(*p) || strchr("_.-*", *p))) p++;
+			klen = p - key;
+		}
 
 		/* expect '=', skip it */
 		while (*p && (*p == ' ' || *p == '\t')) p++;
