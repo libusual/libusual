@@ -142,4 +142,7 @@
 	tt_assert_test_type(a,b,#a" "#op" "#b,const char *,		\
 			    (strcmp(_val1,_val2) op 0),"<%s>")
 
+#define tt_str_contains_op(a,op,b)						\
+	tt_assert_test_type(a,b,#a" "#op" "#b,const char *,		\
+			    (strstr(_val1,_val2) != NULL),"<%s>")
 #endif

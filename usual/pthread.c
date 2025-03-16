@@ -38,7 +38,7 @@ static DWORD WINAPI w32launcher(LPVOID arg)
 	return 0;
 }
 
-int pthread_create(pthread_t *t, pthread_attr_t *attr, void *(*fn)(void *), void *arg)
+int compat_pthread_create(pthread_t *t, pthread_attr_t *attr, void *(*fn)(void *), void *arg)
 {
 	struct _w32thread *info = calloc(1, sizeof(*info));
 	if (!info)
@@ -51,7 +51,7 @@ int pthread_create(pthread_t *t, pthread_attr_t *attr, void *(*fn)(void *), void
 	return 0;
 }
 
-int pthread_join(pthread_t *t, void **ret)
+int compat_pthread_join(pthread_t *t, void **ret)
 {
 	if (WaitForSingleObject(*t, INFINITE) != WAIT_OBJECT_0)
 		return -1;
@@ -59,7 +59,7 @@ int pthread_join(pthread_t *t, void **ret)
 	return 0;
 }
 
-int pthread_mutex_init(pthread_mutex_t *lock, void *unused)
+int compat_pthread_mutex_init(pthread_mutex_t *lock, void *unused)
 {
 	*lock = CreateMutex(NULL, FALSE, NULL);
 	if (*lock == NULL)
@@ -67,7 +67,7 @@ int pthread_mutex_init(pthread_mutex_t *lock, void *unused)
 	return 0;
 }
 
-int pthread_mutex_destroy(pthread_mutex_t *lock)
+int compat_pthread_mutex_destroy(pthread_mutex_t *lock)
 {
 	if (*lock) {
 		CloseHandle(*lock);
@@ -76,37 +76,42 @@ int pthread_mutex_destroy(pthread_mutex_t *lock)
 	return 0;
 }
 
-int pthread_mutex_lock(pthread_mutex_t *lock)
+int compat_pthread_mutex_lock(pthread_mutex_t *lock)
 {
 	if (WaitForSingleObject(*lock, INFINITE) != WAIT_OBJECT_0)
 		return -1;
 	return 0;
 }
 
-int pthread_mutex_unlock(pthread_mutex_t *lock)
+int compat_pthread_mutex_unlock(pthread_mutex_t *lock)
 {
 	if (!ReleaseMutex(*lock))
 		return -1;
 	return 0;
 }
 
-#ifdef INIT_ONCE_STATIC_INIT
-
-typedef void (*once_posix_cb_t)(void);
-
-static BOOL once_wrapper(PINIT_ONCE once, void *arg, void **ctx)
+int compat_pthread_key_create(pthread_key_t *key, void (*destructor)(void*))
 {
-	once_posix_cb_t cb = arg;
-	arg();
-	return TRUE;
+	if (!key) return EINVAL;
+	*key = TlsAlloc();
+	return (*key == TLS_OUT_OF_INDEXES) ? EINVAL : 0;
 }
 
-int pthread_once(pthread_once_t *once, void (*once_func)(void))
+int compat_pthread_key_delete(pthread_key_t key)
 {
-	return InitOnceExecuteOnce(once, once_wrapper, once_func, NULL) ? 0 : -1;
+	return FlsFree(key) == true ? 0 : EINVAL;
 }
 
-#endif
+void* compat_pthread_getspecific(pthread_key_t key)
+{
+	return TlsGetValue(key);
+}
+
+int compat_pthread_setspecific(pthread_key_t key, const void *value)
+{
+	return TlsSetValue(key, (LPVOID)value) ? 0 : EINVAL;
+}
+
 
 
 #endif /* win32 */

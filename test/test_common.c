@@ -29,6 +29,7 @@ struct testgroup_t groups[] = {
 	{ "netdb/", netdb_tests },
 	{ "pgutil/", pgutil_tests },
 	{ "psrandom/", psrandom_tests },
+	{ "pthread/", pthread_tests },
 	{ "regex/", regex_tests },
 	{ "shlist/", shlist_tests },
 	{ "socket/", socket_tests },

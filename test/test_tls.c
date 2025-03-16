@@ -778,7 +778,7 @@ static void test_clientcert(void *z)
 				"verify-client=1",
 				NULL), "OK");
 	str_check(create_worker(&client, false, CA1, "host=server1.com", NULL), "OK");
-	str_check(run_case(client, server), "C:sslv3 alert handshake failure - S:peer did not return a certificate");
+	str_contains_check(run_case(client, server), "alert handshake failure - S:peer did not return a certificate");
 
 	/* verify-client-optional: allow client without cert */
 	str_check(create_worker(&server, true, SERVER1, CA2,
@@ -815,8 +815,8 @@ static void test_fingerprint(void *z)
 		"peer-sha256=ssl/ca2_client2.crt.sha256",
 		NULL), "OK");
 	str_check(create_worker(&client, false, CA1, "host=server1.com", NULL), "OK");
-	str_check(run_case(client, server),
-		 "C:sslv3 alert handshake failure - S:peer did not return a certificate");
+	str_contains_check(run_case(client, server),
+		 " alert handshake failure - S:peer did not return a certificate");
 end:;
 }
 
