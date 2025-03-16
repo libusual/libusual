@@ -52,7 +52,6 @@ static void *thread_worker(void *arg) {
         if (!node) continue;
         list_init(node);
         thread_safe_statlist_append(&ts_list, node);
-        usleep(rand() % 1000);  // Simulate work
         popped_node = thread_safe_statlist_pop(&ts_list);
         if (popped_node) free(popped_node);
     }
