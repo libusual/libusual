@@ -35,7 +35,6 @@ static void *thread_worker(void *arg) {
     struct ThreadSafeSlab *ts_slab = (struct ThreadSafeSlab *)arg;
     for (int i = 0; i < NUM_ALLOCATIONS; i++) {
         void *obj = thread_safe_slab_alloc(ts_slab);
-        usleep(rand() % 1000);
         thread_safe_slab_free(ts_slab, obj);
     }
     return NULL;

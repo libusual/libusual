@@ -2,11 +2,17 @@
 #include <usual/slab.h>
 #include <usual/spinlock.h>
 
+/*
+ * Thread-safe wrapper for the primitive slab allocator.
+ */
 struct ThreadSafeSlab {
     struct Slab *slab;
     SpinLock lock;
 };
 
+/*
+ * Create a new thread-safe slab allocator.
+ */
 struct ThreadSafeSlab *thread_safe_slab_create(const char *name, unsigned obj_size, unsigned align,
                                                slab_init_fn init_func, CxMem *cx) {
     struct ThreadSafeSlab *ts_slab;
@@ -25,6 +31,9 @@ struct ThreadSafeSlab *thread_safe_slab_create(const char *name, unsigned obj_si
     return ts_slab;
 }
 
+/*
+ * Destroy a thread-safe slab allocator and free all associated memory.
+ */
 void thread_safe_slab_destroy(struct ThreadSafeSlab *ts_slab) {
     if (!ts_slab)
         return;
@@ -33,6 +42,9 @@ void thread_safe_slab_destroy(struct ThreadSafeSlab *ts_slab) {
     spin_lock_release(&ts_slab->lock);
 }
 
+/*
+ * Allocate one object from the slab.
+ */
 void *thread_safe_slab_alloc(struct ThreadSafeSlab *ts_slab) {
     void *obj;
     spin_lock_acquire(&ts_slab->lock);
@@ -41,12 +53,18 @@ void *thread_safe_slab_alloc(struct ThreadSafeSlab *ts_slab) {
     return obj;
 }
 
+/*
+ * Return object back to the slab.
+ */
 void thread_safe_slab_free(struct ThreadSafeSlab *ts_slab, void *obj) {
     spin_lock_acquire(&ts_slab->lock);
     slab_free(ts_slab->slab, obj);
     spin_lock_release(&ts_slab->lock);
 }
 
+/*
+ * Get total number of objects allocated (capacity), including free and in-use.
+ */
 int thread_safe_slab_total_count(struct ThreadSafeSlab *ts_slab) {
     int count;
     spin_lock_acquire(&ts_slab->lock);
@@ -55,6 +73,9 @@ int thread_safe_slab_total_count(struct ThreadSafeSlab *ts_slab) {
     return count;
 }
 
+/*
+ * Get number of free objects in the slab.
+ */
 int thread_safe_slab_free_count(struct ThreadSafeSlab *ts_slab) {
     int count;
     spin_lock_acquire(&ts_slab->lock);
@@ -63,6 +84,9 @@ int thread_safe_slab_free_count(struct ThreadSafeSlab *ts_slab) {
     return count;
 }
 
+/*
+ * Get number of currently active (in-use) objects.
+ */
 int thread_safe_slab_active_count(struct ThreadSafeSlab *ts_slab) {
     int count;
     spin_lock_acquire(&ts_slab->lock);
@@ -71,6 +95,9 @@ int thread_safe_slab_active_count(struct ThreadSafeSlab *ts_slab) {
     return count;
 }
 
+/*
+ * Report stats for all slabs (global, not per instance).
+ */
 void thread_safe_slab_stats(slab_stat_fn cb_func, void *cb_arg) {
     slab_stats(cb_func, cb_arg);
 }
