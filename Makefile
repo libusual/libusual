@@ -20,7 +20,8 @@ libusual_la_SOURCES = usual/config.h.in \
 	usual/aatree.h usual/aatree.c \
 	usual/base.h usual/base.c usual/base_win32.h \
 	usual/bits.h \
-	usual/spinlock.h usual/spinlock.c usual/cbtree.h usual/cbtree.c \
+	usual/spinlock.h usual/spinlock.c \
+	usual/cbtree.h usual/cbtree.c \
 	usual/cfparser.h usual/cfparser.c \
 	usual/config_msvc.h \
 	usual/crypto/chacha.h usual/crypto/chacha.c \

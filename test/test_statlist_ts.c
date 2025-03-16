@@ -6,13 +6,15 @@
 
 static void test_thread_safe_statlist_simple(void *p) {
     struct ThreadSafeStatList ts_list;
+    struct List node1, node2, node3;
+    struct List *popped_node;
+
     thread_safe_statlist_init(&ts_list, "test_list");
 
     spin_lock_acquire(&ts_list.lock);
     str_check(statlist_count(&ts_list.list) == 0 ? "OK" : "FAIL", "OK");
     spin_lock_release(&ts_list.lock);
-
-    struct List node1, node2, node3;
+    
     list_init(&node1);
     list_init(&node2);
     list_init(&node3);
@@ -25,7 +27,7 @@ static void test_thread_safe_statlist_simple(void *p) {
     str_check(statlist_count(&ts_list.list) == 3 ? "OK" : "FAIL", "OK");
     spin_lock_release(&ts_list.lock);
 
-    struct List *popped_node = thread_safe_statlist_pop(&ts_list);
+    popped_node = thread_safe_statlist_pop(&ts_list);
     tt_assert(popped_node == &node1);
     
     spin_lock_acquire(&ts_list.lock);
@@ -45,22 +47,23 @@ static struct ThreadSafeStatList ts_list;
 
 static void *thread_worker(void *arg) {
     for (int i = 0; i < NUM_ITERATIONS; i++) {
+        struct List *popped_node;
         struct List *node = malloc(sizeof(struct List));
         if (!node) continue;
         list_init(node);
         thread_safe_statlist_append(&ts_list, node);
         usleep(rand() % 1000);  // Simulate work
-        struct List *popped_node = thread_safe_statlist_pop(&ts_list);
+        popped_node = thread_safe_statlist_pop(&ts_list);
         if (popped_node) free(popped_node);
     }
     return NULL;
 }
 
 static void test_thread_safe_statlist_multithreaded(void *p) {
+    pthread_t threads[NUM_THREADS];
     thread_safe_statlist_init(&ts_list, "test_list");
     srand(time(NULL));
 
-    pthread_t threads[NUM_THREADS];
     for (int i = 0; i < NUM_THREADS; i++) {
         pthread_create(&threads[i], NULL, thread_worker, NULL);
     }
@@ -86,9 +89,10 @@ static void count_elements(struct List *item) {
 
 static void test_thread_safe_statlist_iteration(void *p) {
     struct ThreadSafeStatList ts_list;
+    struct List node1, node2, node3;
+
     thread_safe_statlist_init(&ts_list, "test_list_iteration");
     
-    struct List node1, node2, node3;
     list_init(&node1);
     list_init(&node2);
     list_init(&node3);
