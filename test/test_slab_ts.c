@@ -42,10 +42,10 @@ static void *thread_worker(void *arg) {
 }
 
 static void test_slab_multithreaded(void *p) {
+    pthread_t threads[NUM_THREADS];
     struct ThreadSafeSlab *ts_slab = thread_safe_slab_create("test_slab_mt", sizeof(int), 0, NULL, NULL);
     tt_assert(ts_slab != NULL);
 
-    pthread_t threads[NUM_THREADS];
     for (int i = 0; i < NUM_THREADS; i++) {
         pthread_create(&threads[i], NULL, thread_worker, ts_slab);
     }
