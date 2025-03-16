@@ -1,5 +1,5 @@
-#ifndef _CAS_LOCK_H_
-#define _CAS_LOCK_H_
+#ifndef _SPIN_LOCK_H_
+#define _SPIN_LOCK_H_
 
 #ifdef WIN32
     #include <windows.h>
@@ -18,10 +18,10 @@ typedef struct {
     ATOMIC_INT lock;
     THREAD_ID owner;
     int initialized;
-} CasLock;
+} SpinLock;
 
-void cas_lock_init(CasLock *lock);
-void cas_lock_acquire(CasLock *lock);
-void cas_lock_release(CasLock *lock);
+void spin_lock_init(SpinLock *lock);
+void spin_lock_acquire(SpinLock *lock);
+void spin_lock_release(SpinLock *lock);
 
-#endif /* _CAS_LOCK_H_ */
+#endif /* _SPIN_LOCK_H_ */

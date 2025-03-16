@@ -1,19 +1,19 @@
 #include <usual/pthread.h>
-#include <usual/caslock.h>
+#include <usual/spinlock.h>
 #include "test_common.h"
 
 /*
  * Basic acquire and release test
  */
-static void test_cas_lock_basic(void *p)
+static void test_spin_lock_basic(void *p)
 {
-    CasLock lock;
-    cas_lock_init(&lock);
+    SpinLock lock;
+    spin_lock_init(&lock);
 
-    cas_lock_acquire(&lock);
+    spin_lock_acquire(&lock);
     int_check(lock.lock, 1);
 
-    cas_lock_release(&lock);
+    spin_lock_release(&lock);
     int_check(lock.lock, 0);
 
 end:;
@@ -25,23 +25,23 @@ end:;
 #define NUM_THREADS 10
 #define NUM_ITERATIONS 10000
 
-static CasLock shared_lock;
+static SpinLock shared_lock;
 static int shared_counter = 0;
 
 static void *thread_function(void *arg)
 {
     for (int i = 0; i < NUM_ITERATIONS; i++) {
-        cas_lock_acquire(&shared_lock);
+        spin_lock_acquire(&shared_lock);
         shared_counter++;
-        cas_lock_release(&shared_lock);
+        spin_lock_release(&shared_lock);
     }
     return NULL;
 }
 
-static void test_cas_lock_multithreaded(void *p)
+static void test_spin_lock_multithreaded(void *p)
 {
     pthread_t threads[NUM_THREADS];
-    cas_lock_init(&shared_lock);
+    spin_lock_init(&shared_lock);
     shared_counter = 0;
 
     for (int i = 0; i < NUM_THREADS; i++) {
@@ -59,8 +59,8 @@ end:;
 /*
  * Describe test cases
  */
-struct testcase_t caslock_tests[] = {
-    { "basic", test_cas_lock_basic },
-    { "multithread", test_cas_lock_multithreaded },
+struct testcase_t spinlock_tests[] = {
+    { "basic", test_spin_lock_basic },
+    { "multithread", test_spin_lock_multithreaded },
     END_OF_TESTCASES
 };
