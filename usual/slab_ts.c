@@ -1,17 +1,10 @@
-/*
- * Thread-safe wrapper for slab allocator using a single mutex.
- *
- * Based on original slab allocator by Marko Kreen, adapted for multi-threaded use.
- */
-
 #include <usual/slab_ts.h>
-#include <usual/statlist.h>
-
-#ifndef USUAL_FAKE_SLAB
+#include <usual/slab.h>
+#include <usual/spinlock.h>
 
 struct ThreadSafeSlab {
     struct Slab *slab;
-    pthread_mutex_t mutex;
+    SpinLock lock;
 };
 
 struct ThreadSafeSlab *thread_safe_slab_create(const char *name, unsigned obj_size, unsigned align,
@@ -28,60 +21,56 @@ struct ThreadSafeSlab *thread_safe_slab_create(const char *name, unsigned obj_si
         return NULL;
     }
 
-    pthread_mutex_init(&ts_slab->mutex, NULL);
+    spin_lock_init(&ts_slab->lock);
     return ts_slab;
 }
 
 void thread_safe_slab_destroy(struct ThreadSafeSlab *ts_slab) {
     if (!ts_slab)
         return;
-    
-    pthread_mutex_lock(&ts_slab->mutex);
+    spin_lock_acquire(&ts_slab->lock);
     slab_destroy(ts_slab->slab);
-    pthread_mutex_unlock(&ts_slab->mutex);
-    pthread_mutex_destroy(&ts_slab->mutex);
+    spin_lock_release(&ts_slab->lock);
 }
 
 void *thread_safe_slab_alloc(struct ThreadSafeSlab *ts_slab) {
     void *obj;
-    pthread_mutex_lock(&ts_slab->mutex);
+    spin_lock_acquire(&ts_slab->lock);
     obj = slab_alloc(ts_slab->slab);
-    pthread_mutex_unlock(&ts_slab->mutex);
+    spin_lock_release(&ts_slab->lock);
     return obj;
 }
 
 void thread_safe_slab_free(struct ThreadSafeSlab *ts_slab, void *obj) {
-    pthread_mutex_lock(&ts_slab->mutex);
+    spin_lock_acquire(&ts_slab->lock);
     slab_free(ts_slab->slab, obj);
-    pthread_mutex_unlock(&ts_slab->mutex);
+    spin_lock_release(&ts_slab->lock);
 }
 
 int thread_safe_slab_total_count(struct ThreadSafeSlab *ts_slab) {
-    int count;  // ✅ Declare variables at the beginning
-    pthread_mutex_lock(&ts_slab->mutex);
+    int count;
+    spin_lock_acquire(&ts_slab->lock);
     count = slab_total_count(ts_slab->slab);
-    pthread_mutex_unlock(&ts_slab->mutex);
+    spin_lock_release(&ts_slab->lock);
     return count;
 }
 
 int thread_safe_slab_free_count(struct ThreadSafeSlab *ts_slab) {
     int count;
-    pthread_mutex_lock(&ts_slab->mutex);
+    spin_lock_acquire(&ts_slab->lock);
     count = slab_free_count(ts_slab->slab);
-    pthread_mutex_unlock(&ts_slab->mutex);
+    spin_lock_release(&ts_slab->lock);
     return count;
 }
 
 int thread_safe_slab_active_count(struct ThreadSafeSlab *ts_slab) {
     int count;
-    pthread_mutex_lock(&ts_slab->mutex);
+    spin_lock_acquire(&ts_slab->lock);
     count = slab_active_count(ts_slab->slab);
-    pthread_mutex_unlock(&ts_slab->mutex);
+    spin_lock_release(&ts_slab->lock);
     return count;
 }
 
 void thread_safe_slab_stats(slab_stat_fn cb_func, void *cb_arg) {
     slab_stats(cb_func, cb_arg);
 }
-
-#endif
