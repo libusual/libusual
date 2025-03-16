@@ -8,9 +8,9 @@ static void test_thread_safe_statlist_simple(void *p) {
     struct ThreadSafeStatList ts_list;
     thread_safe_statlist_init(&ts_list, "test_list");
 
-    cas_lock_acquire(&ts_list.lock);
+    spin_lock_acquire(&ts_list.lock);
     str_check(statlist_count(&ts_list.list) == 0 ? "OK" : "FAIL", "OK");
-    cas_lock_release(&ts_list.lock);
+    spin_lock_release(&ts_list.lock);
 
     struct List node1, node2, node3;
     list_init(&node1);
@@ -21,16 +21,16 @@ static void test_thread_safe_statlist_simple(void *p) {
     thread_safe_statlist_append(&ts_list, &node2);
     thread_safe_statlist_append(&ts_list, &node3);
     
-    cas_lock_acquire(&ts_list.lock);
+    spin_lock_acquire(&ts_list.lock);
     str_check(statlist_count(&ts_list.list) == 3 ? "OK" : "FAIL", "OK");
-    cas_lock_release(&ts_list.lock);
+    spin_lock_release(&ts_list.lock);
 
     struct List *popped_node = thread_safe_statlist_pop(&ts_list);
     tt_assert(popped_node == &node1);
     
-    cas_lock_acquire(&ts_list.lock);
+    spin_lock_acquire(&ts_list.lock);
     str_check(statlist_count(&ts_list.list) == 2 ? "OK" : "FAIL", "OK");
-    cas_lock_release(&ts_list.lock);
+    spin_lock_release(&ts_list.lock);
 
 end:;
 }
@@ -69,9 +69,9 @@ static void test_thread_safe_statlist_multithreaded(void *p) {
         pthread_join(threads[i], NULL);
     }
 
-    cas_lock_acquire(&ts_list.lock);
+    spin_lock_acquire(&ts_list.lock);
     str_check(statlist_count(&ts_list.list) == 0 ? "OK" : "FAIL", "OK");
-    cas_lock_release(&ts_list.lock);
+    spin_lock_release(&ts_list.lock);
 
 end:;
 }
