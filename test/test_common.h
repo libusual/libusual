@@ -43,6 +43,7 @@ extern struct testcase_t hashtab_tests[];
 extern struct testcase_t heap_tests[];
 extern struct testcase_t json_tests[];
 extern struct testcase_t list_tests[];
+extern struct testcase_t statlist_ts_tests[];
 extern struct testcase_t mdict_tests[];
 extern struct testcase_t netdb_tests[];
 extern struct testcase_t pgutil_tests[];
