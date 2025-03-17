@@ -26,6 +26,7 @@ struct testgroup_t groups[] = {
 	{ "heap/", heap_tests },
 	{ "json/", json_tests },
 	{ "list/", list_tests },
+	{ "statlist_ts/", statlist_ts_tests },
 	{ "mdict/", mdict_tests },
 	{ "netdb/", netdb_tests },
 	{ "pgutil/", pgutil_tests },
