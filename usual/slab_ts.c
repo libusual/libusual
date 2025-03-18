@@ -17,20 +17,20 @@ struct ThreadSafeSlab {
 
 static void ts_slab_list_append(struct ThreadSafeSlab *ts_slab)
 {
-	statlist_append(&thread_safe_slab_list, &ts_slab->head);
+    statlist_append(&thread_safe_slab_list, &ts_slab->head);
 }
 
 static void ts_slab_list_remove(struct ThreadSafeSlab *ts_slab)
 {
-	statlist_remove(&thread_safe_slab_list, &ts_slab->head);
+    statlist_remove(&thread_safe_slab_list, &ts_slab->head);
 }
 
 static void init_thread_safe_slab_and_store_in_list(struct ThreadSafeSlab *ts_slab, const char *name, unsigned obj_size,
 		      unsigned align, slab_init_fn init_func,
 		      CxMem *cx)
 {
-	init_slab(ts_slab->slab, name, obj_size, align, init_func, cx);
-	ts_slab_list_append(ts_slab);
+    init_slab(ts_slab->slab, name, obj_size, align, init_func, cx);
+    ts_slab_list_append(ts_slab);
 }
 
 /* create a new thread-safe slab allocator */
@@ -58,12 +58,12 @@ struct ThreadSafeSlab *thread_safe_slab_create(const char *name, unsigned obj_si
 /* free all storage associated by thread-safe slab */
 void thread_safe_slab_destroy(struct ThreadSafeSlab *ts_slab)
 {
-	if (!ts_slab)
-		return;
+    if (!ts_slab)
+        return;
 
-	ts_slab_list_remove(ts_slab);
-	slab_destroy_internal(ts_slab->slab);
-	cx_free(ts_slab->slab->cx, ts_slab);
+    ts_slab_list_remove(ts_slab);
+    slab_destroy_internal(ts_slab->slab);
+    cx_free(ts_slab->slab->cx, ts_slab);
 }
 
 /* allocate one object from the slab */
