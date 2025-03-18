@@ -67,6 +67,7 @@ libusual_la_SOURCES = usual/config.h.in \
 	usual/safeio.h usual/safeio.c \
 	usual/shlist.h \
 	usual/signal.h usual/signal.c \
+	usual/slab_internal.c \
 	usual/slab.h usual/slab.c \
 	usual/slab_ts.h usual/slab_ts.c \
 	usual/socket.h usual/socket.c usual/socket_ntop.c usual/socket_pton.c usual/socket_win32.h \
