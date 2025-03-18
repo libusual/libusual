@@ -27,10 +27,6 @@ struct SlabFrag {
 };
 
 
-/* keep track of all active slabs */
-static STATLIST(slab_list);
-static STATLIST(thread_safe_slab_list);
-
 void init_slab(struct Slab *slab, const char *name, unsigned obj_size,
 		      unsigned align, slab_init_fn init_func,
 		      CxMem *cx);

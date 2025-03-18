@@ -27,6 +27,9 @@
 #ifndef USUAL_FAKE_SLAB
 
 
+/* keep track of all active slabs */
+static STATLIST(slab_list);
+
 static void slab_list_append(struct Slab *slab)
 {
 #ifndef _REENTRANT
