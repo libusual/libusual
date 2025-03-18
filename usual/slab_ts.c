@@ -1,10 +1,16 @@
 #include <usual/slab_ts.h>
 #include <usual/slab_internal.h>
 #include <usual/spinlock.h>
+#include <usual/statlist_ts.h>
 
 
 /* keep track of all active thread-safe slabs */
-static STATLIST(thread_safe_slab_list);
+static struct ThreadSafeStatList thread_safe_slab_list;
+
+__attribute__((constructor))
+static void init_thread_safe_slab_list_global(void) {
+    thread_safe_statlist_init(&thread_safe_slab_list, "thread_safe_slab_list");
+}
 
 /*
  * Thread-safe wrapper for the primitive slab allocator.
@@ -17,12 +23,12 @@ struct ThreadSafeSlab {
 
 static void ts_slab_list_append(struct ThreadSafeSlab *ts_slab)
 {
-    statlist_append(&thread_safe_slab_list, &ts_slab->head);
+    thread_safe_statlist_append(&thread_safe_slab_list, &ts_slab->head);
 }
 
 static void ts_slab_list_remove(struct ThreadSafeSlab *ts_slab)
 {
-    statlist_remove(&thread_safe_slab_list, &ts_slab->head);
+    thread_safe_statlist_remove(&thread_safe_slab_list, &ts_slab->head);
 }
 
 static void init_thread_safe_slab_and_store_in_list(struct ThreadSafeSlab *ts_slab, const char *name, unsigned obj_size,
@@ -114,10 +120,12 @@ void thread_safe_slab_stats(slab_stat_fn cb_func, void *cb_arg) {
     struct ThreadSafeSlab *ts_slab;
     struct List *item;
 
-    statlist_for_each(item, &thread_safe_slab_list) {
+    spin_lock_acquire(&thread_safe_slab_list.lock);
+    statlist_for_each(item, &thread_safe_slab_list.list) {
         ts_slab = container_of(item, struct ThreadSafeSlab, head);
         spin_lock_acquire(&ts_slab->lock);
         run_slab_stats(ts_slab->slab, cb_func, cb_arg);
         spin_lock_release(&ts_slab->lock);
     }
+    spin_lock_release(&thread_safe_slab_list.lock);
 }
