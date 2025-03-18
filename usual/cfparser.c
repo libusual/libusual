@@ -395,6 +395,67 @@ static bool load_handler(void *arg, bool is_sect, const char *key, const char *v
 	}
 }
 
+static bool empty_handler(void *arg, bool is_sect, const char *key, const char *val)
+{
+	struct LoaderCtx *ctx = arg;
+	const struct CfSect *s;
+	const struct CfKey *k;
+	void *base;
+
+	if (is_sect) {
+		if (ctx->cur_sect)
+			free(ctx->cur_sect);
+		ctx->cur_sect = strdup(key);
+		if (!ctx->cur_sect)
+			return false;
+		return fill_defaults(ctx);
+	} else if (!ctx->cur_sect) {
+		log_error("load_init_file: value without section: %s", key);
+		return false;
+	} else {
+		/* find section */
+		s = find_sect(ctx->cf, ctx->cur_sect);
+		if (!s) {
+			log_error("unknown section: %s", ctx->cur_sect);
+			return false;
+		}
+
+		/* find section base */
+		base = ctx->cf->base;
+		if (s->base_lookup)
+			base = s->base_lookup(base, ctx->cur_sect);
+
+		/* handle dynamic keys */
+		if (s->set_key)
+			return s->set_key(base, key, val);
+
+		/* set fixed key */
+		k = find_key(s, key);
+		if (!k) {
+			log_error("unknown parameter: %s/%s", ctx->cur_sect, key);
+			return false;
+		}
+		return true;
+	}
+}
+
+bool cf_check_file(const struct CfContext *cf, const char *fn)
+{
+	struct LoaderCtx ctx;
+	bool ok;
+	memset(&ctx, 0, sizeof(ctx));
+	ctx.cf = cf;
+
+	ok = parse_ini_file(fn, empty_handler, &ctx);
+	if (ctx.cur_sect)
+		free(ctx.cur_sect);
+	if (ok && !ctx.got_main_sect) {
+		log_error("load_init_file: main section missing from config file");
+		return false;
+	}
+	return ok;
+}
+
 bool cf_load_file(const struct CfContext *cf, const char *fn)
 {
 	struct LoaderCtx ctx;
