@@ -33,6 +33,4 @@ void init_slab(struct Slab *slab, const char *name, unsigned obj_size,
 
 void slab_destroy_internal(struct Slab *slab);
 
-void run_slab_stats(struct Slab *slab, slab_stat_fn cb_func, void *cb_arg);
-
 #endif /* _USUAL_SLAB_INTERNAL_H_ */

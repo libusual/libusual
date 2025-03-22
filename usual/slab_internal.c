@@ -47,9 +47,3 @@ void slab_destroy_internal(struct Slab *slab)
 	}
 	cx_free(slab->cx, slab);
 }
-
-void run_slab_stats(struct Slab *slab, slab_stat_fn cb_func, void *cb_arg)
-{
-	unsigned free = statlist_count(&slab->freelist);
-	cb_func(cb_arg, slab->name, slab->final_size, free, slab->total_count);
-}

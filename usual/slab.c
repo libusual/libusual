@@ -154,6 +154,12 @@ int slab_active_count(const struct Slab *slab)
 	return slab_total_count(slab) - slab_free_count(slab);
 }
 
+static void run_slab_stats(struct Slab *slab, slab_stat_fn cb_func, void *cb_arg)
+{
+	unsigned free = statlist_count(&slab->freelist);
+	cb_func(cb_arg, slab->name, slab->final_size, free, slab->total_count);
+}
+
 /* call a function for all active slabs */
 void slab_stats(slab_stat_fn cb_func, void *cb_arg)
 {
