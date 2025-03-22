@@ -35,6 +35,7 @@ struct testgroup_t groups[] = {
 	{ "regex/", regex_tests },
 	{ "shlist/", shlist_tests },
 	{ "socket/", socket_tests },
+	{ "slab_ts/", slab_ts_tests },
 	{ "string/", string_tests },
 	{ "strpool/", strpool_tests },
 	{ "talloc/", talloc_tests },
