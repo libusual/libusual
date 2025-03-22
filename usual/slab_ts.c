@@ -119,15 +119,13 @@ int thread_safe_slab_active_count(struct ThreadSafeSlab *ts_slab) {
 void thread_safe_slab_stats(slab_stat_fn cb_func, void *cb_arg) {
     struct ThreadSafeSlab *ts_slab;
     struct List *item;
+    const char *name;
+    size_t final_size;
+    unsigned free, total_count;
 
     spin_lock_acquire(&thread_safe_slab_list.lock);
     statlist_for_each(item, &thread_safe_slab_list.list) {
         ts_slab = container_of(item, struct ThreadSafeSlab, head);
-
-        const char *name;
-        size_t final_size;
-        unsigned free, total_count;
-
         spin_lock_acquire(&ts_slab->lock);
         name = ts_slab->slab->name;
         final_size = ts_slab->slab->final_size;
