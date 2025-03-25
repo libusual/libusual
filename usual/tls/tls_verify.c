@@ -101,6 +101,9 @@ tls_check_subject_altname(struct tls *ctx, X509 *cert, const char *name)
 	} else if (inet_pton(AF_INET6, name, &addrbuf) == 1) {
 		type = GEN_IPADD;
 		addrlen = 16;
+	} else if (strstr(name, "://") != NULL) {
+		type = GEN_URI;
+		addrlen = 0;
 	} else {
 		type = GEN_DNS;
 		addrlen = 0;
@@ -183,6 +186,37 @@ tls_check_subject_altname(struct tls *ctx, X509 *cert, const char *name)
 			    memcmp(data, &addrbuf, addrlen) == 0) {
 				rv = 0;
 				break;
+			}
+		} else if (type == GEN_URI) {
+			const void	*data;
+			int		 format, len;
+
+			format = ASN1_STRING_type(altname->d.uniformResourceIdentifier);
+			if (format == V_ASN1_IA5STRING) {
+				data = ASN1_STRING_get0_data(altname->d.uniformResourceIdentifier);
+				len = ASN1_STRING_length(altname->d.uniformResourceIdentifier);
+
+				if (len < 0 || len != (int)strlen(data)) {
+					tls_set_errorx(ctx,
+					    "error verifying name '%s': "
+					    "NUL byte in subjectAltName URI, "
+					    "probably a malicious certificate",
+					    name);
+					rv = -2;
+					break;
+				}
+
+				/* Direct URI comparison */
+				if (strcmp(data, name) == 0) {
+					rv = 0;
+					break;
+				}
+			} else {
+#ifdef DEBUG
+				fprintf(stdout, "%s: unhandled subjectAltName "
+				    "URI encoding (%d)\n", getprogname(),
+				    format);
+#endif
 			}
 		}
 	}

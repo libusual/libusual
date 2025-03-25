@@ -966,6 +966,9 @@ static const char *do_verify(const char *hostname, const char *commonName, ...)
 		if (!memcmp(aname, "dns:", 4)) {
 			alt->name_type = TLS_CERT_GNAME_DNS;
 			alt->name_value = aname + 4;
+		} else if (!memcmp(aname, "uri:", 4)) {
+			alt->name_type = TLS_CERT_GNAME_URI;
+			alt->name_value = aname + 4;
 		} else if (!memcmp(aname, "ip4:", 4)) {
 			alt->name_type = TLS_CERT_GNAME_IPv4;
 			alt->name_value = &addrbuf[addrpos++];
@@ -1025,6 +1028,27 @@ static void test_servername(void *_)
 	str_check(do_verify("fefe::efef", "foo", "dns:fefe::efef", NULL), "FAIL");
 	str_check(do_verify("1.1.1.1", "1.1.1.1", NULL), "OK");
 	str_check(do_verify("1.1.1.1", NULL, "dns:1.1.1.1", NULL), "FAIL");
+
+	/* URI SAN tests */
+	/* Direct URI matching */
+	str_check(do_verify("https://example.com", NULL, "uri:https://example.com", NULL), "OK");
+	str_check(do_verify("https://example.com/path", NULL, "uri:https://example.com/path", NULL), "OK");
+	str_check(do_verify("https://example.com:8443", NULL, "uri:https://example.com:8443", NULL), "OK");
+	str_check(do_verify("https://example.com", NULL, "uri:http://example.com", NULL), "FAIL");
+	str_check(do_verify("https://example.com", NULL, "uri:https://example.org", NULL), "FAIL");
+	str_check(do_verify("https://example.com/path", NULL, "uri:https://example.com", NULL), "FAIL");
+
+	/* URI with multiple SANs */
+	str_check(do_verify("https://example.com", "example.net", "dns:example.net", "uri:https://example.com", NULL), "OK");
+	str_check(do_verify("https://example.com", "example.net", "dns:example.net", "uri:https://example.net", NULL), "FAIL");
+
+	/* Different URI schemes */
+	str_check(do_verify("ldap://directory.example.com", NULL, "uri:ldap://directory.example.com", NULL), "OK");
+	str_check(do_verify("spiffe://user@example.com", NULL, "uri:spiffe://user@example.com", NULL), "OK");
+
+	/* URI with special characters */
+	str_check(do_verify("https://user:password@example.com", NULL, "uri:https://user:password@example.com", NULL), "OK");
+	str_check(do_verify("https://example.com/path?query=value#fragment", NULL, "uri:https://example.com/path?query=value#fragment", NULL), "OK");
 end:;
 }
 
