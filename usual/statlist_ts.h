@@ -100,22 +100,30 @@ static inline void thread_safe_statlist_put_after(struct ThreadSafeStatList *lis
     spin_lock_release(&list->lock);
 }
 
-/** Loop over thread-safe list */
-static inline void thread_safe_statlist_iterate(struct ThreadSafeStatList *list, void (*func)(struct List *)) {
+/** Loop over thread-safe list (with context) */
+static inline void thread_safe_statlist_iterate(
+    struct ThreadSafeStatList *list,
+    void (*func)(struct List *, void *),
+    void *ctx)
+{
     struct List *item;
     spin_lock_acquire(&list->lock);
     statlist_for_each(item, &list->list) {
-        func(item);
+        func(item, ctx);
     }
     spin_lock_release(&list->lock);
 }
 
-/** Loop over thread-safe list backwards */
-static inline void thread_safe_statlist_iterate_reverse(struct ThreadSafeStatList *list, void (*func)(struct List *)) {
+/** Loop over thread-safe list backwards (with context) */
+static inline void thread_safe_statlist_iterate_reverse(
+    struct ThreadSafeStatList *list,
+    void (*func)(struct List *, void *),
+    void *ctx)
+{
     struct List *item;
     spin_lock_acquire(&list->lock);
     statlist_for_each_reverse(item, &list->list) {
-        func(item);
+        func(item, ctx);
     }
     spin_lock_release(&list->lock);
 }
