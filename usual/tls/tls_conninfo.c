@@ -62,6 +62,9 @@ tls_get_peer_cert_hash(struct tls *ctx, char **hash)
 	unsigned int dlen;
 	int rv = -1;
 
+	if (hash == NULL)
+		return (-1);
+
 	*hash = NULL;
 	if (ctx->ssl_peer_cert == NULL)
 		return (0);

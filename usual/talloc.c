@@ -1217,7 +1217,12 @@ char *talloc_vasprintf(const void *parent, const char *fmt, va_list ap)
 
 char *talloc_vasprintf_append(char *ptr, const char *fmt, va_list ap)
 {
-	size_t plen = strnlen(ptr, talloc_get_size(ptr));
+	size_t plen;
+
+	if (ptr == NULL)
+		return NULL;
+
+	plen = strnlen(ptr, talloc_get_size(ptr));
 	return _tprintf(NULL, ptr, plen, fmt, ap);
 }
 
