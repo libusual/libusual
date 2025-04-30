@@ -1,22 +1,22 @@
 #ifndef _SPIN_LOCK_H_
 #define _SPIN_LOCK_H_
 
+#include <stdint.h>
+
 #ifdef WIN32
     #include <windows.h>
-    #define ATOMIC_INT LONG
-    #define THREAD_ID DWORD
-    #define GET_THREAD_ID() GetCurrentThreadId()
+    #define GET_THREAD_ID() ((uintptr_t)GetCurrentThreadId())
+    #define MEMORY_BARRIER() MemoryBarrier()
 #else
-    #include <sched.h>
     #include <usual/pthread.h>
-    #define ATOMIC_INT int
-    #define THREAD_ID pthread_t
-    #define GET_THREAD_ID() pthread_self()
+    #include <sched.h>
+    #define GET_THREAD_ID() ((uintptr_t)pthread_self())
+    #define MEMORY_BARRIER() __sync_synchronize()
 #endif
 
 typedef struct {
-    ATOMIC_INT lock;
-    THREAD_ID owner;
+    volatile uintptr_t lock_word;  // 0 = unlocked, otherwise holds thread ID
+    int count;                     // recursive depth
     int initialized;
 } SpinLock;
 
