@@ -10,10 +10,12 @@ void spin_lock_init(SpinLock *lock) {
 }
 
 void spin_lock_acquire(SpinLock *lock) {
+    uintptr_t self;
+
     if (lock->initialized != SPIN_LOCK_INITIALIZED)
         fatal("Attempt to acquire an uninitialized lock!");
 
-    uintptr_t self = GET_THREAD_ID();
+    self = GET_THREAD_ID();
 
     if (lock->lock_word == self) {
         lock->count++;
@@ -35,10 +37,12 @@ void spin_lock_acquire(SpinLock *lock) {
 }
 
 void spin_lock_release(SpinLock *lock) {
+    uintptr_t self;
+
     if (lock->initialized != SPIN_LOCK_INITIALIZED)
         fatal("Attempt to release an uninitialized lock!");
 
-    uintptr_t self = GET_THREAD_ID();
+    self = GET_THREAD_ID();
 
     if (lock->lock_word != self) {
         fatal("Thread %lu tried to release a lock it does not own!", (unsigned long)self);
