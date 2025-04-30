@@ -14,7 +14,7 @@
 
 typedef struct {
     volatile uintptr_t lock_word;  // 0 = unlocked, otherwise holds thread ID
-    int count;                     // recursive depth
+    volatile int count;            // recursive depth
     int initialized;
 } SpinLock;
 
