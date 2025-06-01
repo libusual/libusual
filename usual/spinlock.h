@@ -1,6 +1,8 @@
 #ifndef _SPIN_LOCK_H_
 #define _SPIN_LOCK_H_
 
+#include <string.h>
+
 #ifdef WIN32
 #   include <windows.h>
 #   define GET_THREAD_ID() ((uintptr_t)GetCurrentThreadId()) 
