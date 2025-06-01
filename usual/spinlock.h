@@ -34,7 +34,9 @@
         static inline uintptr_t _fallback_tid(void)
         {
             pthread_t self = pthread_self();
-            return (uintptr_t)(void *)&self;   /* unique for lifetime */
+            uintptr_t id = 0;
+            memcpy(&id, &self, sizeof(id));
+            return id;
         }
 #       define GET_THREAD_ID() _fallback_tid()
 #   endif
