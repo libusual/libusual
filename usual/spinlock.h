@@ -21,29 +21,10 @@
 #   define MEMORY_BARRIER() __sync_synchronize()
 
 #else
-#   include <sched.h>
 #   include <unistd.h>
-#   include <sys/types.h>
-#   include <sys/syscall.h>
-#   if defined(SYS_gettid)
-        static inline uintptr_t _linux_tid(void)
-        {
-            return (uintptr_t)syscall(SYS_gettid);
-        }
-#       define GET_THREAD_ID() _linux_tid()
-#   else        /* very old BSDs / exotic libc */
-#       include <pthread.h>
-        static inline uintptr_t _fallback_tid(void)
-        {
-            pthread_t self = pthread_self();
-            uintptr_t id = 0;
-            memcpy(&id, &self, sizeof(id));
-            return id;
-        }
-#       define GET_THREAD_ID() _fallback_tid()
-#   endif
+#   define GET_THREAD_ID() gettid()
 #   define MEMORY_BARRIER() __sync_synchronize()
-#endif /* platform switch */
+#endif
 
 typedef struct {
     volatile uintptr_t lock_word;  // 0 = unlocked, otherwise holds thread ID
