@@ -8,7 +8,7 @@
 #   define GET_THREAD_ID() ((uintptr_t)GetCurrentThreadId()) 
 #   define MEMORY_BARRIER() MemoryBarrier()
 
-#elif HAVE_PTHREAD_THREADID_NP
+#elif defined(HAVE_PTHREAD_THREADID_NP) && HAVE_PTHREAD_THREADID_NP
 #   include <pthread.h>
     static inline uintptr_t _pthread_tid(void)
     {
