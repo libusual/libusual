@@ -27,7 +27,6 @@ void spin_lock_acquire(SpinLock *lock) {
         SwitchToThread();
     }
 #else
-    #include <sched.h>
     while (!__sync_bool_compare_and_swap(&lock->lock_word, 0, self)) {
         sched_yield();
     }
