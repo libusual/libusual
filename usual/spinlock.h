@@ -21,11 +21,12 @@
 
 typedef struct {
 #ifdef WIN32
+    volatile LONG count;
     volatile DWORD lock_word;       // 0 = unlocked, otherwise holds thread ID
 #else
+    volatile int count;             // recursive depth
     volatile pthread_t lock_word;
 #endif
-    volatile int count;             // recursive depth
     int initialized;
 } SpinLock;
 
