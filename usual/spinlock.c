@@ -39,7 +39,7 @@ void spin_lock_acquire(SpinLock *lock) {
     }
 
 #ifdef WIN32
-    while (InterlockedCompareExchangePointer(&lock->count, 1, 0) != 0) {
+    while (InterlockedCompareExchange(&lock->count, 1, 0) != 0) {
         SwitchToThread();
     }
 #else
