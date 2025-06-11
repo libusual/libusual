@@ -7,14 +7,14 @@
 #define SPIN_LOCK_INITIALIZED 1
 
 bool spin_lock_owns(SpinLock *lock){
-    if (lock->initialized != SPIN_LOCK_INITIALIZED)
-        fatal("Attempt to check an uninitialized lock!");
-    
     #ifdef WIN32
         volatile DWORD self; 
     #else
         volatile pthread_t self;
     #endif
+
+    if (lock->initialized != SPIN_LOCK_INITIALIZED)
+        fatal("Attempt to check an uninitialized lock!");
     
     self = GET_THREAD_ID();
 
@@ -22,7 +22,7 @@ bool spin_lock_owns(SpinLock *lock){
 }
 
 void spin_lock_init(SpinLock *lock) {
-    memset(&lock->lock_word, 0, sizeof(lock->lock_word));
+    memset((void*)&(lock->lock_word), 0, sizeof(lock->lock_word));
     lock->count = 0;
     lock->initialized = SPIN_LOCK_INITIALIZED;
 }
