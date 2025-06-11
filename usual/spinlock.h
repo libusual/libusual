@@ -5,33 +5,31 @@
 
 #ifdef WIN32
 #   include <windows.h>
-#   define GET_THREAD_ID() ((uintptr_t)GetCurrentThreadId()) 
+#   define GET_THREAD_ID() (GetCurrentThreadId()) 
 #   define MEMORY_BARRIER() MemoryBarrier()
-
-#elif defined(HAVE_PTHREAD_THREADID_NP) && HAVE_PTHREAD_THREADID_NP
-#   include <pthread.h>
-    static inline uintptr_t _pthread_tid(void)
-    {
-        uint64_t tid;
-        /* always succeeds for current thread */
-        (void)pthread_threadid_np(NULL, &tid);
-        return (uintptr_t)tid;
-    }
-#   define GET_THREAD_ID() _pthread_tid()
-#   define MEMORY_BARRIER() __sync_synchronize()
+#   define THREAD_ID_EQUALS(a,b) a == b
+#   define RESET_LOCK_WORD(a) InterlockedExchangePointer((PVOID*)&a, NULL);
 
 #else
-#   include <unistd.h>
-#   define GET_THREAD_ID() gettid()
-#   define MEMORY_BARRIER() __sync_synchronize()
+    #include <usual/pthread.h>
+    #include <sched.h>
+    #define GET_THREAD_ID() (pthread_self())
+    #define MEMORY_BARRIER() __sync_synchronize()
+    #define THREAD_ID_EQUALS(a,b) pthread_equal(a,b)
+    #define RESET_LOCK_WORD(a) memset((void*)&a, 0, sizeof(pthread_t))
 #endif
 
 typedef struct {
-    volatile uintptr_t lock_word;  // 0 = unlocked, otherwise holds thread ID
-    volatile int count;            // recursive depth
+#ifdef WIN32
+    volatile DWORD lock_word;       // 0 = unlocked, otherwise holds thread ID
+#else
+    volatile pthread_t lock_word;
+#endif
+    volatile int count;             // recursive depth
     int initialized;
 } SpinLock;
 
+bool spin_lock_owns(SpinLock *lock);
 void spin_lock_init(SpinLock *lock);
 void spin_lock_acquire(SpinLock *lock);
 void spin_lock_release(SpinLock *lock);

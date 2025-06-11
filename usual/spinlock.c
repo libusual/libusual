@@ -1,60 +1,72 @@
 #include <usual/logging.h>
 #include <usual/spinlock.h>
+#ifndef WIN32
+#include <sched.h>
+#endif
 
 #define SPIN_LOCK_INITIALIZED 1
 
+bool spin_lock_owns(SpinLock *lock){
+    if (lock->initialized != SPIN_LOCK_INITIALIZED)
+        fatal("Attempt to check an uninitialized lock!");
+    
+    #ifdef WIN32
+        volatile DWORD self; 
+    #else
+        volatile pthread_t self;
+    #endif
+    
+    self = GET_THREAD_ID();
+
+    return THREAD_ID_EQUALS(lock->lock_word,self);
+}
+
 void spin_lock_init(SpinLock *lock) {
-    lock->lock_word = 0;
+    memset(&lock->lock_word, 0, sizeof(lock->lock_word));
     lock->count = 0;
     lock->initialized = SPIN_LOCK_INITIALIZED;
 }
 
 void spin_lock_acquire(SpinLock *lock) {
-    uintptr_t self;
 
     if (lock->initialized != SPIN_LOCK_INITIALIZED)
         fatal("Attempt to acquire an uninitialized lock!");
 
-    self = GET_THREAD_ID();
 
-    if (lock->lock_word == self) {
+    if (spin_lock_owns(lock)) {
         lock->count++;
         return;
     }
 
 #ifdef WIN32
-    while (InterlockedCompareExchangePointer((PVOID*)&lock->lock_word, (PVOID)self, NULL) != NULL) {
+    while (InterlockedCompareExchangePointer(&lock->count, 1, 0) != 0) {
         SwitchToThread();
     }
 #else
-    #include <sched.h>
-    while (!__sync_bool_compare_and_swap(&lock->lock_word, 0, self)) {
+    while (!__sync_bool_compare_and_swap(&lock->count, 0, 1)) {
         sched_yield();
     }
 #endif
 
     MEMORY_BARRIER();
-    lock->count = 1;
+    lock->lock_word = GET_THREAD_ID();
 }
 
 void spin_lock_release(SpinLock *lock) {
-    uintptr_t self;
 
     if (lock->initialized != SPIN_LOCK_INITIALIZED)
         fatal("Attempt to release an uninitialized lock!");
 
-    self = GET_THREAD_ID();
-
-    if (lock->lock_word != self) {
-        fatal("Thread %lu tried to release a lock it does not own!", (unsigned long)self);
+    if (!spin_lock_owns(lock)) {
+        fatal("Thread tried to release a lock it does not own!");
     }
 
-    if (--lock->count == 0) {
-        MEMORY_BARRIER();
-#ifdef WIN32
-        InterlockedExchangePointer((PVOID*)&lock->lock_word, NULL);
-#else
-        lock->lock_word = 0;
-#endif
+    if (lock->count > 1) {
+        lock->count --;
+        return;
     }
+
+    RESET_LOCK_WORD(lock->lock_word);
+    MEMORY_BARRIER();
+    lock->count = 0;
 }
