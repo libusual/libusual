@@ -12,7 +12,7 @@ static void test_slab(void *p)
     struct ThreadSafeSlab *ts_slab;
     void *obj1, *obj2;
 
-    ts_slab = thread_safe_slab_create("test_slab", sizeof(int), 0, NULL, NULL);
+    ts_slab = thread_safe_slab_create("test_slab", sizeof(int), 0, NULL, NULL, false);
     tt_assert(ts_slab != NULL);
 
     obj1 = thread_safe_slab_alloc(ts_slab);
@@ -56,7 +56,7 @@ static void test_slab_multithreaded(void *p) {
     pthread_t threads[NUM_THREADS];
     int call_count = 0;
     
-    ts_slab = thread_safe_slab_create("test_slab_mt", sizeof(int), 0, NULL, NULL);
+    ts_slab = thread_safe_slab_create("test_slab_mt", sizeof(int), 0, NULL, NULL, false);
     tt_assert(ts_slab != NULL);
 
     for (int i = 0; i < NUM_THREADS; i++) {
@@ -75,10 +75,10 @@ static void test_slab_multithreaded(void *p) {
     tt_assert(thread_safe_slab_free_count(ts_slab) == thread_safe_slab_total_count(ts_slab));
     tt_assert(thread_safe_slab_active_count(ts_slab) == 0);
 
-    ts_slab1 = thread_safe_slab_create("stats_slab_1", sizeof(int), 0, NULL, NULL);
+    ts_slab1 = thread_safe_slab_create("stats_slab_1", sizeof(int), 0, NULL, NULL, false);
     tt_assert(ts_slab1);
 
-    ts_slab2 = thread_safe_slab_create("stats_slab_2", sizeof(int), 0, NULL, NULL);
+    ts_slab2 = thread_safe_slab_create("stats_slab_2", sizeof(int), 0, NULL, NULL, false);
     tt_assert(ts_slab2);
 
     obj1 = thread_safe_slab_alloc(ts_slab1);
