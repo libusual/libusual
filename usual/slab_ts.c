@@ -9,7 +9,7 @@ static struct ThreadSafeStatList thread_safe_slab_list;
 
 __attribute__((constructor))
 static void init_thread_safe_slab_list_global(void) {
-    thread_safe_statlist_init(&thread_safe_slab_list, "thread_safe_slab_list");
+    thread_safe_statlist_init(&thread_safe_slab_list, "thread_safe_slab_list", true);
 }
 
 /*
@@ -41,7 +41,7 @@ static void init_thread_safe_slab_and_store_in_list(struct ThreadSafeSlab *ts_sl
 
 /* create a new thread-safe slab allocator */
 struct ThreadSafeSlab *thread_safe_slab_create(const char *name, unsigned obj_size, unsigned align,
-                                               slab_init_fn init_func, CxMem *cx) {
+                                               slab_init_fn init_func, CxMem *cx, bool enable_recursive_lock) {
     struct ThreadSafeSlab *ts_slab;
 
     ts_slab = cx ? cx_alloc0(cx, sizeof(*ts_slab)) : calloc(1, sizeof(*ts_slab));
@@ -58,6 +58,7 @@ struct ThreadSafeSlab *thread_safe_slab_create(const char *name, unsigned obj_si
     list_init(&ts_slab->head);
     init_thread_safe_slab_and_store_in_list(ts_slab, name, obj_size, align, init_func, cx);
     spin_lock_init(&ts_slab->lock);
+    set_recursive(&ts_slab->lock, enable_recursive_lock);
     return ts_slab;
 }
 

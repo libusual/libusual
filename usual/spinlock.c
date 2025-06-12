@@ -25,6 +25,7 @@ void spin_lock_init(SpinLock *lock) {
     memset((void*)&(lock->lock_word), 0, sizeof(lock->lock_word));
     lock->count = 0;
     lock->initialized = SPIN_LOCK_INITIALIZED;
+    lock->enable_recursive = false;
 }
 
 void spin_lock_acquire(SpinLock *lock) {
@@ -33,7 +34,7 @@ void spin_lock_acquire(SpinLock *lock) {
         fatal("Attempt to acquire an uninitialized lock!");
 
 
-    if (spin_lock_owns(lock)) {
+    if (lock->enable_recursive && spin_lock_owns(lock)) {
         lock->count++;
         return;
     }
@@ -69,4 +70,9 @@ void spin_lock_release(SpinLock *lock) {
     RESET_LOCK_WORD(lock->lock_word);
     MEMORY_BARRIER();
     lock->count = 0;
+}
+
+
+void set_recursive(SpinLock *lock, bool recursive){
+    lock->enable_recursive = recursive;
 }

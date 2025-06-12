@@ -9,7 +9,7 @@ static void test_thread_safe_statlist_simple(void *p) {
     struct List node1, node2, node3;
     struct List *popped_node;
 
-    thread_safe_statlist_init(&ts_list, "test_list");
+    thread_safe_statlist_init(&ts_list, "test_list", false);
 
     spin_lock_acquire(&ts_list.lock);
     str_check(statlist_count(&ts_list.list) == 0 ? "OK" : "FAIL", "OK");
@@ -60,7 +60,7 @@ static void *thread_worker(void *arg) {
 
 static void test_thread_safe_statlist_multithreaded(void *p) {
     pthread_t threads[NUM_THREADS];
-    thread_safe_statlist_init(&ts_list, "test_list");
+    thread_safe_statlist_init(&ts_list, "test_list", false);
     srand(time(NULL));
 
     for (int i = 0; i < NUM_THREADS; i++) {
@@ -90,7 +90,7 @@ static void test_thread_safe_statlist_iteration(void *p) {
     struct List node1, node2, node3;
     int element_count;
 
-    thread_safe_statlist_init(&ts_list, "test_list_iteration");
+    thread_safe_statlist_init(&ts_list, "test_list_iteration", false);
 
     list_init(&node1);
     list_init(&node2);
