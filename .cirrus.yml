@@ -161,7 +161,8 @@ task:
         MSYSTEM: MINGW32
   setup_script:
     - choco install -y --no-progress msys2
-    - sh -l -c "pacman --noconfirm -Sy --needed base-devel ${MINGW_PACKAGE_PREFIX}-toolchain ${MINGW_PACKAGE_PREFIX}-libevent autoconf automake libtool"
+    - sh -l -c "pacman -Ss libevent"
+    - sh -l -c "pacman --noconfirm -Syuu --needed base-devel ${MINGW_PACKAGE_PREFIX}-toolchain ${MINGW_PACKAGE_PREFIX}-libevent autoconf automake libtool"
   build_script:
     - sh -l -c "./autogen.sh"
     - sh -l -c "./configure --prefix=$HOME/install --enable-werror"
