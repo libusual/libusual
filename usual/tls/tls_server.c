@@ -116,7 +116,7 @@ tls_configure_server(struct tls *ctx)
 	}
 
 	cert_stack = SSL_load_client_CA_file(ctx->config->ca_file);
-    	SSL_CTX_set_client_CA_list(ctx->ssl_ctx, cert_stack);
+	SSL_CTX_set_client_CA_list(ctx->ssl_ctx, cert_stack);
 
 	return (0);
 

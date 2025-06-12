@@ -406,27 +406,27 @@ tls_do_abort(struct tls *ctx)
 #ifndef USE_LIBSSL_OLD
 static int
 get_min_ssl_version(uint32_t protocols) {
-    if (protocols & TLS_PROTOCOL_TLSv1_0)
-        return TLS1_VERSION;
-    if (protocols & TLS_PROTOCOL_TLSv1_1)
-        return TLS1_1_VERSION;
-    if (protocols & TLS_PROTOCOL_TLSv1_2)
-        return TLS1_2_VERSION;
-    if (protocols & TLS_PROTOCOL_TLSv1_3)
-        return TLS1_3_VERSION;
-    return TLS1_VERSION;
+	if (protocols & TLS_PROTOCOL_TLSv1_0)
+		return TLS1_VERSION;
+	if (protocols & TLS_PROTOCOL_TLSv1_1)
+		return TLS1_1_VERSION;
+	if (protocols & TLS_PROTOCOL_TLSv1_2)
+		return TLS1_2_VERSION;
+	if (protocols & TLS_PROTOCOL_TLSv1_3)
+		return TLS1_3_VERSION;
+	return TLS1_VERSION;
 }
 
 static int
 get_max_ssl_version(uint32_t protocols) {
     if (protocols & TLS_PROTOCOL_TLSv1_3)
-        return TLS1_3_VERSION;
+	    return TLS1_3_VERSION;
     if (protocols & TLS_PROTOCOL_TLSv1_2)
-        return TLS1_2_VERSION;
+	    return TLS1_2_VERSION;
     if (protocols & TLS_PROTOCOL_TLSv1_1)
-        return TLS1_1_VERSION;
+	    return TLS1_1_VERSION;
     if (protocols & TLS_PROTOCOL_TLSv1_0)
-        return TLS1_VERSION;
+	    return TLS1_VERSION;
     return TLS1_3_VERSION;
 }
 #endif
