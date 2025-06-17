@@ -157,8 +157,6 @@ task:
   matrix:
     - env:
         MSYSTEM: MINGW64
-    - env:
-        MSYSTEM: MINGW32
   setup_script:
     - choco install -y --no-progress msys2
     - sh -l -c "pacman --noconfirm -S --needed base-devel ${MINGW_PACKAGE_PREFIX}-toolchain ${MINGW_PACKAGE_PREFIX}-libevent autoconf automake libtool"
