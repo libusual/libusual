@@ -24,7 +24,6 @@
 #include <usual/slab.h>
 #include <usual/socket.h>
 #include <usual/statlist.h>
-#include <usual/statlist_ts.h>
 #include <usual/string.h>
 #include <usual/tls/tls.h>
 #include <usual/time.h>
