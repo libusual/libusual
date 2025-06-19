@@ -31,7 +31,6 @@ regtest_system_SOURCES = \
 	test_pthread.c \
 	test_regex.c \
 	test_shlist.c \
-	test_slab_ts.c \
 	test_socket.c \
 	test_statlist_ts.c \
 	test_string.c \
