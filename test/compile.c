@@ -16,7 +16,6 @@
 #include <usual/crypto/md5.h>
 #include <usual/crypto/csrandom.h>
 #include <usual/misc.h>
-#include <usual/pthread.h>
 #include <usual/safeio.h>
 #include <usual/shlist.h>
 #include <usual/signal.h>
