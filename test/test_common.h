@@ -27,7 +27,6 @@ const char *tdata(const char *fn);
 extern struct testcase_t aatree_tests[];
 extern struct testcase_t base_tests[];
 extern struct testcase_t bits_tests[];
-extern struct testcase_t spinlock_tests[];
 extern struct testcase_t cbtree_tests[];
 extern struct testcase_t cfparser_tests[];
 extern struct testcase_t crypto_tests[];
