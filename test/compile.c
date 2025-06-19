@@ -1,6 +1,5 @@
 #include <usual/aatree.h>
 #include <usual/base.h>
-#include <usual/spinlock.h>
 #include <usual/cbtree.h>
 #include <usual/cfparser.h>
 #include <usual/hashing/crc32.h>
@@ -17,14 +16,12 @@
 #include <usual/crypto/md5.h>
 #include <usual/crypto/csrandom.h>
 #include <usual/misc.h>
-#include <usual/pthread.h>
 #include <usual/safeio.h>
 #include <usual/shlist.h>
 #include <usual/signal.h>
 #include <usual/slab.h>
 #include <usual/socket.h>
 #include <usual/statlist.h>
-#include <usual/statlist_ts.h>
 #include <usual/string.h>
 #include <usual/tls/tls.h>
 #include <usual/time.h>

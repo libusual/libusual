@@ -29,7 +29,6 @@ PKG_CHECK_MODULES(LIBEVENT, libevent)
 
 AC_USUAL_GETADDRINFO_A
 
-AC_PTHREAD
 
 dnl search for common libraries
 # Required for infinite() on FreeBSD:
