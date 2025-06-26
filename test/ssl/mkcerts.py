@@ -2,12 +2,11 @@
 
 """Generate x509 keys and certs."""
 
-from cryptography import x509
-
-import ipaddress
 import datetime
+import ipaddress
 import uuid
 
+from cryptography import x509
 
 #
 # CA utilities
@@ -83,11 +82,11 @@ def _load_name(vals):
 
 def _load_alt_names(alt_names):
     from cryptography.x509.general_name import (
-        RFC822Name,
         DNSName,
         IPAddress,
-        UniformResourceIdentifier,
         RegisteredID,
+        RFC822Name,
+        UniformResourceIdentifier,
     )
 
     gnames = []
@@ -141,9 +140,10 @@ def _wrapKeyUsage(
 
 
 def x509_sign(privkey, pubkey, subject, issuer, ca=False, alt_names=None, usage=None):
+    import hashlib
+
     from cryptography.hazmat.primitives import hashes
     from cryptography.x509.oid import ExtendedKeyUsageOID
-    import hashlib
 
     dt_start = datetime.datetime(2010, 1, 1, 8, 5, 0)
     dt_end = datetime.datetime(2060, 12, 31, 23, 55)
@@ -214,8 +214,8 @@ class Base:
     def write_key(self, fn):
         from cryptography.hazmat.primitives.serialization import (
             Encoding,
-            PrivateFormat,
             NoEncryption,
+            PrivateFormat,
         )
 
         data = self.key.private_bytes(
