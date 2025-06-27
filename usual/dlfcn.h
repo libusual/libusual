@@ -25,8 +25,8 @@
 
 #elif defined(_WIN32)
 
-#define dlopen(a,b) usual_dlopen(a,b)
-#define dlsym(a,b) usual_dlsym(a,b)
+#define dlopen(a, b) usual_dlopen(a, b)
+#define dlsym(a, b) usual_dlsym(a, b)
 #define dlclose(a) usual_dlclose(a)
 #define dlerror(...) usual_dlerror(__VA_ARGS__)
 

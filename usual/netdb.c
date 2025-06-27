@@ -75,7 +75,7 @@ struct GAIARequest {
 	struct gaicb *list[FLEX_ARRAY];
 };
 
-#define RQ_SIZE(n) (offsetof(struct GAIARequest,list) + (n)*(sizeof(struct gaicb *)))
+#define RQ_SIZE(n) (offsetof(struct GAIARequest, list) + (n)*(sizeof(struct gaicb *)))
 
 static void gaia_lock_reqs(struct GAIAContext *ctx)
 {

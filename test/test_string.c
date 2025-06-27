@@ -38,7 +38,7 @@ static void test_strlcpy(void *ptr)
 	str_check(run_strlcpy(buf, "abc", 2, 3), "a");
 	str_check(run_strlcpy(buf, "abc", 1, 3), "");
 	str_check(run_strlcpy(buf, "abc", 0, 3), "XXX");
-end:;
+end:    ;
 }
 
 /*
@@ -68,7 +68,7 @@ static void test_strlcat(void *ptr)
 	str_check(run_strlcat(buf, "abc", 2, 5), "PFX");
 	str_check(run_strlcat(buf, "abc", 1, 4), "PFX");
 	str_check(run_strlcat(buf, "abc", 0, 3), "PFX");
-end:;
+end:    ;
 }
 
 
@@ -87,7 +87,7 @@ static void test_strnlen(void *p)
 	tt_assert(strnlen("foobar", 7) == 6);
 	tt_assert(strnlen("foobar", 8) == 6);
 	tt_assert(strnlen("foobar", 9) == 6);
-end:;
+end:    ;
 }
 
 
@@ -101,7 +101,7 @@ static void test_strerror_r(void *p)
 	/* "int" vs. "const char *" */
 	tt_assert(strerror_r(EINTR, buf, sizeof(buf)) != 0);
 	tt_assert(strlen(strerror_r(EINTR, buf, sizeof(buf))) != 0);
-end:;
+end:    ;
 }
 /*
  * strcmpeq
@@ -115,7 +115,7 @@ static void test_strcmpeq(void *ptr)
 	tt_assert(strcmpeq("foo", "bar") == false);
 	tt_assert(strcmpeq("foo", NULL) == false);
 	tt_assert(strcmpeq(NULL, "foo") == false);
-end:;
+end:    ;
 }
 
 
@@ -130,7 +130,7 @@ static void test_memrchr(void *p)
 	tt_assert(memrchr(data, 'a', 4) == data + 0);
 	tt_assert(memrchr(data, 'd', 8) == data + 3);
 	tt_assert(memrchr(data, 'x', 8) == NULL);
-end:;
+end:    ;
 }
 
 /*
@@ -173,7 +173,7 @@ static void test_memmem(void *p)
 	int_check(zmemm("qweqwez", "eza"), -1);
 	int_check(zmemm("qweqwez", "za"), -1);
 	int_check(zmemm("qweqwez", "a"), -1);
-end:;
+end:    ;
 }
 
 /*
@@ -185,9 +185,9 @@ static void test_mempcpy(void *p)
 	char buf[128];
 	memset(buf, 0, sizeof buf);
 	tt_assert(mempcpy(buf, "xx", 0) == buf);  str_check(buf, "");
-	tt_assert(mempcpy(buf, "xx", 1) == buf+1);  str_check(buf, "x");
-	tt_assert(mempcpy(buf, "yy", 2) == buf+2);  str_check(buf, "yy");
-end:;
+	tt_assert(mempcpy(buf, "xx", 1) == buf + 1);  str_check(buf, "x");
+	tt_assert(mempcpy(buf, "yy", 2) == buf + 2);  str_check(buf, "yy");
+end:    ;
 }
 
 /*
@@ -206,14 +206,14 @@ static int run_strpcpy(char *dst, const char *src, int size)
 		} else {
 			if (memcmp(dst, src, size - 1) != 0)
 				return -11;
-			if (dst[size-1] !=  '\0')
+			if (dst[size - 1] != '\0')
 				return -12;
 		}
 		return -1;
 	}
 	if (*res != '\0')
 		return -13;
-	if (memcmp(dst, src, res-dst) != 0)
+	if (memcmp(dst, src, res - dst) != 0)
 		return -14;
 	if (res < dst)
 		return -15;
@@ -234,7 +234,7 @@ static void test_strpcpy(void *p)
 	int_check(run_strpcpy(buf, "asd", 3), -1);
 	int_check(run_strpcpy(buf, "asd", 4), 3);
 	int_check(run_strpcpy(buf, "asd", 5), 3);
-end:;
+end:    ;
 }
 
 /*
@@ -257,14 +257,14 @@ static int run_strpcat(char *dst, const char *src, int size)
 		} else {
 			if (memcmp(dst, copy, size - 1) != 0)
 				return -11;
-			if (dst[size-1] !=  '\0')
+			if (dst[size - 1] != '\0')
 				return -12;
 		}
 		return -1;
 	}
 	if (*res != '\0')
 		return -13;
-	if (memcmp(dst, copy, res-dst) != 0)
+	if (memcmp(dst, copy, res - dst) != 0)
 		return -14;
 	if (res < dst)
 		return -15;
@@ -286,7 +286,7 @@ static void test_strpcat(void *p)
 	int_check(run_strpcat(buf, "b", 2), -1);
 	int_check(run_strpcat(buf, "b", 3), 2);
 	str_check(buf, "ab");
-end:;
+end:    ;
 }
 
 /*
@@ -316,7 +316,7 @@ static void test_basename(void *p)
 	str_check(run_basename(""), ".");
 	str_check(run_basename("a/"), "a");
 	str_check(run_basename(NULL), ".");
-end:;
+end:    ;
 }
 
 /*
@@ -350,7 +350,7 @@ static void test_dirname(void *p)
 	str_check(run_dirname("a/"), ".");
 	str_check(run_dirname("a//"), ".");
 	str_check(run_dirname(NULL), ".");
-end:;
+end:    ;
 }
 
 /*
@@ -399,7 +399,7 @@ static void test_strlist(void *p)
 	strlist_append(sl, NULL);
 	str_check(lshow(sl), "2,3,NULL");
 	strlist_free(sl);
-end:;
+end:    ;
 }
 
 static bool sl_add(void *arg, const char *s)
@@ -431,7 +431,7 @@ static void test_wlist(void *p)
 	str_check(wlist(",  1 "), "1");
 	str_check(wlist("1  2"), "1  2");
 	str_check(wlist("  "), "");
-end:;
+end:    ;
 }
 
 static void test_mempbrk(void *z)
@@ -441,13 +441,13 @@ static void test_mempbrk(void *z)
 	tt_assert(mempbrk(p, 10, "a", 0) == NULL);
 	tt_assert(mempbrk(p, 10, "ab", 0) == NULL);
 	tt_assert(mempbrk(p, 10, "abc", 0) == NULL);
-	tt_assert(mempbrk(p, 10, "1", 1) == p+1);
-	tt_assert(mempbrk(p, 10, "12", 2) == p+1);
-	tt_assert(mempbrk(p, 10, "21", 2) == p+1);
-	tt_assert(mempbrk(p, 10, "123", 3) == p+1);
-	tt_assert(mempbrk(p, 10, "321", 3) == p+1);
-	tt_assert(mempbrk(p, 11, "abc\0", 4) == p+10);
-end:;
+	tt_assert(mempbrk(p, 10, "1", 1) == p + 1);
+	tt_assert(mempbrk(p, 10, "12", 2) == p + 1);
+	tt_assert(mempbrk(p, 10, "21", 2) == p + 1);
+	tt_assert(mempbrk(p, 10, "123", 3) == p + 1);
+	tt_assert(mempbrk(p, 10, "321", 3) == p + 1);
+	tt_assert(mempbrk(p, 11, "abc\0", 4) == p + 10);
+end:    ;
 }
 
 static void test_memcspn(void *z)
@@ -464,7 +464,7 @@ static void test_memcspn(void *z)
 	int_check(memcspn("qwe", 3, "weza", 4), 1);
 	int_check(memcspn("qwe", 3, "azew", 4), 1);
 	int_check(memcspn("qwe", 3, "zxab", 4), 3);
-end:;
+end:    ;
 }
 
 static void test_memspn(void *z)
@@ -481,7 +481,7 @@ static void test_memspn(void *z)
 	int_check(memspn(d, 10, "0123", 4), 4);
 	int_check(memspn(d, 10, d, 10), 10);
 	int_check(memspn(d, 11, d, 11), 11);
-end:;
+end:    ;
 }
 
 static void test_s2d_dot(void *p)
@@ -496,7 +496,7 @@ static void test_s2d_dot(void *p)
 	val = strtod_dot(buf, &end);
 	tt_assert(val == 1.5);
 	tt_assert(*end == 0);
-end:;
+end:    ;
 }
 
 static const char *wrap_strtonum(const char *s, long long minval, long long maxval)
@@ -552,7 +552,7 @@ static void test_strtonum(void *p)
 	str_check(wrap_strtonum("10", 0, LLONG_MAX), "10");
 	str_check(wrap_strtonum(" 9223372036854775807", -10, 10), "E:too large");
 	str_check(wrap_strtonum("-9223372036854775808", -10, 10), "E:too small");
-end:;
+end:    ;
 }
 
 static const char *run_strsep(const char *input, const char *delim)
@@ -588,7 +588,7 @@ static void test_strsep(void *p)
 	str_check(run_strsep(",:,", ":,"), "()()()()");
 	str_check(run_strsep("", ",:"), "()");
 	str_check(run_strsep(" a , b : c ", ",:"), "( a )( b )( c )");
-end:;
+end:    ;
 }
 
 #pragma GCC diagnostic push
@@ -606,7 +606,7 @@ static void test_snprintf(void *p)
 	int_check(snprintf(buf, 10, "%s", longstr), 10);
 	int_check(snprintf(buf, 11, "%s", longstr), 10);
 	int_check(snprintf(buf, 12, "%s", longstr), 10);
-end:;
+end:    ;
 }
 
 #pragma GCC diagnostic pop
@@ -618,10 +618,10 @@ static void test_asprintf(void *p)
 	int_check(asprintf(&res, "%s", "1234"), 4);
 	str_check(res, "1234");
 	free(res);
-end:;
+end:    ;
 }
 
-_PRINTF(2,3)
+_PRINTF(2, 3)
 static int tmp_asprintf(char **dst, const char *fmt, ...)
 {
 	int res;
@@ -638,7 +638,7 @@ static void test_vasprintf(void *p)
 	int_check(tmp_asprintf(&res, "%s", "1234"), 4);
 	str_check(res, "1234");
 	free(res);
-end:;
+end:    ;
 }
 
 /*

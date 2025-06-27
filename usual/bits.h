@@ -58,13 +58,22 @@ static inline uint64_t rol64(uint64_t v, int s)
 }
 
 /** Rotate 16-bit int to right */
-static inline uint16_t ror16(uint16_t v, int s) { return rol16(v, 16 - s); }
+static inline uint16_t ror16(uint16_t v, int s)
+{
+	return rol16(v, 16 - s);
+}
 
 /** Rotate 32-bit int to right */
-static inline uint32_t ror32(uint32_t v, int s) { return rol32(v, 32 - s); }
+static inline uint32_t ror32(uint32_t v, int s)
+{
+	return rol32(v, 32 - s);
+}
 
 /** Rotate 64-bit int to right */
-static inline uint64_t ror64(uint64_t v, int s) { return rol64(v, 64 - s); }
+static inline uint64_t ror64(uint64_t v, int s)
+{
+	return rol64(v, 64 - s);
+}
 
 /*
  * fls(int)
@@ -81,7 +90,7 @@ static inline uint64_t ror64(uint64_t v, int s) { return rol64(v, 64 - s); }
 #define flsl(x) usual_flsl(x)
 #define flsll(x) usual_flsll(x)
 
-#if _COMPILER_GNUC(4,0) || __has_builtin(__builtin_clzll)
+#if _COMPILER_GNUC(4, 0) || __has_builtin(__builtin_clzll)
 #define _USUAL_FLS_(sfx, type) \
 	return (x == 0) ? 0 : ((8*sizeof(type)) - __builtin_clz ## sfx(x))
 #else
@@ -97,7 +106,7 @@ static inline uint64_t ror64(uint64_t v, int s) { return rol64(v, 64 - s); }
 /** Find last (highest) set bit, 1-based offset, 0 if arg == 0 */
 static inline int fls(int x)
 {
-	_USUAL_FLS_(, int);
+	_USUAL_FLS_( , int);
 }
 
 /** Find last (highest) set bit, 1-based offset, 0 if arg == 0 */
@@ -129,7 +138,7 @@ static inline int flsll(long long x)
 #define ffsl(x) usual_ffsl(x)
 #define ffsll(x) usual_ffsll(x)
 
-#if _COMPILER_GNUC(4,0) || __has_builtin(__builtin_ffsll)
+#if _COMPILER_GNUC(4, 0) || __has_builtin(__builtin_ffsll)
 #define _USUAL_FFS_(sfx, type) \
 	return __builtin_ffs ## sfx((unsigned type)(x))
 #else
@@ -145,7 +154,7 @@ static inline int flsll(long long x)
 /** Find first (lowest) set bit, 1-based ofs, 0 if arg == 0 */
 static inline int ffs(int x)
 {
-	_USUAL_FFS_(, int);
+	_USUAL_FFS_( , int);
 }
 
 /** Find first (lowest) set bit, 1-based ofs, 0 if arg == 0 */
@@ -166,17 +175,17 @@ static inline int ffsll(long long x)
  * Multiply and check overflow.
  */
 
-#define _USUAL_MUL_SAFE_(type, max)	\
-	type unsafe = (type)(1) << (sizeof(type) * 8/2); /* sqrt(max+1) */ \
-	if (a < unsafe && b < unsafe)	\
-		goto safe;		\
-	if (!a || !b)			\
-		goto safe;		\
-	if ((max / a) >= b)		\
-		goto safe;		\
-	return false;			\
-   safe:				\
-	*res_p = a * b;			\
+#define _USUAL_MUL_SAFE_(type, max)     \
+	type unsafe = (type)(1) << (sizeof(type) * 8/2);/* sqrt(max+1) */ \
+	if (a < unsafe && b < unsafe)   \
+	goto safe;              \
+	if (!a || !b)                   \
+	goto safe;              \
+	if ((max / a) >= b)             \
+	goto safe;              \
+	return false;                   \
+safe:                                \
+	*res_p = a * b;                 \
 	return true;
 
 /** Multiply with overflow check for 'unsigned int' */

@@ -34,7 +34,7 @@ struct Slab {
 	char name[32];
 	unsigned final_size;
 	unsigned total_count;
-	slab_init_fn  init_func;
+	slab_init_fn init_func;
 	CxMem *cx;
 };
 
@@ -237,8 +237,8 @@ struct Slab {
 
 
 struct Slab *slab_create(const char *name, unsigned obj_size, unsigned align,
-			     slab_init_fn init_func,
-			     CxMem *cx)
+			 slab_init_fn init_func,
+			 CxMem *cx)
 {
 	struct Slab *s = cx_alloc(cx, sizeof(*s));
 	if (s) {
@@ -284,10 +284,21 @@ void slab_free(struct Slab *slab, void *obj)
 	}
 }
 
-int slab_total_count(const struct Slab *slab) { return 0; }
-int slab_free_count(const struct Slab *slab) { return 0; }
-int slab_active_count(const struct Slab *slab) { return 0; }
-void slab_stats(slab_stat_fn cb_func, void *cb_arg) {}
+int slab_total_count(const struct Slab *slab)
+{
+	return 0;
+}
+int slab_free_count(const struct Slab *slab)
+{
+	return 0;
+}
+int slab_active_count(const struct Slab *slab)
+{
+	return 0;
+}
+void slab_stats(slab_stat_fn cb_func, void *cb_arg)
+{
+}
 
 
 #endif

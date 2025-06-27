@@ -43,7 +43,7 @@ static void test_gai(void *p)
 	freeaddrinfo(req.ar_result);
 
 	int_check(gotres, 1);
-end:;
+end:    ;
 }
 
 struct testcase_t netdb_tests[] = {

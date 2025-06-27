@@ -23,24 +23,24 @@
 #include <usual/base.h>
 
 #ifdef WORDS_BIGENDIAN
-#define FOURCC(a,b,c,d) \
-	(  ((unsigned int)(unsigned char)(a) << 24) \
+#define FOURCC(a, b, c, d) \
+	(((unsigned int)(unsigned char)(a) << 24) \
 	 | ((unsigned int)(unsigned char)(b) << 16) \
 	 | ((unsigned int)(unsigned char)(c) << 8) \
 	 | ((unsigned int)(unsigned char)(d)))
 #else
 /** Four-byte identifier as integer */
-#define FOURCC(a,b,c,d) \
-	(  ((unsigned int)(unsigned char)(a)) \
+#define FOURCC(a, b, c, d) \
+	(((unsigned int)(unsigned char)(a)) \
 	 | ((unsigned int)(unsigned char)(b) << 8) \
 	 | ((unsigned int)(unsigned char)(c) << 16) \
 	 | ((unsigned int)(unsigned char)(d) << 24))
 #endif
 
 #if defined(__i386__) || defined(__x86_64__)
-#define mb()  asm volatile("mfence":::"memory")
-#define rmb() asm volatile("lfence":::"memory")
-#define wmb() asm volatile("sfence":::"memory")
+#define mb()  asm volatile ("mfence" ::: "memory")
+#define rmb() asm volatile ("lfence" ::: "memory")
+#define wmb() asm volatile ("sfence" ::: "memory")
 #endif
 
 #endif

@@ -62,7 +62,7 @@
 #include <stdbool.h>
 #else
 /* we really want bool type */
-typedef enum { true=1, false=0 } bool;
+typedef enum { true = 1, false = 0 } bool;
 #endif
 
 #ifdef WIN32
@@ -100,7 +100,7 @@ typedef enum { true=1, false=0 } bool;
 #endif
 
 /** number of elements in array */
-#define ARRAY_NELEM(a)	(sizeof(a) / sizeof((a)[0]))
+#define ARRAY_NELEM(a)  (sizeof(a) / sizeof((a)[0]))
 
 /**
  * Compat helper to specify array with unknown length.
@@ -148,15 +148,15 @@ typedef enum { true=1, false=0 } bool;
 
 /** Pre-processor macro to check if compiler is GCC with high enough version */
 #if defined(__GNUC__)
-#define _COMPILER_GNUC(maj,min) ((__GNUC__ > (maj)) || (__GNUC__ == (maj) && __GNUC_MINOR__ >= (min)))
+#define _COMPILER_GNUC(maj, min) ((__GNUC__ > (maj)) || (__GNUC__ == (maj) && __GNUC_MINOR__ >= (min)))
 #else
-#define _COMPILER_GNUC(maj,min) (0)
+#define _COMPILER_GNUC(maj, min) (0)
 #endif
 /** Pre-processor macro to check if compiler is CLANG with high enough version */
 #if defined(__clang__)
-#define _COMPILER_CLANG(maj,min) ((__clang_major__ > (maj)) || (__clang_major__ == (maj) && __clang_minor__ >= (min)))
+#define _COMPILER_CLANG(maj, min) ((__clang_major__ > (maj)) || (__clang_major__ == (maj) && __clang_minor__ >= (min)))
 #else
-#define _COMPILER_CLANG(maj,min) (0)
+#define _COMPILER_CLANG(maj, min) (0)
 #endif
 /** Pre-processor macro to check if compiler is Visual C with high enough version */
 #if defined(_MSC_VER)
@@ -209,7 +209,7 @@ typedef enum { true=1, false=0 } bool;
 
 /** Disable padding for structure */
 #ifndef _MSC_VER
-#define _PACKED			__attribute__((packed))
+#define _PACKED                 __attribute__((packed))
 #endif
 
 /*
@@ -217,21 +217,21 @@ typedef enum { true=1, false=0 } bool;
  */
 
 /** Show warning if function result is not used */
-#if _COMPILER_GNUC(4,0) || __has_attribute(warn_unused_result)
+#if _COMPILER_GNUC(4, 0) || __has_attribute(warn_unused_result)
 #define _MUSTCHECK __attribute__((warn_unused_result))
 #else
 #define _MUSTCHECK
 #endif
 
 /** Show warning if used */
-#if _COMPILER_GNUC(4,0) || __has_attribute(deprecated)
+#if _COMPILER_GNUC(4, 0) || __has_attribute(deprecated)
 #define _DEPRECATED __attribute__((deprecated))
 #else
 #define _DEPRECATED
 #endif
 
 /** Check printf-style format and arg sanity */
-#if _COMPILER_GNUC(4,0) || __has_attribute(printf)
+#if _COMPILER_GNUC(4, 0) || __has_attribute(printf)
 #ifdef __MINGW32__
 #define _PRINTF(fmtpos, argpos) __attribute__((format(__MINGW_PRINTF_FORMAT, fmtpos, argpos)))
 #else
@@ -242,42 +242,42 @@ typedef enum { true=1, false=0 } bool;
 #endif
 
 /** Function returns new pointer */
-#if _COMPILER_GNUC(4,0) || __has_attribute(malloc)
+#if _COMPILER_GNUC(4, 0) || __has_attribute(malloc)
 #define _MALLOC __attribute__((malloc))
 #else
 #define _MALLOC
 #endif
 
 /** Disable 'unused' warning for function/argument. */
-#if _COMPILER_GNUC(4,0) || __has_attribute(unused)
+#if _COMPILER_GNUC(4, 0) || __has_attribute(unused)
 #define _UNUSED __attribute__((unused))
 #else
 #define _UNUSED
 #endif
 
 /** Do not inline function. */
-#if _COMPILER_GNUC(4,0) || __has_attribute(noinline)
+#if _COMPILER_GNUC(4, 0) || __has_attribute(noinline)
 #define _NOINLINE __attribute__((noinline))
 #else
 #define _NOINLINE
 #endif
 
 /** Indicates that function never returns */
-#if _COMPILER_GNUC(4,0) || __has_attribute(noreturn)
+#if _COMPILER_GNUC(4, 0) || __has_attribute(noreturn)
 #define _NORETURN __attribute__((noreturn))
 #else
 #define _NORETURN
 #endif
 
 /** Hint for compiler that expression (x) is likely to be true */
-#if _COMPILER_GNUC(4,0) || __has_builtin(__builtin_expect)
+#if _COMPILER_GNUC(4, 0) || __has_builtin(__builtin_expect)
 #define likely(x) __builtin_expect(!!(x), 1)
 #else
 #define likely(x) (x)
 #endif
 
 /** Hint for compiler that expression (x) is likely to be false */
-#if _COMPILER_GNUC(4,0) || __has_builtin(__builtin_expect)
+#if _COMPILER_GNUC(4, 0) || __has_builtin(__builtin_expect)
 #define unlikely(x) __builtin_expect(!!(x), 0)
 #else
 #define unlikely(x) (x)
@@ -295,7 +295,7 @@ typedef enum { true=1, false=0 } bool;
  * It can be used in either global or function scope.
  */
 #ifndef static_assert
-#if _COMPILER_GNUC(4,6) || _COMPILER_MSC(1600) || __has_feature(c_static_assert)
+#if _COMPILER_GNUC(4, 6) || _COMPILER_MSC(1600) || __has_feature(c_static_assert)
 /* Version for new compilers */
 #define static_assert(expr, msg) _Static_assert(expr, msg)
 #else
@@ -330,13 +330,13 @@ static inline void *zmalloc(size_t len)
 }
 
 #ifndef HAVE_POSIX_MEMALIGN
-#define posix_memalign(a,b,c) usual_memalign(a,b,c)
+#define posix_memalign(a, b, c) usual_memalign(a, b, c)
 /** Compat: posix_memalign() */
 int posix_memalign(void **ptr_p, size_t align, size_t len);
 #endif
 
 #ifndef HAVE_REALLOCARRAY
-#define reallocarray(a,b,c) usual_reallocarray(a,b,c)
+#define reallocarray(a, b, c) usual_reallocarray(a, b, c)
 
 /**
  * Same as realloc(), but safely calculates total size.

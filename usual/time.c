@@ -112,7 +112,7 @@ static void ft2tv(FILETIME *src, struct timeval *dest, bool use_epoch)
 
 #ifndef HAVE_GETTIMEOFDAY
 
-int gettimeofday(struct timeval * tp, void * tzp)
+int gettimeofday(struct timeval *tp, void *tzp)
 {
 	FILETIME file_time;
 	SYSTEMTIME system_time;

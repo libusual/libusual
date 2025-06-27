@@ -27,25 +27,25 @@
 
 #include <string.h>
 
-#define MAGIC_USED		0xF100F7	/* allocated block */
-#define MAGIC_FREE		0x8600CB	/* freed block */
-#define MAGIC_MASK		0xFFFFFF	/* keep only magic */
+#define MAGIC_USED              0xF100F7	/* allocated block */
+#define MAGIC_FREE              0x8600CB	/* freed block */
+#define MAGIC_MASK              0xFFFFFF	/* keep only magic */
 
-#define FLAG_PENDING		(1 << 24)	/* partially freed */
-#define FLAG_USE_MEMLIMIT	(1 << 25)	/* some parent has memlimit */
-#define FLAG_HAS_MEMLIMIT	(1 << 26)	/* current node has TLimit child */
+#define FLAG_PENDING            (1 << 24)	/* partially freed */
+#define FLAG_USE_MEMLIMIT       (1 << 25)	/* some parent has memlimit */
+#define FLAG_HAS_MEMLIMIT       (1 << 26)	/* current node has TLimit child */
 
 /* flags parent passes to children */
-#define INHERIT_FLAGS		(FLAG_USE_MEMLIMIT)
+#define INHERIT_FLAGS           (FLAG_USE_MEMLIMIT)
 
 /* recursion limit */
-#define TALLOC_MAX_DEPTH	10000
+#define TALLOC_MAX_DEPTH        10000
 
 /* Don't deal with extreme areas */
-#define TALLOC_MAXLEN	0x10000000		/* 256MB */
+#define TALLOC_MAXLEN   0x10000000		/* 256MB */
 
 /* header size that is prepended to each pointer */
-#define THSIZE	(sizeof(struct THeader))
+#define THSIZE  (sizeof(struct THeader))
 
 /*
  * Prefix on each allocated chunk.
@@ -123,7 +123,10 @@ static const char UNNAMED_NAME[] = "UNNAMED";
 static int leak_report;
 
 static int debug_level;
-void talloc_set_debug(int level) { debug_level = level; }
+void talloc_set_debug(int level)
+{
+	debug_level = level;
+}
 
 /*
  * Internal utils.
@@ -998,7 +1001,7 @@ size_t talloc_reference_count(const void *ptr)
 	t = ptr2hdr(ptr);
 	if (t) {
 		list_for_each(el, &t->ref_list)
-			cnt++;
+		cnt++;
 	}
 	return cnt;
 }
@@ -1177,9 +1180,8 @@ char *talloc_strndup_append_buffer(char *ptr, const char *s, size_t maxlen)
  * printfs
  */
 
-_PRINTF(4,0)
-static char *_tprintf(const void *parent, char *ptr, size_t plen, const char *fmt, va_list ap)
-{
+_PRINTF(4, 0)
+static char *_tprintf(const void *parent, char *ptr, size_t plen, const char *fmt, va_list ap){
 	char buf[128];
 	ssize_t len;
 	va_list ap2;

@@ -31,8 +31,8 @@
 #endif
 
 #ifndef SSLerr
-#define SSLerr(a,b) do {} while (0)
-#define X509err(a,b) do {} while (0)
+#define SSLerr(a, b) do {} while (0)
+#define X509err(a, b) do {} while (0)
 #endif
 
 #ifndef SSL_CTX_set_dh_auto
@@ -45,29 +45,29 @@
  */
 
 static const char file_dh2048[] =
-"-----BEGIN DH PARAMETERS-----\n"
-"MIIBCAKCAQEA9kJXtwh/CBdyorrWqULzBej5UxE5T7bxbrlLOCDaAadWoxTpj0BV\n"
-"89AHxstDqZSt90xkhkn4DIO9ZekX1KHTUPj1WV/cdlJPPT2N286Z4VeSWc39uK50\n"
-"T8X8dryDxUcwYc58yWb/Ffm7/ZFexwGq01uejaClcjrUGvC/RgBYK+X0iP1YTknb\n"
-"zSC0neSRBzZrM2w4DUUdD3yIsxx8Wy2O9vPJI8BD8KVbGI2Ou1WMuF040zT9fBdX\n"
-"Q6MdGGzeMyEstSr/POGxKUAYEY18hKcKctaGxAMZyAcpesqVDNmWn6vQClCbAkbT\n"
-"CD1mpF1Bn5x8vYlLIhkmuquiXsNV6TILOwIBAg==\n"
-"-----END DH PARAMETERS-----\n";
+	"-----BEGIN DH PARAMETERS-----\n"
+	"MIIBCAKCAQEA9kJXtwh/CBdyorrWqULzBej5UxE5T7bxbrlLOCDaAadWoxTpj0BV\n"
+	"89AHxstDqZSt90xkhkn4DIO9ZekX1KHTUPj1WV/cdlJPPT2N286Z4VeSWc39uK50\n"
+	"T8X8dryDxUcwYc58yWb/Ffm7/ZFexwGq01uejaClcjrUGvC/RgBYK+X0iP1YTknb\n"
+	"zSC0neSRBzZrM2w4DUUdD3yIsxx8Wy2O9vPJI8BD8KVbGI2Ou1WMuF040zT9fBdX\n"
+	"Q6MdGGzeMyEstSr/POGxKUAYEY18hKcKctaGxAMZyAcpesqVDNmWn6vQClCbAkbT\n"
+	"CD1mpF1Bn5x8vYlLIhkmuquiXsNV6TILOwIBAg==\n"
+	"-----END DH PARAMETERS-----\n";
 
 static const char file_dh4096[] =
-"-----BEGIN DH PARAMETERS-----\n"
-"MIICCAKCAgEA+hRyUsFN4VpJ1O8JLcCo/VWr19k3BCgJ4uk+d+KhehjdRqNDNyOQ\n"
-"l/MOyQNQfWXPeGKmOmIig6Ev/nm6Nf9Z2B1h3R4hExf+zTiHnvVPeRBhjdQi81rt\n"
-"Xeoh6TNrSBIKIHfUJWBh3va0TxxjQIs6IZOLeVNRLMqzeylWqMf49HsIXqbcokUS\n"
-"Vt1BkvLdW48j8PPv5DsKRN3tloTxqDJGo9tKvj1Fuk74A+Xda1kNhB7KFlqMyN98\n"
-"VETEJ6c7KpfOo30mnK30wqw3S8OtaIR/maYX72tGOno2ehFDkq3pnPtEbD2CScxc\n"
-"alJC+EL7RPk5c/tgeTvCngvc1KZn92Y//EI7G9tPZtylj2b56sHtMftIoYJ9+ODM\n"
-"sccD5Piz/rejE3Ome8EOOceUSCYAhXn8b3qvxVI1ddd1pED6FHRhFvLrZxFvBEM9\n"
-"ERRMp5QqOaHJkM+Dxv8Cj6MqrCbfC4u+ZErxodzuusgDgvZiLF22uxMZbobFWyte\n"
-"OvOzKGtwcTqO/1wV5gKkzu1ZVswVUQd5Gg8lJicwqRWyyNRczDDoG9jVDxmogKTH\n"
-"AaqLulO7R8Ifa1SwF2DteSGVtgWEN8gDpN3RBmmPTDngyF2DHb5qmpnznwtFKdTL\n"
-"KWbuHn491xNO25CQWMtem80uKw+pTnisBRF/454n1Jnhub144YRBoN8CAQI=\n"
-"-----END DH PARAMETERS-----\n";
+	"-----BEGIN DH PARAMETERS-----\n"
+	"MIICCAKCAgEA+hRyUsFN4VpJ1O8JLcCo/VWr19k3BCgJ4uk+d+KhehjdRqNDNyOQ\n"
+	"l/MOyQNQfWXPeGKmOmIig6Ev/nm6Nf9Z2B1h3R4hExf+zTiHnvVPeRBhjdQi81rt\n"
+	"Xeoh6TNrSBIKIHfUJWBh3va0TxxjQIs6IZOLeVNRLMqzeylWqMf49HsIXqbcokUS\n"
+	"Vt1BkvLdW48j8PPv5DsKRN3tloTxqDJGo9tKvj1Fuk74A+Xda1kNhB7KFlqMyN98\n"
+	"VETEJ6c7KpfOo30mnK30wqw3S8OtaIR/maYX72tGOno2ehFDkq3pnPtEbD2CScxc\n"
+	"alJC+EL7RPk5c/tgeTvCngvc1KZn92Y//EI7G9tPZtylj2b56sHtMftIoYJ9+ODM\n"
+	"sccD5Piz/rejE3Ome8EOOceUSCYAhXn8b3qvxVI1ddd1pED6FHRhFvLrZxFvBEM9\n"
+	"ERRMp5QqOaHJkM+Dxv8Cj6MqrCbfC4u+ZErxodzuusgDgvZiLF22uxMZbobFWyte\n"
+	"OvOzKGtwcTqO/1wV5gKkzu1ZVswVUQd5Gg8lJicwqRWyyNRczDDoG9jVDxmogKTH\n"
+	"AaqLulO7R8Ifa1SwF2DteSGVtgWEN8gDpN3RBmmPTDngyF2DHb5qmpnznwtFKdTL\n"
+	"KWbuHn491xNO25CQWMtem80uKw+pTnisBRF/454n1Jnhub144YRBoN8CAQI=\n"
+	"-----END DH PARAMETERS-----\n";
 
 
 static DH *dh2048, *dh4096;
@@ -182,8 +182,12 @@ long SSL_CTX_set_ecdh_auto(SSL_CTX *ctx, int onoff)
 void tls_compat_cleanup(void)
 {
 #ifdef DH_CLEANUP
-	if (dh2048) { DH_free(dh2048); dh2048 = NULL; }
-	if (dh4096) { DH_free(dh4096); dh4096 = NULL; }
+	if (dh2048) {
+		DH_free(dh2048); dh2048 = NULL;
+	}
+	if (dh4096) {
+		DH_free(dh4096); dh4096 = NULL;
+	}
 #endif
 #ifdef ECDH_CLEANUP
 	if (ecdh_cache) {
@@ -199,8 +203,7 @@ void tls_compat_cleanup(void)
  * Load certs for public key from memory.
  */
 
-int
-SSL_CTX_use_certificate_chain_mem(SSL_CTX *ctx, void *data, int data_len)
+int SSL_CTX_use_certificate_chain_mem(SSL_CTX *ctx, void *data, int data_len)
 {
 	pem_password_cb *psw_fn = NULL;
 	void *psw_arg = NULL;
@@ -257,7 +260,7 @@ SSL_CTX_use_certificate_chain_mem(SSL_CTX *ctx, void *data, int data_len)
 		if (!ok)
 			X509_free(cert);
 	}
- failed:
+failed:
 	if (bio)
 		BIO_free(bio);
 	return 0;
@@ -302,7 +305,7 @@ int SSL_CTX_load_verify_mem(SSL_CTX *ctx, void *data, int data_len)
 			got = 1;
 	}
 	ret = got;
- failed:
+failed:
 	if (bio)
 		BIO_free(bio);
 	if (stack)
@@ -316,8 +319,7 @@ int SSL_CTX_load_verify_mem(SSL_CTX *ctx, void *data, int data_len)
 
 #ifndef HAVE_ASN1_TIME_PARSE
 
-static int
-parse2num(const char **str_p, int min, int max)
+static int parse2num(const char **str_p, int min, int max)
 {
 	const char *s = *str_p;
 	if (s && s[0] >= '0' && s[0] <= '9' && s[1] >= '0' && s[1] <= '9') {
@@ -331,8 +333,7 @@ parse2num(const char **str_p, int min, int max)
 	return 0;
 }
 
-int
-asn1_time_parse(const char *src, size_t len, struct tm *tm, int mode)
+int asn1_time_parse(const char *src, size_t len, struct tm *tm, int mode)
 {
 	char buf[16];
 	const char *s = buf;
@@ -386,14 +387,13 @@ asn1_time_parse(const char *src, size_t len, struct tm *tm, int mode)
 			goto good;
 	}
 	return -1;
- good:
+good:
 	return utctime ? V_ASN1_UTCTIME : V_ASN1_GENERALIZEDTIME;
 }
 
 #endif /* HAVE_ASN1_TIME_PARSE */
 
-int
-tls_asn1_parse_time(struct tls *ctx, const ASN1_TIME *asn1time, time_t *dst)
+int tls_asn1_parse_time(struct tls *ctx, const ASN1_TIME *asn1time, time_t *dst)
 {
 	struct tm tm;
 	int res;
@@ -408,7 +408,7 @@ tls_asn1_parse_time(struct tls *ctx, const ASN1_TIME *asn1time, time_t *dst)
 		return -1;
 	}
 
-	res = asn1_time_parse((char*)asn1time->data, asn1time->length, &tm, 0);
+	res = asn1_time_parse((char *)asn1time->data, asn1time->length, &tm, 0);
 	if (res == -1) {
 		tls_set_errorx(ctx, "Invalid asn1 time");
 		return -1;
@@ -431,92 +431,265 @@ tls_asn1_parse_time(struct tls *ctx, const ASN1_TIME *asn1time, time_t *dst)
  * Install empty functions when openssl is not available.
  */
 
-int tls_init(void) { return -1; }
-void tls_deinit(void) { }
+int tls_init(void)
+{
+	return -1;
+}
+void tls_deinit(void)
+{
+}
 
-const char *tls_backend_version(void) { return "unsupported"; }
+const char *tls_backend_version(void)
+{
+	return "unsupported";
+}
 
-const char *tls_error(struct tls *_ctx) { return "No TLS support"; }
+const char *tls_error(struct tls *_ctx)
+{
+	return "No TLS support";
+}
 
-struct tls_config *tls_config_new(void) { return NULL; }
-void tls_config_free(struct tls_config *_config) {}
+struct tls_config *tls_config_new(void)
+{
+	return NULL;
+}
+void tls_config_free(struct tls_config *_config)
+{
+}
 
-int tls_config_set_ca_file(struct tls_config *_config, const char *_ca_file) { return -1; }
-int tls_config_set_ca_path(struct tls_config *_config, const char *_ca_path) { return -1; }
-int tls_config_set_ca_mem(struct tls_config *_config, const uint8_t *_ca, size_t _len) { return -1; }
-int tls_config_set_cert_file(struct tls_config *_config, const char *_cert_file) { return -1; }
-int tls_config_set_cert_mem(struct tls_config *_config, const uint8_t *_cert, size_t _len) { return -1; }
-int tls_config_set_ciphers(struct tls_config *_config, const char *_ciphers) { return -1; }
-int tls_config_set_dheparams(struct tls_config *_config, const char *_params) { return -1; }
-int tls_config_set_ecdhecurve(struct tls_config *_config, const char *_name) { return -1; }
-int tls_config_set_key_file(struct tls_config *_config, const char *_key_file) { return -1; }
-int tls_config_set_key_mem(struct tls_config *_config, const uint8_t *_key, size_t _len) { return -1; }
-int tls_config_set_ocsp_stapling_file(struct tls_config *_config, const char *_blob_file) { return -1; }
-int tls_config_set_ocsp_stapling_mem(struct tls_config *_config, const uint8_t *_blob, size_t _len) { return -1; }
-void tls_config_set_protocols(struct tls_config *_config, uint32_t _protocols) {}
-void tls_config_set_verify_depth(struct tls_config *_config, int _verify_depth) {}
+int tls_config_set_ca_file(struct tls_config *_config, const char *_ca_file)
+{
+	return -1;
+}
+int tls_config_set_ca_path(struct tls_config *_config, const char *_ca_path)
+{
+	return -1;
+}
+int tls_config_set_ca_mem(struct tls_config *_config, const uint8_t *_ca, size_t _len)
+{
+	return -1;
+}
+int tls_config_set_cert_file(struct tls_config *_config, const char *_cert_file)
+{
+	return -1;
+}
+int tls_config_set_cert_mem(struct tls_config *_config, const uint8_t *_cert, size_t _len)
+{
+	return -1;
+}
+int tls_config_set_ciphers(struct tls_config *_config, const char *_ciphers)
+{
+	return -1;
+}
+int tls_config_set_dheparams(struct tls_config *_config, const char *_params)
+{
+	return -1;
+}
+int tls_config_set_ecdhecurve(struct tls_config *_config, const char *_name)
+{
+	return -1;
+}
+int tls_config_set_key_file(struct tls_config *_config, const char *_key_file)
+{
+	return -1;
+}
+int tls_config_set_key_mem(struct tls_config *_config, const uint8_t *_key, size_t _len)
+{
+	return -1;
+}
+int tls_config_set_ocsp_stapling_file(struct tls_config *_config, const char *_blob_file)
+{
+	return -1;
+}
+int tls_config_set_ocsp_stapling_mem(struct tls_config *_config, const uint8_t *_blob, size_t _len)
+{
+	return -1;
+}
+void tls_config_set_protocols(struct tls_config *_config, uint32_t _protocols)
+{
+}
+void tls_config_set_verify_depth(struct tls_config *_config, int _verify_depth)
+{
+}
 
-void tls_config_prefer_ciphers_client(struct tls_config *_config) {}
-void tls_config_prefer_ciphers_server(struct tls_config *_config) {}
+void tls_config_prefer_ciphers_client(struct tls_config *_config)
+{
+}
+void tls_config_prefer_ciphers_server(struct tls_config *_config)
+{
+}
 
-void tls_config_insecure_noverifycert(struct tls_config *_config) {}
-void tls_config_insecure_noverifyname(struct tls_config *_config) {}
-void tls_config_insecure_noverifytime(struct tls_config *_config) {}
-void tls_config_verify(struct tls_config *_config) {}
+void tls_config_insecure_noverifycert(struct tls_config *_config)
+{
+}
+void tls_config_insecure_noverifyname(struct tls_config *_config)
+{
+}
+void tls_config_insecure_noverifytime(struct tls_config *_config)
+{
+}
+void tls_config_verify(struct tls_config *_config)
+{
+}
 
-void tls_config_verify_client(struct tls_config *_config) {}
-void tls_config_verify_client_optional(struct tls_config *_config) {}
+void tls_config_verify_client(struct tls_config *_config)
+{
+}
+void tls_config_verify_client_optional(struct tls_config *_config)
+{
+}
 
-void tls_config_clear_keys(struct tls_config *_config) {}
-int tls_config_parse_protocols(uint32_t *_protocols, const char *_protostr) { return -1; }
+void tls_config_clear_keys(struct tls_config *_config)
+{
+}
+int tls_config_parse_protocols(uint32_t *_protocols, const char *_protostr)
+{
+	return -1;
+}
 
-struct tls *tls_client(void) { return NULL; }
-struct tls *tls_server(void) { return NULL; }
-int tls_configure(struct tls *_ctx, struct tls_config *_config) { return -1; }
-void tls_reset(struct tls *_ctx) {}
-void usual_tls_free(struct tls *_ctx) {}
+struct tls *tls_client(void)
+{
+	return NULL;
+}
+struct tls *tls_server(void)
+{
+	return NULL;
+}
+int tls_configure(struct tls *_ctx, struct tls_config *_config)
+{
+	return -1;
+}
+void tls_reset(struct tls *_ctx)
+{
+}
+void usual_tls_free(struct tls *_ctx)
+{
+}
 
-int tls_accept_fds(struct tls *_ctx, struct tls **_cctx, int _fd_read, int _fd_write) { return -1; }
-int tls_accept_socket(struct tls *_ctx, struct tls **_cctx, int _socket) { return -1; }
-int tls_connect(struct tls *_ctx, const char *_host, const char *_port) { return -1; }
-int tls_connect_fds(struct tls *_ctx, int _fd_read, int _fd_write, const char *_servername) { return -1; }
-int tls_connect_servername(struct tls *_ctx, const char *_host, const char *_port, const char *_servername) { return -1; }
-int tls_connect_socket(struct tls *_ctx, int _s, const char *_servername) { return -1; }
-int tls_handshake(struct tls *_ctx) { return -1; }
-ssize_t tls_read(struct tls *_ctx, void *_buf, size_t _buflen) { return -1; }
-ssize_t tls_write(struct tls *_ctx, const void *_buf, size_t _buflen) { return -1; }
-int tls_close(struct tls *_ctx) { return -1; }
+int tls_accept_fds(struct tls *_ctx, struct tls **_cctx, int _fd_read, int _fd_write)
+{
+	return -1;
+}
+int tls_accept_socket(struct tls *_ctx, struct tls **_cctx, int _socket)
+{
+	return -1;
+}
+int tls_connect(struct tls *_ctx, const char *_host, const char *_port)
+{
+	return -1;
+}
+int tls_connect_fds(struct tls *_ctx, int _fd_read, int _fd_write, const char *_servername)
+{
+	return -1;
+}
+int tls_connect_servername(struct tls *_ctx, const char *_host, const char *_port, const char *_servername)
+{
+	return -1;
+}
+int tls_connect_socket(struct tls *_ctx, int _s, const char *_servername)
+{
+	return -1;
+}
+int tls_handshake(struct tls *_ctx)
+{
+	return -1;
+}
+ssize_t tls_read(struct tls *_ctx, void *_buf, size_t _buflen)
+{
+	return -1;
+}
+ssize_t tls_write(struct tls *_ctx, const void *_buf, size_t _buflen)
+{
+	return -1;
+}
+int tls_close(struct tls *_ctx)
+{
+	return -1;
+}
 
-int tls_peer_cert_provided(struct tls *ctx) { return 0; }
-int tls_peer_cert_contains_name(struct tls *ctx, const char *name) { return 0; }
+int tls_peer_cert_provided(struct tls *ctx)
+{
+	return 0;
+}
+int tls_peer_cert_contains_name(struct tls *ctx, const char *name)
+{
+	return 0;
+}
 
-const char *tls_peer_cert_hash(struct tls *_ctx) { return NULL; }
-const char *tls_peer_cert_issuer(struct tls *ctx) { return NULL; }
-const char *tls_peer_cert_subject(struct tls *ctx) { return NULL; }
-time_t tls_peer_cert_notbefore(struct tls *ctx) { return (time_t)-1; }
-time_t tls_peer_cert_notafter(struct tls *ctx) { return (time_t)-1; }
+const char *tls_peer_cert_hash(struct tls *_ctx)
+{
+	return NULL;
+}
+const char *tls_peer_cert_issuer(struct tls *ctx)
+{
+	return NULL;
+}
+const char *tls_peer_cert_subject(struct tls *ctx)
+{
+	return NULL;
+}
+time_t tls_peer_cert_notbefore(struct tls *ctx)
+{
+	return (time_t)-1;
+}
+time_t tls_peer_cert_notafter(struct tls *ctx)
+{
+	return (time_t)-1;
+}
 
-const char *tls_conn_version(struct tls *ctx) { return "n/a"; }
-const char *tls_conn_cipher(struct tls *ctx) { return "n/a"; }
+const char *tls_conn_version(struct tls *ctx)
+{
+	return "n/a";
+}
+const char *tls_conn_cipher(struct tls *ctx)
+{
+	return "n/a";
+}
 
-uint8_t *tls_load_file(const char *_file, size_t *_len, char *_password) { return NULL; }
+uint8_t *tls_load_file(const char *_file, size_t *_len, char *_password)
+{
+	return NULL;
+}
 
-ssize_t tls_get_connection_info(struct tls *ctx, char *buf, size_t buflen) { return -1; }
+ssize_t tls_get_connection_info(struct tls *ctx, char *buf, size_t buflen)
+{
+	return -1;
+}
 
-int tls_ocsp_refresh_stapling(struct tls **ocsp_ctx_p, int *async_fd_p, struct tls_config *config) { return -1; }
-int tls_ocsp_check_peer(struct tls **ocsp_ctx_p, int *async_fd_p, struct tls *client) { return -1; }
+int tls_ocsp_refresh_stapling(struct tls **ocsp_ctx_p, int *async_fd_p, struct tls_config *config)
+{
+	return -1;
+}
+int tls_ocsp_check_peer(struct tls **ocsp_ctx_p, int *async_fd_p, struct tls *client)
+{
+	return -1;
+}
 int tls_get_ocsp_info(struct tls *ctx, int *response_status, int *cert_status, int *crl_reason,
 		      time_t *this_update, time_t *next_update, time_t *revoction_time,
-		      const char **result_text) { return -1; }
+		      const char **result_text)
+{
+	return -1;
+}
 
 int tls_ocsp_check_peer_request(struct tls **ocsp_ctx_p, struct tls *target,
-				char **ocsp_url, void **request_blob, size_t *request_size) { return -1; }
+				char **ocsp_url, void **request_blob, size_t *request_size)
+{
+	return -1;
+}
 
 int tls_ocsp_refresh_stapling_request(struct tls **ocsp_ctx_p, struct tls_config *config,
-				      char **ocsp_url, void **request_blob, size_t *request_size) { return -1; }
+				      char **ocsp_url, void **request_blob, size_t *request_size)
+{
+	return -1;
+}
 
-int tls_get_peer_cert(struct tls *ctx, struct tls_cert **cert_p, const char *algo) { *cert_p = NULL; return -1; }
-void tls_cert_free(struct tls_cert *cert) {}
+int tls_get_peer_cert(struct tls *ctx, struct tls_cert **cert_p, const char *algo)
+{
+	*cert_p = NULL; return -1;
+}
+void tls_cert_free(struct tls_cert *cert)
+{
+}
 
 
 #endif /* !USUAL_LIBSSL_FOR_TLS */

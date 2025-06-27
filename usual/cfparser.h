@@ -175,21 +175,21 @@ const char *cf_get_lookup(struct CfValue *cv);
  */
 
 /** Ops for string */
-#define CF_STR	{ cf_set_str, cf_get_str }
+#define CF_STR  { cf_set_str, cf_get_str }
 /** Ops for filename */
-#define CF_FILE	{ cf_set_filename, cf_get_str }
+#define CF_FILE { cf_set_filename, cf_get_str }
 /** Ops for integer */
-#define CF_INT	{ cf_set_int, cf_get_int }
+#define CF_INT  { cf_set_int, cf_get_int }
 /** Ops for unsigned integer */
 #define CF_UINT { cf_set_uint, cf_get_uint }
 /** Ops for boolean */
-#define CF_BOOL	{ cf_set_int, cf_get_int }
+#define CF_BOOL { cf_set_int, cf_get_int }
 /** Ops for time as usec */
-#define CF_TIME_USEC	{ cf_set_time_usec, cf_get_time_usec }
+#define CF_TIME_USEC    { cf_set_time_usec, cf_get_time_usec }
 /** Ops for time as double */
-#define CF_TIME_DOUBLE	{ cf_set_time_double, cf_get_time_double }
+#define CF_TIME_DOUBLE  { cf_set_time_double, cf_get_time_double }
 /** Ops for lookup, takes table as argument */
-#define CF_LOOKUP(t)	{ cf_set_lookup, cf_get_lookup, t }
+#define CF_LOOKUP(t)    { cf_set_lookup, cf_get_lookup, t }
 
 /** @} */
 

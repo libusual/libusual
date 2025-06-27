@@ -29,7 +29,7 @@ wchar_t *mbstr_decode(const char *str, int str_len, int *wlen_p, wchar_t *wbuf, 
 wctype_t wctype_wcsn(const wchar_t *name, unsigned int namelen);
 
 #ifndef HAVE_MBSNRTOWCS
-#define mbsnrtowcs(a,b,c,d,e) usual_mbsnrtowcs(a,b,c,d,e)
+#define mbsnrtowcs(a, b, c, d, e) usual_mbsnrtowcs(a, b, c, d, e)
 size_t mbsnrtowcs(wchar_t *dst, const char **src_p, size_t srclen, size_t dstlen, mbstate_t *ps);
 #endif
 

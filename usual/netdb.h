@@ -34,17 +34,17 @@
 
 /** Async execution */
 #ifndef GAI_WAIT
-#define GAI_WAIT	0
+#define GAI_WAIT        0
 #endif
 
 /** Synchronous execution */
 #ifndef GAI_NOWAIT
-#define GAI_NOWAIT	1
+#define GAI_NOWAIT      1
 #endif
 
 /* avoid name conflicts */
 #define gaicb usual_gaicb
-#define getaddrinfo_a(a,b,c,d) usual_getaddrinfo_a(a,b,c,d)
+#define getaddrinfo_a(a, b, c, d) usual_getaddrinfo_a(a, b, c, d)
 
 /**
  * Request data for getaddrinfo_a().

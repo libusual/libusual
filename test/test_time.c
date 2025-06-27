@@ -22,7 +22,7 @@ static void test_get_time(void *p)
 	reset_time_cache();
 	ct2 = get_cached_time();
 	tt_assert(ct2 != ct);
-end:;
+end:    ;
 }
 
 static void test_time_format(void *p)
@@ -45,7 +45,7 @@ static void test_time_format(void *p)
 	t = 1226059006841546;
 	str_check(format_time_ms(t, buf, sizeof(buf)), "2008-11-07 11:56:46.841 GMT");
 	str_check(format_time_s(t, buf, sizeof(buf)), "2008-11-07 11:56:46 GMT");
-end:;
+end:    ;
 }
 
 struct testcase_t time_tests[] = {

@@ -124,7 +124,7 @@ static void test_list_sort(void *p)
 	int i;
 	for (i = 0; i < 259; i++)
 		tt_assert(test_sort(list_sort, i));
-end:;
+end:    ;
 }
 
 #if 0
@@ -133,7 +133,7 @@ static void test_list_sort2(void *p)
 	int i;
 	for (i = 0; i < 259; i++)
 		tt_assert(test_sort(list_sort2, i));
-end:;
+end:    ;
 }
 
 static void test_list_sort3(void *p)
@@ -141,7 +141,7 @@ static void test_list_sort3(void *p)
 	int i;
 	for (i = 0; i < 259; i++)
 		tt_assert(test_sort(list_sort3, i));
-end:;
+end:    ;
 }
 #endif
 

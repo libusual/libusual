@@ -41,7 +41,7 @@ static const char *mkseq(uint32_t c, int n)
 		buf[i] = (c & 0x3F) | 0x80;
 		c >>= 6;
 	}
-	buf[0] = prefix[n-1] | c;
+	buf[0] = prefix[n - 1] | c;
 	return buf;
 }
 
@@ -63,7 +63,7 @@ static void test_utf8_char_size(void *p)
 	int_check(utf8_char_size(0x10000), 4);
 	int_check(utf8_char_size(0x100000), 4);
 	int_check(utf8_char_size(0x10FFFF), 4);
-end:;
+end:    ;
 }
 
 static void test_utf8_seq_size(void *p)
@@ -82,7 +82,7 @@ static void test_utf8_seq_size(void *p)
 	int_check(utf8_seq_size(0xF4), 4);
 	int_check(utf8_seq_size(0xF5), 0);
 	int_check(utf8_seq_size(0xFF), 0);
-end:;
+end:    ;
 }
 
 static void test_utf8_get_char(void *p)
@@ -123,7 +123,7 @@ static void test_utf8_get_char(void *p)
 	int_check(readseq(0x10ffff, 5), -248);
 	int_check(readseq(0xd800, 3), -237);
 	int_check(readseq(0xdfff, 3), -237);
-end:;
+end:    ;
 }
 
 static const char *uput(unsigned c, int buflen)
@@ -173,7 +173,7 @@ static void test_utf8_put_char(void *p)
 	str_check(uput(0x024B62, 2), "FAILED");
 	str_check(uput(0x024B62, 1), "FAILED");
 	str_check(uput(0x024B62, 0), "FAILED");
-end:;
+end:    ;
 }
 
 static int validseq(uint32_t c, int n)
@@ -203,7 +203,7 @@ static void test_utf8_validate_seq(void *p)
 	int_check(validseq(0x10ffff, 5), 0);
 	int_check(validseq(0xd800, 3), 0);
 	int_check(validseq(0xdfff, 3), 0);
-end:;
+end:    ;
 }
 
 /*

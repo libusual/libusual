@@ -63,7 +63,7 @@ static int getentropy_win32(void *dst, size_t len)
 
 	lib = LoadLibrary("advapi32.dll");
 	if (lib) {
-		fn = (rtlgenrandom_t)(void(*)(void))GetProcAddress(lib, "SystemFunction036");
+		fn = (rtlgenrandom_t)(void (*)(void))GetProcAddress(lib, "SystemFunction036");
 		if (fn && fn(dst, len))
 			res = 0;
 		FreeLibrary(lib);
@@ -190,7 +190,7 @@ static int getentropy_devrandom(void *dst, size_t bytes)
 	unsigned int i;
 
 	for (i = 0; devlist[i]; i++) {
-	reopen:
+reopen:
 		fd = open_devrandom(devlist[i]);
 		if (fd == -1)
 			continue;

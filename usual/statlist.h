@@ -46,9 +46,9 @@ struct StatList {
 
 /** Define and initialize StatList head */
 #ifdef LIST_DEBUG
-#define STATLIST(var) struct StatList var = { {&var.head, &var.head}, 0, #var }
+#define STATLIST(var) struct StatList var = {{&var.head, &var.head}, 0, #var }
 #else
-#define STATLIST(var) struct StatList var = { {&var.head, &var.head}, 0 }
+#define STATLIST(var) struct StatList var = {{&var.head, &var.head}, 0 }
 #endif
 
 /** Add to the start of the list */

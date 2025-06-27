@@ -34,7 +34,7 @@ static void test_quote_lit(void *ptr)
 
 	str_check(run_quote_lit(buf, "a", 4), "'a'");
 	str_check(run_quote_lit(buf, "a", 3), "FAIL");
-end:;
+end:    ;
 }
 
 /*
@@ -79,7 +79,7 @@ static void test_quote_ident(void *ptr)
 	str_check(qident(buf, "a\"b", 5), "FAIL");
 	str_check(qident(buf, "a\"b", 4), "FAIL");
 	str_check(qident(buf, "a\"b", 3), "FAIL");
-end:;
+end:    ;
 }
 
 /*
@@ -108,7 +108,7 @@ static void test_quote_fqident(void *ptr)
 
 	str_check(fqident(buf, "i", 9), "public.i");
 	str_check(fqident(buf, "i", 8), "FAIL");
-end:;
+end:    ;
 }
 
 /*
@@ -175,7 +175,7 @@ static void test_parse_array(void *ptr)
 	str_check(aparse("{\"abc}"), "FAIL");
 	str_check(aparse("{\\"), "FAIL");
 	str_check(aparse("{abc ,"), "FAIL");
-end:;
+end:    ;
 }
 
 /*

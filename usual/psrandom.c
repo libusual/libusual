@@ -23,11 +23,11 @@
 
 /*  Written in 2014 by Sebastiano Vigna (vigna@acm.org)
 
-To the extent possible under law, the author has dedicated all copyright
-and related and neighboring rights to this software to the public domain
-worldwide. This software is distributed without any warranty.
+   To the extent possible under law, the author has dedicated all copyright
+   and related and neighboring rights to this software to the public domain
+   worldwide. This software is distributed without any warranty.
 
-See <http://creativecommons.org/publicdomain/zero/1.0/>. */
+   See <http://creativecommons.org/publicdomain/zero/1.0/>. */
 
 /* This is the fastest generator passing BigCrush without
    systematic failures, but due to the relatively short period it is
@@ -59,8 +59,8 @@ uint64_t xorshift128plus(uint64_t *s0, uint64_t *s1)
 	return xorshift128plus_core(a, b, s1);
 }
 
-#define XS1K_STATE	16
-#define XS1K_MASK	(XS1K_STATE - 1)
+#define XS1K_STATE      16
+#define XS1K_MASK       (XS1K_STATE - 1)
 
 /* 1024-bit state.  Period: 2**1024 - 1 */
 uint64_t xorshift1024plus(uint64_t state[XS1K_STATE], unsigned int counter)

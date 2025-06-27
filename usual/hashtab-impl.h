@@ -68,8 +68,8 @@ typedef bool (*hash_cmp_fn)(const htab_val_t curval, const void *arg);
 #endif
 
 #define MASK(h) ((h)->size - 1)
-#define CALC_POS(h, key) ((key) & MASK(h))
-#define NEXT_POS(h, pos) (((pos) * 5 + 1) & MASK(h))
+#define CALC_POS(h, key) ((key)&MASK(h))
+#define NEXT_POS(h, pos) (((pos) * 5 + 1)&MASK(h))
 #define MAX_USED(h) ((h)->size * HTAB_MAX_FILL / 100)
 
 /** Single HashTab segment */

@@ -33,21 +33,20 @@
  */
 
 /* Upper bounds */
-#define UB_COMMON_NAME				255
-#define UB_COUNTRY_NAME				255
-#define UB_STATE_NAME				255
-#define UB_LOCALITY_NAME			255
-#define UB_STREET_ADDRESS			255
-#define UB_ORGANIZATION_NAME			255
-#define UB_ORGANIZATIONAL_UNIT_NAME		255
+#define UB_COMMON_NAME                          255
+#define UB_COUNTRY_NAME                         255
+#define UB_STATE_NAME                           255
+#define UB_LOCALITY_NAME                        255
+#define UB_STREET_ADDRESS                       255
+#define UB_ORGANIZATION_NAME                    255
+#define UB_ORGANIZATIONAL_UNIT_NAME             255
 
-#define UB_GNAME_DNS				255
-#define UB_GNAME_EMAIL				255
-#define UB_GNAME_URI				255
+#define UB_GNAME_DNS                            255
+#define UB_GNAME_EMAIL                          255
+#define UB_GNAME_URI                            255
 
 /* Convert ASN1_INTEGER to decimal string string */
-static int
-tls_parse_bigint(struct tls *ctx, const ASN1_INTEGER *asn1int, const char **dst_p)
+static int tls_parse_bigint(struct tls *ctx, const ASN1_INTEGER *asn1int, const char **dst_p)
 {
 	long small;
 	BIGNUM *big;
@@ -85,9 +84,8 @@ tls_parse_bigint(struct tls *ctx, const ASN1_INTEGER *asn1int, const char **dst_
  * Disallow any ancient ASN.1 escape sequences.
  */
 
-static int
-check_invalid_bytes(struct tls *ctx, const unsigned char *data, unsigned int len,
-		    int ascii_only, const char *desc)
+static int check_invalid_bytes(struct tls *ctx, const unsigned char *data, unsigned int len,
+			       int ascii_only, const char *desc)
 {
 	unsigned int i, c;
 
@@ -117,12 +115,11 @@ check_invalid_bytes(struct tls *ctx, const unsigned char *data, unsigned int len
 		}
 	}
 	return 0;
- failed:
+failed:
 	return -1;
 }
 
-static int
-tls_parse_asn1string(struct tls *ctx, ASN1_STRING *a1str, const char **dst_p, int minchars, int maxchars, const char *desc)
+static int tls_parse_asn1string(struct tls *ctx, ASN1_STRING *a1str, const char **dst_p, int minchars, int maxchars, const char *desc)
 {
 	int format, len, ret = -1;
 	const unsigned char *data;
@@ -212,13 +209,12 @@ tls_parse_asn1string(struct tls *ctx, ASN1_STRING *a1str, const char **dst_p, in
 	cstr[len] = 0;
 	*dst_p = cstr;
 	ret = len;
- failed:
+failed:
 	ASN1_STRING_free(a1utf);
 	return ret;
 }
 
-static int
-tls_cert_get_dname_string(struct tls *ctx, X509_NAME *name, int nid, const char **str_p, int minchars, int maxchars, const char *desc)
+static int tls_cert_get_dname_string(struct tls *ctx, X509_NAME *name, int nid, const char **str_p, int minchars, int maxchars, const char *desc)
 {
 	int loc, len;
 	X509_NAME_ENTRY *ne;
@@ -241,8 +237,7 @@ tls_cert_get_dname_string(struct tls *ctx, X509_NAME *name, int nid, const char 
 	return 0;
 }
 
-static int
-tls_load_alt_ia5string(struct tls *ctx, ASN1_IA5STRING *ia5str, struct tls_cert *cert, int slot_type, int minchars, int maxchars, const char *desc)
+static int tls_load_alt_ia5string(struct tls *ctx, ASN1_IA5STRING *ia5str, struct tls_cert *cert, int slot_type, int minchars, int maxchars, const char *desc)
 {
 	struct tls_cert_general_name *slot;
 	const char *data;
@@ -271,8 +266,7 @@ tls_load_alt_ia5string(struct tls *ctx, ASN1_IA5STRING *ia5str, struct tls_cert 
 	return 0;
 }
 
-static int
-tls_load_alt_ipaddr(struct tls *ctx, ASN1_OCTET_STRING *bin, struct tls_cert *cert)
+static int tls_load_alt_ipaddr(struct tls *ctx, ASN1_OCTET_STRING *bin, struct tls_cert *cert)
 {
 	struct tls_cert_general_name *slot;
 	const void *data;
@@ -311,8 +305,7 @@ tls_load_alt_ipaddr(struct tls *ctx, ASN1_OCTET_STRING *bin, struct tls_cert *ce
 }
 
 /* See RFC 5280 section 4.2.1.6 for SubjectAltName details. */
-static int
-tls_cert_get_altnames(struct tls *ctx, struct tls_cert *cert, X509 *x509_cert)
+static int tls_cert_get_altnames(struct tls *ctx, struct tls_cert *cert, X509 *x509_cert)
 {
 	STACK_OF(GENERAL_NAME) *altname_stack = NULL;
 	GENERAL_NAME *altname;
@@ -354,40 +347,44 @@ tls_cert_get_altnames(struct tls *ctx, struct tls_cert *cert, X509 *x509_cert)
 			goto out;
 	}
 	rv = 0;
- out:
+out:
 	sk_GENERAL_NAME_pop_free(altname_stack, GENERAL_NAME_free);
 	return rv;
 }
 
-static int
-tls_get_dname(struct tls *ctx, X509_NAME *name, struct tls_cert_dname *dname)
+static int tls_get_dname(struct tls *ctx, X509_NAME *name, struct tls_cert_dname *dname)
 {
 	int ret;
 	ret = tls_cert_get_dname_string(ctx, name, NID_commonName, &dname->common_name,
 					0, UB_COMMON_NAME, "commonName");
-	if (ret == 0)
+	if (ret == 0) {
 		ret = tls_cert_get_dname_string(ctx, name, NID_countryName, &dname->country_name,
 						0, UB_COUNTRY_NAME, "countryName");
-	if (ret == 0)
+	}
+	if (ret == 0) {
 		ret = tls_cert_get_dname_string(ctx, name, NID_stateOrProvinceName, &dname->state_or_province_name,
 						0, UB_STATE_NAME, "stateName");
-	if (ret == 0)
+	}
+	if (ret == 0) {
 		ret = tls_cert_get_dname_string(ctx, name, NID_localityName, &dname->locality_name,
 						0, UB_LOCALITY_NAME, "localityName");
-	if (ret == 0)
+	}
+	if (ret == 0) {
 		ret = tls_cert_get_dname_string(ctx, name, NID_streetAddress, &dname->street_address,
 						0, UB_STREET_ADDRESS, "streetAddress");
-	if (ret == 0)
+	}
+	if (ret == 0) {
 		ret = tls_cert_get_dname_string(ctx, name, NID_organizationName, &dname->organization_name,
 						0, UB_ORGANIZATION_NAME, "organizationName");
-	if (ret == 0)
+	}
+	if (ret == 0) {
 		ret = tls_cert_get_dname_string(ctx, name, NID_organizationalUnitName, &dname->organizational_unit_name,
 						0, UB_ORGANIZATIONAL_UNIT_NAME, "organizationalUnitName");
+	}
 	return ret;
 }
 
-static int
-tls_get_basic_constraints(struct tls *ctx, struct tls_cert *cert, X509 *x509)
+static int tls_get_basic_constraints(struct tls *ctx, struct tls_cert *cert, X509 *x509)
 {
 	BASIC_CONSTRAINTS *bc;
 	int crit;
@@ -427,8 +424,7 @@ static uint32_t map_bits(const uint32_t map[][2], uint32_t input)
 	return out;
 }
 
-static int
-tls_get_key_usage(struct tls *ctx, struct tls_cert *cert, X509 *x509)
+static int tls_get_key_usage(struct tls *ctx, struct tls_cert *cert, X509 *x509)
 {
 	static const uint32_t ku_map[][2] = {
 		{KU_DIGITAL_SIGNATURE, KU_DIGITAL_SIGNATURE},
@@ -458,8 +454,7 @@ tls_get_key_usage(struct tls *ctx, struct tls_cert *cert, X509 *x509)
 	return 0;
 }
 
-static int
-tls_get_ext_key_usage(struct tls *ctx, struct tls_cert *cert, X509 *x509)
+static int tls_get_ext_key_usage(struct tls *ctx, struct tls_cert *cert, X509 *x509)
 {
 	static const uint32_t xku_map[][2] = {
 		{XKU_SSL_SERVER, TLS_XKU_SSL_SERVER},
@@ -488,8 +483,7 @@ tls_get_ext_key_usage(struct tls *ctx, struct tls_cert *cert, X509 *x509)
 	return 0;
 }
 
-static int
-tls_load_extensions(struct tls *ctx, struct tls_cert *cert, X509 *x509)
+static int tls_load_extensions(struct tls *ctx, struct tls_cert *cert, X509 *x509)
 {
 	int ret;
 
@@ -509,8 +503,7 @@ tls_load_extensions(struct tls *ctx, struct tls_cert *cert, X509 *x509)
 	return ret;
 }
 
-static void *
-tls_calc_fingerprint(struct tls *ctx, X509 *x509, const char *algo, size_t *outlen)
+static void *tls_calc_fingerprint(struct tls *ctx, X509 *x509, const char *algo, size_t *outlen)
 {
 	const EVP_MD *md;
 	void *res;
@@ -549,8 +542,7 @@ tls_calc_fingerprint(struct tls *ctx, X509 *x509, const char *algo, size_t *outl
 	return res;
 }
 
-static void
-check_verify_error(struct tls *ctx, struct tls_cert *cert)
+static void check_verify_error(struct tls *ctx, struct tls_cert *cert)
 {
 	long vres = SSL_get_verify_result(ctx->ssl_conn);
 	if (vres == X509_V_OK) {
@@ -560,8 +552,7 @@ check_verify_error(struct tls *ctx, struct tls_cert *cert)
 	}
 }
 
-int
-tls_parse_cert(struct tls *ctx, struct tls_cert **cert_p, const char *fingerprint_algo, X509 *x509)
+int tls_parse_cert(struct tls *ctx, struct tls_cert **cert_p, const char *fingerprint_algo, X509 *x509)
 {
 	struct tls_cert *cert = NULL;
 	X509_NAME *subject, *issuer;
@@ -616,13 +607,12 @@ tls_parse_cert(struct tls *ctx, struct tls_cert **cert_p, const char *fingerprin
 		*cert_p = cert;
 		return 0;
 	}
- failed:
+failed:
 	tls_cert_free(cert);
 	return ret;
 }
 
-int
-tls_get_peer_cert(struct tls *ctx, struct tls_cert **cert_p, const char *fingerprint_algo)
+int tls_get_peer_cert(struct tls *ctx, struct tls_cert **cert_p, const char *fingerprint_algo)
 {
 	X509 *peer = ctx->ssl_peer_cert;
 	int res;
@@ -642,20 +632,18 @@ tls_get_peer_cert(struct tls *ctx, struct tls_cert **cert_p, const char *fingerp
 	return res;
 }
 
-static void
-tls_cert_free_dname(struct tls_cert_dname *dname)
+static void tls_cert_free_dname(struct tls_cert_dname *dname)
 {
-	free((void*)dname->common_name);
-	free((void*)dname->country_name);
-	free((void*)dname->state_or_province_name);
-	free((void*)dname->locality_name);
-	free((void*)dname->street_address);
-	free((void*)dname->organization_name);
-	free((void*)dname->organizational_unit_name);
+	free((void *)dname->common_name);
+	free((void *)dname->country_name);
+	free((void *)dname->state_or_province_name);
+	free((void *)dname->locality_name);
+	free((void *)dname->street_address);
+	free((void *)dname->organization_name);
+	free((void *)dname->organizational_unit_name);
 }
 
-void
-tls_cert_free(struct tls_cert *cert)
+void tls_cert_free(struct tls_cert *cert)
 {
 	int i;
 	if (!cert)
@@ -666,12 +654,12 @@ tls_cert_free(struct tls_cert *cert)
 
 	if (cert->subject_alt_name_count) {
 		for (i = 0; i < cert->subject_alt_name_count; i++)
-			free((void*)cert->subject_alt_names[i].name_value);
+			free((void *)cert->subject_alt_names[i].name_value);
 	}
 	free(cert->subject_alt_names);
 
-	free((void*)cert->serial);
-	free((void*)cert->fingerprint);
+	free((void *)cert->serial);
+	free((void *)cert->fingerprint);
 	free(cert);
 }
 

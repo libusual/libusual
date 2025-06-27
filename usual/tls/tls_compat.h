@@ -32,11 +32,11 @@
 
 #define NID_kx_ecdhe (-90)
 #define NID_kx_dhe (-91)
-#define SSL_CIPHER_get_kx_nid(ciph) ( 0 )
+#define SSL_CIPHER_get_kx_nid(ciph) (0)
 #define X509_get_key_usage(x509) ((x509)->ex_kusage)
 #define X509_get_extended_key_usage(x509) ((x509)->ex_xkusage)
 #define SSL_CTX_get0_param(ssl_ctx) ((ssl_ctx)->param)
-#define ASN1_STRING_get0_data(x) ((const unsigned char*)ASN1_STRING_data(x))
+#define ASN1_STRING_get0_data(x) ((const unsigned char *)ASN1_STRING_data(x))
 #define X509_OBJECT_get0_X509(x) ((x)->data.x509)
 
 #ifndef OPENSSL_VERSION
@@ -113,14 +113,14 @@ int SSL_CTX_load_verify_mem(SSL_CTX *ctx, void *buf, int len);
 
 /* BoringSSL has no OCSP support */
 #ifdef OPENSSL_IS_BORINGSSL
-#define SSL_CTX_set_tlsext_status_cb(a,b) (1)
-#define SSL_set_tlsext_status_type(a,b) (1)
+#define SSL_CTX_set_tlsext_status_cb(a, b) (1)
+#define SSL_set_tlsext_status_type(a, b) (1)
 #endif
 
 /* AWS-LC does not currently have OCSP support */
 #if defined(OPENSSL_IS_AWSLC) && defined(OPENSSL_NO_OCSP)
-#define SSL_CTX_set_tlsext_status_cb(a,b) (1)
-#define SSL_set_tlsext_status_type(a,b) (1)
+#define SSL_CTX_set_tlsext_status_cb(a, b) (1)
+#define SSL_set_tlsext_status_type(a, b) (1)
 #endif
 
 void tls_compat_cleanup(void);

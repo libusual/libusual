@@ -59,7 +59,7 @@ void digest_reset(struct DigestContext *ctx)
 
 void digest_free(struct DigestContext *ctx)
 {
-	CxMem *cx =  ctx->cx;
+	CxMem *cx = ctx->cx;
 	unsigned alloc = offsetof(struct DigestContext, state) + ctx->impl->state_len;
 
 	memset(ctx, 0, alloc);

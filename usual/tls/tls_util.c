@@ -27,8 +27,7 @@
 
 #include "tls_internal.h"
 
-const char *
-tls_backend_version(void)
+const char *tls_backend_version(void)
 {
 	return OpenSSL_version(OPENSSL_VERSION);
 }
@@ -41,8 +40,7 @@ tls_backend_version(void)
  * then the function will return 1, with both host and port being NULL.
  * On memory allocation failure -1 will be returned.
  */
-int
-tls_host_port(const char *hostport, char **host, char **port)
+int tls_host_port(const char *hostport, char **host, char **port)
 {
 	char *h, *p, *s;
 	int rv = 1;
@@ -81,23 +79,22 @@ tls_host_port(const char *hostport, char **host, char **port)
 	rv = 0;
 	goto done;
 
- fail:
+fail:
 	free(*host);
 	*host = NULL;
 	free(*port);
 	*port = NULL;
 	rv = -1;
 
- done:
+done:
 	free(s);
 
 	return (rv);
 }
 
-static int
-tls_password_cb(char *buf, int size, int rwflag, void *u)
+static int tls_password_cb(char *buf, int size, int rwflag, void *u)
 {
-	size_t	len;
+	size_t len;
 	if (u == NULL) {
 		memset(buf, 0, size);
 		return (0);
@@ -107,8 +104,7 @@ tls_password_cb(char *buf, int size, int rwflag, void *u)
 	return (len);
 }
 
-uint8_t *
-tls_load_file(const char *name, size_t *len, char *password)
+uint8_t *tls_load_file(const char *name, size_t *len, char *password)
 {
 	FILE *fp;
 	EVP_PKEY *key = NULL;
@@ -161,11 +157,11 @@ tls_load_file(const char *name, size_t *len, char *password)
 	BIO_free_all(bio);
 	EVP_PKEY_free(key);
 
- done:
+done:
 	*len = size;
 	return (buf);
 
- fail:
+fail:
 	free(buf);
 	if (fd != -1)
 		close(fd);
@@ -177,8 +173,7 @@ tls_load_file(const char *name, size_t *len, char *password)
 	return (NULL);
 }
 
-ssize_t
-tls_get_connection_info(struct tls *ctx, char *buf, size_t buflen)
+ssize_t tls_get_connection_info(struct tls *ctx, char *buf, size_t buflen)
 {
 	SSL *conn = ctx->ssl_conn;
 	const char *ocsp_pfx = "", *ocsp_info = "";

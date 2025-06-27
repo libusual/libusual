@@ -272,7 +272,7 @@ void *memmem(const void *haystack, size_t hlen, const void *needle, size_t nlen)
 	if (!s2 || nlen == 1)
 		return (void *)s2;
 	for (i = s2 - s; i <= hlen - nlen; i++) {
-		if (s[i] == q[0] && s[i+1] == q[1]) {
+		if (s[i] == q[0] && s[i + 1] == q[1]) {
 			if (memcmp(s + i + 2, q + 2, nlen - 2) == 0)
 				return (void *)(s + i);
 		}
@@ -302,10 +302,14 @@ void explicit_bzero(void *buf, size_t len)
 /* avoid link-time optimization */
 #if defined(__GNUC__x) || __has_attribute(weak)
 void __explicit_bzero_hack(void *, size_t);
-__attribute__((weak)) void __explicit_bzero_hack(void *buf, size_t len) { }
+__attribute__((weak)) void __explicit_bzero_hack(void *buf, size_t len)
+{
+}
 #else
 typedef void (*__explicit_bzero_cb_t)(void *, size_t);
-static void __explicit_bzero_hack_cb(void *buf, size_t len) { }
+static void __explicit_bzero_hack_cb(void *buf, size_t len)
+{
+}
 static volatile __explicit_bzero_cb_t __explicit_bzero_hack = __explicit_bzero_hack_cb;
 #endif
 

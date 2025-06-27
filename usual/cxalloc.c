@@ -127,9 +127,9 @@ int cx_vasprintf(CxMem *cx, char **dst_p, const char *fmt, va_list ap)
 		return -1;
 
 	if ((size_t)res < sizeof buf) {
-		memcpy(dst, buf, res+1);
+		memcpy(dst, buf, res + 1);
 	} else {
-		res2 = vsnprintf(dst, res+1, fmt, ap);
+		res2 = vsnprintf(dst, res + 1, fmt, ap);
 		if (res2 != res) {
 			cx_free(cx, dst);
 			return -1;

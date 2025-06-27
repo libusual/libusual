@@ -92,7 +92,7 @@ loop:
 		if (p[1] != ':')
 			return NULL;
 		p = n2 + 2;
-		wct = wctype_wcsn(n1, n2-n1);
+		wct = wctype_wcsn(n1, n2 - n1);
 		if (wct == (wctype_t)0)
 			return NULL;
 		if (iswctype(c, wct))
@@ -204,7 +204,7 @@ loop:
 			if (*p == '\0')
 				return FNM_NOMATCH;
 		}
-		/* fallthrough */
+	/* fallthrough */
 	default:
 		/* match single char */
 		if (*s == '/' && *p == '\0' && (flags & FNM_LEADING_DIR))

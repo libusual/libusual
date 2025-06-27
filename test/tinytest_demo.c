@@ -40,13 +40,12 @@
 
 /* First, let's see if strcmp is working.  (All your test cases should be
  * functions declared to take a single void * as) an argument. */
-void
-test_strcmp(void *data)
+void test_strcmp(void *data)
 {
-	(void)data; /* This testcase takes no data. */
+	(void)data;	/* This testcase takes no data. */
 
 	/* Let's make sure the empty string is equal to itself */
-	if (strcmp("","")) {
+	if (strcmp("", "")) {
 		/* This macro tells tinytest to stop the current test
 		 * and go straight to the "end" label. */
 		tt_abort_msg("The empty string was not equal to itself");
@@ -70,7 +69,7 @@ test_strcmp(void *data)
 	tt_int_op(strcmp("abc", "abc"), ==, 0);
 
 	/* Fail unless strcmp("abc, "abcd") is less than 0 */
-	tt_int_op(strcmp("abc", "abcd"), < , 0);
+	tt_int_op(strcmp("abc", "abcd"), <, 0);
 
 	/* Incidentally, there's a test_str_op that uses strcmp internally. */
 	tt_str_op("abc", <, "abcd");
@@ -78,7 +77,7 @@ test_strcmp(void *data)
 
 	/* Every test-case function needs to finish with an "end:"
 	   label and (optionally) code to clean up local variables. */
- end:
+end:
 	;
 }
 
@@ -101,8 +100,7 @@ struct data_buffer {
 };
 /* The setup function needs to take a const struct testcase_t and return
    void* */
-void *
-setup_data_buffer(const struct testcase_t *testcase)
+void *setup_data_buffer(const struct testcase_t *testcase)
 {
 	struct data_buffer *db = malloc(sizeof(struct data_buffer));
 
@@ -116,8 +114,7 @@ setup_data_buffer(const struct testcase_t *testcase)
 }
 /* The clean function deallocates storage carefully and returns true on
    success. */
-int
-clean_data_buffer(const struct testcase_t *testcase, void *ptr)
+int clean_data_buffer(const struct testcase_t *testcase, void *ptr)
 {
 	struct data_buffer *db = ptr;
 
@@ -134,8 +131,7 @@ struct testcase_setup_t data_buffer_setup = {
 
 
 /* Now let's write our test. */
-void
-test_memcpy(void *ptr)
+void test_memcpy(void *ptr)
 {
 	/* This time, we use the argument. */
 	struct data_buffer *db = ptr;
@@ -156,7 +152,7 @@ test_memcpy(void *ptr)
 	/* Another rather trivial test. */
 	tt_str_op(db->buffer1, !=, mem);
 
- end:
+end:
 	/* This time our end block has something to do. */
 	free(mem);
 }
@@ -165,7 +161,7 @@ test_memcpy(void *ptr)
 
 /* Now we need to make sure that our tests get invoked.   First, you take
    a bunch of related tests and put them into an array of struct testcase_t.
-*/
+ */
 
 struct testcase_t demo_tests[] = {
 	/* Here's a really simple test: it has a name you can refer to it
@@ -184,7 +180,6 @@ struct testcase_t demo_tests[] = {
 /* Next, we make an array of testgroups.  This is mandatory.  Unlike more
    heavy-duty testing frameworks, groups can't next. */
 struct testgroup_t groups[] = {
-
 	/* Every group has a 'prefix', and an array of tests.  That's it. */
 	{ "demo/", demo_tests },
 
@@ -192,8 +187,7 @@ struct testgroup_t groups[] = {
 };
 
 
-int
-main(int c, const char **v)
+int main(int c, const char **v)
 {
 	/* Finally, just call tinytest_main().  It lets you specify verbose
 	   or quiet output with --verbose and --quiet.  You can list
@@ -209,6 +203,6 @@ main(int c, const char **v)
 	   If you list no tests, you get them all by default, so that
 	   "tinytest-demo" and "tinytest-demo .." mean the same thing.
 
-	*/
+	 */
 	return tinytest_main(c, v, groups);
 }

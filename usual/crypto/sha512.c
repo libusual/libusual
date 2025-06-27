@@ -23,9 +23,9 @@
 #include <usual/bits.h>
 
 /* repeat with increasing offset */
-#define R4(R, t) R(t+0); R(t+1); R(t+2); R(t+3)
-#define R16(R, t) R4(R, t+0); R4(R, t+4); R4(R, t+8); R4(R, t+12)
-#define R64(R, t) R16(R, t+0); R16(R, t+16); R16(R, t+32); R16(R, t+48);
+#define R4(R, t) R(t + 0); R(t + 1); R(t + 2); R(t + 3)
+#define R16(R, t) R4(R, t + 0); R4(R, t + 4); R4(R, t + 8); R4(R, t + 12)
+#define R64(R, t) R16(R, t + 0); R16(R, t + 16); R16(R, t + 32); R16(R, t + 48);
 
 #define bufpos(ctx) ((ctx)->nbytes & (SHA512_BLOCK_SIZE - 1))
 
@@ -83,28 +83,28 @@ static const uint64_t K[80] = {
  * mixing
  */
 
-#define CH(x,y,z)  ((x & y) ^ ((~x) & z))
-#define MAJ(x,y,z) ((x & y) ^ (x & z) ^ (y & z))
+#define CH(x, y, z)  ((x &y) ^ ((~x)&z))
+#define MAJ(x, y, z) ((x &y) ^ (x &z) ^ (y &z))
 
 #define E0(x) (ror64(x, 28) ^ ror64(x, 34) ^ ror64(x, 39))
 #define E1(x) (ror64(x, 14) ^ ror64(x, 18) ^ ror64(x, 41))
-#define O0(x) (ror64(x,  1) ^ ror64(x,  8) ^ (x >> 7))
+#define O0(x) (ror64(x, 1) ^ ror64(x, 8) ^ (x >> 7))
 #define O1(x) (ror64(x, 19) ^ ror64(x, 61) ^ (x >> 6))
 
-#define W(n)	(ctx->buf.words[(n) & 15])
-#define setW(n,v) W(n) = (v)
+#define W(n)    (ctx->buf.words[(n) & 15])
+#define setW(n, v) W(n) = (v)
 
 #define SHA512_ROUND(_t) do { \
-	uint64_t tmp1, tmp2, t = (_t); \
-	if (t >= 16) { \
-		setW(t, O1(W(t - 2)) + W(t - 7) + O0(W(t - 15)) + W(t - 16)); \
-	} else { \
-		/* convert endianess on first go */ \
-		setW(t, be64toh(W(t))); \
-	} \
-	tmp1 = h + E1(e) + CH(e,f,g) + K[k_pos++] + W(t); \
-	tmp2 = E0(a) + MAJ(a,b,c); \
-	h = g; g = f; f = e; e = d + tmp1; d = c; c = b; b = a; a = tmp1 + tmp2; \
+		uint64_t tmp1, tmp2, t = (_t); \
+		if (t >= 16) { \
+			setW(t, O1(W(t - 2)) + W(t - 7) + O0(W(t - 15)) + W(t - 16)); \
+		} else { \
+			/* convert endianess on first go */ \
+			setW(t, be64toh(W(t))); \
+		} \
+		tmp1 = h + E1(e) + CH(e, f, g) + K[k_pos++] + W(t); \
+		tmp2 = E0(a) + MAJ(a, b, c); \
+		h = g; g = f; f = e; e = d + tmp1; d = c; c = b; b = a; a = tmp1 + tmp2; \
 } while (0)
 
 /*

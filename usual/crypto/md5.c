@@ -40,10 +40,10 @@ static inline void swap_words(uint32_t *w, int n)
  * MD5 core.
  */
 
-#define F(X,Y,Z) ((X & Y) | ((~X) & Z))
-#define G(X,Y,Z) ((X & Z) | (Y & (~Z)))
-#define H(X,Y,Z) (X ^ Y ^ Z)
-#define I(X,Y,Z) (Y ^ (X | (~Z)))
+#define F(X, Y, Z) ((X &Y) | ((~X)&Z))
+#define G(X, Y, Z) ((X &Z) | (Y & (~Z)))
+#define H(X, Y, Z) (X ^ Y ^ Z)
+#define I(X, Y, Z) (Y ^ (X | (~Z)))
 
 #define OP(fn, a, b, c, d, k, s, T_i) \
 	a = b + rol32(a + fn(b, c, d) + X[k] + T_i, s)

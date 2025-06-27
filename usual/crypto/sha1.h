@@ -28,10 +28,10 @@
 #include <usual/base.h>
 
 /** Block length for SHA1 */
-#define SHA1_BLOCK_SIZE		64
+#define SHA1_BLOCK_SIZE         64
 
 /** Result length for SHA1 */
-#define SHA1_DIGEST_LENGTH	20
+#define SHA1_DIGEST_LENGTH      20
 
 
 /** SHA1 state */

@@ -312,8 +312,7 @@ static bool fdbuf_resize(struct fd_buf *buf, int fd)
 	need_bytes = fd / 8 + 8;
 #endif
 
-	if (buf->alloc_bytes < need_bytes)
-	{
+	if (buf->alloc_bytes < need_bytes) {
 		while (alloc < need_bytes)
 			alloc *= 2;
 
@@ -350,21 +349,20 @@ int poll(struct pollfd *fds, nfds_t nfds, int timeout_ms)
 	unsigned i;
 
 	/* convert timeout_ms to timeval */
-	if (timeout_ms >= 0)
-	{
+	if (timeout_ms >= 0) {
 		tvreal.tv_sec = timeout_ms / 1000;
 		tvreal.tv_usec = (timeout_ms % 1000) * 1000;
 		tv = &tvreal;
-	} else if (timeout_ms < -1)
+	} else if (timeout_ms < -1) {
 		goto err_inval;
+	}
 
 	/*
 	 * Convert pollfds to fd sets.
 	 */
 	fdbuf_zero(&readfds);
 	fdbuf_zero(&writefds);
-	for (i = 0; i < nfds; i++)
-	{
+	for (i = 0; i < nfds; i++) {
 		pf = fds + i;
 		if (pf->fd < 0)
 			goto err_badf;
@@ -393,8 +391,7 @@ int poll(struct pollfd *fds, nfds_t nfds, int timeout_ms)
 	 */
 	res = 0;
 
-	for (i = 0; i < nfds; i++)
-	{
+	for (i = 0; i < nfds; i++) {
 		pf = fds + i;
 		pf->revents = 0;
 		if ((pf->events & POLLIN) && FD_ISSET(pf->fd, readfds.set))

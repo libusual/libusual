@@ -104,36 +104,36 @@ const char *sa2str(const struct sockaddr *sa, char *buf, size_t buflen);
 
 #ifndef HAVE_INET_NTOP
 #undef inet_ntop
-#define inet_ntop(a,b,c,d) usual_inet_ntop(a,b,c,d)
+#define inet_ntop(a, b, c, d) usual_inet_ntop(a, b, c, d)
 /** Compat: inet_ntop() */
 const char *inet_ntop(int af, const void *src, char *dst, int cnt);
 #endif
 
 #ifndef HAVE_INET_PTON
 #undef inet_pton
-#define inet_pton(a,b,c) usual_inet_pton(a,b,c)
+#define inet_pton(a, b, c) usual_inet_pton(a, b, c)
 /** Compat: inet_pton() */
 int inet_pton(int af, const char *src, void *dst);
 #endif
 
 #ifndef HAVE_GETPEEREID
-#define getpeereid(a,b,c) compat_getpeereid(a,b,c)
+#define getpeereid(a, b, c) compat_getpeereid(a, b, c)
 /** Get user id of UNIX socket peer */
 int getpeereid(int fd, uid_t *uid_p, gid_t *gid_p);
 #endif
 
-#define getpeercreds(a,b,c,d) usual_getpeercreds(a,b,c,d)
+#define getpeercreds(a, b, c, d) usual_getpeercreds(a, b, c, d)
 /** Get info of UNIX socket peer */
 int getpeercreds(int fd, uid_t *uid_p, gid_t *gid_p, pid_t *pid_p);
 
 #if !defined(HAVE_POLL)
-#define POLLIN		(1 << 0)
-#define POLLOUT		(1 << 1)
-#define POLLHUP		(1 << 2)
-#define POLLPRI		(1 << 3)
-#define POLLNVAL	(1 << 4)
-#define POLLERR		(1 << 5)
-#define poll(a,b,c)	compat_poll(a,b,c)
+#define POLLIN          (1 << 0)
+#define POLLOUT         (1 << 1)
+#define POLLHUP         (1 << 2)
+#define POLLPRI         (1 << 3)
+#define POLLNVAL        (1 << 4)
+#define POLLERR         (1 << 5)
+#define poll(a, b, c)     compat_poll(a, b, c)
 struct pollfd {
 	int fd;
 	short events;
@@ -145,7 +145,7 @@ int poll(struct pollfd *fds, nfds_t nfds, int timeout_ms);
 #endif
 
 #ifdef WIN32
-#define socketpair(a,b,c,d) win32_socketpair(a,b,c,d)
+#define socketpair(a, b, c, d) win32_socketpair(a, b, c, d)
 /** Compat: socketpair() for win32 */
 int socketpair(int d, int typ, int proto, int sv[2]);
 #endif

@@ -21,9 +21,9 @@ struct MBuf {
 };
 
 /** Format fragment for *printf() */
-#define MBUF_FMT	".*s"
+#define MBUF_FMT        ".*s"
 /** Argument layout for *printf() */
-#define MBUF_ARG(m)	((m) ? mbuf_written(m) : 6), ((m) ? (const char *)mbuf_data(m) : "(null)")
+#define MBUF_ARG(m)     ((m) ? mbuf_written(m) : 6), ((m) ? (const char *)mbuf_data(m) : "(null)")
 
 /*
  * Init functions

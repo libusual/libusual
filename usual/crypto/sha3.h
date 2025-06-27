@@ -30,43 +30,43 @@
 #include <usual/crypto/keccak.h>
 
 /** Keccak capacity area for SHA3-224, in bits */
-#define SHA3_224_CAPACITY	448
+#define SHA3_224_CAPACITY       448
 /** Keccak capacity area for SHA3-256, in bits */
-#define SHA3_256_CAPACITY	512
+#define SHA3_256_CAPACITY       512
 /** Keccak capacity area for SHA3-384, in bits */
-#define SHA3_384_CAPACITY	768
+#define SHA3_384_CAPACITY       768
 /** Keccak capacity area for SHA3-512, in bits */
-#define SHA3_512_CAPACITY	1024
+#define SHA3_512_CAPACITY       1024
 /** Keccak capacity area for SHAKE128, in bits */
-#define SHAKE128_CAPACITY	256
+#define SHAKE128_CAPACITY       256
 /** Keccak capacity area for SHAKE256, in bits */
-#define SHAKE256_CAPACITY	512
+#define SHAKE256_CAPACITY       512
 
 /** Result length of SHA3-224, in bytes */
-#define SHA3_224_DIGEST_LENGTH	(224/8)
+#define SHA3_224_DIGEST_LENGTH  (224/8)
 /** Result length of SHA3-256, in bytes */
-#define SHA3_256_DIGEST_LENGTH	(256/8)
+#define SHA3_256_DIGEST_LENGTH  (256/8)
 /** Result length of SHA3-384, in bytes */
-#define SHA3_384_DIGEST_LENGTH	(384/8)
+#define SHA3_384_DIGEST_LENGTH  (384/8)
 /** Result length of SHA3-512, in bytes */
-#define SHA3_512_DIGEST_LENGTH	(512/8)
+#define SHA3_512_DIGEST_LENGTH  (512/8)
 /** Result length of SHAKE128, in bytes */
-#define SHAKE128_DIGEST_LENGTH	(256/8)
+#define SHAKE128_DIGEST_LENGTH  (256/8)
 /** Result length of SHAKE256, in bytes */
-#define SHAKE256_DIGEST_LENGTH	(512/8)
+#define SHAKE256_DIGEST_LENGTH  (512/8)
 
 /** Block size of SHA3-224, in bytes */
-#define SHA3_224_BLOCK_SIZE	((1600 - SHA3_224_CAPACITY) / 8)
+#define SHA3_224_BLOCK_SIZE     ((1600 - SHA3_224_CAPACITY) / 8)
 /** Block size of SHA3-256, in bytes */
-#define SHA3_256_BLOCK_SIZE	((1600 - SHA3_256_CAPACITY) / 8)
+#define SHA3_256_BLOCK_SIZE     ((1600 - SHA3_256_CAPACITY) / 8)
 /** Block size of SHA3-384, in bytes */
-#define SHA3_384_BLOCK_SIZE	((1600 - SHA3_384_CAPACITY) / 8)
+#define SHA3_384_BLOCK_SIZE     ((1600 - SHA3_384_CAPACITY) / 8)
 /** Block size of SHA3-512, in bytes */
-#define SHA3_512_BLOCK_SIZE	((1600 - SHA3_512_CAPACITY) / 8)
+#define SHA3_512_BLOCK_SIZE     ((1600 - SHA3_512_CAPACITY) / 8)
 /** Block size of SHAKE128, in bytes */
-#define SHAKE128_BLOCK_SIZE	((1600 - SHAKE128_CAPACITY) / 8)
+#define SHAKE128_BLOCK_SIZE     ((1600 - SHAKE128_CAPACITY) / 8)
 /** Block size of SHAKE256, in bytes */
-#define SHAKE256_BLOCK_SIZE	((1600 - SHAKE256_CAPACITY) / 8)
+#define SHAKE256_BLOCK_SIZE     ((1600 - SHAKE256_CAPACITY) / 8)
 
 /**
  * State structure.

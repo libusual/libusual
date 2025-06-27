@@ -26,8 +26,7 @@
 
 #include "tls_internal.h"
 
-struct tls *
-tls_client(void)
+struct tls *tls_client(void)
 {
 	struct tls *ctx;
 
@@ -39,15 +38,13 @@ tls_client(void)
 	return (ctx);
 }
 
-int
-tls_connect(struct tls *ctx, const char *host, const char *port)
+int tls_connect(struct tls *ctx, const char *host, const char *port)
 {
 	return tls_connect_servername(ctx, host, port, NULL);
 }
 
-int
-tls_connect_servername(struct tls *ctx, const char *host, const char *port,
-    const char *servername)
+int tls_connect_servername(struct tls *ctx, const char *host, const char *port,
+			   const char *servername)
 {
 	struct addrinfo hints, *res, *res0;
 	const char *h = NULL, *p = NULL;
@@ -127,7 +124,7 @@ tls_connect_servername(struct tls *ctx, const char *host, const char *port,
 			continue;
 		}
 
-		break;  /* Connected. */
+		break;	/* Connected. */
 	}
 	freeaddrinfo(res0);
 
@@ -146,22 +143,20 @@ tls_connect_servername(struct tls *ctx, const char *host, const char *port,
 
 	rv = 0;
 
- err:
+err:
 	free(hs);
 	free(ps);
 
 	return (rv);
 }
 
-int
-tls_connect_socket(struct tls *ctx, int s, const char *servername)
+int tls_connect_socket(struct tls *ctx, int s, const char *servername)
 {
 	return tls_connect_fds(ctx, s, s, servername);
 }
 
-int
-tls_connect_fds(struct tls *ctx, int fd_read, int fd_write,
-    const char *servername)
+int tls_connect_fds(struct tls *ctx, int fd_read, int fd_write,
+		    const char *servername)
 {
 	union tls_addr addrbuf;
 	int rv = -1;
@@ -242,12 +237,11 @@ tls_connect_fds(struct tls *ctx, int fd_read, int fd_write,
 
 	rv = 0;
 
- err:
+err:
 	return (rv);
 }
 
-int
-tls_handshake_client(struct tls *ctx)
+int tls_handshake_client(struct tls *ctx)
 {
 	X509 *cert = NULL;
 	int ssl_ret;
@@ -271,10 +265,11 @@ tls_handshake_client(struct tls *ctx)
 			goto err;
 		}
 		if ((rv = tls_check_name(ctx, cert,
-		    ctx->servername)) != 0) {
-			if (rv != -2)
+					 ctx->servername)) != 0) {
+			if (rv != -2) {
 				tls_set_errorx(ctx, "name `%s' not present in"
-				    " server certificate", ctx->servername);
+					       " server certificate", ctx->servername);
+			}
 			goto err;
 		}
 	}
@@ -282,7 +277,7 @@ tls_handshake_client(struct tls *ctx)
 	ctx->state |= TLS_HANDSHAKE_COMPLETE;
 	rv = 0;
 
- err:
+err:
 	X509_free(cert);
 
 	return (rv);

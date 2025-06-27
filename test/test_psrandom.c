@@ -6,9 +6,9 @@
 
 #define str_check(a, b) tt_str_op(a, ==, b)
 
-#define tt_stri_op(a,op,b)						\
-	tt_assert_test_type(a,b,#a" "#op" "#b,const char *,		\
-			    (strcasecmp(_val1,_val2) op 0),"<%s>")
+#define tt_stri_op(a, op, b)                                              \
+	tt_assert_test_type(a, b,#a " "#op " "#b, const char *,             \
+			    (strcasecmp(_val1, _val2) op 0), "<%s>")
 
 #define stri_check(a, b) tt_stri_op(a, ==, b)
 
@@ -20,7 +20,7 @@ static const char *mkhex(const uint8_t *src, int len)
 	int i;
 	for (i = 0; i < len; i++) {
 		buf[i*2] = hextbl[src[i] >> 4];
-		buf[i*2+1] = hextbl[src[i] & 15];
+		buf[i*2 + 1] = hextbl[src[i] & 15];
 	}
 	buf[i*2] = 0;
 	return buf;
@@ -84,7 +84,7 @@ static void test_random(void *z)
 	pseudo_random_seed(0, 0);
 	pseudo_random_bytes(buf, 8);
 	v1 = le32dec(buf);
-	v2 = le32dec(buf+4);
+	v2 = le32dec(buf + 4);
 	pseudo_random_seed(0, 0);
 	int_check(v1, pseudo_random());
 	int_check(v2, pseudo_random());
@@ -129,11 +129,11 @@ end:
 // orig code by Sebastiano Vigna
 static uint64_t xs128plus_orig(uint64_t s[2])
 {
-	uint64_t s1 = s[ 0 ];
-	const uint64_t s0 = s[ 1 ];
-	s[ 0 ] = s0;
-	s1 ^= s1 << 23; // a
-	return ( s[ 1 ] = ( s1 ^ s0 ^ ( s1 >> 17 ) ^ ( s0 >> 26 ) ) ) + s0; // b, c
+	uint64_t s1 = s[0];
+	const uint64_t s0 = s[1];
+	s[0] = s0;
+	s1 ^= s1 << 23;	// a
+	return (s[1] = (s1 ^ s0 ^ (s1 >> 17) ^ (s0 >> 26))) + s0;	// b, c
 }
 
 static void test_core(void *z)

@@ -30,13 +30,13 @@
 
 #ifdef WIN32
 
-#define pthread_create(a,b,c,d)		compat_pthread_create(a,b,c,d)
-#define pthread_mutex_init(a,b)		compat_pthread_mutex_init(a,b)
-#define pthread_mutex_destroy(a)	compat_pthread_mutex_destroy(a)
-#define pthread_mutex_lock(a)		compat_pthread_mutex_lock(a)
-#define pthread_mutex_unlock(a)		compat_pthread_mutex_unlock(a)
-#define pthread_join(a,b)		compat_pthread_join(a,b)
-#define pthread_once(a,b)		compat_pthread_once(a,b)
+#define pthread_create(a, b, c, d)         compat_pthread_create(a, b, c, d)
+#define pthread_mutex_init(a, b)         compat_pthread_mutex_init(a, b)
+#define pthread_mutex_destroy(a)        compat_pthread_mutex_destroy(a)
+#define pthread_mutex_lock(a)           compat_pthread_mutex_lock(a)
+#define pthread_mutex_unlock(a)         compat_pthread_mutex_unlock(a)
+#define pthread_join(a, b)               compat_pthread_join(a, b)
+#define pthread_once(a, b)               compat_pthread_once(a, b)
 
 typedef HANDLE pthread_t;
 typedef HANDLE pthread_mutex_t;

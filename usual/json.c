@@ -26,16 +26,16 @@
 #include <usual/string.h>
 #include <math.h>
 
-#define TYPE_BITS	3
-#define TYPE_MASK	((1 << TYPE_BITS) - 1)
-#define UNATTACHED	((struct JsonValue *)(1 << TYPE_BITS))
+#define TYPE_BITS       3
+#define TYPE_MASK       ((1 << TYPE_BITS) - 1)
+#define UNATTACHED      ((struct JsonValue *)(1 << TYPE_BITS))
 
-#define JSON_MAX_KEY	(1024*1024)
+#define JSON_MAX_KEY    (1024*1024)
 
-#define NUMBER_BUF	100
+#define NUMBER_BUF      100
 
-#define JSON_MAXINT	((1LL << 53) - 1)
-#define JSON_MININT	(-(1LL << 53) + 1)
+#define JSON_MAXINT     ((1LL << 53) - 1)
+#define JSON_MININT     (-(1LL << 53) + 1)
 
 /*
  * Common struct for all JSON values
@@ -140,9 +140,9 @@ enum TokenTypes {
  * 4-byte ints for small string tokens.
  */
 
-#define C_NULL FOURCC('n','u','l','l')
-#define C_TRUE FOURCC('t','r','u','e')
-#define C_ALSE FOURCC('a','l','s','e')
+#define C_NULL FOURCC('n', 'u', 'l', 'l')
+#define C_TRUE FOURCC('t', 'r', 'u', 'e')
+#define C_ALSE FOURCC('a', 'l', 's', 'e')
 
 /*
  * Signature for render functions.
@@ -255,7 +255,7 @@ static inline char *plain_copy(char *dst, const char *src, const char *endptr)
 }
 
 /* error message on context */
-_PRINTF(2,0)
+_PRINTF(2, 0)
 static void format_err(struct JsonContext *ctx, const char *errmsg, va_list ap)
 {
 	char buf[119];
@@ -267,7 +267,7 @@ static void format_err(struct JsonContext *ctx, const char *errmsg, va_list ap)
 }
 
 /* set message and return false */
-_PRINTF(2,3)
+_PRINTF(2, 3)
 static bool err_false(struct JsonContext *ctx, const char *errmsg, ...)
 {
 	va_list ap;
@@ -278,9 +278,8 @@ static bool err_false(struct JsonContext *ctx, const char *errmsg, ...)
 }
 
 /* set message and return NULL */
-_PRINTF(2,3)
-static void *err_null(struct JsonContext *ctx, const char *errmsg, ...)
-{
+_PRINTF(2, 3)
+static void *err_null(struct JsonContext *ctx, const char *errmsg, ...){
 	va_list ap;
 	va_start(ap, errmsg);
 	format_err(ctx, errmsg, ap);
@@ -799,47 +798,56 @@ static bool skip_extra_comma(struct JsonContext *ctx, const char **src_p, const 
 
 /* oldstate + token -> newstate */
 static const unsigned char STATE_STEPS[MAX_STATES][MAX_TOKENS] = {
-[S_INITIAL_VALUE] = {
-	[T_OPEN_LIST] = S_LIST_VALUE_OR_CLOSE,
-	[T_OPEN_DICT] = S_DICT_KEY_OR_CLOSE,
-	[T_STRING] = S_DONE,
-	[T_OTHER] = S_DONE },
-[S_LIST_VALUE] = {
-	[T_OPEN_LIST] = S_LIST_VALUE_OR_CLOSE,
-	[T_OPEN_DICT] = S_DICT_KEY_OR_CLOSE,
-	[T_STRING] = S_LIST_COMMA_OR_CLOSE,
-	[T_OTHER] = S_LIST_COMMA_OR_CLOSE },
-[S_LIST_VALUE_OR_CLOSE] = {
-	[T_OPEN_LIST] = S_LIST_VALUE_OR_CLOSE,
-	[T_OPEN_DICT] = S_DICT_KEY_OR_CLOSE,
-	[T_STRING] = S_LIST_COMMA_OR_CLOSE,
-	[T_OTHER] = S_LIST_COMMA_OR_CLOSE,
-	[T_CLOSE_LIST] = S_PARENT },
-[S_LIST_COMMA_OR_CLOSE] = {
-	[T_COMMA] = S_LIST_VALUE,
-	[T_CLOSE_LIST] = S_PARENT },
-[S_DICT_KEY] = {
-	[T_STRING] = S_DICT_COLON },
-[S_DICT_KEY_OR_CLOSE] = {
-	[T_STRING] = S_DICT_COLON,
-	[T_CLOSE_DICT] = S_PARENT },
-[S_DICT_COLON] = {
-	[T_COLON] = S_DICT_VALUE },
-[S_DICT_VALUE] = {
-	[T_OPEN_LIST] = S_LIST_VALUE_OR_CLOSE,
-	[T_OPEN_DICT] = S_DICT_KEY_OR_CLOSE,
-	[T_STRING] = S_DICT_COMMA_OR_CLOSE,
-	[T_OTHER] = S_DICT_COMMA_OR_CLOSE },
-[S_DICT_COMMA_OR_CLOSE] = {
-	[T_COMMA] = S_DICT_KEY,
-	[T_CLOSE_DICT] = S_PARENT },
+	[S_INITIAL_VALUE] = {
+		[T_OPEN_LIST] = S_LIST_VALUE_OR_CLOSE,
+		[T_OPEN_DICT] = S_DICT_KEY_OR_CLOSE,
+		[T_STRING] = S_DONE,
+		[T_OTHER] = S_DONE
+	},
+	[S_LIST_VALUE] = {
+		[T_OPEN_LIST] = S_LIST_VALUE_OR_CLOSE,
+		[T_OPEN_DICT] = S_DICT_KEY_OR_CLOSE,
+		[T_STRING] = S_LIST_COMMA_OR_CLOSE,
+		[T_OTHER] = S_LIST_COMMA_OR_CLOSE
+	},
+	[S_LIST_VALUE_OR_CLOSE] = {
+		[T_OPEN_LIST] = S_LIST_VALUE_OR_CLOSE,
+		[T_OPEN_DICT] = S_DICT_KEY_OR_CLOSE,
+		[T_STRING] = S_LIST_COMMA_OR_CLOSE,
+		[T_OTHER] = S_LIST_COMMA_OR_CLOSE,
+		[T_CLOSE_LIST] = S_PARENT
+	},
+	[S_LIST_COMMA_OR_CLOSE] = {
+		[T_COMMA] = S_LIST_VALUE,
+		[T_CLOSE_LIST] = S_PARENT
+	},
+	[S_DICT_KEY] = {
+		[T_STRING] = S_DICT_COLON
+	},
+	[S_DICT_KEY_OR_CLOSE] = {
+		[T_STRING] = S_DICT_COLON,
+		[T_CLOSE_DICT] = S_PARENT
+	},
+	[S_DICT_COLON] = {
+		[T_COLON] = S_DICT_VALUE
+	},
+	[S_DICT_VALUE] = {
+		[T_OPEN_LIST] = S_LIST_VALUE_OR_CLOSE,
+		[T_OPEN_DICT] = S_DICT_KEY_OR_CLOSE,
+		[T_STRING] = S_DICT_COMMA_OR_CLOSE,
+		[T_OTHER] = S_DICT_COMMA_OR_CLOSE
+	},
+	[S_DICT_COMMA_OR_CLOSE] = {
+		[T_COMMA] = S_DICT_KEY,
+		[T_CLOSE_DICT] = S_PARENT
+	},
 };
 
 #define MAPSTATE(state, tok) do { \
-	int newstate = STATE_STEPS[state][tok]; \
-	if (!newstate) \
+		int newstate = STATE_STEPS[state][tok]; \
+		if (!newstate) \
 		return err_false(ctx, "Unexpected symbol: '%c'", c); \
-	state = newstate; \
+		state = newstate; \
 } while (0)
 
 /* actual parser */
@@ -923,7 +931,7 @@ static bool parse_tokens(struct JsonContext *ctx, const char *src, const char *e
 		case '/':
 			if (relaxed && skip_comment(ctx, &src, end))
 				continue;
-			/* fallthrough */
+		/* fallthrough */
 		default:
 			return err_false(ctx, "Invalid symbol: '%c'", c);
 		}
@@ -989,8 +997,8 @@ static bool render_float(struct RenderState *rs, struct JsonValue *jv)
 	if (len < 0 || len >= NUMBER_BUF)
 		return false;
 	if (!memchr(buf, '.', len) && !memchr(buf, 'e', len)) {
-	    buf[len++] = '.';
-	    buf[len++] = '0';
+		buf[len++] = '.';
+		buf[len++] = '0';
 	}
 	return mbuf_write(rs->dst, buf, len);
 }
@@ -1039,9 +1047,8 @@ static bool render_string(struct RenderState *rs, struct JsonValue *jv)
 			/* Valid in JSON, but not in JS:
 			   \u2028 - Line separator
 			   \u2029 - Paragraph separator */
-			((unsigned char)s[0] == 0xE2 && (unsigned char)s[1] == 0x80 &&
-			 ((unsigned char)s[2] == 0xA8 || (unsigned char)s[2] == 0xA9)))
-		{
+		    ((unsigned char)s[0] == 0xE2 && (unsigned char)s[1] == 0x80 &&
+		     ((unsigned char)s[2] == 0xA8 || (unsigned char)s[2] == 0xA9))) {
 			/* flush */
 			if (last < s) {
 				if (!mbuf_write(rs->dst, last, s - last))

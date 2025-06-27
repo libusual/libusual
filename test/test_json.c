@@ -46,8 +46,9 @@ static const char *simple_value(const char *json)
 				if (buf[i] == '+' || buf[i] == '-') continue;
 				if (buf[i] == 'e' || buf[i] == 'E') continue;
 				if (buf[i] == '.') continue;
-				if (buf[i] == ',') buf[i] = '.';
-				else if (buf[i] & 0x80) {
+				if (buf[i] == ',') {
+					buf[i] = '.';
+				} else if (buf[i] & 0x80) {
 					j = i;
 					while (buf[j] & 0x80) j++;
 					buf[i++] = '.';
@@ -198,17 +199,17 @@ static void test_json_basic(void *p)
 	str_check(xrerender("!"), "EPARSE: Line #1: Invalid symbol: '!'");
 
 	{
-	const char badenc1[] = {'"', 0xc1, 0xbf, '"', 0};
-	const char badenc2[] = {'"', 0xe0, 0x9f, 0xbf, '"', 0};
-	const char badenc3[] = {'"', 0xf0, 0x8f, 0xbf, 0xbf, '"'};
-	const char badenc4[] = {'"', 0xf4, 0x90, 0x80, 0x80, '"', 0};
+		const char badenc1[] = {'"', 0xc1, 0xbf, '"', 0};
+		const char badenc2[] = {'"', 0xe0, 0x9f, 0xbf, '"', 0};
+		const char badenc3[] = {'"', 0xf0, 0x8f, 0xbf, 0xbf, '"'};
+		const char badenc4[] = {'"', 0xf4, 0x90, 0x80, 0x80, '"', 0};
 
-	str_check(xrerender(badenc1), "EPARSE: Line #1: Invalid UTF8 sequence");
-	str_check(xrerender(badenc2), "EPARSE: Line #1: Invalid UTF8 sequence");
-	str_check(xrerender(badenc3), "EPARSE: Line #1: Invalid UTF8 sequence");
-	str_check(xrerender(badenc4), "EPARSE: Line #1: Invalid UTF8 sequence");
+		str_check(xrerender(badenc1), "EPARSE: Line #1: Invalid UTF8 sequence");
+		str_check(xrerender(badenc2), "EPARSE: Line #1: Invalid UTF8 sequence");
+		str_check(xrerender(badenc3), "EPARSE: Line #1: Invalid UTF8 sequence");
+		str_check(xrerender(badenc4), "EPARSE: Line #1: Invalid UTF8 sequence");
 	}
-end:;
+end:    ;
 }
 
 static const char *render(struct JsonValue *obj)
@@ -264,7 +265,7 @@ static void test_json_render(void *p)
 	str_check(render(list), "[null,false,-1,-2.0,\"qz\"]");
 
 	json_free_context(ctx);
-end:;
+end:    ;
 }
 
 static void test_json_fetch(void *p)
@@ -420,7 +421,7 @@ static void test_json_relax(void *p)
 	str_check(xrerender_opts("{},", rlx), "EPARSE: Line #1: Unexpected symbol: ','");
 	str_check(xrerender_opts("{'a':1,,},", rlx), "EPARSE: Line #1: Unexpected symbol: ','");
 	str_check(xrerender_opts("{'a':1,,'b':2},", rlx), "EPARSE: Line #1: Unexpected symbol: ','");
-end:;
+end:    ;
 }
 
 struct testcase_t json_tests[] = {

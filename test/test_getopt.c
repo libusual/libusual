@@ -66,7 +66,7 @@ static void test_getopt(void *_)
 	str_check(xgetopt("ab:", NULL, "-a", "zzz", "-bFOO", NULL), "a,b=FOO|zzz");
 	str_check(xgetopt("ab:", NULL, "-b", "FOO", "-", "--", "-a", NULL), "b=FOO|-|-a");
 	str_check(xgetopt("ab:", NULL, "--foo", NULL), "ERR");
-end:;
+end:    ;
 }
 
 static void test_getopt_long(void *_)
@@ -87,7 +87,7 @@ static void test_getopt_long(void *_)
 	str_check(xgetopt(sopts, lopts, "--xx", NULL), "ERR");
 	str_check(xgetopt(sopts, lopts, "-", "--longc", "ARG", NULL), "|-|ARG");
 	tt_assert(longc == 'C');
-end:;
+end:    ;
 }
 
 struct testcase_t getopt_tests[] = {

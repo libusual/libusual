@@ -56,11 +56,12 @@ loop:
 	res = recv(fd, buf, len, flags);
 	if (res < 0 && errno == EINTR)
 		goto loop;
-	if (res < 0)
+	if (res < 0) {
 		log_noise("safe_recv(%d, %zu) = %s", fd, len,
 			  strerror_r(errno, ebuf, sizeof(ebuf)));
-	else if (cf_verbose > 2)
+	} else if (cf_verbose > 2) {
 		log_noise("safe_recv(%d, %zu) = %zd", fd, len, res);
+	}
 	return res;
 }
 
@@ -72,11 +73,12 @@ loop:
 	res = send(fd, buf, len, flags);
 	if (res < 0 && errno == EINTR)
 		goto loop;
-	if (res < 0)
+	if (res < 0) {
 		log_noise("safe_send(%d, %zu) = %s", fd, len,
 			  strerror_r(errno, ebuf, sizeof(ebuf)));
-	else if (cf_verbose > 2)
+	} else if (cf_verbose > 2) {
 		log_noise("safe_send(%d, %zu) = %zd", fd, len, res);
+	}
 	return res;
 }
 
@@ -122,11 +124,12 @@ loop:
 	res = recvmsg(fd, msg, flags);
 	if (res < 0 && errno == EINTR)
 		goto loop;
-	if (res < 0)
+	if (res < 0) {
 		log_warning("safe_recvmsg(%d, msg, %d) = %s", fd, flags,
 			    strerror_r(errno, ebuf, sizeof(ebuf)));
-	else if (cf_verbose > 2)
+	} else if (cf_verbose > 2) {
 		log_noise("safe_recvmsg(%d, msg, %d) = %zd", fd, flags, res);
+	}
 	return res;
 }
 
@@ -155,8 +158,9 @@ loop:
 			msgerr_count++;
 			goto loop;
 		}
-	} else if (cf_verbose > 2)
+	} else if (cf_verbose > 2) {
 		log_noise("safe_sendmsg(%d, msg, %d) = %zd", fd, flags, res);
+	}
 	return res;
 }
 
@@ -169,12 +173,13 @@ loop:
 	res = connect(fd, sa, sa_len);
 	if (res < 0 && errno == EINTR)
 		goto loop;
-	if (res < 0 && (errno != EINPROGRESS || cf_verbose > 2))
+	if (res < 0 && (errno != EINPROGRESS || cf_verbose > 2)) {
 		log_noise("connect(%d, %s) = %s", fd,
 			  sa2str(sa, buf, sizeof(buf)),
 			  strerror_r(errno, ebuf, sizeof(ebuf)));
-	else if (cf_verbose > 2)
+	} else if (cf_verbose > 2) {
 		log_noise("connect(%d, %s) = %d", fd, sa2str(sa, buf, sizeof(buf)), res);
+	}
 	return res;
 }
 
@@ -187,15 +192,16 @@ loop:
 	res = accept(fd, sa, sa_len_p);
 	if (res < 0 && errno == EINTR)
 		goto loop;
-	if (res < 0)
+	if (res < 0) {
 		log_noise("safe_accept(%d) = %s", fd,
 			  strerror_r(errno, ebuf, sizeof(ebuf)));
-	else if (cf_verbose > 2) {
-		if (sa->sa_family == AF_UNIX)
+	} else if (cf_verbose > 2) {
+		if (sa->sa_family == AF_UNIX) {
 			/* sa2str() won't work here since accept() doesn't set sun_path */
 			log_noise("safe_accept(%d) = %d (unix)", fd, res);
-		else
+		} else {
 			log_noise("safe_accept(%d) = %d (%s)", fd, res, sa2str(sa, buf, sizeof(buf)));
+		}
 	}
 	return res;
 }

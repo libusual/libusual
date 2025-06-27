@@ -74,7 +74,7 @@ typedef int (*talloc_destructor_f)(void *ptr);
  * It can be redefined in user source files.
  */
 #ifndef TALLOC_POS
-#define TALLOC_POS(apifunc)	apifunc "@" __FILE__ ":" STR(__LINE__)
+#define TALLOC_POS(apifunc)     apifunc "@" __FILE__ ":" STR(__LINE__)
 #endif
 
 /**
@@ -89,7 +89,7 @@ typedef int (*talloc_destructor_f)(void *ptr);
 void *_talloc_const_name(const void *parent, size_t elem_size, size_t count,
 			 bool zero_fill, const char *name) _MALLOC;
 void *_talloc_format_name(const void *parent, size_t elem_size, size_t count,
-			  bool zero_fill, const char *fmt, ...) _PRINTF(5,6) _MALLOC;
+			  bool zero_fill, const char *fmt, ...) _PRINTF(5, 6) _MALLOC;
 int _talloc_unlink(const void *parent, const void *ptr, const char *source_pos);
 int _talloc_free(const void *ptr, const char *source_pos);
 void _talloc_free_children(const void *ptr, const char *source_pos);
@@ -132,7 +132,7 @@ type *talloc(const void *parent, #type);
  * @returns		New object or NULL on error.
  */
 #ifdef DOXYGEN
-type* talloc_zero(const void *parent, #type);
+type *talloc_zero(const void *parent, #type);
 #else
 #define talloc_zero(parent, type) \
 	(type *)_talloc_const_name(parent, sizeof(type), 1, true, #type)
@@ -314,7 +314,7 @@ type *talloc_ptrtype(const void *parent, type *ptr);
 #else
 #define talloc_ptrtype(parent, ptr) \
 	(__typeof__(ptr))_talloc_const_name(parent, sizeof(*(ptr)), 1, \
-				      false, TALLOC_POS("talloc_ptrtype"))
+					    false, TALLOC_POS("talloc_ptrtype"))
 #endif
 
 /**
@@ -332,7 +332,7 @@ type *talloc_array_ptrtype(const void *parent, type *ptr, size_t count);
 #else
 #define talloc_array_ptrtype(parent, ptr, count) \
 	(typeof(ptr))_talloc_const_name(parent, sizeof(*(ptr)), count, \
-				     false, TALLOC_POS("talloc_array_ptrtype"))
+					false, TALLOC_POS("talloc_array_ptrtype"))
 #endif
 
 /**
@@ -408,7 +408,7 @@ const struct CxMem *talloc_as_cx(const void *parent, const char *name);
 void talloc_set_destructor(const void *ptr, talloc_destructor_f destructor);
 #ifndef DOXYGEN
 #define talloc_set_destructor(ptr, dfn) \
-	do {	int (*_dfn)(__typeof__(ptr)) = (dfn); \
+	do {    int (*_dfn)(__typeof__(ptr)) = (dfn); \
 		talloc_set_destructor(ptr, (talloc_destructor_f)(_dfn)); \
 	} while (0)
 #endif
@@ -510,7 +510,7 @@ const char *talloc_get_name(const void *ptr);
 #ifdef DOXYGEN
 const char *talloc_set_name(const void *ptr, const char *fmt, ...);
 #else
-const char *talloc_set_name(const void *ptr, const char *fmt, ...) _PRINTF(2,3);
+const char *talloc_set_name(const void *ptr, const char *fmt, ...) _PRINTF(2, 3);
 #endif
 
 /**
@@ -655,7 +655,7 @@ int talloc_increase_ref_count(const void *ptr);
 #else
 #define talloc_increase_ref_count(ptr) \
 	(_talloc_reference_named(NULL, ptr, \
-		TALLOC_POS("talloc_increase_ref_count")) ? 0 : -1)
+				 TALLOC_POS("talloc_increase_ref_count")) ? 0 : -1)
 #endif
 
 /**
@@ -756,14 +756,14 @@ char *talloc_strndup(const void *parent, const char *s, size_t maxlen) _MALLOC;
 #ifdef DOXYGEN
 char *talloc_asprintf(const void *parent, const char *fmt, ...);
 #else
-char *talloc_asprintf(const void *parent, const char *fmt, ...) _PRINTF(2,3) _MALLOC;
+char *talloc_asprintf(const void *parent, const char *fmt, ...) _PRINTF(2, 3) _MALLOC;
 #endif
 
 /** Format string taking argument from va_list */
 #ifdef DOXYGEN
 char *talloc_vasprintf(const void *parent, const char *fmt, va_list ap);
 #else
-char *talloc_vasprintf(const void *parent, const char *fmt, va_list ap) _PRINTF(2,0) _MALLOC;
+char *talloc_vasprintf(const void *parent, const char *fmt, va_list ap) _PRINTF(2, 0) _MALLOC;
 #endif
 
 /**
@@ -786,14 +786,14 @@ char *talloc_strndup_append(char *ptr, const char *s, size_t maxlen);
 #ifdef DOXYGEN
 char *talloc_asprintf_append(char *ptr, const char *fmt, ...);
 #else
-char *talloc_asprintf_append(char *ptr, const char *fmt, ...) _PRINTF(2,3);
+char *talloc_asprintf_append(char *ptr, const char *fmt, ...) _PRINTF(2, 3);
 #endif
 
 /** Append formatted string to existing string */
 #ifdef DOXYGEN
 char *talloc_vasprintf_append(char *ptr, const char *fmt, va_list ap);
 #else
-char *talloc_vasprintf_append(char *ptr, const char *fmt, va_list ap) _PRINTF(2,0);
+char *talloc_vasprintf_append(char *ptr, const char *fmt, va_list ap) _PRINTF(2, 0);
 #endif
 
 /**
@@ -817,14 +817,14 @@ char *talloc_strndup_append_buffer(char *ptr, const char *str, size_t maxlen);
 #ifdef DOXYGEN
 char *talloc_asprintf_append_buffer(char *ptr, const char *fmt, ...);
 #else
-char *talloc_asprintf_append_buffer(char *ptr, const char *fmt, ...) _PRINTF(2,3);
+char *talloc_asprintf_append_buffer(char *ptr, const char *fmt, ...) _PRINTF(2, 3);
 #endif
 
 /** Append formatted string to existing buffer */
 #ifdef DOXYGEN
 char *talloc_vasprintf_append_buffer(char *ptr, const char *fmt, va_list ap);
 #else
-char *talloc_vasprintf_append_buffer(char *ptr, const char *fmt, va_list ap) _PRINTF(2,0);
+char *talloc_vasprintf_append_buffer(char *ptr, const char *fmt, va_list ap) _PRINTF(2, 0);
 #endif
 
 /**
@@ -889,9 +889,9 @@ void talloc_report_full(const void *ptr, FILE *f);
 void talloc_report_depth_file(const void *ptr, int depth, int max_depth, FILE *f);
 /** Run callback on context and it's children */
 void talloc_report_depth_cb(const void *ptr, int depth, int max_depth,
-		void (*callback)(const void *ptr, int depth, int max_depth,
-				 int is_ref, void *private_data),
-		void *private_data);
+			    void (*callback)(const void *ptr, int depth, int max_depth,
+					     int is_ref, void *private_data),
+			    void *private_data);
 /** Print parents to file */
 void talloc_show_parents(const void *ptr, FILE *file);
 

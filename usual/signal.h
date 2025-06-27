@@ -55,7 +55,6 @@ struct sigevent {
 	int sigev_signo;
 	union sigval sigev_value;
 	void (*sigev_notify_function)(union sigval);
-
 };
 #endif
 
@@ -69,8 +68,8 @@ struct sigevent {
 typedef struct siginfo_t siginfo_t;
 struct sigaction {
 	union {
-		void     (*sa_handler)(int);
-		void     (*sa_sigaction)(int, siginfo_t *, void *);
+		void (*sa_handler)(int);
+		void (*sa_sigaction)(int, siginfo_t *, void *);
 	};
 	int sa_flags;
 	int sa_mask;
@@ -79,7 +78,7 @@ struct sigaction {
 #define sigfillset(s)
 #define sigaddset(s, sig)
 #define sigdelset(s, sig)
-#define sigaction(a,b,c) compat_sigaction(a,b,c)
+#define sigaction(a, b, c) compat_sigaction(a, b, c)
 int sigaction(int sig, const struct sigaction *sa, struct sigaction *old);
 #endif
 
@@ -112,7 +111,7 @@ static inline _sighandler_t wrap_signal(int sig, _sighandler_t func)
 	}
 	return signal(sig, func);
 }
-#define signal(a,b) wrap_signal(a,b)
+#define signal(a, b) wrap_signal(a, b)
 #endif
 
 #endif

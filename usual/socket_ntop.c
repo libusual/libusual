@@ -50,8 +50,7 @@ static const char *inet_ntop6(const u_char *src, char *dst, int size);
  * author:
  *	Paul Vixie, 1996.
  */
-const char *
-inet_ntop(int af, const void *src, char *dst, int size)
+const char *inet_ntop(int af, const void *src, char *dst, int size)
 {
 	if (size < 0) {
 		errno = ENOSPC;
@@ -80,8 +79,7 @@ inet_ntop(int af, const void *src, char *dst, int size)
  * author:
  *	Paul Vixie, 1996.
  */
-static const char *
-inet_ntop4(const u_char *src, char *dst, int size)
+static const char *inet_ntop4(const u_char *src, char *dst, int size)
 {
 	static const char fmt[] = "%u.%u.%u.%u";
 	char tmp[sizeof "255.255.255.255"];
@@ -102,8 +100,7 @@ inet_ntop4(const u_char *src, char *dst, int size)
  * author:
  *	Paul Vixie, 1996.
  */
-static const char *
-inet_ntop6(const u_char *src, char *dst, int size)
+static const char *inet_ntop6(const u_char *src, char *dst, int size)
 {
 	/*
 	 * Note that int32_t and int16_t need only be "at least" large enough
@@ -175,7 +172,7 @@ inet_ntop6(const u_char *src, char *dst, int size)
 		/* Is this address an encapsulated IPv4? */
 		if (i == 6 && best.base == 0 &&
 		    (best.len == 6 || (best.len == 5 && words[5] == 0xffff))) {
-			if (!inet_ntop4(src+12, tp, (size_t)(ep - tp)))
+			if (!inet_ntop4(src + 12, tp, (size_t)(ep - tp)))
 				return (NULL);
 			tp += strlen(tp);
 			break;
