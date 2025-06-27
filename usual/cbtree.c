@@ -68,13 +68,13 @@ static inline bool is_node(void *ptr)
 /* flag pointer as pointing to user object */
 static inline void *set_external(const void *obj)
 {
-	return (void*)((uintptr_t)(obj) | 1);
+	return (void *)((uintptr_t)(obj) | 1);
 }
 
 /* remove flag from user pointer */
 static inline void *get_external(void *extval)
 {
-	return (void*)((uintptr_t)(extval) & (~1));
+	return (void *)((uintptr_t)(extval) & (~1));
 }
 
 /* get specific bit from string */
@@ -337,7 +337,7 @@ static bool walk(struct Node *node, cbtree_walker_func cb_func, void *cb_arg)
 	if (!is_node(node))
 		return cb_func(cb_arg, get_external(node));
 	return walk(node->child[0], cb_func, cb_arg)
-	    && walk(node->child[1], cb_func, cb_arg);
+	       && walk(node->child[1], cb_func, cb_arg);
 }
 
 bool cbtree_walk(struct CBTree *tree, cbtree_walker_func cb_func, void *cb_arg)

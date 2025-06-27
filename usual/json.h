@@ -129,19 +129,40 @@ enum JsonValueType json_value_type(struct JsonValue *jv);
 size_t json_value_size(struct JsonValue *jv);
 
 /** Return true if value is null */
-static inline bool json_value_is_null(struct JsonValue *jv) { return json_value_type(jv) == JSON_NULL; }
+static inline bool json_value_is_null(struct JsonValue *jv)
+{
+	return json_value_type(jv) == JSON_NULL;
+}
 /** Return true if value is boolean */
-static inline bool json_value_is_bool(struct JsonValue *jv) { return json_value_type(jv) == JSON_BOOL; }
+static inline bool json_value_is_bool(struct JsonValue *jv)
+{
+	return json_value_type(jv) == JSON_BOOL;
+}
 /** Return true if value is int */
-static inline bool json_value_is_int(struct JsonValue *jv) { return json_value_type(jv) == JSON_INT; }
+static inline bool json_value_is_int(struct JsonValue *jv)
+{
+	return json_value_type(jv) == JSON_INT;
+}
 /** Return true if value is float */
-static inline bool json_value_is_float(struct JsonValue *jv) { return json_value_type(jv) == JSON_FLOAT; }
+static inline bool json_value_is_float(struct JsonValue *jv)
+{
+	return json_value_type(jv) == JSON_FLOAT;
+}
 /** Return true if value is string */
-static inline bool json_value_is_string(struct JsonValue *jv) { return json_value_type(jv) == JSON_STRING; }
+static inline bool json_value_is_string(struct JsonValue *jv)
+{
+	return json_value_type(jv) == JSON_STRING;
+}
 /** Return true if value is list */
-static inline bool json_value_is_list(struct JsonValue *jv) { return json_value_type(jv) == JSON_LIST; }
+static inline bool json_value_is_list(struct JsonValue *jv)
+{
+	return json_value_type(jv) == JSON_LIST;
+}
 /** Return true if value is dict */
-static inline bool json_value_is_dict(struct JsonValue *jv) { return json_value_type(jv) == JSON_DICT; }
+static inline bool json_value_is_dict(struct JsonValue *jv)
+{
+	return json_value_type(jv) == JSON_DICT;
+}
 
 /** Get bool value */
 bool json_value_as_bool(struct JsonValue *jv, bool *dst_p);

@@ -19,8 +19,8 @@
 #include <usual/crypto/sha3.h>
 #include <usual/crypto/digest.h>
 
-#define PAD_SHA3	0x06
-#define PAD_SHAKE	0x1f
+#define PAD_SHA3        0x06
+#define PAD_SHAKE       0x1f
 
 void sha3_224_reset(struct SHA3Context *ctx)
 {

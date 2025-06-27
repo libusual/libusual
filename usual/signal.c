@@ -29,7 +29,6 @@ struct AlarmCtx {
 	HANDLE event;
 	HANDLE thread;
 	int secs;
-
 };
 static volatile struct AlarmCtx actx;
 
@@ -135,7 +134,8 @@ int kill(int pid, int sig)
 	if (ret) {
 		errno = ret;
 		return -1;
-	} else
-		return  0;
+	} else {
+		return 0;
+	}
 }
 #endif

@@ -28,27 +28,27 @@
  * SHA1 core.
  */
 
-#define W(n)		(buf[(n) & 15])
-#define setW(n, val)	W(n) = val
+#define W(n)            (buf[(n) & 15])
+#define setW(n, val)    W(n) = val
 
 /* base SHA1 operation */
 #define SHA1OP(_t, fn, K) do { \
-	uint32_t tmp, t = (_t); \
-	if (t >= 16) { \
-		tmp = W(t - 3) ^ W(t - 8) ^ W(t - 14) ^ W(t - 16); \
-		setW(t, rol32(tmp, 1)); \
-	} else { \
-		/* convert endianess on first go */ \
-		setW(t, be32toh(W(t))); \
-	} \
-	tmp = rol32(a, 5) + fn(b, c, d) + e + W(t) + K; \
-	e = d; d = c; c = rol32(b, 30); b = a; a = tmp; \
+		uint32_t tmp, t = (_t); \
+		if (t >= 16) { \
+			tmp = W(t - 3) ^ W(t - 8) ^ W(t - 14) ^ W(t - 16); \
+			setW(t, rol32(tmp, 1)); \
+		} else { \
+			/* convert endianess on first go */ \
+			setW(t, be32toh(W(t))); \
+		} \
+		tmp = rol32(a, 5) + fn(b, c, d) + e + W(t) + K; \
+		e = d; d = c; c = rol32(b, 30); b = a; a = tmp; \
 } while (0)
 
 /* mix functions */
 #define F0(b, c, d) (d ^ (b & (c ^ d)))
 #define F1(b, c, d) (b ^ c ^ d)
-#define F2(b, c, d) ((b & c) | (b & d) | (c & d))
+#define F2(b, c, d) ((b &c) | (b &d) | (c &d))
 #define F3(b, c, d) (b ^ c ^ d)
 
 /* operation details for each round */
@@ -58,11 +58,11 @@
 #define SHA1R3(t) SHA1OP(t, F3, 0xca62c1d6)
 
 /* repeat with increasing offset */
-#define R4(R, t) R(t+0); R(t+1); R(t+2); R(t+3)
-#define R16(R, t) R4(R, t+0); R4(R, t+4); R4(R, t+8); R4(R, t+12)
-#define R20(R, t) R16(R, t+0); R4(R, t+16)
+#define R4(R, t) R(t + 0); R(t + 1); R(t + 2); R(t + 3)
+#define R16(R, t) R4(R, t + 0); R4(R, t + 4); R4(R, t + 8); R4(R, t + 12)
+#define R20(R, t) R16(R, t + 0); R4(R, t + 16)
 
-static void sha1_core(struct sha1_ctx * ctx, uint32_t *buf)
+static void sha1_core(struct sha1_ctx *ctx, uint32_t *buf)
 {
 	uint32_t a, b, c, d, e;
 

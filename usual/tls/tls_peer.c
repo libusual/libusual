@@ -26,37 +26,32 @@
 
 #include "tls_internal.h"
 
-const char *
-tls_peer_cert_hash(struct tls *ctx)
+const char *tls_peer_cert_hash(struct tls *ctx)
 {
 	if (ctx->conninfo)
 		return (ctx->conninfo->hash);
 	return NULL;
 }
-const char *
-tls_peer_cert_issuer(struct tls *ctx)
+const char *tls_peer_cert_issuer(struct tls *ctx)
 {
 	if (ctx->conninfo)
 		return (ctx->conninfo->issuer);
 	return NULL;
 }
 
-const char *
-tls_peer_cert_subject(struct tls *ctx)
+const char *tls_peer_cert_subject(struct tls *ctx)
 {
 	if (ctx->conninfo)
 		return (ctx->conninfo->subject);
 	return NULL;
 }
 
-int
-tls_peer_cert_provided(struct tls *ctx)
+int tls_peer_cert_provided(struct tls *ctx)
 {
 	return (ctx->ssl_peer_cert != NULL);
 }
 
-int
-tls_peer_cert_contains_name(struct tls *ctx, const char *name)
+int tls_peer_cert_contains_name(struct tls *ctx, const char *name)
 {
 	if (ctx->ssl_peer_cert == NULL)
 		return (0);
@@ -64,8 +59,7 @@ tls_peer_cert_contains_name(struct tls *ctx, const char *name)
 	return (tls_check_name(ctx, ctx->ssl_peer_cert, name) == 0);
 }
 
-time_t
-tls_peer_cert_notbefore(struct tls *ctx)
+time_t tls_peer_cert_notbefore(struct tls *ctx)
 {
 	if (ctx->ssl_peer_cert == NULL)
 		return (-1);
@@ -74,8 +68,7 @@ tls_peer_cert_notbefore(struct tls *ctx)
 	return (ctx->conninfo->notbefore);
 }
 
-time_t
-tls_peer_cert_notafter(struct tls *ctx)
+time_t tls_peer_cert_notafter(struct tls *ctx)
 {
 	if (ctx->ssl_peer_cert == NULL)
 		return (-1);

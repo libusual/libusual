@@ -26,9 +26,9 @@
 
 #include <usual/base.h>
 
-#define CHACHA_KEY_SIZE		32
-#define CHACHA_IV_SIZE		8
-#define CHACHA_BLOCK_SIZE	64
+#define CHACHA_KEY_SIZE         32
+#define CHACHA_IV_SIZE          8
+#define CHACHA_BLOCK_SIZE       64
 
 /**
  * ChaCha state.

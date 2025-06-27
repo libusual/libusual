@@ -57,8 +57,8 @@
 #define opterr usual_opterr
 #define optind usual_optind
 #define optopt usual_optopt
-#define getopt(a,b,c) usual_getopt(a,b,c)
-#define getopt_long(a,b,c,d,e) usual_getopt_long(a,b,c,d,e)
+#define getopt(a, b, c) usual_getopt(a, b, c)
+#define getopt_long(a, b, c, d, e) usual_getopt_long(a, b, c, d, e)
 
 
 /** argument to current option, or NULL if it has none */

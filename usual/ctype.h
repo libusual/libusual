@@ -40,7 +40,10 @@
 
 #ifndef isblank
 #define isblank usual_isblank
-static inline int isblank(int c) { return (c == ' ') || (c == '\t'); }
+static inline int isblank(int c)
+{
+	return (c == ' ') || (c == '\t');
+}
 #endif
 
 /* keep right signature, cast to uchar internally */

@@ -35,7 +35,7 @@
 		out[c] = out[c] + out[d];  out[b] = rol32(out[b] ^ out[c], 7); \
 	} while (0)
 
-#define OUTPUT(a,b,c,d) \
+#define OUTPUT(a, b, c, d) \
 	do { \
 		output[a] = htole32(x[a] + input[a]); \
 		output[b] = htole32(x[b] + input[b]); \

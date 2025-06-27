@@ -58,7 +58,7 @@ const struct CxOps cx_nofail_ops = {
 
 const struct CxMem cx_libc_nofail = {
 	&cx_nofail_ops,
-	(void*)&cx_libc_allocator,
+	(void *)&cx_libc_allocator,
 };
 
 /*

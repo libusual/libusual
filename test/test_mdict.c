@@ -46,7 +46,7 @@ static void test_mdict(void *p)
 	str_check(xget(d, "key2"), "");
 	str_check(xget(d, "key3"), "NULL");
 	mdict_free(d);
-end:;
+end:    ;
 }
 
 

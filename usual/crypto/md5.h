@@ -28,10 +28,10 @@
 #include <usual/base.h>
 
 /** Block length for MD5 */
-#define MD5_BLOCK_LENGTH	64
+#define MD5_BLOCK_LENGTH        64
 
 /** Result length for MD5 */
-#define MD5_DIGEST_LENGTH	16
+#define MD5_DIGEST_LENGTH       16
 
 /** MD5 state */
 struct md5_ctx {

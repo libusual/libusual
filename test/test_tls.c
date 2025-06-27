@@ -61,7 +61,7 @@ static void free_worker(struct Worker *w)
 	free(w);
 }
 
-_PRINTF(2,3)
+_PRINTF(2, 3)
 static void add_error(struct Worker *w, const char *s, ...)
 {
 	char buf[1024];
@@ -331,7 +331,7 @@ static void worker_cb(evutil_socket_t fd, short flags, void *arg)
 		}
 	}
 	if (!w->pending && w->ctx) {
-		errx(1, "missed event setup: %s flags=%d state=%d", w->is_server ? "S":"C", flags, w->wstate);
+		errx(1, "missed event setup: %s flags=%d state=%d", w->is_server ? "S" : "C", flags, w->wstate);
 	}
 	return;
 }
@@ -342,7 +342,7 @@ static const char *mkhex(const uint8_t *src, int len, char *dst)
 	int i;
 	for (i = 0; i < len; i++) {
 		dst[i*2] = hextbl[src[i] >> 4];
-		dst[i*2+1] = hextbl[src[i] & 15];
+		dst[i*2 + 1] = hextbl[src[i] & 15];
 	}
 	dst[i*2] = 0;
 	return dst;
@@ -357,7 +357,7 @@ static const char *hexcmp(const char *fn, const void *buf, unsigned int len)
 
 	if (!fdata)
 		return strerror(errno);
-	while (flen && isspace(fdata[flen-1]))
+	while (flen && isspace(fdata[flen - 1]))
 		flen--;
 	fdata[flen] = 0;
 
@@ -606,7 +606,7 @@ static void test_tls_config_equal(void *z)
 
 	tt_assert(tls_config_equal(server->config, server_unchanged->config) == true);
 	tt_assert(tls_config_equal(server->config, server_changed->config) == false);
-end:;
+end:    ;
 }
 
 static void test_tls_keypair_list_equal(void *z)
@@ -626,7 +626,7 @@ static void test_tls_keypair_list_equal(void *z)
 	tls_keypair_set_cert_file(kp2b, "ssl/different_ca1_server2.crt");
 
 	tt_assert(tls_keypair_list_equal(kp1a, kp2a) == false);
-end:;
+end:    ;
 }
 
 static void test_tls_keypair_list_length(void *z)
@@ -636,7 +636,7 @@ static void test_tls_keypair_list_length(void *z)
 	kp1b = tls_keypair_new();
 	kp2a = tls_keypair_new();
 
-  /* this keypair list is one keypair longer */
+	/* this keypair list is one keypair longer */
 	kp1a->next = kp1b;
 
 	tls_keypair_set_cert_file(kp1a, "ssl/ca1_server1.crt");
@@ -644,7 +644,7 @@ static void test_tls_keypair_list_length(void *z)
 	tls_keypair_set_cert_file(kp2a, "ssl/ca1_server1.crt");
 
 	tt_assert(tls_keypair_list_equal(kp1a, kp2a) == false);
-end:;
+end:    ;
 }
 
 static void test_verify(void *z)
@@ -680,7 +680,7 @@ static void test_verify(void *z)
 	str_check(run_case(client, server), "C:write failed: Broken pipe,C:close error: res=-1 err=shutdown failed: Success");
 #endif
 
-end:;
+end:    ;
 }
 
 static void test_noverifyname(void *z)
@@ -692,15 +692,15 @@ static void test_noverifyname(void *z)
 	/* noverifyname: client checks server cert, ignore bad hostname */
 	str_check(create_worker(&server, true, SERVER1, NULL), "OK");
 	str_check(create_worker(&client, false, CA1, "host=example2.com",
-		"noverifyname=1",
-		NULL), "OK");
+				"noverifyname=1",
+				NULL), "OK");
 	str_check(run_case(client, server), "OK");
 
 	/* noverifyname: client checks server cert, ignore NULL hostname */
 	str_check(create_worker(&server, true, SERVER1, NULL), "OK");
 	str_check(create_worker(&client, false, CA1, "noverifyname=1", NULL), "OK");
 	str_check(run_case(client, server), "OK");
-end:;
+end:    ;
 }
 
 static void test_noverifycert(void *z)
@@ -712,36 +712,36 @@ static void test_noverifycert(void *z)
 	/* noverifycert: client ignores cert */
 	str_check(create_worker(&server, true, SERVER1, NULL), "OK");
 	str_check(create_worker(&client, false, CA2,
-		"host=server1.com",
-		"noverifycert=1",
-		NULL), "OK");
+				"host=server1.com",
+				"noverifycert=1",
+				NULL), "OK");
 	str_check(run_case(client, server), "OK");
 
 	/* noverifycert: client ignores cert, but checks hostname */
 	str_check(create_worker(&server, true, SERVER1, NULL), "OK");
 	str_check(create_worker(&client, false, CA2,
-		"host=server2.com",
-		"noverifycert=1",
-		NULL), "OK");
+				"host=server2.com",
+				"noverifycert=1",
+				NULL), "OK");
 	str_check(run_case(client, server), "C:name `server2.com' not present in server certificate");
 
 	/* noverifycert: client ignores both cert, hostname */
 	str_check(create_worker(&server, true, SERVER1, NULL), "OK");
 	str_check(create_worker(&client, false, CA2,
-		"host=server2.com",
-		"noverifycert=1",
-		"noverifyname=1",
-		NULL), "OK");
+				"host=server2.com",
+				"noverifycert=1",
+				"noverifyname=1",
+				NULL), "OK");
 	str_check(run_case(client, server), "OK");
 
 	/* noverifycert: client ignores both cert, hostname (=NULL) */
 	str_check(create_worker(&server, true, SERVER1, NULL), "OK");
 	str_check(create_worker(&client, false, CA2,
-		"noverifycert=1",
-		"noverifyname=1",
-		NULL), "OK");
+				"noverifycert=1",
+				"noverifyname=1",
+				NULL), "OK");
 	str_check(run_case(client, server), "OK");
-end:;
+end:    ;
 }
 
 static void test_clientcert(void *z)
@@ -763,8 +763,8 @@ static void test_clientcert(void *z)
 				NULL), "OK");
 	str_check(create_worker(&client, false, CLIENT2, CA1, "host=server1.com", NULL), "OK");
 	str_any2(run_case(client, server),
-		"C:tlsv1 alert unknown ca - S:no certificate returned",
-		"C:tlsv1 alert unknown ca - S:certificate verify failed");
+		 "C:tlsv1 alert unknown ca - S:no certificate returned",
+		 "C:tlsv1 alert unknown ca - S:certificate verify failed");
 
 	/* noverifycert: server allow invalid cert */
 	str_check(create_worker(&server, true, SERVER1, CA1,
@@ -786,7 +786,7 @@ static void test_clientcert(void *z)
 				NULL), "OK");
 	str_check(create_worker(&client, false, CA1, "host=server1.com", NULL), "OK");
 	str_check(run_case(client, server), "OK");
-end:;
+end:    ;
 }
 
 static void test_fingerprint(void *z)
@@ -797,27 +797,27 @@ static void test_fingerprint(void *z)
 
 	/* both server & client with cert */
 	str_check(create_worker(&server, true, SERVER1, CA2,
-		"verify-client=1",
-		"peer-sha1=ssl/ca2_client2.crt.sha1",
-		"peer-sha256=ssl/ca2_client2.crt.sha256",
-		NULL), "OK");
+				"verify-client=1",
+				"peer-sha1=ssl/ca2_client2.crt.sha1",
+				"peer-sha256=ssl/ca2_client2.crt.sha256",
+				NULL), "OK");
 	str_check(create_worker(&client, false, CLIENT2, CA1,
-		"host=server1.com",
-		"peer-sha1=ssl/ca1_server1.crt.sha1",
-		"peer-sha256=ssl/ca1_server1.crt.sha256",
-		NULL), "OK");
+				"host=server1.com",
+				"peer-sha1=ssl/ca1_server1.crt.sha1",
+				"peer-sha256=ssl/ca1_server1.crt.sha256",
+				NULL), "OK");
 	str_check(run_case(client, server), "OK");
 
 	/* client without cert */
 	str_check(create_worker(&server, true, SERVER1, CA1,
-		"verify-client=1",
-		"peer-sha1=ssl/ca2_client2.crt.sha1",
-		"peer-sha256=ssl/ca2_client2.crt.sha256",
-		NULL), "OK");
+				"verify-client=1",
+				"peer-sha1=ssl/ca2_client2.crt.sha1",
+				"peer-sha256=ssl/ca2_client2.crt.sha256",
+				NULL), "OK");
 	str_check(create_worker(&client, false, CA1, "host=server1.com", NULL), "OK");
 	str_contains_check(run_case(client, server),
-		 " alert handshake failure - S:peer did not return a certificate");
-end:;
+			   " alert handshake failure - S:peer did not return a certificate");
+end:    ;
 }
 
 static void test_set_mem(void *z)
@@ -830,7 +830,7 @@ static void test_set_mem(void *z)
 	str_check(create_worker(&server, true, "mem=1", SERVER1, CA2, NULL), "OK");
 	str_check(create_worker(&client, false, "mem=1", CLIENT2, CA1, "host=server1.com", NULL), "OK");
 	str_check(run_case(client, server), "OK");
-end:;
+end:    ;
 }
 
 static void test_cipher_nego(void *z)
@@ -842,9 +842,9 @@ static void test_cipher_nego(void *z)
 	/* server key is EC:secp384r1 - ECDHE-ECDSA */
 	str_check(create_worker(&server, true, "show=ciphers", SERVER1, NULL), "OK");
 	str_check(create_worker(&client, false, CA1,
-		"ciphers=AESGCM",
-		"host=server1.com",
-		NULL), "OK");
+				"ciphers=AESGCM",
+				"host=server1.com",
+				NULL), "OK");
 	str_any3(run_case(client, server),
 		 "TLSv1.2/ECDHE-ECDSA-AES256-GCM-SHA384/ECDH=secp384r1",
 		 "TLSv1.2/ECDHE-ECDSA-AES256-GCM-SHA384/ECDH=X25519",
@@ -853,9 +853,9 @@ static void test_cipher_nego(void *z)
 	/* server key is RSA - ECDHE-RSA */
 	str_check(create_worker(&server, true, "show=ciphers", SERVER2, NULL), "OK");
 	str_check(create_worker(&client, false, CA2,
-		"ciphers=AESGCM",
-		"host=server2.com",
-		NULL), "OK");
+				"ciphers=AESGCM",
+				"host=server2.com",
+				NULL), "OK");
 	str_any3(run_case(client, server),
 		 "TLSv1.2/ECDHE-RSA-AES256-GCM-SHA384/ECDH=prime256v1",
 		 "TLSv1.2/ECDHE-RSA-AES256-GCM-SHA384/ECDH=X25519",
@@ -863,28 +863,28 @@ static void test_cipher_nego(void *z)
 
 	/* server key is RSA - DHE-RSA */
 	str_check(create_worker(&server, true, SERVER2,
-		"show=ciphers",
-		"dheparams=auto",
-		NULL), "OK");
+				"show=ciphers",
+				"dheparams=auto",
+				NULL), "OK");
 	str_check(create_worker(&client, false, CA2,
-		"ciphers=EDH+AESGCM",
-		"host=server2.com",
-		NULL), "OK");
+				"ciphers=EDH+AESGCM",
+				"host=server2.com",
+				NULL), "OK");
 	str_check(run_case(client, server), "TLSv1.2/DHE-RSA-AES256-GCM-SHA384/DH=2048");
 
 	/* server key is RSA - ECDHE-RSA */
 	str_check(create_worker(&server, true, SERVER2,
-		"show=ciphers",
-		NULL), "OK");
+				"show=ciphers",
+				NULL), "OK");
 	str_check(create_worker(&client, false, CA2,
-		"ciphers=EECDH+AES",
-		"host=server2.com",
-		NULL), "OK");
+				"ciphers=EECDH+AES",
+				"host=server2.com",
+				NULL), "OK");
 	str_any3(run_case(client, server),
 		 "TLSv1.2/ECDHE-RSA-AES256-GCM-SHA384/ECDH=prime256v1",
 		 "TLSv1.2/ECDHE-RSA-AES256-GCM-SHA384/ECDH=X25519",
 		 "TLSv1.2/ECDHE-RSA-AES256-GCM-SHA384");
-end:;
+end:    ;
 }
 
 static void test_cert_info(void *z)
@@ -895,15 +895,15 @@ static void test_cert_info(void *z)
 
 	/* server shows client cert */
 	str_check(create_worker(&server, true, "show=peer-cert", SERVER1, CA2,
-		"peer-sha1=ssl/ca2_client2.crt.sha1",
-		"peer-sha256=ssl/ca2_client2.crt.sha256",
-		"verify-client=1",
-		NULL), "OK");
+				"peer-sha1=ssl/ca2_client2.crt.sha1",
+				"peer-sha256=ssl/ca2_client2.crt.sha256",
+				"verify-client=1",
+				NULL), "OK");
 	str_check(create_worker(&client, false, CLIENT2, CA1,
-		"host=server1.com",
-		"peer-sha1=ssl/ca1_server1.crt.sha1",
-		"peer-sha256=ssl/ca1_server1.crt.sha256",
-		NULL), "OK");
+				"host=server1.com",
+				"peer-sha1=ssl/ca1_server1.crt.sha1",
+				"peer-sha256=ssl/ca1_server1.crt.sha256",
+				NULL), "OK");
 	str_check(run_case(client, server),
 		  "Subject: /CN=client2/C=XX/ST=State2/L=City2/O=Org2"
 		  " Issuer: /CN=TestCA2"
@@ -930,7 +930,7 @@ static void test_cert_info(void *z)
 		  " Serial: 172016068453027343380871247608609871345869881015"
 		  " NotBefore: 2010-01-01T08:05:00Z"
 		  " NotAfter: 2060-12-31T23:55:00Z");
-end:;
+end:    ;
 }
 
 /*
@@ -969,12 +969,12 @@ static const char *do_verify(const char *hostname, const char *commonName, ...)
 		} else if (!memcmp(aname, "ip4:", 4)) {
 			alt->name_type = TLS_CERT_GNAME_IPv4;
 			alt->name_value = &addrbuf[addrpos++];
-			if (inet_pton(AF_INET, aname + 4, (void*)alt->name_value) != 1)
+			if (inet_pton(AF_INET, aname + 4, (void *)alt->name_value) != 1)
 				return aname;
 		} else if (!memcmp(aname, "ip6:", 4)) {
 			alt->name_type = TLS_CERT_GNAME_IPv6;
 			alt->name_value = &addrbuf[addrpos++];
-			if (inet_pton(AF_INET6, aname + 4, (void*)alt->name_value) != 1)
+			if (inet_pton(AF_INET6, aname + 4, (void *)alt->name_value) != 1)
 				return aname;
 		} else {
 			return aname;
@@ -1025,7 +1025,7 @@ static void test_servername(void *_)
 	str_check(do_verify("fefe::efef", "foo", "dns:fefe::efef", NULL), "FAIL");
 	str_check(do_verify("1.1.1.1", "1.1.1.1", NULL), "OK");
 	str_check(do_verify("1.1.1.1", NULL, "dns:1.1.1.1", NULL), "FAIL");
-end:;
+end:    ;
 }
 
 /*
@@ -1044,8 +1044,8 @@ static const char *run_time(const char *val)
 
 	memset(&tmp, 0, sizeof tmp);
 
-	tmp.data = (unsigned char*)val+2;
-	tmp.length = strlen(val+2);
+	tmp.data = (unsigned char *)val + 2;
+	tmp.length = strlen(val + 2);
 	if (val[0] == 'G' && val[1] == ':') {
 		tmp.type = V_ASN1_GENERALIZEDTIME;
 	} else if (val[0] == 'U' && val[1] == ':') {
@@ -1085,7 +1085,7 @@ static void test_time(void *_)
 	str_check(run_time("U:"), "Invalid asn1 time");
 	str_check(run_time("X:"), "Invalid time object type: 88");
 	str_check(run_time("G:20140101021544Z"), "2014-01-01 02:15:44 GMT");
-end:;
+end:    ;
 }
 
 struct testcase_t tls_tests[] = {

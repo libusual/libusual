@@ -26,8 +26,7 @@
 
 #include "tls_internal.h"
 
-struct tls *
-tls_server(void)
+struct tls *tls_server(void)
 {
 	struct tls *ctx;
 
@@ -39,8 +38,7 @@ tls_server(void)
 	return (ctx);
 }
 
-struct tls *
-tls_server_conn(struct tls *ctx)
+struct tls *tls_server_conn(struct tls *ctx)
 {
 	struct tls *conn_ctx;
 
@@ -52,8 +50,7 @@ tls_server_conn(struct tls *ctx)
 	return (conn_ctx);
 }
 
-int
-tls_configure_server(struct tls *ctx)
+int tls_configure_server(struct tls *ctx)
 {
 	EC_KEY *ecdh_key;
 	STACK_OF(X509_NAME) * cert_stack;
@@ -83,7 +80,7 @@ tls_configure_server(struct tls *ctx)
 		SSL_CTX_set_ecdh_auto(ctx->ssl_ctx, 1);
 	} else if (ctx->config->ecdhecurve != NID_undef) {
 		if ((ecdh_key = EC_KEY_new_by_curve_name(
-		    ctx->config->ecdhecurve)) == NULL) {
+			     ctx->config->ecdhecurve)) == NULL) {
 			tls_set_errorx(ctx, "failed to set ECDHE curve");
 			goto err;
 		}
@@ -92,9 +89,10 @@ tls_configure_server(struct tls *ctx)
 		EC_KEY_free(ecdh_key);
 	}
 
-	if (ctx->config->ciphers_server == 1)
+	if (ctx->config->ciphers_server == 1) {
 		SSL_CTX_set_options(ctx->ssl_ctx,
-		    SSL_OP_CIPHER_SERVER_PREFERENCE);
+				    SSL_OP_CIPHER_SERVER_PREFERENCE);
+	}
 
 	if (SSL_CTX_set_tlsext_status_cb(ctx->ssl_ctx, tls_ocsp_stapling_callback) != 1) {
 		tls_set_errorx(ctx, "ssl OCSP stapling setup failure");
@@ -120,18 +118,16 @@ tls_configure_server(struct tls *ctx)
 
 	return (0);
 
- err:
+err:
 	return (-1);
 }
 
-int
-tls_accept_socket(struct tls *ctx, struct tls **cctx, int socket)
+int tls_accept_socket(struct tls *ctx, struct tls **cctx, int socket)
 {
 	return (tls_accept_fds(ctx, cctx, socket, socket));
 }
 
-int
-tls_accept_fds(struct tls *ctx, struct tls **cctx, int fd_read, int fd_write)
+int tls_accept_fds(struct tls *ctx, struct tls **cctx, int fd_read, int fd_write)
 {
 	struct tls *conn_ctx = NULL;
 
@@ -163,7 +159,7 @@ tls_accept_fds(struct tls *ctx, struct tls **cctx, int fd_read, int fd_write)
 
 	return (0);
 
- err:
+err:
 	usual_tls_free(conn_ctx);
 
 	*cctx = NULL;
@@ -171,8 +167,7 @@ tls_accept_fds(struct tls *ctx, struct tls **cctx, int fd_read, int fd_write)
 	return (-1);
 }
 
-int
-tls_handshake_server(struct tls *ctx)
+int tls_handshake_server(struct tls *ctx)
 {
 	int ssl_ret;
 	int rv = -1;
@@ -191,7 +186,7 @@ tls_handshake_server(struct tls *ctx)
 	ctx->state |= TLS_HANDSHAKE_COMPLETE;
 	rv = 0;
 
- err:
+err:
 	return (rv);
 }
 

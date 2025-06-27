@@ -52,10 +52,10 @@
 #define STRICT (ctx->strict)
 
 /* how many regmatch_t can be reported */
-#define MAX_GROUPS		128
+#define MAX_GROUPS              128
 
 /* max count we want to store, means 'infinite' for simple atoms */
-#define MAX_COUNT		0x7fff
+#define MAX_COUNT               0x7fff
 
 /* max count for simple atoms: char, any or class */
 #define SIMPLE_MAXCNT(op) (((op)->maxcnt == MAX_COUNT) ? 0x7FFFFFFF : (op)->maxcnt)
@@ -297,7 +297,7 @@ static int op_count_full(struct ParseCtx *ctx, const char **re)
 		return REG_EBRACE;
 	if (*end == ',') {
 		*re = end + 1;
-		end = (char*)*re;
+		end = (char *)*re;
 		b = strtoul(*re, &end, 10);
 		if (end == *re)
 			b = MAX_COUNT;
@@ -601,8 +601,8 @@ loop:
 		if (glevel > 0) {
 			glevel--;
 			err = op_gend(ctx);
-		} else  {
-			err = op_char(ctx, c); /* POSIX bug */
+		} else {
+			err = op_char(ctx, c);	/* POSIX bug */
 		}
 		break;
 	case '|':
@@ -797,7 +797,7 @@ failed:
 struct HMatch {
 	const char *hist_start;
 	const char *hist_end;
-	int rep_len; 		/* if repeated seq, full len thus far */
+	int rep_len;		/* if repeated seq, full len thus far */
 };
 
 /* per-group-match context */
@@ -980,8 +980,9 @@ static int match_group(struct ExecCtx *ctx, const struct Op *op, const char *str
 			if (err == 0 && STRICT) {
 				gm->end = NULL;
 				gotmatch = true;
-			} else if (err != REG_NOMATCH)
+			} else if (err != REG_NOMATCH) {
 				break;
+			}
 			alist = alist->next;
 		}
 	}
@@ -1076,7 +1077,7 @@ static int cmp_gmatches(struct ExecCtx *ctx, int gno, struct GMatch *gm, int rep
 static int gm_resolve_tie(struct ExecCtx *ctx, int gno)
 {
 	struct GMatch *gm = ctx->gm_stack[gno];
-	if (!gm) /* 0-count match is better than no match */
+	if (!gm)/* 0-count match is better than no match */
 		return ctx->hm_first[gno].hist_start ? -1 : 0;
 
 	return cmp_gmatches(ctx, gno, gm, 0);

@@ -12,7 +12,7 @@ static void reset(void)
 	logbuf[0] = 0;
 }
 
-_PRINTF(1,2)
+_PRINTF(1, 2)
 static void m_log(const char *fmt, ...)
 {
 	size_t len = strlen(logbuf);
@@ -32,17 +32,17 @@ static void *log_alloc(void *ctx, size_t len)
 	m_log("A(%d)", (int)len);
 	delta += len;
 	p = cx_alloc(ctx, len + 8);
-	*(int*)p = len;
+	*(int *)p = len;
 	return (char *)p + 8;
 }
 
 static void *log_realloc(void *ctx, void *ptr, size_t len)
 {
 	char *p = (char *)ptr - 8;
-	int olen = *(int*)p;
+	int olen = *(int *)p;
 	m_log("R(%d)", (int)len);
 	p = cx_realloc(ctx, p, len + 8);
-	*(int*)p = len;
+	*(int *)p = len;
 	delta += len - olen;
 	return p + 8;
 }
@@ -50,7 +50,7 @@ static void *log_realloc(void *ctx, void *ptr, size_t len)
 static void log_free(void *ctx, void *ptr)
 {
 	char *p = (char *)ptr - 8;
-	int len = *(int*)p;
+	int len = *(int *)p;
 	delta -= len;
 	m_log("F(%d)", len);
 	cx_free(ctx, p);
@@ -64,7 +64,7 @@ static const struct CxOps log_ops = {
 
 static const struct CxMem log_libc = {
 	&log_ops,
-	(void*)&cx_libc_allocator,
+	(void *)&cx_libc_allocator,
 };
 
 #define log_check(x) str_check(logbuf, x); reset();
@@ -132,7 +132,7 @@ static void test_cxalloc_util(void *zzz)
 	cx_free(cx, p);
 	log_check("F(6)");
 	int_check(delta, 0);
-end:;
+end:    ;
 }
 
 struct testcase_t cxalloc_tests[] = {

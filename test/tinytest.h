@@ -49,18 +49,18 @@ struct testcase_setup_t {
 
 /** A single test-case that you can run. */
 struct testcase_t {
-	const char *name; /**< An identifier for this case. */
-	testcase_fn fn; /**< The function to run to implement this case. */
-	unsigned long flags; /**< Bitfield of TT_* flags. */
-	const struct testcase_setup_t *setup; /**< Optional setup/cleanup fns*/
-	void *setup_data; /**< Extra data usable by setup function */
+	const char *name;	/**< An identifier for this case. */
+	testcase_fn fn;	/**< The function to run to implement this case. */
+	unsigned long flags;	/**< Bitfield of TT_* flags. */
+	const struct testcase_setup_t *setup;	/**< Optional setup/cleanup fns*/
+	void *setup_data;	/**< Extra data usable by setup function */
 };
 #define END_OF_TESTCASES { NULL, NULL, 0, NULL, NULL }
 
 /** A group of tests that are selectable together. */
 struct testgroup_t {
-	const char *prefix; /**< Prefix to prepend to testnames. */
-	struct testcase_t *cases; /** Array, ending with END_OF_TESTCASES */
+	const char *prefix;	/**< Prefix to prepend to testnames. */
+	struct testcase_t *cases;	/** Array, ending with END_OF_TESTCASES */
 };
 #define END_OF_GROUPS { NULL, NULL}
 
@@ -79,7 +79,7 @@ int _tinytest_set_flag(struct testgroup_t *, const char *, unsigned long);
 	_tinytest_set_flag(groups, named, TT_SKIP)
 
 /** Run a single testcase in a single group. */
-int testcase_run_one(const struct testgroup_t *,const struct testcase_t *);
+int testcase_run_one(const struct testgroup_t *, const struct testcase_t *);
 /** Run a set of testcases from an END_OF_GROUPS-terminated array of groups,
     as selected from the command line. */
 int tinytest_main(int argc, const char **argv, struct testgroup_t *groups);

@@ -62,17 +62,16 @@ struct tls_ocsp_query {
  * Extract OCSP response info.
  */
 
-static int
-tls_ocsp_fill_info(struct tls *ctx,
-	int response_status, int cert_status, int crl_reason,
-	ASN1_GENERALIZEDTIME *revtime,
-	ASN1_GENERALIZEDTIME *thisupd,
-	ASN1_GENERALIZEDTIME *nextupd)
+static int tls_ocsp_fill_info(struct tls *ctx,
+			      int response_status, int cert_status, int crl_reason,
+			      ASN1_GENERALIZEDTIME *revtime,
+			      ASN1_GENERALIZEDTIME *thisupd,
+			      ASN1_GENERALIZEDTIME *nextupd)
 {
 	struct tls_ocsp_info *info;
 	int res;
 
-	info = calloc(1, sizeof (struct tls_ocsp_info));
+	info = calloc(1, sizeof(struct tls_ocsp_info));
 	if (!info) {
 		tls_set_error(ctx, "calloc");
 		return -1;
@@ -95,8 +94,7 @@ tls_ocsp_fill_info(struct tls *ctx,
 	return res;
 }
 
-static void
-tls_ocsp_fill_result(struct tls *ctx, int res)
+static void tls_ocsp_fill_result(struct tls *ctx, int res)
 {
 	struct tls_ocsp_info *info = ctx->ocsp_info;
 	if (res < 0) {
@@ -110,17 +108,15 @@ tls_ocsp_fill_result(struct tls *ctx, int res)
 	}
 }
 
-void
-tls_ocsp_info_free(struct tls_ocsp_info *info)
+void tls_ocsp_info_free(struct tls_ocsp_info *info)
 {
 	free(info);
 }
 
-int
-tls_get_ocsp_info(struct tls *ctx, int *response_status, int *cert_status,
-		  int *crl_reason, time_t *this_update,
-		  time_t *next_update, time_t *revoction_time,
-		  const char **result_text)
+int tls_get_ocsp_info(struct tls *ctx, int *response_status, int *cert_status,
+		      int *crl_reason, time_t *this_update,
+		      time_t *next_update, time_t *revoction_time,
+		      const char **result_text)
 {
 	static const struct tls_ocsp_info no_ocsp = { -1, -1, -1, 0, 0, 0 };
 	const struct tls_ocsp_info *info = ctx->ocsp_info;
@@ -159,8 +155,7 @@ tls_get_ocsp_info(struct tls *ctx, int *response_status, int *cert_status,
  * Verify stapled response
  */
 
-static OCSP_CERTID *
-tls_ocsp_get_certid(X509 *main_cert, STACK_OF(X509) *extra_certs, SSL_CTX *ssl_ctx)
+static OCSP_CERTID *tls_ocsp_get_certid(X509 *main_cert, STACK_OF(X509) *extra_certs, SSL_CTX *ssl_ctx)
 {
 	X509_NAME *issuer_name;
 	X509 *issuer;
@@ -204,16 +199,15 @@ error:
 	return NULL;
 }
 
-static int
-tls_ocsp_verify_response(struct tls *ctx, X509 *main_cert, STACK_OF(X509) *extra_certs,
-			 SSL_CTX *ssl_ctx, OCSP_RESPONSE *resp)
+static int tls_ocsp_verify_response(struct tls *ctx, X509 *main_cert, STACK_OF(X509) *extra_certs,
+				    SSL_CTX *ssl_ctx, OCSP_RESPONSE *resp)
 {
 	OCSP_BASICRESP *br = NULL;
 	STACK_OF(X509) *ocsp_chain = NULL;
 	ASN1_GENERALIZEDTIME *revtime = NULL, *thisupd = NULL, *nextupd = NULL;
 	OCSP_CERTID *cid = NULL;
 	STACK_OF(X509) *combined = NULL;
-	int response_status=0, cert_status=0, crl_reason=0;
+	int response_status = 0, cert_status = 0, crl_reason = 0;
 	int ssl_res, ret = -1;
 	unsigned long flags;
 #ifdef BUGGY_VERIFY
@@ -350,8 +344,7 @@ error:
  * 1=OK, 0=bad, -1=internal error
  */
 
-int
-tls_ocsp_verify_callback(SSL *ssl, void *arg)
+int tls_ocsp_verify_callback(SSL *ssl, void *arg)
 {
 	OCSP_RESPONSE *resp = NULL;
 	STACK_OF(X509) *extra_certs = NULL;
@@ -393,8 +386,7 @@ error:
  * Staple OCSP response to server handshake.
  */
 
-int
-tls_ocsp_stapling_callback(SSL *ssl, void *arg)
+int tls_ocsp_stapling_callback(SSL *ssl, void *arg)
 {
 	struct tls *ctx;
 	char *mem, *fmem = NULL;
@@ -407,7 +399,7 @@ tls_ocsp_stapling_callback(SSL *ssl, void *arg)
 		return SSL_TLSEXT_ERR_NOACK;
 
 	if (ctx->config->ocsp_file) {
-		fmem = mem = (char*)tls_load_file(ctx->config->ocsp_file, &len, NULL);
+		fmem = mem = (char *)tls_load_file(ctx->config->ocsp_file, &len, NULL);
 		if (!mem)
 			goto err;
 	} else {
@@ -434,8 +426,7 @@ err:
  * Query OCSP responder over HTTP(S).
  */
 
-void
-tls_ocsp_client_free(struct tls *ctx)
+void tls_ocsp_client_free(struct tls *ctx)
 {
 	struct tls_ocsp_query *q;
 	if (!ctx)
@@ -455,8 +446,7 @@ tls_ocsp_client_free(struct tls *ctx)
 	}
 }
 
-static struct tls *
-tls_ocsp_client_new(void)
+static struct tls *tls_ocsp_client_new(void)
 {
 	struct tls *ctx;
 
@@ -465,7 +455,7 @@ tls_ocsp_client_new(void)
 		return NULL;
 	ctx->flags = TLS_OCSP_CLIENT;
 
-	ctx->ocsp_query = calloc(1, sizeof (struct tls_ocsp_query));
+	ctx->ocsp_query = calloc(1, sizeof(struct tls_ocsp_query));
 	if (!ctx->ocsp_query) {
 		usual_tls_free(ctx);
 		return NULL;
@@ -473,8 +463,7 @@ tls_ocsp_client_new(void)
 	return ctx;
 }
 
-static int
-tls_build_ocsp_request(struct tls *ctx)
+static int tls_build_ocsp_request(struct tls *ctx)
 {
 	struct tls_ocsp_query *q;
 	int ok, ret = -1;
@@ -537,8 +526,7 @@ failed:
 	return ret;
 }
 
-static int
-tls_ocsp_setup(struct tls **ocsp_ctx_p, struct tls_config *config, struct tls *target)
+static int tls_ocsp_setup(struct tls **ocsp_ctx_p, struct tls_config *config, struct tls *target)
 {
 	struct tls *ctx;
 	struct tls_ocsp_query *q;
@@ -568,7 +556,7 @@ tls_ocsp_setup(struct tls **ocsp_ctx_p, struct tls_config *config, struct tls *t
 		q->main_cert = SSL_get_peer_certificate(target->ssl_conn);
 		q->extra_certs = SSL_get_peer_cert_chain(target->ssl_conn);
 		q->cert_ssl_ctx = target->ssl_ctx;
-		X509_free(q->main_cert); /* unref */
+		X509_free(q->main_cert);/* unref */
 	}
 
 	if (!q->main_cert) {
@@ -596,8 +584,7 @@ failed:
 	return ret;
 }
 
-static int
-tls_ocsp_process_response_parsed(struct tls *ctx, struct tls_config *config, OCSP_RESPONSE *resp)
+static int tls_ocsp_process_response_parsed(struct tls *ctx, struct tls_config *config, OCSP_RESPONSE *resp)
 {
 	struct tls_ocsp_query *q = ctx->ocsp_query;
 	BIO *mem = NULL;
@@ -633,11 +620,10 @@ failed:
 	return ret;
 }
 
-static int
-tls_ocsp_create_request(struct tls **ocsp_ctx_p,
-			struct tls_config *config, struct tls *target,
-			char **ocsp_url,
-			void **request_blob, size_t *request_size)
+static int tls_ocsp_create_request(struct tls **ocsp_ctx_p,
+				   struct tls_config *config, struct tls *target,
+				   char **ocsp_url,
+				   void **request_blob, size_t *request_size)
 {
 	int res;
 	struct tls_ocsp_query *q;
@@ -658,25 +644,22 @@ tls_ocsp_create_request(struct tls **ocsp_ctx_p,
  * Public API for request blobs.
  */
 
-int
-tls_ocsp_check_peer_request(struct tls **ocsp_ctx_p, struct tls *target,
-			    char **ocsp_url, void **request_blob, size_t *request_size)
+int tls_ocsp_check_peer_request(struct tls **ocsp_ctx_p, struct tls *target,
+				char **ocsp_url, void **request_blob, size_t *request_size)
 {
 	return tls_ocsp_create_request(ocsp_ctx_p, NULL, target,
-			ocsp_url, request_blob, request_size);
+				       ocsp_url, request_blob, request_size);
 }
 
-int
-tls_ocsp_refresh_stapling_request(struct tls **ocsp_ctx_p,
-		struct tls_config *config,
-		char **ocsp_url, void **request_blob, size_t *request_size)
+int tls_ocsp_refresh_stapling_request(struct tls **ocsp_ctx_p,
+				      struct tls_config *config,
+				      char **ocsp_url, void **request_blob, size_t *request_size)
 {
 	return tls_ocsp_create_request(ocsp_ctx_p, config, NULL,
-			ocsp_url, request_blob, request_size);
+				       ocsp_url, request_blob, request_size);
 }
 
-int
-tls_ocsp_process_response(struct tls *ctx, const void *response_blob, size_t size)
+int tls_ocsp_process_response(struct tls *ctx, const void *response_blob, size_t size)
 {
 	int ret;
 	OCSP_RESPONSE *resp;
@@ -697,16 +680,15 @@ tls_ocsp_process_response(struct tls *ctx, const void *response_blob, size_t siz
  * Network processing
  */
 
-static int
-tls_ocsp_build_http_req(struct tls *ctx)
+static int tls_ocsp_build_http_req(struct tls *ctx)
 {
 	struct tls_ocsp_query *q = ctx->ocsp_query;
 	int ok;
 	OCSP_REQUEST *req;
 	OCSP_REQ_CTX *sreq;
 	const unsigned char *data;
-	int ret=-1, https=0;
-	char *host=NULL, *port=NULL, *path=NULL;
+	int ret = -1, https = 0;
+	char *host = NULL, *port = NULL, *path = NULL;
 
 	ok = OCSP_parse_url(q->ocsp_url, &host, &port, &path, &https);
 	if (ok != 1) {
@@ -743,14 +725,13 @@ failed:
 	return ret;
 }
 
-static int
-tls_ocsp_connection_setup(struct tls *ctx)
+static int tls_ocsp_connection_setup(struct tls *ctx)
 {
 	SSL *ssl = NULL;
-	int ret = -1, ok, https=0;
+	int ret = -1, ok, https = 0;
 	struct tls_ocsp_query *q = ctx->ocsp_query;
 	union { struct in_addr ip4; struct in6_addr ip6; } addrbuf;
-	char *host=NULL, *port=NULL, *path=NULL;
+	char *host = NULL, *port = NULL, *path = NULL;
 
 	ok = OCSP_parse_url(q->ocsp_url, &host, &port, &path, &https);
 	if (ok != 1) {
@@ -803,8 +784,7 @@ failed:
 	return ret;
 }
 
-static int
-tls_ocsp_evloop(struct tls *ctx, int *fd_p, struct tls_config *config)
+static int tls_ocsp_evloop(struct tls *ctx, int *fd_p, struct tls_config *config)
 {
 	struct tls_ocsp_query *q = ctx->ocsp_query;
 	OCSP_RESPONSE *ocsp_resp = NULL;
@@ -850,8 +830,7 @@ error:
 	return -1;
 }
 
-static int
-tls_ocsp_do_poll(struct tls *ctx, int errcode, int fd)
+static int tls_ocsp_do_poll(struct tls *ctx, int errcode, int fd)
 {
 	struct pollfd pfd;
 	int res;
@@ -878,8 +857,7 @@ tls_ocsp_do_poll(struct tls *ctx, int errcode, int fd)
 	return -1;
 }
 
-static int
-tls_ocsp_query_async(struct tls **ocsp_ctx_p, int *fd_p, struct tls_config *config, struct tls *target)
+static int tls_ocsp_query_async(struct tls **ocsp_ctx_p, int *fd_p, struct tls_config *config, struct tls *target)
 {
 	struct tls *ctx = *ocsp_ctx_p;
 	int ret;
@@ -899,8 +877,7 @@ failed:
 	return -1;
 }
 
-static int
-tls_ocsp_common_query(struct tls **ocsp_ctx_p, int *fd_p, struct tls_config *config, struct tls *target)
+static int tls_ocsp_common_query(struct tls **ocsp_ctx_p, int *fd_p, struct tls_config *config, struct tls *target)
 {
 	struct tls *ctx = NULL;
 	int ret, fd = -1;
@@ -926,28 +903,29 @@ tls_ocsp_common_query(struct tls **ocsp_ctx_p, int *fd_p, struct tls_config *con
  * Public API.
  */
 
-int
-tls_ocsp_check_peer(struct tls **ocsp_ctx_p, int *async_fd_p, struct tls *target)
+int tls_ocsp_check_peer(struct tls **ocsp_ctx_p, int *async_fd_p, struct tls *target)
 {
 	return tls_ocsp_common_query(ocsp_ctx_p, async_fd_p, NULL, target);
 }
 
-int
-tls_ocsp_refresh_stapling(struct tls **ocsp_ctx_p, int *async_fd_p, struct tls_config *config)
+int tls_ocsp_refresh_stapling(struct tls **ocsp_ctx_p, int *async_fd_p, struct tls_config *config)
 {
 	return tls_ocsp_common_query(ocsp_ctx_p, async_fd_p, config, NULL);
 }
 
 #else /* No OCSP */
 
-void tls_ocsp_info_free(struct tls_ocsp_info *info) {}
-void tls_ocsp_client_free(struct tls *ctx) {}
+void tls_ocsp_info_free(struct tls_ocsp_info *info)
+{
+}
+void tls_ocsp_client_free(struct tls *ctx)
+{
+}
 
-int
-tls_get_ocsp_info(struct tls *ctx, int *response_status, int *cert_status,
-		  int *crl_reason, time_t *this_update,
-		  time_t *next_update, time_t *revoction_time,
-		  const char **result_text)
+int tls_get_ocsp_info(struct tls *ctx, int *response_status, int *cert_status,
+		      int *crl_reason, time_t *this_update,
+		      time_t *next_update, time_t *revoction_time,
+		      const char **result_text)
 {
 	if (response_status) *response_status = -1;
 	if (cert_status) *cert_status = -1;
@@ -959,15 +937,13 @@ tls_get_ocsp_info(struct tls *ctx, int *response_status, int *cert_status,
 	return TLS_NO_OCSP;
 }
 
-int
-tls_ocsp_check_peer(struct tls **ocsp_ctx_p, int *async_fd_p, struct tls *target)
+int tls_ocsp_check_peer(struct tls **ocsp_ctx_p, int *async_fd_p, struct tls *target)
 {
 	*ocsp_ctx_p = NULL;
 	return TLS_NO_OCSP;
 }
 
-int
-tls_ocsp_refresh_stapling(struct tls **ocsp_ctx_p, int *async_fd_p, struct tls_config *config)
+int tls_ocsp_refresh_stapling(struct tls **ocsp_ctx_p, int *async_fd_p, struct tls_config *config)
 {
 	*ocsp_ctx_p = NULL;
 	return TLS_NO_OCSP;

@@ -59,16 +59,16 @@ void reset_time_cache(void);
 
 
 #ifndef HAVE_GETTIMEOFDAY
-#define gettimeofday(t,z) usual_gettimeofday(t,z)
+#define gettimeofday(t, z) usual_gettimeofday(t, z)
 
 /** Compat: gettimeofday() */
-int gettimeofday(struct timeval * tp, void * tzp);
+int gettimeofday(struct timeval *tp, void *tzp);
 
 #endif
 
 
 #ifndef HAVE_LOCALTIME_R
-#define localtime_r(t,r) usual_localtime_r(t,r)
+#define localtime_r(t, r) usual_localtime_r(t, r)
 
 /** Compat: localtime_r() */
 struct tm *localtime_r(const time_t *tp, struct tm *result);
@@ -80,12 +80,15 @@ struct tm *localtime_r(const time_t *tp, struct tm *result);
 #define usleep(x) usual_usleep(x)
 
 /** Compat: usleep() */
-static inline void usleep(long usec) { Sleep(usec / 1000); }
+static inline void usleep(long usec)
+{
+	Sleep(usec / 1000);
+}
 
 #endif
 
 #ifndef HAVE_GETRUSAGE
-#define getrusage(w,r) usual_getrusage(w,r)
+#define getrusage(w, r) usual_getrusage(w, r)
 
 #define RUSAGE_SELF 0
 

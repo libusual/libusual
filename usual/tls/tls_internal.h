@@ -81,14 +81,14 @@ struct tls_conninfo {
 	time_t notafter;
 };
 
-#define TLS_CLIENT		(1 << 0)
-#define TLS_SERVER		(1 << 1)
-#define TLS_SERVER_CONN		(1 << 2)
-#define TLS_OCSP_CLIENT		(1 << 3)
+#define TLS_CLIENT              (1 << 0)
+#define TLS_SERVER              (1 << 1)
+#define TLS_SERVER_CONN         (1 << 2)
+#define TLS_OCSP_CLIENT         (1 << 3)
 
-#define TLS_EOF_NO_CLOSE_NOTIFY	(1 << 0)
-#define TLS_HANDSHAKE_COMPLETE	(1 << 1)
-#define TLS_DO_ABORT		(1 << 8)
+#define TLS_EOF_NO_CLOSE_NOTIFY (1 << 0)
+#define TLS_HANDSHAKE_COMPLETE  (1 << 1)
+#define TLS_DO_ABORT            (1 << 8)
 
 struct tls_ocsp_query;
 struct tls_ocsp_info;
@@ -131,7 +131,7 @@ struct tls *tls_server_conn(struct tls *ctx);
 
 int tls_check_name(struct tls *ctx, X509 *cert, const char *servername);
 int tls_configure_keypair(struct tls *ctx, SSL_CTX *ssl_ctx,
-    struct tls_keypair *keypair, int required);
+			  struct tls_keypair *keypair, int required);
 int tls_configure_server(struct tls *ctx);
 int tls_configure_ssl(struct tls *ctx);
 int tls_configure_ssl_verify(struct tls *ctx, int verify);
@@ -140,29 +140,29 @@ int tls_handshake_server(struct tls *ctx);
 int tls_host_port(const char *hostport, char **host, char **port);
 
 int tls_error_set(struct tls_error *error, const char *fmt, ...)
-    _PRINTF(2, 3)
-    __attribute__((__nonnull__ (2)));
+_PRINTF(2, 3)
+__attribute__((__nonnull__ (2)));
 int tls_error_setx(struct tls_error *error, const char *fmt, ...)
-    _PRINTF(2, 3)
-    __attribute__((__nonnull__ (2)));
+_PRINTF(2, 3)
+__attribute__((__nonnull__ (2)));
 int tls_config_set_error(struct tls_config *cfg, const char *fmt, ...)
-    _PRINTF(2, 3)
-    __attribute__((__nonnull__ (2)));
+_PRINTF(2, 3)
+__attribute__((__nonnull__ (2)));
 int tls_config_set_errorx(struct tls_config *cfg, const char *fmt, ...)
-    _PRINTF(2, 3)
-    __attribute__((__nonnull__ (2)));
+_PRINTF(2, 3)
+__attribute__((__nonnull__ (2)));
 int tls_set_error(struct tls *ctx, const char *fmt, ...)
-    _PRINTF(2, 3)
-    __attribute__((__nonnull__ (2)));
+_PRINTF(2, 3)
+__attribute__((__nonnull__ (2)));
 int tls_set_errorx(struct tls *ctx, const char *fmt, ...)
-    _PRINTF(2, 3)
-    __attribute__((__nonnull__ (2)));
+_PRINTF(2, 3)
+__attribute__((__nonnull__ (2)));
 int tls_set_error_libssl(struct tls *ctx, const char *fmt, ...)
-    _PRINTF(2, 3)
-    __attribute__((__nonnull__ (2)));
+_PRINTF(2, 3)
+__attribute__((__nonnull__ (2)));
 
 int tls_ssl_error(struct tls *ctx, SSL *ssl_conn, int ssl_ret,
-    const char *prefix);
+		  const char *prefix);
 
 int tls_get_conninfo(struct tls *ctx);
 void tls_free_conninfo(struct tls_conninfo *conninfo);

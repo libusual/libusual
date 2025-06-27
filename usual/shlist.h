@@ -151,7 +151,7 @@ static inline struct SHList *shlist_pop(struct SHList *list)
 
 /** Remove and return specific type of elem */
 #define shlist_pop_type(list, type, field) ( \
-	shlist_empty(list) ? NULL : container_of(shlist_pop(list), type, field))
+		shlist_empty(list) ? NULL : container_of(shlist_pop(list), type, field))
 
 /** Loop over list */
 #define shlist_for_each(node, list) \

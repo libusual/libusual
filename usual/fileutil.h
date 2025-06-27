@@ -52,7 +52,7 @@ int map_file(struct MappedFile *m, const char *fname, int rw) _MUSTCHECK;
 void unmap_file(struct MappedFile *m);
 
 #if !defined(HAVE_GETLINE)
-#define getline(a,b,c) compat_getline(a,b,c)
+#define getline(a, b, c) compat_getline(a, b, c)
 
 /**
  * Compat: Read line from file

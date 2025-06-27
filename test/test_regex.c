@@ -108,7 +108,7 @@ static void test_regex(void *ptr)
 	str_check(e_rx("[a-b-c]", "bar", 0), "ERANGE");
 	str_check(b_rx("(\\1)", "bar", 0), "ESUBREG");
 	str_check(e_rx("[[:random:]]", "bar", 0), "ECTYPE");
-end:;
+end:    ;
 }
 
 /*

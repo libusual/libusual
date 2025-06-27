@@ -117,7 +117,7 @@ static void test_fnmatch_posix(void *p)
 #ifndef HAVE_FNMATCH
 	int_check(0, fnmatch("[a\\-x]", "_", FNM_NOESCAPE));
 #endif
-end:;
+end:    ;
 }
 
 /*
@@ -147,7 +147,7 @@ static void test_fnmatch_gnu(void *p)
 	int_check(0, fnmatch("[\\!x]", "!", 0));
 	int_check(1, fnmatch("[\\!x]", "\\", 0));
 	int_check(0, fnmatch("[\\[:alnum:]", ":", 0));
-end:;
+end:    ;
 }
 
 /*
@@ -174,9 +174,9 @@ static void test_fnmatch_weird(void *p)
 	for (i = 0; i < 1200; i++) {
 		char c = 'a' + (i%26);
 		pat[i*2] = c;
-		pat[i*2+1] = '*';
+		pat[i*2 + 1] = '*';
 		str[i*2] = c;
-		str[i*2+1] = c;
+		str[i*2 + 1] = c;
 	}
 	pat[i*2] = 0;
 	str[i*2] = 0;
@@ -184,9 +184,9 @@ static void test_fnmatch_weird(void *p)
 
 	for (i = 0; i < 2000; i++) {
 		pat[i*2] = '*';
-		pat[i*2+1] = '?';
+		pat[i*2 + 1] = '?';
 		str[i*2] = 'a';
-		str[i*2+1] = 'b';
+		str[i*2 + 1] = 'b';
 	}
 	str[i*2] = 0;
 	pat[i*2] = 0;
@@ -207,7 +207,7 @@ static void test_fnmatch_weird(void *p)
 	pat[2000] = 0;
 	pat[0] = '*';
 	int_check(0, fnmatch(pat, str, 0));
-end:;
+end:    ;
 }
 
 struct testcase_t fnmatch_tests[] = {

@@ -21,25 +21,25 @@
 #include <usual/bits.h>
 
 #define SIP_ROUND1 \
-    v0 += v1; v1 = rol64(v1, 13); v1 ^= v0; v0 = rol64(v0, 32);	\
-    v2 += v3; v3 = rol64(v3, 16); v3 ^= v2;			\
-    v0 += v3; v3 = rol64(v3, 21); v3 ^= v0;			\
-    v2 += v1; v1 = rol64(v1, 17); v1 ^= v2; v2 = rol64(v2, 32)
-#define SIP_ROUND2	SIP_ROUND1; SIP_ROUND1
-#define SIP_ROUND4	SIP_ROUND2; SIP_ROUND2
-#define SIP_ROUNDS(n)	SIP_ROUND ## n
+	v0 += v1; v1 = rol64(v1, 13); v1 ^= v0; v0 = rol64(v0, 32); \
+	v2 += v3; v3 = rol64(v3, 16); v3 ^= v2;                     \
+	v0 += v3; v3 = rol64(v3, 21); v3 ^= v0;                     \
+	v2 += v1; v1 = rol64(v1, 17); v1 ^= v2; v2 = rol64(v2, 32)
+#define SIP_ROUND2      SIP_ROUND1; SIP_ROUND1
+#define SIP_ROUND4      SIP_ROUND2; SIP_ROUND2
+#define SIP_ROUNDS(n)   SIP_ROUND ## n
 
-#define sip_compress(n)		\
-	do {			\
-		v3 ^= m;	\
-		SIP_ROUNDS(n);	\
-		v0 ^= m;	\
+#define sip_compress(n)         \
+	do {                    \
+		v3 ^= m;        \
+		SIP_ROUNDS(n);  \
+		v0 ^= m;        \
 	} while (0)
 
-#define sip_finalize(n)		\
-	do {			\
-		v2 ^= 0xff;	\
-		SIP_ROUNDS(n);	\
+#define sip_finalize(n)         \
+	do {                    \
+		v2 ^= 0xff;     \
+		SIP_ROUNDS(n);  \
 	} while (0)
 
 uint64_t siphash24(const void *data, size_t len, uint64_t k0, uint64_t k1)
@@ -60,17 +60,17 @@ uint64_t siphash24(const void *data, size_t len, uint64_t k0, uint64_t k1)
 	m = (uint64_t)len << 56;
 	switch (len & 7) {
 	case 7: m |= (uint64_t)s[6] << 48;
-		/* fallthrough */
+	/* fallthrough */
 	case 6: m |= (uint64_t)s[5] << 40;
-		/* fallthrough */
+	/* fallthrough */
 	case 5: m |= (uint64_t)s[4] << 32;
-		/* fallthrough */
+	/* fallthrough */
 	case 4: m |= (uint64_t)s[3] << 24;
-		/* fallthrough */
+	/* fallthrough */
 	case 3: m |= (uint64_t)s[2] << 16;
-		/* fallthrough */
+	/* fallthrough */
 	case 2: m |= (uint64_t)s[1] <<  8;
-		/* fallthrough */
+	/* fallthrough */
 	case 1: m |= (uint64_t)s[0];
 		break;
 	case 0: break;

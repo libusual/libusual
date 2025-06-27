@@ -19,8 +19,8 @@
 #include <usual/utf8.h>
 #include <usual/err.h>
 
-#define u8head(c, mask)	(((c) & (mask | (mask >> 1))) == mask)
-#define u8tail(c)	u8head(c, 0x80)
+#define u8head(c, mask) (((c) & (mask | (mask >> 1))) == mask)
+#define u8tail(c)       u8head(c, 0x80)
 
 /*
  * conservative utf8 decoder
@@ -69,7 +69,7 @@ int utf8_get_char(const char **src_p, const char *_srcend)
 			goto bad_enc;
 
 		c = ((p[0] & 0x07) << 18) | ((p[1] & 0x3F) << 12)
-		  | ((p[2] & 0x3F) << 6) | (p[3] & 0x3F);
+		    | ((p[2] & 0x3F) << 6) | (p[3] & 0x3F);
 		if (c < 0x10000 || c > 0x10FFFF)
 			goto bad_enc;
 		p += 4;
@@ -155,20 +155,20 @@ int utf8_validate_seq(const char *src, const char *srcend)
 	const unsigned char *u = (unsigned char *)src;
 	const unsigned char *uend = (unsigned char *)srcend;
 
-	if (u[0] < 0x80) { /* ascii */
+	if (u[0] < 0x80) {	/* ascii */
 		if (u[0] == 0)
 			goto invalid;
 		return 1;
-	} else if (u[0] < 0xC2) { /* tail byte as first byte */
+	} else if (u[0] < 0xC2) {	/* tail byte as first byte */
 		goto invalid;
-	} else if (u[0] < 0xE0) { /* 1 tail byte */
+	} else if (u[0] < 0xE0) {	/* 1 tail byte */
 		if (u + 2 > uend)
 			goto invalid;
 
 		if ((u[1] & 0xC0) != 0x80)
 			goto invalid;
 		return 2;
-	} else if (u[0] < 0xF0) { /* 2 tail bytes */
+	} else if (u[0] < 0xF0) {	/* 2 tail bytes */
 		if (u + 3 > uend)
 			goto invalid;
 		if (u[0] == 0xE0 && u[1] < 0xA0)
@@ -180,7 +180,7 @@ int utf8_validate_seq(const char *src, const char *srcend)
 		if ((u[2] & 0xC0) != 0x80)
 			goto invalid;
 		return 3;
-	} else if (u[0] < 0xF5) { /* 3-tail bytes */
+	} else if (u[0] < 0xF5) {	/* 3-tail bytes */
 		if (u + 4 > uend)
 			goto invalid;
 		if (u[0] == 0xF0 && u[1] < 0x90)

@@ -127,12 +127,12 @@ static bool parse_ini_file_internal(const char *fn, cf_handler_f user_handler, v
 			break;
 
 		/* read key val */
-		if (*p && *p == '\''){
+		if (*p && *p == '\'') {
 			key = ++p;
 			while (*p && *p != '\'') p++;
-			if (*p != '\''){
+			if (*p != '\'') {
 				goto syntax_error;
-			} else{
+			} else {
 				klen = p - key;
 				if (klen <= 0)
 					goto syntax_error;
@@ -148,8 +148,9 @@ static bool parse_ini_file_internal(const char *fn, cf_handler_f user_handler, v
 		while (*p && (*p == ' ' || *p == '\t')) p++;
 		if (*p != '=') {
 			goto syntax_error;
-		} else
+		} else {
 			p++;
+		}
 		while (*p && (*p == ' ' || *p == '\t')) p++;
 
 		/* now read value */
@@ -176,9 +177,10 @@ static bool parse_ini_file_internal(const char *fn, cf_handler_f user_handler, v
 
 		log_debug("parse_ini_file: '%s' = '%s' ok:%d", key, val, ok);
 
-		if (!ok)
+		if (!ok) {
 			log_error("invalid value \"%s\" for parameter %s in configuration (%s:%d)",
 				  val, key, fn, count_lines(buf, p));
+		}
 
 		/* restore data, to keep count_lines() working */
 		key[klen] = o1;
@@ -215,8 +217,9 @@ static void *get_dest(void *base, const struct CfKey *k)
 		if (!base)
 			return NULL;
 		dst = (char *)base + k->key_ofs;
-	} else
+	} else {
 		dst = (char *)k->key_ofs;
+	}
 	return dst;
 }
 
@@ -258,7 +261,7 @@ const char *cf_get(const struct CfContext *cf, const char *sect, const char *key
 	/* find section base */
 	base = cf->base;
 	if (s->base_lookup)
-	    base = s->base_lookup(base, sect);
+		base = s->base_lookup(base, sect);
 
 	/* handle dynamic keys */
 	if (s->set_key) {
@@ -299,7 +302,7 @@ bool cf_set(const struct CfContext *cf, const char *sect, const char *key, const
 	/* find section base */
 	base = cf->base;
 	if (s->base_lookup)
-	    base = s->base_lookup(base, sect);
+		base = s->base_lookup(base, sect);
 
 	/* handle dynamic keys */
 	if (s->set_key)

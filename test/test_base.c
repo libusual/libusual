@@ -41,7 +41,7 @@ static void test_ptr(void *p)
 	int_check(CUSTOM_ALIGN(3, 4), 4);
 	int_check(CUSTOM_ALIGN(4, 4), 4);
 	int_check(CUSTOM_ALIGN(5, 4), 8);
-end:;
+end:    ;
 }
 
 #ifdef _PACKED
@@ -70,7 +70,7 @@ static void test_misc(void *_p)
 	int_check(sizeof(struct packed), 8);
 #endif
 
-end:;
+end:    ;
 }
 
 #pragma GCC diagnostic push
@@ -83,7 +83,7 @@ static void test_reallocarray(void *_p)
 	void *p;
 	p = reallocarray(NULL, 1, 1); tt_assert(p); free(p);
 	p = reallocarray(NULL, SIZE_MAX, SIZE_MAX); tt_assert(p == NULL);
-end:;
+end:    ;
 }
 
 #pragma GCC diagnostic pop

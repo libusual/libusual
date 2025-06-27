@@ -45,7 +45,7 @@
 
 #include <usual/aatree.h>
 
-#include <stddef.h>   /* for NULL */
+#include <stddef.h>	/* for NULL */
 
 typedef struct AATree Tree;
 typedef struct AANode Node;
@@ -116,8 +116,7 @@ static Node *rebalance_on_remove(Node *current)
 	 * fix it by lowering current->level.
 	 */
 	if (current->left->level < current->level - 1
-	    || current->right->level < current->level - 1)
-	{
+	    || current->right->level < current->level - 1) {
 		current->level--;
 
 		/* if ->right is red, change it's level too */
@@ -156,13 +155,14 @@ static Node * insert_sub(Tree *tree, Node *current, uintptr_t value, Node *node)
 
 	/* recursive insert */
 	cmp = tree->node_cmp(value, current);
-	if (cmp > 0)
+	if (cmp > 0) {
 		current->right = insert_sub(tree, current->right, value, node);
-	else if (cmp < 0)
+	} else if (cmp < 0) {
 		current->left = insert_sub(tree, current->left, value, node);
-	else
+	} else {
 		/* already exists? */
 		return current;
+	}
 
 	return rebalance_on_insert(current);
 }
@@ -193,11 +193,11 @@ static Node *drop_this_node(Tree *tree, Node *old)
 {
 	Node *new = NIL;
 
-	if (old->left == NIL)
+	if (old->left == NIL) {
 		new = old->right;
-	else if (old->right == NIL)
+	} else if (old->right == NIL) {
 		new = old->left;
-	else {
+	} else {
 		/*
 		 * Picking nearest from right is better than from left,
 		 * due to asymmetry of the AA-tree.  It will result in

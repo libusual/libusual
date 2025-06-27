@@ -48,7 +48,7 @@ static void test_strpool(void *p)
 	int_check(strpool_total(pool), 2);
 	strpool_free(pool);
 
-end:;
+end:    ;
 }
 
 

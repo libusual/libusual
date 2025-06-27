@@ -35,7 +35,7 @@ static const char *decode(const char *s, int inbuf)
 	for (i = 0; i < 128; i++) {
 		out[i] = tmp[i];
 		if (out[i] == '~') {
-			out[i+1] = 0;
+			out[i + 1] = 0;
 			break;
 		} else if (out[i] == 0) {
 			out[i] = '#';
@@ -64,7 +64,7 @@ static void test_mbstr_decode(void *p)
 		str_check(decode("a\200cc", 5), "aYccZ~");
 		str_check(decode("aa\200c", 5), "aaYcZ~");
 	}
-end:;
+end:    ;
 }
 
 /*
@@ -99,7 +99,7 @@ static const char *mbsnr(const char *str, int inbuf, int outbuf)
 	for (i = 0; i < 128; i++) {
 		out[i] = tmp[i];
 		if (out[i] == '~') {
-			out[i+1] = 0;
+			out[i + 1] = 0;
 			break;
 		}
 	}
@@ -110,20 +110,20 @@ static void test_mbsnrtowcs(void *p)
 {
 	str_check(mbsnr("", 1, 1), "Z~");
 	str_check(mbsnr("", 0, 0), "~");
-	str_check(mbsnr("", 0, 1), "~"); /* XXX */
+	str_check(mbsnr("", 0, 1), "~");/* XXX */
 	str_check(mbsnr("", 1, 0), "~");
 
 	str_check(mbsnr("x", 1, 1), "x~");
 	str_check(mbsnr("x", 0, 0), "~");
-	str_check(mbsnr("x", 0, 1), "~"); /* XXX */
+	str_check(mbsnr("x", 0, 1), "~");	/* XXX */
 	str_check(mbsnr("x", 1, 0), "~");
 
 	str_check(mbsnr("abc", 3, 3), "abc~");
-	str_check(mbsnr("abc", 3, 4), "abc~"); /* XXX */
+	str_check(mbsnr("abc", 3, 4), "abc~");	/* XXX */
 
 	str_check(mbsnr("abc", 4, 3), "abc~");
 	str_check(mbsnr("abc", 4, 4), "abcZ~");
-end:;
+end:    ;
 }
 
 /*

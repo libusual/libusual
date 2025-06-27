@@ -42,8 +42,8 @@ typedef void (*slab_init_fn)(void *obj);
 
 /** Create new slab context for specific size */
 struct Slab *slab_create(const char *name, unsigned obj_size, unsigned align,
-			     slab_init_fn init_func,
-			     CxMem *cx);
+			 slab_init_fn init_func,
+			 CxMem *cx);
 
 /** Free whole context */
 void slab_destroy(struct Slab *slab);

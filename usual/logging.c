@@ -47,7 +47,9 @@
 #define LOG_PID 0
 #define LOG_DAEMON 0
 
-static inline void openlog(const char *ident, int opt, int fac) {}
+static inline void openlog(const char *ident, int opt, int fac)
+{
+}
 #define syslog win32_eventlog
 #define closelog()
 static void win32_eventlog(int level, const char *fmt, ...) _PRINTF(2, 3);
@@ -79,7 +81,7 @@ struct LevelInfo {
 static const struct LevelInfo log_level_list[] = {
 	{ "FATAL", LOG_CRIT },	/* LG_FATAL */
 	{ "ERROR", LOG_ERR },	/* LG_ERROR */
-	{ "WARNING", LOG_WARNING },/* LG_WARNING */
+	{ "WARNING", LOG_WARNING },	/* LG_WARNING */
 	{ "LOG", LOG_INFO },	/* LG_STATS*/
 	{ "LOG", LOG_INFO },	/* LG_INFO */
 	{ "DEBUG", LOG_DEBUG },	/* LG_DEBUG */
@@ -89,20 +91,20 @@ static const struct LevelInfo log_level_list[] = {
 struct FacName { const char *name; int code; };
 static const struct FacName facility_names [] = {
 #ifndef WIN32
-	{ "auth",	LOG_AUTH },
+	{ "auth", LOG_AUTH },
 #ifdef LOG_AUTHPRIV
-	{ "authpriv",	LOG_AUTHPRIV },
+	{ "authpriv", LOG_AUTHPRIV },
 #endif
-	{ "daemon",	LOG_DAEMON },
-	{ "user",	LOG_USER },
-	{ "local0",	LOG_LOCAL0 },
-	{ "local1",	LOG_LOCAL1 },
-	{ "local2",	LOG_LOCAL2 },
-	{ "local3",	LOG_LOCAL3 },
-	{ "local4",	LOG_LOCAL4 },
-	{ "local5",	LOG_LOCAL5 },
-	{ "local6",	LOG_LOCAL6 },
-	{ "local7",	LOG_LOCAL7 },
+	{ "daemon", LOG_DAEMON },
+	{ "user", LOG_USER },
+	{ "local0", LOG_LOCAL0 },
+	{ "local1", LOG_LOCAL1 },
+	{ "local2", LOG_LOCAL2 },
+	{ "local3", LOG_LOCAL3 },
+	{ "local4", LOG_LOCAL4 },
+	{ "local5", LOG_LOCAL5 },
+	{ "local6", LOG_LOCAL6 },
+	{ "local7", LOG_LOCAL7 },
 #endif
 	{ NULL },
 };
@@ -215,11 +217,11 @@ void log_generic(enum LogLevel level, void *ctx, const char *fmt, ...)
 					struct stat st;
 					dev_t js_dev = f1;
 					ino_t js_ino = f2;
-					if (fstat(fileno(stderr), &st) >= 0)
+					if (fstat(fileno(stderr), &st) >= 0) {
 						if (js_dev == st.st_dev && js_ino == st.st_ino)
 							use_systemd_journal = true;
+					}
 				}
-
 			}
 			journal_stream_checked = true;
 		}
@@ -227,7 +229,7 @@ void log_generic(enum LogLevel level, void *ctx, const char *fmt, ...)
 			sd_journal_print(lev->syslog_prio, "%s", msg);
 		else
 #endif
-			fprintf(stderr, "%s [%u] %s %s\n", timebuf, pid, lev->tag, msg);
+		fprintf(stderr, "%s [%u] %s %s\n", timebuf, pid, lev->tag, msg);
 	}
 
 	if (log_file && level <= cf_logfile_level)
@@ -262,10 +264,10 @@ void log_fatal(const char *file, int line, const char *func, bool show_perror, v
 
 	if (show_perror) {
 		log_generic(LG_FATAL, ctx, "@%s:%d in function %s(): %s: %s [%d]",
-			     file, line, func, buf, estr, old_errno);
+			    file, line, func, buf, estr, old_errno);
 	} else {
 		log_generic(LG_FATAL, ctx, "@%s:%d in function %s(): %s",
-			     file, line, func, buf);
+			    file, line, func, buf);
 	}
 }
 

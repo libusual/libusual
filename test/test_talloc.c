@@ -33,7 +33,7 @@ static void m_log(char code, struct CheckHeader *hdr)
 	snprintf(buf, sizeof(buf), "%s%c:%u", sep, code, hdr->ptr_nr);
 	res = strlcat(log_buf, buf, sizeof(log_buf));
 	tt_assert(res < sizeof(log_buf));
-end:;
+end:    ;
 }
 
 static void *log_alloc(void *ctx, size_t len)
@@ -91,7 +91,7 @@ static const struct CxOps log_ops = {
 
 static const struct CxMem log_libc = {
 	&log_ops,
-	(void*)&cx_libc_allocator,
+	(void *)&cx_libc_allocator,
 };
 
 static void log_reset(void)
@@ -286,7 +286,7 @@ static void test_talloc_basic(void *zzz)
 	tt_assert(chp);
 	talloc_free(top);
 	int_check(delta, 0);
-end:;
+end:    ;
 }
 
 static void test_talloc_strings(void *zzz)
@@ -321,7 +321,7 @@ static void test_talloc_strings(void *zzz)
 
 	talloc_free(top);
 	log_check_quick();
-end:;
+end:    ;
 }
 
 static int destruct_calls;
@@ -341,37 +341,37 @@ static void test_talloc_refs(void *zzz)
 	talloc_enable_null_tracking();
 
 	/* simple ref, freed from new parent */
-	top = talloc_from_cx(cx, 0, "top");	tt_assert(top != NULL);
-	p1 = talloc_strdup(top, "p1");		tt_assert(p1);
-	p2 = talloc_strdup(top, "p2");		tt_assert(p2);
-	ref = talloc_reference(p2, p1);		tt_assert(ref == p1);
+	top = talloc_from_cx(cx, 0, "top");     tt_assert(top != NULL);
+	p1 = talloc_strdup(top, "p1");          tt_assert(p1);
+	p2 = talloc_strdup(top, "p2");          tt_assert(p2);
+	ref = talloc_reference(p2, p1);         tt_assert(ref == p1);
 	str_check(dump_talloc(top), "[top[p1,p2[>p1]]]");
-	err = talloc_free(p2);			tt_assert(err == 0);
+	err = talloc_free(p2);                  tt_assert(err == 0);
 	str_check(dump_talloc(top), "[top[p1]]");
-	err = talloc_free(top);			tt_assert(err == 0);
+	err = talloc_free(top);                 tt_assert(err == 0);
 	log_check_full("A:1, A:2, A:3, A:4, F:4, F:3, F:2, F:1");
 
 	/* simple ref, free old parent */
-	top = talloc_from_cx(cx, 0, "top");	tt_assert(top != NULL);
-	p1 = talloc_strdup(top, "p1");		tt_assert(p1);
-	p2 = talloc_strdup(top, "p2");		tt_assert(p2);
-	ref = talloc_reference(p2, p1);		tt_assert(ref == p1);
+	top = talloc_from_cx(cx, 0, "top");     tt_assert(top != NULL);
+	p1 = talloc_strdup(top, "p1");          tt_assert(p1);
+	p2 = talloc_strdup(top, "p2");          tt_assert(p2);
+	ref = talloc_reference(p2, p1);         tt_assert(ref == p1);
 	str_check(dump_talloc(top), "[top[p1,p2[>p1]]]");
-	err = talloc_free(p1);			tt_assert(err == -1);
-	err = talloc_unlink(top, p1);		tt_assert(err == 0);
+	err = talloc_free(p1);                  tt_assert(err == -1);
+	err = talloc_unlink(top, p1);           tt_assert(err == 0);
 	str_check(dump_talloc(top), "[top[p2[p1]]]");
-	err = talloc_free(top);			tt_assert(err == 0);
+	err = talloc_free(top);                 tt_assert(err == 0);
 	log_check_full("A:1, A:2, A:3, A:4, F:4, F:2, F:3, F:1");
 
 	/* ref loop */
-	top = talloc_from_cx(cx, 0, "top");	tt_assert(top != NULL);
+	top = talloc_from_cx(cx, 0, "top");     tt_assert(top != NULL);
 	top2 = talloc_strdup(top, "top2");
-	p1 = talloc_strdup(top2, "p1");		tt_assert(p1);
-	p2 = talloc_strdup(p1, "p2");		tt_assert(p2);
-	p3 = talloc_strdup(p1, "p3");		tt_assert(p2);
+	p1 = talloc_strdup(top2, "p1");         tt_assert(p1);
+	p2 = talloc_strdup(p1, "p2");           tt_assert(p2);
+	p3 = talloc_strdup(p1, "p3");           tt_assert(p2);
 	talloc_set_destructor(top2, test_destructor);
 	talloc_set_destructor(p2, test_destructor);
-	ref = talloc_reference(p3, p1);		tt_assert(ref == p1);
+	ref = talloc_reference(p3, p1);         tt_assert(ref == p1);
 	str_check(dump_talloc(top), "[top[top2[p1[p2,p3[>p1]]]]]");
 
 	/* fail */
@@ -389,7 +389,7 @@ static void test_talloc_refs(void *zzz)
 	log_reset();
 
 	talloc_disable_null_tracking();
-end:;
+end:    ;
 }
 
 static void test_talloc_memlimit(void *pppp)
@@ -398,34 +398,34 @@ static void test_talloc_memlimit(void *pppp)
 	int err;
 
 	/* create memlimit ptr */
-	top = talloc_from_cx(&log_libc, 0, "top");	tt_assert(top);
-	l1 = talloc_strdup(top, "l1");		tt_assert(l1);
-	err = talloc_set_memlimit(l1, 1000);	tt_assert(err == 0);
+	top = talloc_from_cx(&log_libc, 0, "top");      tt_assert(top);
+	l1 = talloc_strdup(top, "l1");          tt_assert(l1);
+	err = talloc_set_memlimit(l1, 1000);    tt_assert(err == 0);
 
 	/* too large */
-	tmp = talloc_size(l1, 1000);		tt_assert(tmp == NULL);
+	tmp = talloc_size(l1, 1000);            tt_assert(tmp == NULL);
 	str_check(dump_talloc(top), "[top[l1[.memlimit]]]");
 
 	/* ok */
-	l2 = talloc_named_const(l1, 500, "l2");	tt_assert(l2);
+	l2 = talloc_named_const(l1, 500, "l2"); tt_assert(l2);
 	/* second level, too large */
-	tmp = talloc_size(l2, 500);		tt_assert(tmp == NULL);
+	tmp = talloc_size(l2, 500);             tt_assert(tmp == NULL);
 	str_check(dump_talloc(top), "[top[l1[.memlimit,l2]]]");
 
 	/* steal into memlimit */
 	l3 = talloc_named_const(top, 500, "l3");
-	tmp = talloc_steal(l2, l3);		tt_assert(tmp == l3);
+	tmp = talloc_steal(l2, l3);             tt_assert(tmp == l3);
 	str_check(dump_talloc(top), "[top[l1[.memlimit,l2[l3]]]]");
-	tmp = talloc_size(l2, 10);		tt_assert(tmp == NULL);
+	tmp = talloc_size(l2, 10);              tt_assert(tmp == NULL);
 
 	/* steal away from memlimit */
-	tmp = talloc_steal(top, l3);		tt_assert(tmp == l3);
+	tmp = talloc_steal(top, l3);            tt_assert(tmp == l3);
 	str_check(dump_talloc(top), "[top[l1[.memlimit,l2]l3]]");
-	tmp = talloc_size(l2, 10);		tt_assert(tmp);
+	tmp = talloc_size(l2, 10);              tt_assert(tmp);
 
 	talloc_free(top);
 	log_check_quick();
-end:;
+end:    ;
 }
 
 static void test_talloc_reparent(void *zzz)
@@ -436,17 +436,17 @@ static void test_talloc_reparent(void *zzz)
 	int err;
 
 	log_reset();
-	top = talloc_from_cx(cx, 10, "top");	tt_assert(top);
-	p1 = talloc_strdup(top, "p1");		tt_assert(p1);
-	p2 = talloc_strdup(p1, "p2");		tt_assert(p2);
-	p3 = talloc_strdup(p2, "p3");		tt_assert(p3);
-	ref = talloc_reference(p1, p3);		tt_assert(ref == p3);
+	top = talloc_from_cx(cx, 10, "top");    tt_assert(top);
+	p1 = talloc_strdup(top, "p1");          tt_assert(p1);
+	p2 = talloc_strdup(p1, "p2");           tt_assert(p2);
+	p3 = talloc_strdup(p2, "p3");           tt_assert(p3);
+	ref = talloc_reference(p1, p3);         tt_assert(ref == p3);
 	str_check(dump_talloc(top), "[top[p1[>p3,p2[p3]]]]");
-	err = talloc_free(p2);			tt_assert(err == 0);
+	err = talloc_free(p2);                  tt_assert(err == 0);
 	str_check(dump_talloc(top), "[top[p1[p3]]]");
 	talloc_free(top);
 	log_check_quick();
-end:;
+end:    ;
 }
 
 struct testcase_t talloc_tests[] = {

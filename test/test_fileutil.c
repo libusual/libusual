@@ -12,14 +12,14 @@
  */
 
 #define LN1 "11112222333344445555666677778888"
-#define LN2 LN1 LN1 LN1 LN1   LN1 LN1 LN1 LN1
-#define LN3 LN2 LN2 LN2 LN2   LN2 LN2 LN2 LN2
+#define LN2 LN1 LN1 LN1 LN1 LN1 LN1 LN1 LN1
+#define LN3 LN2 LN2 LN2 LN2 LN2 LN2 LN2 LN2
 
 static const char fdata[] = "1\n"
-"line 2\n"
-"\n"
-LN3
-"noln";
+			    "line 2\n"
+			    "\n"
+			    LN3
+			    "noln";
 static const char filename[] = "test_fileutil.tmp";
 
 static bool createfile(void)
@@ -38,7 +38,7 @@ static void test_fsize(void *p)
 	tt_assert(file_size(filename) == (int)strlen(fdata));
 	tt_assert(file_size(filename) == (int)sizeof(fdata) - 1);
 	tt_assert(file_size("nonexist") == -1);
-end:;
+end:    ;
 }
 
 static bool addln(void *arg, const char *ln, ssize_t len)

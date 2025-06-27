@@ -35,7 +35,7 @@ static void test_ctype_char(void *p)
 			int_check(tolower(c), tolower(cx));
 		}
 	}
-end:;
+end:    ;
 }
 
 

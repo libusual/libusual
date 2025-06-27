@@ -14,10 +14,10 @@ static const char *ntop(int af, const void *src)
 
 static void test_ntop(void *z)
 {
-	static const uint8_t data[] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16};
+	static const uint8_t data[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
 	str_check(ntop(AF_INET, data), "1.2.3.4");
 	str_check(ntop(AF_INET6, data), "102:304:506:708:90a:b0c:d0e:f10");
-end:;
+end:    ;
 }
 
 static const char *pton(int af, const char *s)
@@ -25,7 +25,7 @@ static const char *pton(int af, const char *s)
 	static char str[128];
 	unsigned char buf[128];
 	int res;
-	int len = (af == AF_INET) ?  4 : 16;
+	int len = (af == AF_INET) ? 4 : 16;
 
 	memset(buf, 0xCC, sizeof(buf));
 
@@ -53,7 +53,7 @@ static void test_pton(void *z)
 	str_check(pton(AF_INET6, "F00F::5060"), "f00f::5060");
 	str_check(pton(AF_INET6, "F00F::127.0.0.1"), "f00f::7f00:1");
 	str_check(pton(AF_INET6, "::1:2:3:4:5:6:7:8"), "FAIL");
-end:;
+end:    ;
 }
 
 struct testcase_t socket_tests[] = {

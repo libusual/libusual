@@ -145,7 +145,7 @@ static void test_shlist(void *p)
 	str_check(xdel(list, 3), "");
 	str_check(check_list(list), "OK");
 	int_check(shlist_empty(list), 1);
-end:;
+end:    ;
 }
 #if (defined __GNUC__) && (__GNUC__ >= 12)
 #pragma GCC diagnostic pop
@@ -165,7 +165,7 @@ static void test_shlist_remove(void *p)
 	shlist_remove(node);
 	tt_assert(shlist_empty(node));
 	tt_assert(shlist_empty(list));
-end:;
+end:    ;
 }
 
 struct testcase_t shlist_tests[] = {

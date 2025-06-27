@@ -110,8 +110,12 @@ static void impl_extract(void *buf, size_t nbytes)
 
 static pid_t last_pid = -1;
 
-static void prng_lock(void) { }
-static void prng_unlock(void) { }
+static void prng_lock(void)
+{
+}
+static void prng_unlock(void)
+{
+}
 
 /*
  * Make sure state is initialized.

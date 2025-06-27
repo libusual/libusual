@@ -13,7 +13,7 @@ static void test_bswap(void *p)
 	int_check(bswap16(0xff01), 0x01ff);
 	int_check(bswap32(0x01020304), 0x04030201);
 	ull_check(bswap64(0x0102030405060708ULL), 0x0807060504030201ULL);
-end:;
+end:    ;
 }
 
 /*
@@ -90,12 +90,12 @@ static const char *tencode(int t, uint64_t val)
 
 static void test_encdec(void *p)
 {
-	ull_check(tdecode( 2, 1,2), 0x0102);
-	ull_check(tdecode(-2, 1,2), 0x0201);
-	ull_check(tdecode( 4, 1,2,3,4), 0x01020304);
-	ull_check(tdecode(-4, 1,2,3,4), 0x04030201);
-	ull_check(tdecode( 8, 1,2,3,4,5,6,7,8), 0x0102030405060708);
-	ull_check(tdecode(-8, 1,2,3,4,5,6,7,8), 0x0807060504030201);
+	ull_check(tdecode( 2, 1, 2), 0x0102);
+	ull_check(tdecode(-2, 1, 2), 0x0201);
+	ull_check(tdecode( 4, 1, 2, 3, 4), 0x01020304);
+	ull_check(tdecode(-4, 1, 2, 3, 4), 0x04030201);
+	ull_check(tdecode( 8, 1, 2, 3, 4, 5, 6, 7, 8), 0x0102030405060708);
+	ull_check(tdecode(-8, 1, 2, 3, 4, 5, 6, 7, 8), 0x0807060504030201);
 
 	str_check(tencode( 2, 0x0102), "01 02");
 	str_check(tencode(-2, 0x0102), "02 01");
@@ -103,7 +103,7 @@ static void test_encdec(void *p)
 	str_check(tencode(-4, 0x01020304), "04 03 02 01");
 	str_check(tencode( 8, 0x0102030405060708ULL), "01 02 03 04 05 06 07 08");
 	str_check(tencode(-8, 0x0102030405060708ULL), "08 07 06 05 04 03 02 01");
-end:;
+end:    ;
 }
 
 

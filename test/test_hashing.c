@@ -24,7 +24,7 @@ static void test_crc32(void *p)
 	int_check(xcrc32("abcdefghijklmnopqrstuvwxyz"), 1277644989);
 	int_check(xcrc32("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"), 532866770);
 	int_check(xcrc32("12345678901234567890123456789012345678901234567890123456789012345678901234567890"), 2091469426);
-end:;
+end:    ;
 }
 
 static void test_lookup3(void *p)
@@ -46,7 +46,7 @@ static void test_lookup3(void *p)
 	int_check(xlookup3("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"), 3992286962);
 	int_check(xlookup3("12345678901234567890123456789012345678901234567890123456789012345678901234567890"), 2776963519);
 #endif
-end:;
+end:    ;
 }
 
 struct testcase_t hashing_tests[] = {

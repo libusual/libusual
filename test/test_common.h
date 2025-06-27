@@ -12,14 +12,14 @@
 	do { \
 		const char *res = (val); \
 		if (strcmp(res, a) && strcmp(res, b)) \
-			str_check(res, a); \
+		str_check(res, a); \
 	} while (0)
 
 #define str_any3(val, a, b, c) \
 	do { \
 		const char *res = (val); \
 		if (strcmp(res, a) && strcmp(res, b) && strcmp(res, c)) \
-			str_check(res, a); \
+		str_check(res, a); \
 	} while (0)
 
 const char *tdata(const char *fn);

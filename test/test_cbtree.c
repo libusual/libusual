@@ -130,9 +130,9 @@ static int get_next(bool with_stat, bool added[])
 static void test_cbtree_random(void *p)
 {
 	bool is_added[RSIZE];
-	int prefer_remove = 0; /* 0 - insert, 1 - delete */
+	int prefer_remove = 0;	/* 0 - insert, 1 - delete */
 	int n;
-	int op; /* 0 - insert, 1 - delete */
+	int op;	/* 0 - insert, 1 - delete */
 	struct CBTree *tree;
 	unsigned long long total = 0;
 

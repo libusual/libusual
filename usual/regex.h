@@ -93,16 +93,16 @@
  */
 
 /** Use POSIX Extended Regex Syntax instead of Basic Syntax */
-#define REG_EXTENDED	(1 << 0)
+#define REG_EXTENDED    (1 << 0)
 
 /** Do case-insensitive matching */
-#define REG_ICASE	(1 << 1)
+#define REG_ICASE       (1 << 1)
 
 /** Do case-insensitive matching */
-#define REG_NOSUB	(1 << 2)
+#define REG_NOSUB       (1 << 2)
 
 /** Do case-insensitive matching */
-#define REG_NEWLINE	(1 << 3)
+#define REG_NEWLINE     (1 << 3)
 
 /* @} */
 
@@ -112,10 +112,10 @@
  */
 
 /** The start of string is not beginning of line, so ^ should not match */
-#define REG_NOTBOL	(1 << 4)
+#define REG_NOTBOL      (1 << 4)
 
 /** The end of string is not end of line, so $ should not match */
-#define REG_NOTEOL	(1 << 5)
+#define REG_NOTEOL      (1 << 5)
 
 /* @} */
 
@@ -124,31 +124,31 @@
  * @{
  */
 /** Match not found */
-#define REG_NOMATCH	1
+#define REG_NOMATCH     1
 /** Bad {} repeat specification */
-#define REG_BADBR	2
+#define REG_BADBR       2
 /** General problem with regular expression */
-#define REG_BADPAT	3
+#define REG_BADPAT      3
 /** Repeat used without preceding non-repeat element */
-#define REG_BADRPT	4
+#define REG_BADRPT      4
 /** Syntax error with {} */
-#define REG_EBRACE	5
+#define REG_EBRACE      5
 /** Syntax error with [] */
-#define REG_EBRACK	6
+#define REG_EBRACK      6
 /** Bad collation reference */
-#define REG_ECOLLATE	7
+#define REG_ECOLLATE    7
 /** Bad character class reference  */
-#define REG_ECTYPE	8
+#define REG_ECTYPE      8
 /** Trailing backslack */
-#define REG_EESCAPE	9
+#define REG_EESCAPE     9
 /** Syntax error with () */
-#define REG_EPAREN	10
+#define REG_EPAREN      10
 /** Bad endpoint in range */
-#define REG_ERANGE	11
+#define REG_ERANGE      11
 /** No memory */
-#define REG_ESPACE	12
+#define REG_ESPACE      12
 /** Bad subgroup reference */
-#define REG_ESUBREG	13
+#define REG_ESUBREG     13
 
 /* @} */
 
@@ -158,7 +158,7 @@
  */
 #undef RE_DUP_MAX
 /** Max count user can enter via {} */
-#define RE_DUP_MAX	0x7ffe
+#define RE_DUP_MAX      0x7ffe
 /* @} */
 
 /**
@@ -180,7 +180,7 @@
  *   \/ - /
  * @endcode
  */
-#define REG_RELAXED_SYNTAX	(1 << 14)
+#define REG_RELAXED_SYNTAX      (1 << 14)
 
 /**
  * Dont permute groups in attempt to get longest match.
@@ -188,10 +188,10 @@
  * May give minor speed win at the expense of strict
  * POSIX compatibility.
  */
-#define REG_RELAXED_MATCHING	(1 << 15)
+#define REG_RELAXED_MATCHING    (1 << 15)
 
 /** Turn on both REG_RELAXED_SYNTAX and REG_RELAXED_MATCHING */
-#define REG_RELAXED		(REG_RELAXED_SYNTAX | REG_RELAXED_MATCHING)
+#define REG_RELAXED             (REG_RELAXED_SYNTAX | REG_RELAXED_MATCHING)
 
 /* @} */
 
@@ -224,9 +224,9 @@ typedef struct {
 } regmatch_t;
 
 /* avoid name conflicts */
-#define regcomp(a,b,c) usual_regcomp(a,b,c)
-#define regexec(a,b,c,d,e) usual_regexec(a,b,c,d,e)
-#define regerror(a,b,c,d) usual_regerror(a,b,c,d)
+#define regcomp(a, b, c) usual_regcomp(a, b, c)
+#define regexec(a, b, c, d, e) usual_regexec(a, b, c, d, e)
+#define regerror(a, b, c, d) usual_regerror(a, b, c, d)
 #define regfree(a) usual_regfree(a)
 
 /**

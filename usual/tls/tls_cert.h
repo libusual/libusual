@@ -1,35 +1,35 @@
 #ifndef _USUAL_TLS_TLS_CERT_H_
 #define _USUAL_TLS_TLS_CERT_H_
 
-#define TLS_CERT_GNAME_DNS	1
-#define TLS_CERT_GNAME_IPv4	2
-#define TLS_CERT_GNAME_IPv6	3
-#define TLS_CERT_GNAME_EMAIL	4
-#define TLS_CERT_GNAME_URI	5
+#define TLS_CERT_GNAME_DNS      1
+#define TLS_CERT_GNAME_IPv4     2
+#define TLS_CERT_GNAME_IPv6     3
+#define TLS_CERT_GNAME_EMAIL    4
+#define TLS_CERT_GNAME_URI      5
 
-#define TLS_KU_DIGITAL_SIGNATURE	(1 << 0)
-#define TLS_KU_NON_REPUDIATION		(1 << 1)
-#define TLS_KU_KEY_ENCIPHERMENT		(1 << 2)
-#define TLS_KU_DATA_ENCIPHERMENT	(1 << 3)
-#define TLS_KU_KEY_AGREEMENT		(1 << 4)
-#define TLS_KU_KEY_CERT_SIGN		(1 << 5)
-#define TLS_KU_CRL_SIGN			(1 << 6)
-#define TLS_KU_ENCIPHER_ONLY		(1 << 7)
-#define TLS_KU_DECIPHER_ONLY		(1 << 8)
+#define TLS_KU_DIGITAL_SIGNATURE        (1 << 0)
+#define TLS_KU_NON_REPUDIATION          (1 << 1)
+#define TLS_KU_KEY_ENCIPHERMENT         (1 << 2)
+#define TLS_KU_DATA_ENCIPHERMENT        (1 << 3)
+#define TLS_KU_KEY_AGREEMENT            (1 << 4)
+#define TLS_KU_KEY_CERT_SIGN            (1 << 5)
+#define TLS_KU_CRL_SIGN                 (1 << 6)
+#define TLS_KU_ENCIPHER_ONLY            (1 << 7)
+#define TLS_KU_DECIPHER_ONLY            (1 << 8)
 
-#define TLS_XKU_SSL_SERVER		(1 << 0)
-#define TLS_XKU_SSL_CLIENT		(1 << 1)
-#define TLS_XKU_SMIME			(1 << 2)
-#define TLS_XKU_CODE_SIGN		(1 << 3)
-#define TLS_XKU_OCSP_SIGN		(1 << 4)
-#define TLS_XKU_SGC			(1 << 5)
-#define TLS_XKU_TIMESTAMP		(1 << 6)
-#define TLS_XKU_DVCS			(1 << 7)
+#define TLS_XKU_SSL_SERVER              (1 << 0)
+#define TLS_XKU_SSL_CLIENT              (1 << 1)
+#define TLS_XKU_SMIME                   (1 << 2)
+#define TLS_XKU_CODE_SIGN               (1 << 3)
+#define TLS_XKU_OCSP_SIGN               (1 << 4)
+#define TLS_XKU_SGC                     (1 << 5)
+#define TLS_XKU_TIMESTAMP               (1 << 6)
+#define TLS_XKU_DVCS                    (1 << 7)
 
-#define TLS_EXT_BASIC			(1 << 0)
-#define TLS_EXT_KEY_USAGE		(1 << 1)
-#define TLS_EXT_EXTENDED_KEY_USAGE	(1 << 2)
-#define TLS_EXT_SUBJECT_ALT_NAME	(1 << 3)
+#define TLS_EXT_BASIC                   (1 << 0)
+#define TLS_EXT_KEY_USAGE               (1 << 1)
+#define TLS_EXT_EXTENDED_KEY_USAGE      (1 << 2)
+#define TLS_EXT_SUBJECT_ALT_NAME        (1 << 3)
 
 /*
  * GeneralName

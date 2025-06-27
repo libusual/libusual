@@ -123,7 +123,7 @@ static void report_last_result(struct PgSocket *db)
 	switch (PQresultStatus(res)) {
 	default:
 		log_error("%s: %s", PQdb(db->con), PQresultErrorMessage(res));
-		/* fallthrough */
+	/* fallthrough */
 	case PGRES_COMMAND_OK:
 	case PGRES_TUPLES_OK:
 	case PGRES_COPY_OUT:
@@ -217,8 +217,9 @@ static void flush(struct PgSocket *db)
 		wait_event(db, EV_WRITE, send_cb);
 	} else if (res == 0) {
 		wait_event(db, EV_READ, result_cb);
-	} else
+	} else {
 		conn_error(db, PGS_RESULT_BAD, "PQflush");
+	}
 }
 
 /* override default notice receiver */
@@ -359,7 +360,7 @@ void pgs_send_query_params(struct PgSocket *db, const char *q, int cnt, ...)
 {
 	int i;
 	va_list ap;
-	const char * args[MAX_QRY_ARGS];
+	const char *args[MAX_QRY_ARGS];
 
 	if (cnt < 0 || cnt > MAX_QRY_ARGS) {
 		log_warning("bad query arg cnt");

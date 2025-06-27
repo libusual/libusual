@@ -24,44 +24,44 @@ extern "C" {
 
 #include <usual/base.h>
 
-#define TLS_API	20141031
+#define TLS_API 20141031
 
-#define TLS_PROTOCOL_TLSv1_0	(1 << 1)
-#define TLS_PROTOCOL_TLSv1_1	(1 << 2)
-#define TLS_PROTOCOL_TLSv1_2	(1 << 3)
-#define TLS_PROTOCOL_TLSv1_3	(1 << 4)
+#define TLS_PROTOCOL_TLSv1_0    (1 << 1)
+#define TLS_PROTOCOL_TLSv1_1    (1 << 2)
+#define TLS_PROTOCOL_TLSv1_2    (1 << 3)
+#define TLS_PROTOCOL_TLSv1_3    (1 << 4)
 #define TLS_PROTOCOL_TLSv1 \
 	(TLS_PROTOCOL_TLSv1_0|TLS_PROTOCOL_TLSv1_1|TLS_PROTOCOL_TLSv1_2|TLS_PROTOCOL_TLSv1_3)
 
 #define TLS_PROTOCOLS_ALL TLS_PROTOCOL_TLSv1
 #define TLS_PROTOCOLS_DEFAULT (TLS_PROTOCOL_TLSv1_2|TLS_PROTOCOL_TLSv1_3)
 
-#define TLS_WANT_POLLIN		-2
-#define TLS_WANT_POLLOUT	-3
-#define TLS_NO_OCSP		-4
-#define TLS_NO_CERT		-5
+#define TLS_WANT_POLLIN         -2
+#define TLS_WANT_POLLOUT        -3
+#define TLS_NO_OCSP             -4
+#define TLS_NO_CERT             -5
 
-#define TLS_OCSP_RESPONSE_SUCCESSFUL		0
-#define TLS_OCSP_RESPONSE_MALFORMED		1
-#define TLS_OCSP_RESPONSE_INTERNALERR		2
-#define TLS_OCSP_RESPONSE_TRYLATER		3
-#define TLS_OCSP_RESPONSE_SIGREQUIRED		5
-#define TLS_OCSP_RESPONSE_UNAUTHORIZED		6
+#define TLS_OCSP_RESPONSE_SUCCESSFUL            0
+#define TLS_OCSP_RESPONSE_MALFORMED             1
+#define TLS_OCSP_RESPONSE_INTERNALERR           2
+#define TLS_OCSP_RESPONSE_TRYLATER              3
+#define TLS_OCSP_RESPONSE_SIGREQUIRED           5
+#define TLS_OCSP_RESPONSE_UNAUTHORIZED          6
 
-#define TLS_OCSP_CERT_GOOD			0
-#define TLS_OCSP_CERT_REVOKED			1
-#define TLS_OCSP_CERT_UNKNOWN			2
+#define TLS_OCSP_CERT_GOOD                      0
+#define TLS_OCSP_CERT_REVOKED                   1
+#define TLS_OCSP_CERT_UNKNOWN                   2
 
-#define TLS_CRL_REASON_UNPSECIFIED		0
-#define TLS_CRL_REASON_KEY_COMPROMISE		1
-#define TLS_CRL_REASON_CA_COMPROMISE		2
-#define TLS_CRL_REASON_AFFILIATION_CHANGED	3
-#define TLS_CRL_REASON_SUPERSEDED		4
-#define TLS_CRL_REASON_CESSATION_OF_OPERATION	5
-#define TLS_CRL_REASON_CERTIFICATE_HOLD		6
-#define TLS_CRL_REASON_REMOVE_FROM_CRL		8
-#define TLS_CRL_REASON_PRIVILEGE_WITH_DRAWN	9
-#define TLS_CRL_REASON_AA_COMPROMISE		10
+#define TLS_CRL_REASON_UNPSECIFIED              0
+#define TLS_CRL_REASON_KEY_COMPROMISE           1
+#define TLS_CRL_REASON_CA_COMPROMISE            2
+#define TLS_CRL_REASON_AFFILIATION_CHANGED      3
+#define TLS_CRL_REASON_SUPERSEDED               4
+#define TLS_CRL_REASON_CESSATION_OF_OPERATION   5
+#define TLS_CRL_REASON_CERTIFICATE_HOLD         6
+#define TLS_CRL_REASON_REMOVE_FROM_CRL          8
+#define TLS_CRL_REASON_PRIVILEGE_WITH_DRAWN     9
+#define TLS_CRL_REASON_AA_COMPROMISE            10
 
 struct tls;
 struct tls_config;
@@ -80,21 +80,21 @@ void tls_config_free(struct tls_config *_config);
 int tls_config_set_ca_file(struct tls_config *_config, const char *_ca_file);
 int tls_config_set_ca_path(struct tls_config *_config, const char *_ca_path);
 int tls_config_set_ca_mem(struct tls_config *_config, const uint8_t *_ca,
-    size_t _len);
+			  size_t _len);
 int tls_config_set_cert_file(struct tls_config *_config,
-    const char *_cert_file);
+			     const char *_cert_file);
 int tls_config_set_cert_mem(struct tls_config *_config, const uint8_t *_cert,
-    size_t _len);
+			    size_t _len);
 int tls_config_set_ciphers(struct tls_config *_config, const char *_ciphers);
 int tls_config_set_dheparams(struct tls_config *_config, const char *_params);
 int tls_config_set_ecdhecurve(struct tls_config *_config, const char *_name);
 int tls_config_set_key_file(struct tls_config *_config, const char *_key_file);
 int tls_config_set_key_mem(struct tls_config *_config, const uint8_t *_key,
-    size_t _len);
+			   size_t _len);
 int tls_config_set_keypair_file(struct tls_config *_config,
-    const char *_cert_file, const char *_key_file);
+				const char *_cert_file, const char *_key_file);
 int tls_config_set_keypair_mem(struct tls_config *_config, const uint8_t *_cert,
-    size_t _cert_len, const uint8_t *_key, size_t _key_len);
+			       size_t _cert_len, const uint8_t *_key, size_t _key_len);
 
 int tls_config_set_ocsp_stapling_file(struct tls_config *_config, const char *_blob_file);
 int tls_config_set_ocsp_stapling_mem(struct tls_config *_config, const uint8_t *_blob, size_t _len);
@@ -122,13 +122,13 @@ void tls_reset(struct tls *_ctx);
 void usual_tls_free(struct tls *_ctx);
 
 int tls_accept_fds(struct tls *_ctx, struct tls **_cctx, int _fd_read,
-    int _fd_write);
+		   int _fd_write);
 int tls_accept_socket(struct tls *_ctx, struct tls **_cctx, int _socket);
 int tls_connect(struct tls *_ctx, const char *_host, const char *_port);
 int tls_connect_fds(struct tls *_ctx, int _fd_read, int _fd_write,
-    const char *_servername);
+		    const char *_servername);
 int tls_connect_servername(struct tls *_ctx, const char *_host,
-    const char *_port, const char *_servername);
+			   const char *_port, const char *_servername);
 int tls_connect_socket(struct tls *_ctx, int _s, const char *_servername);
 int tls_handshake(struct tls *_ctx);
 ssize_t tls_read(struct tls *_ctx, void *_buf, size_t _buflen);
@@ -141,8 +141,8 @@ int tls_peer_cert_contains_name(struct tls *_ctx, const char *_name);
 const char *tls_peer_cert_hash(struct tls *_ctx);
 const char *tls_peer_cert_issuer(struct tls *_ctx);
 const char *tls_peer_cert_subject(struct tls *_ctx);
-time_t	tls_peer_cert_notbefore(struct tls *_ctx);
-time_t	tls_peer_cert_notafter(struct tls *_ctx);
+time_t  tls_peer_cert_notbefore(struct tls *_ctx);
+time_t  tls_peer_cert_notafter(struct tls *_ctx);
 
 const char *tls_conn_version(struct tls *_ctx);
 const char *tls_conn_cipher(struct tls *_ctx);
@@ -158,10 +158,10 @@ int tls_get_ocsp_info(struct tls *ctx, int *response_status, int *cert_status, i
 		      const char **result_text);
 
 int tls_ocsp_check_peer_request(struct tls **ocsp_ctx_p, struct tls *target,
-			    char **ocsp_url, void **request_blob, size_t *request_size);
+				char **ocsp_url, void **request_blob, size_t *request_size);
 
 int tls_ocsp_refresh_stapling_request(struct tls **ocsp_ctx_p, struct tls_config *config,
-		char **ocsp_url, void **request_blob, size_t *request_size);
+				      char **ocsp_url, void **request_blob, size_t *request_size);
 
 int tls_ocsp_process_response(struct tls *ctx, const void *response_blob, size_t size);
 bool tls_config_equal(struct tls_config *server_connect_conf_left, struct tls_config *server_connect_conf_right);

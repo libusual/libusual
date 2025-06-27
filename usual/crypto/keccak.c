@@ -124,7 +124,7 @@ static void keccak_f(struct KeccakContext *ctx)
 		tmpbuf[0] = tmp[4];
 		tmpbuf[6] = tmp[0];
 		for (i = 0; i < 5; i++) {
-			d = tmp[i-1] ^ rol64(tmp[i+1], 1);
+			d = tmp[i - 1] ^ rol64(tmp[i + 1], 1);
 			A[0 + i] ^= d;
 			A[5 + i] ^= d;
 			A[10 + i] ^= d;
@@ -142,13 +142,13 @@ static void keccak_f(struct KeccakContext *ctx)
 
 		/* Chi step */
 		for (i = 0; i < 25; ) {
-			tmp[0] = A[i+0];
-			tmp[1] = A[i+1];
+			tmp[0] = A[i + 0];
+			tmp[1] = A[i + 1];
 
-			A[i] ^= ~A[i+1] & A[i+2]; i++;
-			A[i] ^= ~A[i+1] & A[i+2]; i++;
-			A[i] ^= ~A[i+1] & A[i+2]; i++;
-			A[i] ^= ~A[i+1] & tmp[0]; i++;
+			A[i] ^= ~A[i + 1] & A[i + 2]; i++;
+			A[i] ^= ~A[i + 1] & A[i + 2]; i++;
+			A[i] ^= ~A[i + 1] & A[i + 2]; i++;
+			A[i] ^= ~A[i + 1] & tmp[0]; i++;
 			A[i] ^= ~tmp[0] & tmp[1]; i++;
 		}
 
@@ -167,16 +167,16 @@ static void keccak_f(struct KeccakContext *ctx)
 	uint64_t Da, De, Di, Do, Du;
 	int i;
 
-#define Aba state[ 0]
-#define Abe state[ 1]
-#define Abi state[ 2]
-#define Abo state[ 3]
-#define Abu state[ 4]
-#define Aga state[ 5]
-#define Age state[ 6]
-#define Agi state[ 7]
-#define Ago state[ 8]
-#define Agu state[ 9]
+#define Aba state[0]
+#define Abe state[1]
+#define Abi state[2]
+#define Abo state[3]
+#define Abu state[4]
+#define Aga state[5]
+#define Age state[6]
+#define Agi state[7]
+#define Ago state[8]
+#define Agu state[9]
 #define Aka state[10]
 #define Ake state[11]
 #define Aki state[12]
@@ -211,56 +211,56 @@ static void keccak_f(struct KeccakContext *ctx)
 		Bi = rol64((Aki^Di), 43);
 		Bo = rol64((Amo^Do), 21);
 		Bu = rol64((Asu^Du), 14);
-		Aba =   Ba ^((~Be)&  Bi );
-		Aba ^= RoundConstants64[i+0];
-		Age =   Be ^((~Bi)&  Bo );
-		Aki =   Bi ^((~Bo)&  Bu );
-		Amo =   Bo ^((~Bu)&  Ba );
-		Asu =   Bu ^((~Ba)&  Be );
+		Aba = Ba ^((~Be)&  Bi);
+		Aba ^= RoundConstants64[i + 0];
+		Age = Be ^((~Bi)&  Bo);
+		Aki = Bi ^((~Bo)&  Bu);
+		Amo = Bo ^((~Bu)&  Ba);
+		Asu = Bu ^((~Ba)&  Be);
 
 		Bi = rol64((Aka^Da), 3);
 		Bo = rol64((Ame^De), 45);
 		Bu = rol64((Asi^Di), 61);
 		Ba = rol64((Abo^Do), 28);
 		Be = rol64((Agu^Du), 20);
-		Aka =   Ba ^((~Be)&  Bi );
-		Ame =   Be ^((~Bi)&  Bo );
-		Asi =   Bi ^((~Bo)&  Bu );
-		Abo =   Bo ^((~Bu)&  Ba );
-		Agu =   Bu ^((~Ba)&  Be );
+		Aka = Ba ^((~Be)&  Bi);
+		Ame = Be ^((~Bi)&  Bo);
+		Asi = Bi ^((~Bo)&  Bu);
+		Abo = Bo ^((~Bu)&  Ba);
+		Agu = Bu ^((~Ba)&  Be);
 
 		Bu = rol64((Asa^Da), 18);
 		Ba = rol64((Abe^De), 1);
 		Be = rol64((Agi^Di), 6);
 		Bi = rol64((Ako^Do), 25);
 		Bo = rol64((Amu^Du), 8);
-		Asa =   Ba ^((~Be)&  Bi );
-		Abe =   Be ^((~Bi)&  Bo );
-		Agi =   Bi ^((~Bo)&  Bu );
-		Ako =   Bo ^((~Bu)&  Ba );
-		Amu =   Bu ^((~Ba)&  Be );
+		Asa = Ba ^((~Be)&  Bi);
+		Abe = Be ^((~Bi)&  Bo);
+		Agi = Bi ^((~Bo)&  Bu);
+		Ako = Bo ^((~Bu)&  Ba);
+		Amu = Bu ^((~Ba)&  Be);
 
 		Be = rol64((Aga^Da), 36);
 		Bi = rol64((Ake^De), 10);
 		Bo = rol64((Ami^Di), 15);
 		Bu = rol64((Aso^Do), 56);
 		Ba = rol64((Abu^Du), 27);
-		Aga =   Ba ^((~Be)&  Bi );
-		Ake =   Be ^((~Bi)&  Bo );
-		Ami =   Bi ^((~Bo)&  Bu );
-		Aso =   Bo ^((~Bu)&  Ba );
-		Abu =   Bu ^((~Ba)&  Be );
+		Aga = Ba ^((~Be)&  Bi);
+		Ake = Be ^((~Bi)&  Bo);
+		Ami = Bi ^((~Bo)&  Bu);
+		Aso = Bo ^((~Bu)&  Ba);
+		Abu = Bu ^((~Ba)&  Be);
 
 		Bo = rol64((Ama^Da), 41);
 		Bu = rol64((Ase^De), 2);
 		Ba = rol64((Abi^Di), 62);
 		Be = rol64((Ago^Do), 55);
 		Bi = rol64((Aku^Du), 39);
-		Ama =   Ba ^((~Be)&  Bi );
-		Ase =   Be ^((~Bi)&  Bo );
-		Abi =   Bi ^((~Bo)&  Bu );
-		Ago =   Bo ^((~Bu)&  Ba );
-		Aku =   Bu ^((~Ba)&  Be );
+		Ama = Ba ^((~Be)&  Bi);
+		Ase = Be ^((~Bi)&  Bo);
+		Abi = Bi ^((~Bo)&  Bu);
+		Ago = Bo ^((~Bu)&  Ba);
+		Aku = Bu ^((~Ba)&  Be);
 
 		Ca = Aba^Aka^Asa^Aga^Ama;
 		Ce = Age^Ame^Abe^Ake^Ase;
@@ -278,56 +278,56 @@ static void keccak_f(struct KeccakContext *ctx)
 		Bi = rol64((Agi^Di), 43);
 		Bo = rol64((Aso^Do), 21);
 		Bu = rol64((Aku^Du), 14);
-		Aba =   Ba ^((~Be)&  Bi );
-		Aba ^= RoundConstants64[i+1];
-		Ame =   Be ^((~Bi)&  Bo );
-		Agi =   Bi ^((~Bo)&  Bu );
-		Aso =   Bo ^((~Bu)&  Ba );
-		Aku =   Bu ^((~Ba)&  Be );
+		Aba = Ba ^((~Be)&  Bi);
+		Aba ^= RoundConstants64[i + 1];
+		Ame = Be ^((~Bi)&  Bo);
+		Agi = Bi ^((~Bo)&  Bu);
+		Aso = Bo ^((~Bu)&  Ba);
+		Aku = Bu ^((~Ba)&  Be);
 
 		Bi = rol64((Asa^Da), 3);
 		Bo = rol64((Ake^De), 45);
 		Bu = rol64((Abi^Di), 61);
 		Ba = rol64((Amo^Do), 28);
 		Be = rol64((Agu^Du), 20);
-		Asa =   Ba ^((~Be)&  Bi );
-		Ake =   Be ^((~Bi)&  Bo );
-		Abi =   Bi ^((~Bo)&  Bu );
-		Amo =   Bo ^((~Bu)&  Ba );
-		Agu =   Bu ^((~Ba)&  Be );
+		Asa = Ba ^((~Be)&  Bi);
+		Ake = Be ^((~Bi)&  Bo);
+		Abi = Bi ^((~Bo)&  Bu);
+		Amo = Bo ^((~Bu)&  Ba);
+		Agu = Bu ^((~Ba)&  Be);
 
 		Bu = rol64((Ama^Da), 18);
 		Ba = rol64((Age^De), 1);
 		Be = rol64((Asi^Di), 6);
 		Bi = rol64((Ako^Do), 25);
 		Bo = rol64((Abu^Du), 8);
-		Ama =   Ba ^((~Be)&  Bi );
-		Age =   Be ^((~Bi)&  Bo );
-		Asi =   Bi ^((~Bo)&  Bu );
-		Ako =   Bo ^((~Bu)&  Ba );
-		Abu =   Bu ^((~Ba)&  Be );
+		Ama = Ba ^((~Be)&  Bi);
+		Age = Be ^((~Bi)&  Bo);
+		Asi = Bi ^((~Bo)&  Bu);
+		Ako = Bo ^((~Bu)&  Ba);
+		Abu = Bu ^((~Ba)&  Be);
 
 		Be = rol64((Aka^Da), 36);
 		Bi = rol64((Abe^De), 10);
 		Bo = rol64((Ami^Di), 15);
 		Bu = rol64((Ago^Do), 56);
 		Ba = rol64((Asu^Du), 27);
-		Aka =   Ba ^((~Be)&  Bi );
-		Abe =   Be ^((~Bi)&  Bo );
-		Ami =   Bi ^((~Bo)&  Bu );
-		Ago =   Bo ^((~Bu)&  Ba );
-		Asu =   Bu ^((~Ba)&  Be );
+		Aka = Ba ^((~Be)&  Bi);
+		Abe = Be ^((~Bi)&  Bo);
+		Ami = Bi ^((~Bo)&  Bu);
+		Ago = Bo ^((~Bu)&  Ba);
+		Asu = Bu ^((~Ba)&  Be);
 
 		Bo = rol64((Aga^Da), 41);
 		Bu = rol64((Ase^De), 2);
 		Ba = rol64((Aki^Di), 62);
 		Be = rol64((Abo^Do), 55);
 		Bi = rol64((Amu^Du), 39);
-		Aga =   Ba ^((~Be)&  Bi );
-		Ase =   Be ^((~Bi)&  Bo );
-		Aki =   Bi ^((~Bo)&  Bu );
-		Abo =   Bo ^((~Bu)&  Ba );
-		Amu =   Bu ^((~Ba)&  Be );
+		Aga = Ba ^((~Be)&  Bi);
+		Ase = Be ^((~Bi)&  Bo);
+		Aki = Bi ^((~Bo)&  Bu);
+		Abo = Bo ^((~Bu)&  Ba);
+		Amu = Bu ^((~Ba)&  Be);
 
 		Ca = Aba^Asa^Ama^Aka^Aga;
 		Ce = Ame^Ake^Age^Abe^Ase;
@@ -345,56 +345,56 @@ static void keccak_f(struct KeccakContext *ctx)
 		Bi = rol64((Asi^Di), 43);
 		Bo = rol64((Ago^Do), 21);
 		Bu = rol64((Amu^Du), 14);
-		Aba =   Ba ^((~Be)&  Bi );
-		Aba ^= RoundConstants64[i+2];
-		Ake =   Be ^((~Bi)&  Bo );
-		Asi =   Bi ^((~Bo)&  Bu );
-		Ago =   Bo ^((~Bu)&  Ba );
-		Amu =   Bu ^((~Ba)&  Be );
+		Aba = Ba ^((~Be)&  Bi);
+		Aba ^= RoundConstants64[i + 2];
+		Ake = Be ^((~Bi)&  Bo);
+		Asi = Bi ^((~Bo)&  Bu);
+		Ago = Bo ^((~Bu)&  Ba);
+		Amu = Bu ^((~Ba)&  Be);
 
 		Bi = rol64((Ama^Da), 3);
 		Bo = rol64((Abe^De), 45);
 		Bu = rol64((Aki^Di), 61);
 		Ba = rol64((Aso^Do), 28);
 		Be = rol64((Agu^Du), 20);
-		Ama =   Ba ^((~Be)&  Bi );
-		Abe =   Be ^((~Bi)&  Bo );
-		Aki =   Bi ^((~Bo)&  Bu );
-		Aso =   Bo ^((~Bu)&  Ba );
-		Agu =   Bu ^((~Ba)&  Be );
+		Ama = Ba ^((~Be)&  Bi);
+		Abe = Be ^((~Bi)&  Bo);
+		Aki = Bi ^((~Bo)&  Bu);
+		Aso = Bo ^((~Bu)&  Ba);
+		Agu = Bu ^((~Ba)&  Be);
 
 		Bu = rol64((Aga^Da), 18);
 		Ba = rol64((Ame^De), 1);
 		Be = rol64((Abi^Di), 6);
 		Bi = rol64((Ako^Do), 25);
 		Bo = rol64((Asu^Du), 8);
-		Aga =   Ba ^((~Be)&  Bi );
-		Ame =   Be ^((~Bi)&  Bo );
-		Abi =   Bi ^((~Bo)&  Bu );
-		Ako =   Bo ^((~Bu)&  Ba );
-		Asu =   Bu ^((~Ba)&  Be );
+		Aga = Ba ^((~Be)&  Bi);
+		Ame = Be ^((~Bi)&  Bo);
+		Abi = Bi ^((~Bo)&  Bu);
+		Ako = Bo ^((~Bu)&  Ba);
+		Asu = Bu ^((~Ba)&  Be);
 
 		Be = rol64((Asa^Da), 36);
 		Bi = rol64((Age^De), 10);
 		Bo = rol64((Ami^Di), 15);
 		Bu = rol64((Abo^Do), 56);
 		Ba = rol64((Aku^Du), 27);
-		Asa =   Ba ^((~Be)&  Bi );
-		Age =   Be ^((~Bi)&  Bo );
-		Ami =   Bi ^((~Bo)&  Bu );
-		Abo =   Bo ^((~Bu)&  Ba );
-		Aku =   Bu ^((~Ba)&  Be );
+		Asa = Ba ^((~Be)&  Bi);
+		Age = Be ^((~Bi)&  Bo);
+		Ami = Bi ^((~Bo)&  Bu);
+		Abo = Bo ^((~Bu)&  Ba);
+		Aku = Bu ^((~Ba)&  Be);
 
 		Bo = rol64((Aka^Da), 41);
 		Bu = rol64((Ase^De), 2);
 		Ba = rol64((Agi^Di), 62);
 		Be = rol64((Amo^Do), 55);
 		Bi = rol64((Abu^Du), 39);
-		Aka =   Ba ^((~Be)&  Bi );
-		Ase =   Be ^((~Bi)&  Bo );
-		Agi =   Bi ^((~Bo)&  Bu );
-		Amo =   Bo ^((~Bu)&  Ba );
-		Abu =   Bu ^((~Ba)&  Be );
+		Aka = Ba ^((~Be)&  Bi);
+		Ase = Be ^((~Bi)&  Bo);
+		Agi = Bi ^((~Bo)&  Bu);
+		Amo = Bo ^((~Bu)&  Ba);
+		Abu = Bu ^((~Ba)&  Be);
 
 		Ca = Aba^Ama^Aga^Asa^Aka;
 		Ce = Ake^Abe^Ame^Age^Ase;
@@ -412,56 +412,56 @@ static void keccak_f(struct KeccakContext *ctx)
 		Bi = rol64((Abi^Di), 43);
 		Bo = rol64((Abo^Do), 21);
 		Bu = rol64((Abu^Du), 14);
-		Aba =   Ba ^((~Be)&  Bi );
-		Aba ^= RoundConstants64[i+3];
-		Abe =   Be ^((~Bi)&  Bo );
-		Abi =   Bi ^((~Bo)&  Bu );
-		Abo =   Bo ^((~Bu)&  Ba );
-		Abu =   Bu ^((~Ba)&  Be );
+		Aba = Ba ^((~Be)&  Bi);
+		Aba ^= RoundConstants64[i + 3];
+		Abe = Be ^((~Bi)&  Bo);
+		Abi = Bi ^((~Bo)&  Bu);
+		Abo = Bo ^((~Bu)&  Ba);
+		Abu = Bu ^((~Ba)&  Be);
 
 		Bi = rol64((Aga^Da), 3);
 		Bo = rol64((Age^De), 45);
 		Bu = rol64((Agi^Di), 61);
 		Ba = rol64((Ago^Do), 28);
 		Be = rol64((Agu^Du), 20);
-		Aga =   Ba ^((~Be)&  Bi );
-		Age =   Be ^((~Bi)&  Bo );
-		Agi =   Bi ^((~Bo)&  Bu );
-		Ago =   Bo ^((~Bu)&  Ba );
-		Agu =   Bu ^((~Ba)&  Be );
+		Aga = Ba ^((~Be)&  Bi);
+		Age = Be ^((~Bi)&  Bo);
+		Agi = Bi ^((~Bo)&  Bu);
+		Ago = Bo ^((~Bu)&  Ba);
+		Agu = Bu ^((~Ba)&  Be);
 
 		Bu = rol64((Aka^Da), 18);
 		Ba = rol64((Ake^De), 1);
 		Be = rol64((Aki^Di), 6);
 		Bi = rol64((Ako^Do), 25);
 		Bo = rol64((Aku^Du), 8);
-		Aka =   Ba ^((~Be)&  Bi );
-		Ake =   Be ^((~Bi)&  Bo );
-		Aki =   Bi ^((~Bo)&  Bu );
-		Ako =   Bo ^((~Bu)&  Ba );
-		Aku =   Bu ^((~Ba)&  Be );
+		Aka = Ba ^((~Be)&  Bi);
+		Ake = Be ^((~Bi)&  Bo);
+		Aki = Bi ^((~Bo)&  Bu);
+		Ako = Bo ^((~Bu)&  Ba);
+		Aku = Bu ^((~Ba)&  Be);
 
 		Be = rol64((Ama^Da), 36);
 		Bi = rol64((Ame^De), 10);
 		Bo = rol64((Ami^Di), 15);
 		Bu = rol64((Amo^Do), 56);
 		Ba = rol64((Amu^Du), 27);
-		Ama =   Ba ^((~Be)&  Bi );
-		Ame =   Be ^((~Bi)&  Bo );
-		Ami =   Bi ^((~Bo)&  Bu );
-		Amo =   Bo ^((~Bu)&  Ba );
-		Amu =   Bu ^((~Ba)&  Be );
+		Ama = Ba ^((~Be)&  Bi);
+		Ame = Be ^((~Bi)&  Bo);
+		Ami = Bi ^((~Bo)&  Bu);
+		Amo = Bo ^((~Bu)&  Ba);
+		Amu = Bu ^((~Ba)&  Be);
 
 		Bo = rol64((Asa^Da), 41);
 		Bu = rol64((Ase^De), 2);
 		Ba = rol64((Asi^Di), 62);
 		Be = rol64((Aso^Do), 55);
 		Bi = rol64((Asu^Du), 39);
-		Asa =   Ba ^((~Be)&  Bi );
-		Ase =   Be ^((~Bi)&  Bo );
-		Asi =   Bi ^((~Bo)&  Bu );
-		Aso =   Bo ^((~Bu)&  Ba );
-		Asu =   Bu ^((~Ba)&  Be );
+		Asa = Ba ^((~Be)&  Bi);
+		Ase = Be ^((~Bi)&  Bo);
+		Asi = Bi ^((~Bo)&  Bu);
+		Aso = Bo ^((~Bu)&  Ba);
+		Asu = Bu ^((~Ba)&  Be);
 	}
 }
 
@@ -513,22 +513,22 @@ static const uint32_t RoundConstants32[2*KECCAK_ROUNDS] = {
 	Cz = Abu1^Agu1^Aku1^Amu1^Asu1; \
 	Du0 = Abe0^Age0^Ake0^Ame0^Ase0; \
 	Da1 = Cz^Du0; \
-	\
+        \
 	Cw = Abi0^Agi0^Aki0^Ami0^Asi0; \
 	Do0 = Cw^rol32(Cz, 1); \
 	Cy = Abi1^Agi1^Aki1^Ami1^Asi1; \
 	Do1 = Cy^Cx; \
-	\
+        \
 	Cx = Aba0^Aga0^Aka0^Ama0^Asa0; \
 	De0 = Cx^rol32(Cy, 1); \
 	Cz = Aba1^Aga1^Aka1^Ama1^Asa1; \
 	De1 = Cz^Cw; \
-	\
+        \
 	Cy = Abo1^Ago1^Ako1^Amo1^Aso1; \
 	Di0 = Du0^rol32(Cy, 1); \
 	Cw = Abo0^Ago0^Ako0^Amo0^Aso0; \
 	Di1 = Du1^Cw; \
-	\
+        \
 	Du0 = Cw^rol32(Cz, 1); \
 	Du1 = Cy^Cx;
 
@@ -539,22 +539,22 @@ static const uint32_t RoundConstants32[2*KECCAK_ROUNDS] = {
 	Cz = Asu1^Agu1^Amu1^Abu0^Aku0; \
 	Du0 = Age0^Ame1^Abe1^Ake0^Ase0; \
 	Da1 = Cz^Du0; \
-	\
+        \
 	Cw = Aki1^Asi1^Agi0^Ami1^Abi0; \
 	Do0 = Cw^rol32(Cz, 1); \
 	Cy = Aki0^Asi0^Agi1^Ami0^Abi1; \
 	Do1 = Cy^Cx; \
-	\
+        \
 	Cx = Aba0^Aka1^Asa0^Aga0^Ama1; \
 	De0 = Cx^rol32(Cy, 1); \
 	Cz = Aba1^Aka0^Asa1^Aga1^Ama0; \
 	De1 = Cz^Cw; \
-	\
+        \
 	Cy = Amo0^Abo1^Ako0^Aso1^Ago0; \
 	Di0 = Du0^rol32(Cy, 1); \
 	Cw = Amo1^Abo0^Ako1^Aso0^Ago1; \
 	Di1 = Du1^Cw; \
-	\
+        \
 	Du0 = Cw^rol32(Cz, 1); \
 	Du1 = Cy^Cx;
 
@@ -565,22 +565,22 @@ static const uint32_t RoundConstants32[2*KECCAK_ROUNDS] = {
 	Cz = Aku0^Agu1^Abu0^Asu0^Amu0; \
 	Du0 = Ame1^Ake1^Age1^Abe1^Ase0; \
 	Da1 = Cz^Du0; \
-	\
+        \
 	Cw = Agi1^Abi1^Asi1^Ami0^Aki1; \
 	Do0 = Cw^rol32(Cz, 1); \
 	Cy = Agi0^Abi0^Asi0^Ami1^Aki0; \
 	Do1 = Cy^Cx; \
-	\
+        \
 	Cx = Aba0^Asa1^Ama1^Aka1^Aga1; \
 	De0 = Cx^rol32(Cy, 1); \
 	Cz = Aba1^Asa0^Ama0^Aka0^Aga0; \
 	De1 = Cz^Cw; \
-	\
+        \
 	Cy = Aso0^Amo0^Ako1^Ago0^Abo0; \
 	Di0 = Du0^rol32(Cy, 1); \
 	Cw = Aso1^Amo1^Ako0^Ago1^Abo1; \
 	Di1 = Du1^Cw; \
-	\
+        \
 	Du0 = Cw^rol32(Cz, 1); \
 	Du1 = Cy^Cx;
 
@@ -591,22 +591,22 @@ static const uint32_t RoundConstants32[2*KECCAK_ROUNDS] = {
 	Cz = Amu0^Agu1^Asu0^Aku1^Abu1; \
 	Du0 = Ake1^Abe0^Ame0^Age1^Ase0; \
 	Da1 = Cz^Du0; \
-	\
+        \
 	Cw = Asi0^Aki0^Abi1^Ami1^Agi1; \
 	Do0 = Cw^rol32(Cz, 1); \
 	Cy = Asi1^Aki1^Abi0^Ami0^Agi0; \
 	Do1 = Cy^Cx; \
-	\
+        \
 	Cx = Aba0^Ama0^Aga1^Asa1^Aka0; \
 	De0 = Cx^rol32(Cy, 1); \
 	Cz = Aba1^Ama1^Aga0^Asa0^Aka1; \
 	De1 = Cz^Cw; \
-	\
+        \
 	Cy = Ago1^Aso0^Ako0^Abo0^Amo1; \
 	Di0 = Du0^rol32(Cy, 1); \
 	Cw = Ago0^Aso1^Ako1^Abo1^Amo0; \
 	Di1 = Du1^Cw; \
-	\
+        \
 	Du0 = Cw^rol32(Cz, 1); \
 	Du1 = Cy^Cx;
 
@@ -625,16 +625,16 @@ static void keccak_f(struct KeccakContext *ctx)
 #define Bo Co0
 #define Bu Cu0
 
-#define Aba0 state[ 0]
-#define Aba1 state[ 1]
-#define Abe0 state[ 2]
-#define Abe1 state[ 3]
-#define Abi0 state[ 4]
-#define Abi1 state[ 5]
-#define Abo0 state[ 6]
-#define Abo1 state[ 7]
-#define Abu0 state[ 8]
-#define Abu1 state[ 9]
+#define Aba0 state[0]
+#define Aba1 state[1]
+#define Abe0 state[2]
+#define Abe1 state[3]
+#define Abi0 state[4]
+#define Abi1 state[5]
+#define Abo0 state[6]
+#define Abo1 state[7]
+#define Abu0 state[8]
+#define Abu1 state[9]
 #define Aga0 state[10]
 #define Aga1 state[11]
 #define Age0 state[12]
@@ -685,112 +685,112 @@ static void keccak_f(struct KeccakContext *ctx)
 		Bi = rol32((Aki1^Di1), 22);
 		Bo = rol32((Amo1^Do1), 11);
 		Bu = rol32((Asu0^Du0), 7);
-		Aba0 =   Ba ^((~Be)&  Bi );
-		Aba0 ^= RoundConstants32[i+0];
-		Age0 =   Be ^((~Bi)&  Bo );
-		Aki1 =   Bi ^((~Bo)&  Bu );
-		Amo1 =   Bo ^((~Bu)&  Ba );
-		Asu0 =   Bu ^((~Ba)&  Be );
+		Aba0 = Ba ^((~Be)&  Bi);
+		Aba0 ^= RoundConstants32[i + 0];
+		Age0 = Be ^((~Bi)&  Bo);
+		Aki1 = Bi ^((~Bo)&  Bu);
+		Amo1 = Bo ^((~Bu)&  Ba);
+		Asu0 = Bu ^((~Ba)&  Be);
 
 		Ba = (Aba1^Da1);
 		Be = rol32((Age1^De1), 22);
 		Bi = rol32((Aki0^Di0), 21);
 		Bo = rol32((Amo0^Do0), 10);
 		Bu = rol32((Asu1^Du1), 7);
-		Aba1 =   Ba ^((~Be)&  Bi );
-		Aba1 ^= RoundConstants32[i+1];
-		Age1 =   Be ^((~Bi)&  Bo );
-		Aki0 =   Bi ^((~Bo)&  Bu );
-		Amo0 =   Bo ^((~Bu)&  Ba );
-		Asu1 =   Bu ^((~Ba)&  Be );
+		Aba1 = Ba ^((~Be)&  Bi);
+		Aba1 ^= RoundConstants32[i + 1];
+		Age1 = Be ^((~Bi)&  Bo);
+		Aki0 = Bi ^((~Bo)&  Bu);
+		Amo0 = Bo ^((~Bu)&  Ba);
+		Asu1 = Bu ^((~Ba)&  Be);
 
 		Bi = rol32((Aka1^Da1), 2);
 		Bo = rol32((Ame1^De1), 23);
 		Bu = rol32((Asi1^Di1), 31);
 		Ba = rol32((Abo0^Do0), 14);
 		Be = rol32((Agu0^Du0), 10);
-		Aka1 =   Ba ^((~Be)&  Bi );
-		Ame1 =   Be ^((~Bi)&  Bo );
-		Asi1 =   Bi ^((~Bo)&  Bu );
-		Abo0 =   Bo ^((~Bu)&  Ba );
-		Agu0 =   Bu ^((~Ba)&  Be );
+		Aka1 = Ba ^((~Be)&  Bi);
+		Ame1 = Be ^((~Bi)&  Bo);
+		Asi1 = Bi ^((~Bo)&  Bu);
+		Abo0 = Bo ^((~Bu)&  Ba);
+		Agu0 = Bu ^((~Ba)&  Be);
 
 		Bi = rol32((Aka0^Da0), 1);
 		Bo = rol32((Ame0^De0), 22);
 		Bu = rol32((Asi0^Di0), 30);
 		Ba = rol32((Abo1^Do1), 14);
 		Be = rol32((Agu1^Du1), 10);
-		Aka0 =   Ba ^((~Be)&  Bi );
-		Ame0 =   Be ^((~Bi)&  Bo );
-		Asi0 =   Bi ^((~Bo)&  Bu );
-		Abo1 =   Bo ^((~Bu)&  Ba );
-		Agu1 =   Bu ^((~Ba)&  Be );
+		Aka0 = Ba ^((~Be)&  Bi);
+		Ame0 = Be ^((~Bi)&  Bo);
+		Asi0 = Bi ^((~Bo)&  Bu);
+		Abo1 = Bo ^((~Bu)&  Ba);
+		Agu1 = Bu ^((~Ba)&  Be);
 
 		Bu = rol32((Asa0^Da0), 9);
 		Ba = rol32((Abe1^De1), 1);
 		Be = rol32((Agi0^Di0), 3);
 		Bi = rol32((Ako1^Do1), 13);
 		Bo = rol32((Amu0^Du0), 4);
-		Asa0 =   Ba ^((~Be)&  Bi );
-		Abe1 =   Be ^((~Bi)&  Bo );
-		Agi0 =   Bi ^((~Bo)&  Bu );
-		Ako1 =   Bo ^((~Bu)&  Ba );
-		Amu0 =   Bu ^((~Ba)&  Be );
+		Asa0 = Ba ^((~Be)&  Bi);
+		Abe1 = Be ^((~Bi)&  Bo);
+		Agi0 = Bi ^((~Bo)&  Bu);
+		Ako1 = Bo ^((~Bu)&  Ba);
+		Amu0 = Bu ^((~Ba)&  Be);
 
 		Bu = rol32((Asa1^Da1), 9);
 		Ba = (Abe0^De0);
 		Be = rol32((Agi1^Di1), 3);
 		Bi = rol32((Ako0^Do0), 12);
 		Bo = rol32((Amu1^Du1), 4);
-		Asa1 =   Ba ^((~Be)&  Bi );
-		Abe0 =   Be ^((~Bi)&  Bo );
-		Agi1 =   Bi ^((~Bo)&  Bu );
-		Ako0 =   Bo ^((~Bu)&  Ba );
-		Amu1 =   Bu ^((~Ba)&  Be );
+		Asa1 = Ba ^((~Be)&  Bi);
+		Abe0 = Be ^((~Bi)&  Bo);
+		Agi1 = Bi ^((~Bo)&  Bu);
+		Ako0 = Bo ^((~Bu)&  Ba);
+		Amu1 = Bu ^((~Ba)&  Be);
 
 		Be = rol32((Aga0^Da0), 18);
 		Bi = rol32((Ake0^De0), 5);
 		Bo = rol32((Ami1^Di1), 8);
 		Bu = rol32((Aso0^Do0), 28);
 		Ba = rol32((Abu1^Du1), 14);
-		Aga0 =   Ba ^((~Be)&  Bi );
-		Ake0 =   Be ^((~Bi)&  Bo );
-		Ami1 =   Bi ^((~Bo)&  Bu );
-		Aso0 =   Bo ^((~Bu)&  Ba );
-		Abu1 =   Bu ^((~Ba)&  Be );
+		Aga0 = Ba ^((~Be)&  Bi);
+		Ake0 = Be ^((~Bi)&  Bo);
+		Ami1 = Bi ^((~Bo)&  Bu);
+		Aso0 = Bo ^((~Bu)&  Ba);
+		Abu1 = Bu ^((~Ba)&  Be);
 
 		Be = rol32((Aga1^Da1), 18);
 		Bi = rol32((Ake1^De1), 5);
 		Bo = rol32((Ami0^Di0), 7);
 		Bu = rol32((Aso1^Do1), 28);
 		Ba = rol32((Abu0^Du0), 13);
-		Aga1 =   Ba ^((~Be)&  Bi );
-		Ake1 =   Be ^((~Bi)&  Bo );
-		Ami0 =   Bi ^((~Bo)&  Bu );
-		Aso1 =   Bo ^((~Bu)&  Ba );
-		Abu0 =   Bu ^((~Ba)&  Be );
+		Aga1 = Ba ^((~Be)&  Bi);
+		Ake1 = Be ^((~Bi)&  Bo);
+		Ami0 = Bi ^((~Bo)&  Bu);
+		Aso1 = Bo ^((~Bu)&  Ba);
+		Abu0 = Bu ^((~Ba)&  Be);
 
 		Bo = rol32((Ama1^Da1), 21);
 		Bu = rol32((Ase0^De0), 1);
 		Ba = rol32((Abi0^Di0), 31);
 		Be = rol32((Ago1^Do1), 28);
 		Bi = rol32((Aku1^Du1), 20);
-		Ama1 =   Ba ^((~Be)&  Bi );
-		Ase0 =   Be ^((~Bi)&  Bo );
-		Abi0 =   Bi ^((~Bo)&  Bu );
-		Ago1 =   Bo ^((~Bu)&  Ba );
-		Aku1 =   Bu ^((~Ba)&  Be );
+		Ama1 = Ba ^((~Be)&  Bi);
+		Ase0 = Be ^((~Bi)&  Bo);
+		Abi0 = Bi ^((~Bo)&  Bu);
+		Ago1 = Bo ^((~Bu)&  Ba);
+		Aku1 = Bu ^((~Ba)&  Be);
 
 		Bo = rol32((Ama0^Da0), 20);
 		Bu = rol32((Ase1^De1), 1);
 		Ba = rol32((Abi1^Di1), 31);
 		Be = rol32((Ago0^Do0), 27);
 		Bi = rol32((Aku0^Du0), 19);
-		Ama0 =   Ba ^((~Be)&  Bi );
-		Ase1 =   Be ^((~Bi)&  Bo );
-		Abi1 =   Bi ^((~Bo)&  Bu );
-		Ago0 =   Bo ^((~Bu)&  Ba );
-		Aku0 =   Bu ^((~Ba)&  Be );
+		Ama0 = Ba ^((~Be)&  Bi);
+		Ase1 = Be ^((~Bi)&  Bo);
+		Abi1 = Bi ^((~Bo)&  Bu);
+		Ago0 = Bo ^((~Bu)&  Ba);
+		Aku0 = Bu ^((~Ba)&  Be);
 
 		KeccakAtoD_round1();
 
@@ -799,112 +799,112 @@ static void keccak_f(struct KeccakContext *ctx)
 		Bi = rol32((Agi1^Di1), 22);
 		Bo = rol32((Aso1^Do1), 11);
 		Bu = rol32((Aku1^Du0), 7);
-		Aba0 =   Ba ^((~Be)&  Bi );
-		Aba0 ^= RoundConstants32[i+2];
-		Ame1 =   Be ^((~Bi)&  Bo );
-		Agi1 =   Bi ^((~Bo)&  Bu );
-		Aso1 =   Bo ^((~Bu)&  Ba );
-		Aku1 =   Bu ^((~Ba)&  Be );
+		Aba0 = Ba ^((~Be)&  Bi);
+		Aba0 ^= RoundConstants32[i + 2];
+		Ame1 = Be ^((~Bi)&  Bo);
+		Agi1 = Bi ^((~Bo)&  Bu);
+		Aso1 = Bo ^((~Bu)&  Ba);
+		Aku1 = Bu ^((~Ba)&  Be);
 
 		Ba = (Aba1^Da1);
 		Be = rol32((Ame0^De1), 22);
 		Bi = rol32((Agi0^Di0), 21);
 		Bo = rol32((Aso0^Do0), 10);
 		Bu = rol32((Aku0^Du1), 7);
-		Aba1 =   Ba ^((~Be)&  Bi );
-		Aba1 ^= RoundConstants32[i+3];
-		Ame0 =   Be ^((~Bi)&  Bo );
-		Agi0 =   Bi ^((~Bo)&  Bu );
-		Aso0 =   Bo ^((~Bu)&  Ba );
-		Aku0 =   Bu ^((~Ba)&  Be );
+		Aba1 = Ba ^((~Be)&  Bi);
+		Aba1 ^= RoundConstants32[i + 3];
+		Ame0 = Be ^((~Bi)&  Bo);
+		Agi0 = Bi ^((~Bo)&  Bu);
+		Aso0 = Bo ^((~Bu)&  Ba);
+		Aku0 = Bu ^((~Ba)&  Be);
 
 		Bi = rol32((Asa1^Da1), 2);
 		Bo = rol32((Ake1^De1), 23);
 		Bu = rol32((Abi1^Di1), 31);
 		Ba = rol32((Amo1^Do0), 14);
 		Be = rol32((Agu0^Du0), 10);
-		Asa1 =   Ba ^((~Be)&  Bi );
-		Ake1 =   Be ^((~Bi)&  Bo );
-		Abi1 =   Bi ^((~Bo)&  Bu );
-		Amo1 =   Bo ^((~Bu)&  Ba );
-		Agu0 =   Bu ^((~Ba)&  Be );
+		Asa1 = Ba ^((~Be)&  Bi);
+		Ake1 = Be ^((~Bi)&  Bo);
+		Abi1 = Bi ^((~Bo)&  Bu);
+		Amo1 = Bo ^((~Bu)&  Ba);
+		Agu0 = Bu ^((~Ba)&  Be);
 
 		Bi = rol32((Asa0^Da0), 1);
 		Bo = rol32((Ake0^De0), 22);
 		Bu = rol32((Abi0^Di0), 30);
 		Ba = rol32((Amo0^Do1), 14);
 		Be = rol32((Agu1^Du1), 10);
-		Asa0 =   Ba ^((~Be)&  Bi );
-		Ake0 =   Be ^((~Bi)&  Bo );
-		Abi0 =   Bi ^((~Bo)&  Bu );
-		Amo0 =   Bo ^((~Bu)&  Ba );
-		Agu1 =   Bu ^((~Ba)&  Be );
+		Asa0 = Ba ^((~Be)&  Bi);
+		Ake0 = Be ^((~Bi)&  Bo);
+		Abi0 = Bi ^((~Bo)&  Bu);
+		Amo0 = Bo ^((~Bu)&  Ba);
+		Agu1 = Bu ^((~Ba)&  Be);
 
 		Bu = rol32((Ama1^Da0), 9);
 		Ba = rol32((Age1^De1), 1);
 		Be = rol32((Asi1^Di0), 3);
 		Bi = rol32((Ako0^Do1), 13);
 		Bo = rol32((Abu1^Du0), 4);
-		Ama1 =   Ba ^((~Be)&  Bi );
-		Age1 =   Be ^((~Bi)&  Bo );
-		Asi1 =   Bi ^((~Bo)&  Bu );
-		Ako0 =   Bo ^((~Bu)&  Ba );
-		Abu1 =   Bu ^((~Ba)&  Be );
+		Ama1 = Ba ^((~Be)&  Bi);
+		Age1 = Be ^((~Bi)&  Bo);
+		Asi1 = Bi ^((~Bo)&  Bu);
+		Ako0 = Bo ^((~Bu)&  Ba);
+		Abu1 = Bu ^((~Ba)&  Be);
 
 		Bu = rol32((Ama0^Da1), 9);
 		Ba = (Age0^De0);
 		Be = rol32((Asi0^Di1), 3);
 		Bi = rol32((Ako1^Do0), 12);
 		Bo = rol32((Abu0^Du1), 4);
-		Ama0 =   Ba ^((~Be)&  Bi );
-		Age0 =   Be ^((~Bi)&  Bo );
-		Asi0 =   Bi ^((~Bo)&  Bu );
-		Ako1 =   Bo ^((~Bu)&  Ba );
-		Abu0 =   Bu ^((~Ba)&  Be );
+		Ama0 = Ba ^((~Be)&  Bi);
+		Age0 = Be ^((~Bi)&  Bo);
+		Asi0 = Bi ^((~Bo)&  Bu);
+		Ako1 = Bo ^((~Bu)&  Ba);
+		Abu0 = Bu ^((~Ba)&  Be);
 
 		Be = rol32((Aka1^Da0), 18);
 		Bi = rol32((Abe1^De0), 5);
 		Bo = rol32((Ami0^Di1), 8);
 		Bu = rol32((Ago1^Do0), 28);
 		Ba = rol32((Asu1^Du1), 14);
-		Aka1 =   Ba ^((~Be)&  Bi );
-		Abe1 =   Be ^((~Bi)&  Bo );
-		Ami0 =   Bi ^((~Bo)&  Bu );
-		Ago1 =   Bo ^((~Bu)&  Ba );
-		Asu1 =   Bu ^((~Ba)&  Be );
+		Aka1 = Ba ^((~Be)&  Bi);
+		Abe1 = Be ^((~Bi)&  Bo);
+		Ami0 = Bi ^((~Bo)&  Bu);
+		Ago1 = Bo ^((~Bu)&  Ba);
+		Asu1 = Bu ^((~Ba)&  Be);
 
 		Be = rol32((Aka0^Da1), 18);
 		Bi = rol32((Abe0^De1), 5);
 		Bo = rol32((Ami1^Di0), 7);
 		Bu = rol32((Ago0^Do1), 28);
 		Ba = rol32((Asu0^Du0), 13);
-		Aka0 =   Ba ^((~Be)&  Bi );
-		Abe0 =   Be ^((~Bi)&  Bo );
-		Ami1 =   Bi ^((~Bo)&  Bu );
-		Ago0 =   Bo ^((~Bu)&  Ba );
-		Asu0 =   Bu ^((~Ba)&  Be );
+		Aka0 = Ba ^((~Be)&  Bi);
+		Abe0 = Be ^((~Bi)&  Bo);
+		Ami1 = Bi ^((~Bo)&  Bu);
+		Ago0 = Bo ^((~Bu)&  Ba);
+		Asu0 = Bu ^((~Ba)&  Be);
 
 		Bo = rol32((Aga1^Da1), 21);
 		Bu = rol32((Ase0^De0), 1);
 		Ba = rol32((Aki1^Di0), 31);
 		Be = rol32((Abo1^Do1), 28);
 		Bi = rol32((Amu1^Du1), 20);
-		Aga1 =   Ba ^((~Be)&  Bi );
-		Ase0 =   Be ^((~Bi)&  Bo );
-		Aki1 =   Bi ^((~Bo)&  Bu );
-		Abo1 =   Bo ^((~Bu)&  Ba );
-		Amu1 =   Bu ^((~Ba)&  Be );
+		Aga1 = Ba ^((~Be)&  Bi);
+		Ase0 = Be ^((~Bi)&  Bo);
+		Aki1 = Bi ^((~Bo)&  Bu);
+		Abo1 = Bo ^((~Bu)&  Ba);
+		Amu1 = Bu ^((~Ba)&  Be);
 
 		Bo = rol32((Aga0^Da0), 20);
 		Bu = rol32((Ase1^De1), 1);
 		Ba = rol32((Aki0^Di1), 31);
 		Be = rol32((Abo0^Do0), 27);
 		Bi = rol32((Amu0^Du0), 19);
-		Aga0 =   Ba ^((~Be)&  Bi );
-		Ase1 =   Be ^((~Bi)&  Bo );
-		Aki0 =   Bi ^((~Bo)&  Bu );
-		Abo0 =   Bo ^((~Bu)&  Ba );
-		Amu0 =   Bu ^((~Ba)&  Be );
+		Aga0 = Ba ^((~Be)&  Bi);
+		Ase1 = Be ^((~Bi)&  Bo);
+		Aki0 = Bi ^((~Bo)&  Bu);
+		Abo0 = Bo ^((~Bu)&  Ba);
+		Amu0 = Bu ^((~Ba)&  Be);
 
 		KeccakAtoD_round2();
 
@@ -913,112 +913,112 @@ static void keccak_f(struct KeccakContext *ctx)
 		Bi = rol32((Asi0^Di1), 22);
 		Bo = rol32((Ago0^Do1), 11);
 		Bu = rol32((Amu1^Du0), 7);
-		Aba0 =   Ba ^((~Be)&  Bi );
-		Aba0 ^= RoundConstants32[i+4];
-		Ake1 =   Be ^((~Bi)&  Bo );
-		Asi0 =   Bi ^((~Bo)&  Bu );
-		Ago0 =   Bo ^((~Bu)&  Ba );
-		Amu1 =   Bu ^((~Ba)&  Be );
+		Aba0 = Ba ^((~Be)&  Bi);
+		Aba0 ^= RoundConstants32[i + 4];
+		Ake1 = Be ^((~Bi)&  Bo);
+		Asi0 = Bi ^((~Bo)&  Bu);
+		Ago0 = Bo ^((~Bu)&  Ba);
+		Amu1 = Bu ^((~Ba)&  Be);
 
 		Ba = (Aba1^Da1);
 		Be = rol32((Ake0^De1), 22);
 		Bi = rol32((Asi1^Di0), 21);
 		Bo = rol32((Ago1^Do0), 10);
 		Bu = rol32((Amu0^Du1), 7);
-		Aba1 =   Ba ^((~Be)&  Bi );
-		Aba1 ^= RoundConstants32[i+5];
-		Ake0 =   Be ^((~Bi)&  Bo );
-		Asi1 =   Bi ^((~Bo)&  Bu );
-		Ago1 =   Bo ^((~Bu)&  Ba );
-		Amu0 =   Bu ^((~Ba)&  Be );
+		Aba1 = Ba ^((~Be)&  Bi);
+		Aba1 ^= RoundConstants32[i + 5];
+		Ake0 = Be ^((~Bi)&  Bo);
+		Asi1 = Bi ^((~Bo)&  Bu);
+		Ago1 = Bo ^((~Bu)&  Ba);
+		Amu0 = Bu ^((~Ba)&  Be);
 
 		Bi = rol32((Ama0^Da1), 2);
 		Bo = rol32((Abe0^De1), 23);
 		Bu = rol32((Aki0^Di1), 31);
 		Ba = rol32((Aso1^Do0), 14);
 		Be = rol32((Agu0^Du0), 10);
-		Ama0 =   Ba ^((~Be)&  Bi );
-		Abe0 =   Be ^((~Bi)&  Bo );
-		Aki0 =   Bi ^((~Bo)&  Bu );
-		Aso1 =   Bo ^((~Bu)&  Ba );
-		Agu0 =   Bu ^((~Ba)&  Be );
+		Ama0 = Ba ^((~Be)&  Bi);
+		Abe0 = Be ^((~Bi)&  Bo);
+		Aki0 = Bi ^((~Bo)&  Bu);
+		Aso1 = Bo ^((~Bu)&  Ba);
+		Agu0 = Bu ^((~Ba)&  Be);
 
 		Bi = rol32((Ama1^Da0), 1);
 		Bo = rol32((Abe1^De0), 22);
 		Bu = rol32((Aki1^Di0), 30);
 		Ba = rol32((Aso0^Do1), 14);
 		Be = rol32((Agu1^Du1), 10);
-		Ama1 =   Ba ^((~Be)&  Bi );
-		Abe1 =   Be ^((~Bi)&  Bo );
-		Aki1 =   Bi ^((~Bo)&  Bu );
-		Aso0 =   Bo ^((~Bu)&  Ba );
-		Agu1 =   Bu ^((~Ba)&  Be );
+		Ama1 = Ba ^((~Be)&  Bi);
+		Abe1 = Be ^((~Bi)&  Bo);
+		Aki1 = Bi ^((~Bo)&  Bu);
+		Aso0 = Bo ^((~Bu)&  Ba);
+		Agu1 = Bu ^((~Ba)&  Be);
 
 		Bu = rol32((Aga1^Da0), 9);
 		Ba = rol32((Ame0^De1), 1);
 		Be = rol32((Abi1^Di0), 3);
 		Bi = rol32((Ako1^Do1), 13);
 		Bo = rol32((Asu1^Du0), 4);
-		Aga1 =   Ba ^((~Be)&  Bi );
-		Ame0 =   Be ^((~Bi)&  Bo );
-		Abi1 =   Bi ^((~Bo)&  Bu );
-		Ako1 =   Bo ^((~Bu)&  Ba );
-		Asu1 =   Bu ^((~Ba)&  Be );
+		Aga1 = Ba ^((~Be)&  Bi);
+		Ame0 = Be ^((~Bi)&  Bo);
+		Abi1 = Bi ^((~Bo)&  Bu);
+		Ako1 = Bo ^((~Bu)&  Ba);
+		Asu1 = Bu ^((~Ba)&  Be);
 
 		Bu = rol32((Aga0^Da1), 9);
 		Ba = (Ame1^De0);
 		Be = rol32((Abi0^Di1), 3);
 		Bi = rol32((Ako0^Do0), 12);
 		Bo = rol32((Asu0^Du1), 4);
-		Aga0 =   Ba ^((~Be)&  Bi );
-		Ame1 =   Be ^((~Bi)&  Bo );
-		Abi0 =   Bi ^((~Bo)&  Bu );
-		Ako0 =   Bo ^((~Bu)&  Ba );
-		Asu0 =   Bu ^((~Ba)&  Be );
+		Aga0 = Ba ^((~Be)&  Bi);
+		Ame1 = Be ^((~Bi)&  Bo);
+		Abi0 = Bi ^((~Bo)&  Bu);
+		Ako0 = Bo ^((~Bu)&  Ba);
+		Asu0 = Bu ^((~Ba)&  Be);
 
 		Be = rol32((Asa1^Da0), 18);
 		Bi = rol32((Age1^De0), 5);
 		Bo = rol32((Ami1^Di1), 8);
 		Bu = rol32((Abo1^Do0), 28);
 		Ba = rol32((Aku0^Du1), 14);
-		Asa1 =   Ba ^((~Be)&  Bi );
-		Age1 =   Be ^((~Bi)&  Bo );
-		Ami1 =   Bi ^((~Bo)&  Bu );
-		Abo1 =   Bo ^((~Bu)&  Ba );
-		Aku0 =   Bu ^((~Ba)&  Be );
+		Asa1 = Ba ^((~Be)&  Bi);
+		Age1 = Be ^((~Bi)&  Bo);
+		Ami1 = Bi ^((~Bo)&  Bu);
+		Abo1 = Bo ^((~Bu)&  Ba);
+		Aku0 = Bu ^((~Ba)&  Be);
 
 		Be = rol32((Asa0^Da1), 18);
 		Bi = rol32((Age0^De1), 5);
 		Bo = rol32((Ami0^Di0), 7);
 		Bu = rol32((Abo0^Do1), 28);
 		Ba = rol32((Aku1^Du0), 13);
-		Asa0 =   Ba ^((~Be)&  Bi );
-		Age0 =   Be ^((~Bi)&  Bo );
-		Ami0 =   Bi ^((~Bo)&  Bu );
-		Abo0 =   Bo ^((~Bu)&  Ba );
-		Aku1 =   Bu ^((~Ba)&  Be );
+		Asa0 = Ba ^((~Be)&  Bi);
+		Age0 = Be ^((~Bi)&  Bo);
+		Ami0 = Bi ^((~Bo)&  Bu);
+		Abo0 = Bo ^((~Bu)&  Ba);
+		Aku1 = Bu ^((~Ba)&  Be);
 
 		Bo = rol32((Aka0^Da1), 21);
 		Bu = rol32((Ase0^De0), 1);
 		Ba = rol32((Agi1^Di0), 31);
 		Be = rol32((Amo0^Do1), 28);
 		Bi = rol32((Abu0^Du1), 20);
-		Aka0 =   Ba ^((~Be)&  Bi );
-		Ase0 =   Be ^((~Bi)&  Bo );
-		Agi1 =   Bi ^((~Bo)&  Bu );
-		Amo0 =   Bo ^((~Bu)&  Ba );
-		Abu0 =   Bu ^((~Ba)&  Be );
+		Aka0 = Ba ^((~Be)&  Bi);
+		Ase0 = Be ^((~Bi)&  Bo);
+		Agi1 = Bi ^((~Bo)&  Bu);
+		Amo0 = Bo ^((~Bu)&  Ba);
+		Abu0 = Bu ^((~Ba)&  Be);
 
 		Bo = rol32((Aka1^Da0), 20);
 		Bu = rol32((Ase1^De1), 1);
 		Ba = rol32((Agi0^Di1), 31);
 		Be = rol32((Amo1^Do0), 27);
 		Bi = rol32((Abu1^Du0), 19);
-		Aka1 =   Ba ^((~Be)&  Bi );
-		Ase1 =   Be ^((~Bi)&  Bo );
-		Agi0 =   Bi ^((~Bo)&  Bu );
-		Amo1 =   Bo ^((~Bu)&  Ba );
-		Abu1 =   Bu ^((~Ba)&  Be );
+		Aka1 = Ba ^((~Be)&  Bi);
+		Ase1 = Be ^((~Bi)&  Bo);
+		Agi0 = Bi ^((~Bo)&  Bu);
+		Amo1 = Bo ^((~Bu)&  Ba);
+		Abu1 = Bu ^((~Ba)&  Be);
 
 		KeccakAtoD_round3();
 
@@ -1027,112 +1027,112 @@ static void keccak_f(struct KeccakContext *ctx)
 		Bi = rol32((Abi0^Di1), 22);
 		Bo = rol32((Abo0^Do1), 11);
 		Bu = rol32((Abu0^Du0), 7);
-		Aba0 =   Ba ^((~Be)&  Bi );
-		Aba0 ^= RoundConstants32[i+6];
-		Abe0 =   Be ^((~Bi)&  Bo );
-		Abi0 =   Bi ^((~Bo)&  Bu );
-		Abo0 =   Bo ^((~Bu)&  Ba );
-		Abu0 =   Bu ^((~Ba)&  Be );
+		Aba0 = Ba ^((~Be)&  Bi);
+		Aba0 ^= RoundConstants32[i + 6];
+		Abe0 = Be ^((~Bi)&  Bo);
+		Abi0 = Bi ^((~Bo)&  Bu);
+		Abo0 = Bo ^((~Bu)&  Ba);
+		Abu0 = Bu ^((~Ba)&  Be);
 
 		Ba = (Aba1^Da1);
 		Be = rol32((Abe1^De1), 22);
 		Bi = rol32((Abi1^Di0), 21);
 		Bo = rol32((Abo1^Do0), 10);
 		Bu = rol32((Abu1^Du1), 7);
-		Aba1 =   Ba ^((~Be)&  Bi );
-		Aba1 ^= RoundConstants32[i+7];
-		Abe1 =   Be ^((~Bi)&  Bo );
-		Abi1 =   Bi ^((~Bo)&  Bu );
-		Abo1 =   Bo ^((~Bu)&  Ba );
-		Abu1 =   Bu ^((~Ba)&  Be );
+		Aba1 = Ba ^((~Be)&  Bi);
+		Aba1 ^= RoundConstants32[i + 7];
+		Abe1 = Be ^((~Bi)&  Bo);
+		Abi1 = Bi ^((~Bo)&  Bu);
+		Abo1 = Bo ^((~Bu)&  Ba);
+		Abu1 = Bu ^((~Ba)&  Be);
 
 		Bi = rol32((Aga0^Da1), 2);
 		Bo = rol32((Age0^De1), 23);
 		Bu = rol32((Agi0^Di1), 31);
 		Ba = rol32((Ago0^Do0), 14);
 		Be = rol32((Agu0^Du0), 10);
-		Aga0 =   Ba ^((~Be)&  Bi );
-		Age0 =   Be ^((~Bi)&  Bo );
-		Agi0 =   Bi ^((~Bo)&  Bu );
-		Ago0 =   Bo ^((~Bu)&  Ba );
-		Agu0 =   Bu ^((~Ba)&  Be );
+		Aga0 = Ba ^((~Be)&  Bi);
+		Age0 = Be ^((~Bi)&  Bo);
+		Agi0 = Bi ^((~Bo)&  Bu);
+		Ago0 = Bo ^((~Bu)&  Ba);
+		Agu0 = Bu ^((~Ba)&  Be);
 
 		Bi = rol32((Aga1^Da0), 1);
 		Bo = rol32((Age1^De0), 22);
 		Bu = rol32((Agi1^Di0), 30);
 		Ba = rol32((Ago1^Do1), 14);
 		Be = rol32((Agu1^Du1), 10);
-		Aga1 =   Ba ^((~Be)&  Bi );
-		Age1 =   Be ^((~Bi)&  Bo );
-		Agi1 =   Bi ^((~Bo)&  Bu );
-		Ago1 =   Bo ^((~Bu)&  Ba );
-		Agu1 =   Bu ^((~Ba)&  Be );
+		Aga1 = Ba ^((~Be)&  Bi);
+		Age1 = Be ^((~Bi)&  Bo);
+		Agi1 = Bi ^((~Bo)&  Bu);
+		Ago1 = Bo ^((~Bu)&  Ba);
+		Agu1 = Bu ^((~Ba)&  Be);
 
 		Bu = rol32((Aka0^Da0), 9);
 		Ba = rol32((Ake0^De1), 1);
 		Be = rol32((Aki0^Di0), 3);
 		Bi = rol32((Ako0^Do1), 13);
 		Bo = rol32((Aku0^Du0), 4);
-		Aka0 =   Ba ^((~Be)&  Bi );
-		Ake0 =   Be ^((~Bi)&  Bo );
-		Aki0 =   Bi ^((~Bo)&  Bu );
-		Ako0 =   Bo ^((~Bu)&  Ba );
-		Aku0 =   Bu ^((~Ba)&  Be );
+		Aka0 = Ba ^((~Be)&  Bi);
+		Ake0 = Be ^((~Bi)&  Bo);
+		Aki0 = Bi ^((~Bo)&  Bu);
+		Ako0 = Bo ^((~Bu)&  Ba);
+		Aku0 = Bu ^((~Ba)&  Be);
 
 		Bu = rol32((Aka1^Da1), 9);
 		Ba = (Ake1^De0);
 		Be = rol32((Aki1^Di1), 3);
 		Bi = rol32((Ako1^Do0), 12);
 		Bo = rol32((Aku1^Du1), 4);
-		Aka1 =   Ba ^((~Be)&  Bi );
-		Ake1 =   Be ^((~Bi)&  Bo );
-		Aki1 =   Bi ^((~Bo)&  Bu );
-		Ako1 =   Bo ^((~Bu)&  Ba );
-		Aku1 =   Bu ^((~Ba)&  Be );
+		Aka1 = Ba ^((~Be)&  Bi);
+		Ake1 = Be ^((~Bi)&  Bo);
+		Aki1 = Bi ^((~Bo)&  Bu);
+		Ako1 = Bo ^((~Bu)&  Ba);
+		Aku1 = Bu ^((~Ba)&  Be);
 
 		Be = rol32((Ama0^Da0), 18);
 		Bi = rol32((Ame0^De0), 5);
 		Bo = rol32((Ami0^Di1), 8);
 		Bu = rol32((Amo0^Do0), 28);
 		Ba = rol32((Amu0^Du1), 14);
-		Ama0 =   Ba ^((~Be)&  Bi );
-		Ame0 =   Be ^((~Bi)&  Bo );
-		Ami0 =   Bi ^((~Bo)&  Bu );
-		Amo0 =   Bo ^((~Bu)&  Ba );
-		Amu0 =   Bu ^((~Ba)&  Be );
+		Ama0 = Ba ^((~Be)&  Bi);
+		Ame0 = Be ^((~Bi)&  Bo);
+		Ami0 = Bi ^((~Bo)&  Bu);
+		Amo0 = Bo ^((~Bu)&  Ba);
+		Amu0 = Bu ^((~Ba)&  Be);
 
 		Be = rol32((Ama1^Da1), 18);
 		Bi = rol32((Ame1^De1), 5);
 		Bo = rol32((Ami1^Di0), 7);
 		Bu = rol32((Amo1^Do1), 28);
 		Ba = rol32((Amu1^Du0), 13);
-		Ama1 =   Ba ^((~Be)&  Bi );
-		Ame1 =   Be ^((~Bi)&  Bo );
-		Ami1 =   Bi ^((~Bo)&  Bu );
-		Amo1 =   Bo ^((~Bu)&  Ba );
-		Amu1 =   Bu ^((~Ba)&  Be );
+		Ama1 = Ba ^((~Be)&  Bi);
+		Ame1 = Be ^((~Bi)&  Bo);
+		Ami1 = Bi ^((~Bo)&  Bu);
+		Amo1 = Bo ^((~Bu)&  Ba);
+		Amu1 = Bu ^((~Ba)&  Be);
 
 		Bo = rol32((Asa0^Da1), 21);
 		Bu = rol32((Ase0^De0), 1);
 		Ba = rol32((Asi0^Di0), 31);
 		Be = rol32((Aso0^Do1), 28);
 		Bi = rol32((Asu0^Du1), 20);
-		Asa0 =   Ba ^((~Be)&  Bi );
-		Ase0 =   Be ^((~Bi)&  Bo );
-		Asi0 =   Bi ^((~Bo)&  Bu );
-		Aso0 =   Bo ^((~Bu)&  Ba );
-		Asu0 =   Bu ^((~Ba)&  Be );
+		Asa0 = Ba ^((~Be)&  Bi);
+		Ase0 = Be ^((~Bi)&  Bo);
+		Asi0 = Bi ^((~Bo)&  Bu);
+		Aso0 = Bo ^((~Bu)&  Ba);
+		Asu0 = Bu ^((~Ba)&  Be);
 
 		Bo = rol32((Asa1^Da0), 20);
 		Bu = rol32((Ase1^De1), 1);
 		Ba = rol32((Asi1^Di1), 31);
 		Be = rol32((Aso1^Do0), 27);
 		Bi = rol32((Asu1^Du0), 19);
-		Asa1 =   Ba ^((~Be)&  Bi );
-		Ase1 =   Be ^((~Bi)&  Bo );
-		Asi1 =   Bi ^((~Bo)&  Bu );
-		Aso1 =   Bo ^((~Bu)&  Ba );
-		Asu1 =   Bu ^((~Ba)&  Be );
+		Asa1 = Ba ^((~Be)&  Bi);
+		Ase1 = Be ^((~Bi)&  Bo);
+		Asi1 = Bi ^((~Bo)&  Bu);
+		Aso1 = Bo ^((~Bu)&  Ba);
+		Asu1 = Bu ^((~Ba)&  Be);
 	}
 }
 

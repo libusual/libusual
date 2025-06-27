@@ -172,8 +172,9 @@ void daemonize(const char *pidfile, bool go_background)
 		check_pidfile(pidfile);
 		/* write pidfile twice, to be able to show problems to user */
 		write_pidfile(pidfile, true);
-	} else if (go_background)
+	} else if (go_background) {
 		fatal("daemon needs pidfile configured");
+	}
 
 	if (!go_background)
 		return;

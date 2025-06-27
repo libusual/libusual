@@ -47,19 +47,19 @@
 
 #define LONGEST_TEST_NAME 16384
 
-static int in_tinytest_main = 0; /**< true if we're in tinytest_main().*/
-static int n_ok = 0; /**< Number of tests that have passed */
-static int n_bad = 0; /**< Number of tests that have failed. */
-static int n_skipped = 0; /**< Number of tests that have been skipped. */
+static int in_tinytest_main = 0;/**< true if we're in tinytest_main().*/
+static int n_ok = 0;	/**< Number of tests that have passed */
+static int n_bad = 0;	/**< Number of tests that have failed. */
+static int n_skipped = 0;	/**< Number of tests that have been skipped. */
 
-static int opt_forked = 0; /**< True iff we're called from inside a win32 fork*/
-static int opt_nofork = 0; /**< Suppress calls to fork() for debugging. */
-static int opt_verbosity = 1; /**< -==quiet,0==terse,1==normal,2==verbose */
+static int opt_forked = 0;	/**< True iff we're called from inside a win32 fork*/
+static int opt_nofork = 0;	/**< Suppress calls to fork() for debugging. */
+static int opt_verbosity = 1;	/**< -==quiet,0==terse,1==normal,2==verbose */
 const char *verbosity_flag = "";
 
-enum outcome { SKIP=2, OK=1, FAIL=0 };
+enum outcome { SKIP = 2, OK = 1, FAIL = 0 };
 static enum outcome cur_test_outcome = 0;
-const char *cur_test_prefix = NULL; /**< prefix of the current test group */
+const char *cur_test_prefix = NULL;	/**< prefix of the current test group */
 /** Name of the  current test, if we haven't logged is yet. Used for --quiet */
 const char *cur_test_name = NULL;
 
@@ -68,8 +68,7 @@ const char *cur_test_name = NULL;
 static const char *commandname = NULL;
 #endif
 
-static enum outcome
-_testcase_run_bare(const struct testcase_t *testcase)
+static enum outcome _testcase_run_bare(const struct testcase_t *testcase)
 {
 	void *env = NULL;
 	int outcome;
@@ -77,7 +76,7 @@ _testcase_run_bare(const struct testcase_t *testcase)
 		env = testcase->setup->setup_fn(testcase);
 		if (!env)
 			return FAIL;
-		else if (env == (void*)TT_SKIP)
+		else if (env == (void *)TT_SKIP)
 			return SKIP;
 	}
 
@@ -95,9 +94,8 @@ _testcase_run_bare(const struct testcase_t *testcase)
 
 #define MAGIC_EXITCODE 42
 
-static enum outcome
-_testcase_run_forked(const struct testgroup_t *group,
-		     const struct testcase_t *testcase)
+static enum outcome _testcase_run_forked(const struct testgroup_t *group,
+					 const struct testcase_t *testcase)
 {
 #ifdef WIN32
 	/* Fork? On Win32?  How primitive!  We'll do what the smart kids do:
@@ -109,7 +107,7 @@ _testcase_run_forked(const struct testgroup_t *group,
 	   share no state between tests.)
 	 */
 	int ok;
-	char buffer[LONGEST_TEST_NAME+256];
+	char buffer[LONGEST_TEST_NAME + 256];
 	STARTUPINFO si;
 	PROCESS_INFORMATION info;
 	DWORD exitcode;
@@ -119,11 +117,11 @@ _testcase_run_forked(const struct testgroup_t *group,
 		       " called from within tinytest_main.\n");
 		abort();
 	}
-	if (opt_verbosity>0)
+	if (opt_verbosity > 0)
 		printf("[forking] ");
 
 	evutil_snprintf(buffer, sizeof(buffer), "%s --RUNNING-FORKED %s %s%s",
-		 commandname, verbosity_flag, group->prefix, testcase->name);
+			commandname, verbosity_flag, group->prefix, testcase->name);
 
 	memset(&si, 0, sizeof(si));
 	memset(&info, 0, sizeof(info));
@@ -153,7 +151,7 @@ _testcase_run_forked(const struct testgroup_t *group,
 	if (pipe(outcome_pipe))
 		perror("opening pipe");
 
-	if (opt_verbosity>0)
+	if (opt_verbosity > 0)
 		printf("[forking] ");
 	pid = fork();
 	if (!pid) {
@@ -162,7 +160,7 @@ _testcase_run_forked(const struct testgroup_t *group,
 		char b[1];
 		close(outcome_pipe[0]);
 		test_r = _testcase_run_bare(testcase);
-		assert(0<=(int)test_r && (int)test_r<=2);
+		assert(0 <= (int)test_r && (int)test_r <= 2);
 		b[0] = "NYS"[test_r];
 		write_r = write(outcome_pipe[1], b, 1);
 		if (write_r != 1) {
@@ -186,46 +184,46 @@ _testcase_run_forked(const struct testgroup_t *group,
 		}
 		waitpid(pid, &status, 0);
 		close(outcome_pipe[0]);
-		return b[0]=='Y' ? OK : (b[0]=='S' ? SKIP : FAIL);
+		return b[0] == 'Y' ? OK : (b[0] == 'S' ? SKIP : FAIL);
 	}
 #endif
 }
 
-int
-testcase_run_one(const struct testgroup_t *group,
-		 const struct testcase_t *testcase)
+int testcase_run_one(const struct testgroup_t *group,
+		     const struct testcase_t *testcase)
 {
 	enum outcome outcome;
 
 	if (testcase->flags & TT_SKIP) {
-		if (opt_verbosity>0)
+		if (opt_verbosity > 0) {
 			printf("%s%s: SKIPPED\n",
-			    group->prefix, testcase->name);
+			       group->prefix, testcase->name);
+		}
 		++n_skipped;
 		return SKIP;
 	}
 
-	if (opt_verbosity>0 && !opt_forked) {
+	if (opt_verbosity > 0 && !opt_forked) {
 		printf("%s%s: ", group->prefix, testcase->name);
 	} else {
-		if (opt_verbosity==0) printf(".");
+		if (opt_verbosity == 0) printf(".");
 		cur_test_prefix = group->prefix;
 		cur_test_name = testcase->name;
 	}
 
-	if ((testcase->flags & TT_FORK) && !(opt_forked||opt_nofork)) {
+	if ((testcase->flags & TT_FORK) && !(opt_forked || opt_nofork)) {
 		outcome = _testcase_run_forked(group, testcase);
 	} else {
-		outcome  = _testcase_run_bare(testcase);
+		outcome = _testcase_run_bare(testcase);
 	}
 
 	if (outcome == OK) {
 		++n_ok;
-		if (opt_verbosity>0 && !opt_forked)
-			puts(opt_verbosity==1?"OK":"");
+		if (opt_verbosity > 0 && !opt_forked)
+			puts(opt_verbosity == 1 ? "OK" : "");
 	} else if (outcome == SKIP) {
 		++n_skipped;
-		if (opt_verbosity>0 && !opt_forked)
+		if (opt_verbosity > 0 && !opt_forked)
 			puts("SKIPPED");
 	} else {
 		++n_bad;
@@ -234,26 +232,25 @@ testcase_run_one(const struct testgroup_t *group,
 	}
 
 	if (opt_forked) {
-		exit(outcome==OK ? 0 : (outcome==SKIP?MAGIC_EXITCODE : 1));
+		exit(outcome == OK ? 0 : (outcome == SKIP ? MAGIC_EXITCODE : 1));
 	} else {
 		return (int)outcome;
 	}
 }
 
-int
-_tinytest_set_flag(struct testgroup_t *groups, const char *arg, unsigned long flag)
+int _tinytest_set_flag(struct testgroup_t *groups, const char *arg, unsigned long flag)
 {
 	int i, j;
 	int length = LONGEST_TEST_NAME;
 	char fullname[LONGEST_TEST_NAME];
-	int found=0;
+	int found = 0;
 	if (strstr(arg, ".."))
-		length = strstr(arg,"..")-arg;
-	for (i=0; groups[i].prefix; ++i) {
-		for (j=0; groups[i].cases[j].name; ++j) {
+		length = strstr(arg, "..") - arg;
+	for (i = 0; groups[i].prefix; ++i) {
+		for (j = 0; groups[i].cases[j].name; ++j) {
 			evutil_snprintf(fullname, sizeof(fullname), "%s%s",
-				 groups[i].prefix, groups[i].cases[j].name);
-			if (!flag) /* Hack! */
+					groups[i].prefix, groups[i].cases[j].name);
+			if (!flag)	/* Hack! */
 				printf("    %s\n", fullname);
 			if (!strncmp(fullname, arg, length)) {
 				groups[i].cases[j].flags |= flag;
@@ -264,8 +261,7 @@ _tinytest_set_flag(struct testgroup_t *groups, const char *arg, unsigned long fl
 	return found;
 }
 
-static void
-usage(struct testgroup_t *groups, int list_groups)
+static void usage(struct testgroup_t *groups, int list_groups)
 {
 	puts("Options are: [--verbose|--quiet|--terse] [--no-fork]");
 	puts("  Specify tests by name, or using a prefix ending with '..'");
@@ -277,15 +273,14 @@ usage(struct testgroup_t *groups, int list_groups)
 	exit(0);
 }
 
-int
-tinytest_main(int c, const char **v, struct testgroup_t *groups)
+int tinytest_main(int c, const char **v, struct testgroup_t *groups)
 {
-	int i, j, n=0;
+	int i, j, n = 0;
 
 #ifdef WIN32
 	commandname = v[0];
 #endif
-	for (i=1; i<c; ++i) {
+	for (i = 1; i < c; ++i) {
 		if (v[i][0] == '-') {
 			if (!strcmp(v[i], "--RUNNING-FORKED")) {
 				opt_forked = 1;
@@ -305,7 +300,7 @@ tinytest_main(int c, const char **v, struct testgroup_t *groups)
 			} else if (!strcmp(v[i], "--list-tests")) {
 				usage(groups, 1);
 			} else {
-				printf("Unknown option %s.  Try --help\n",v[i]);
+				printf("Unknown option %s.  Try --help\n", v[i]);
 				return -1;
 			}
 		} else {
@@ -322,46 +317,45 @@ tinytest_main(int c, const char **v, struct testgroup_t *groups)
 	setvbuf(stdout, NULL, _IONBF, 0);
 
 	++in_tinytest_main;
-	for (i=0; groups[i].prefix; ++i)
-		for (j=0; groups[i].cases[j].name; ++j)
-			if (groups[i].cases[j].flags & _TT_ENABLED)
+	for (i = 0; groups[i].prefix; ++i)
+		for (j = 0; groups[i].cases[j].name; ++j)
+			if (groups[i].cases[j].flags & _TT_ENABLED) {
 				testcase_run_one(&groups[i],
 						 &groups[i].cases[j]);
+			}
 
 	--in_tinytest_main;
 
-	if (opt_verbosity==0)
+	if (opt_verbosity == 0)
 		puts("");
 
-	if (n_bad)
+	if (n_bad) {
 		printf("%d/%d TESTS FAILED. (%d skipped)\n", n_bad,
-		       n_bad+n_ok,n_skipped);
-	else if (opt_verbosity >= 1)
+		       n_bad + n_ok, n_skipped);
+	} else if (opt_verbosity >= 1) {
 		printf("%d tests ok.  (%d skipped)\n", n_ok, n_skipped);
+	}
 
 	return (n_bad == 0) ? 0 : 1;
 }
 
-int
-_tinytest_get_verbosity(void)
+int _tinytest_get_verbosity(void)
 {
 	return opt_verbosity;
 }
 
-void
-_tinytest_set_test_failed(void)
+void _tinytest_set_test_failed(void)
 {
 	if (opt_verbosity <= 0 && cur_test_name) {
-		if (opt_verbosity==0) puts("");
+		if (opt_verbosity == 0) puts("");
 		printf("%s%s: ", cur_test_prefix, cur_test_name);
 		cur_test_name = NULL;
 	}
 	cur_test_outcome = 0;
 }
 
-void
-_tinytest_set_test_skipped(void)
+void _tinytest_set_test_skipped(void)
 {
-	if (cur_test_outcome==OK)
+	if (cur_test_outcome == OK)
 		cur_test_outcome = SKIP;
 }

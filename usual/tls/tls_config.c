@@ -23,19 +23,18 @@
 
 #include "tls_internal.h"
 
-static int
-set_string(const char **dest, const char *src)
+static int set_string(const char **dest, const char *src)
 {
 	free((char *)*dest);
 	*dest = NULL;
-	if (src != NULL)
+	if (src != NULL) {
 		if ((*dest = strdup(src)) == NULL)
 			return -1;
+	}
 	return 0;
 }
 
-static void *
-memdup(const void *in, size_t len)
+static void *memdup(const void *in, size_t len)
 {
 	void *out;
 
@@ -45,62 +44,55 @@ memdup(const void *in, size_t len)
 	return out;
 }
 
-static int
-set_mem(char **dest, size_t *destlen, const void *src, size_t srclen)
+static int set_mem(char **dest, size_t *destlen, const void *src, size_t srclen)
 {
 	free(*dest);
 	*dest = NULL;
 	*destlen = 0;
-	if (src != NULL)
+	if (src != NULL) {
 		if ((*dest = memdup(src, srclen)) == NULL)
 			return -1;
+	}
 	*destlen = srclen;
 	return 0;
 }
 
-struct tls_keypair *
-tls_keypair_new(void)
+struct tls_keypair *tls_keypair_new(void)
 {
 	return calloc(1, sizeof(struct tls_keypair));
 }
 
-int
-tls_keypair_set_cert_file(struct tls_keypair *keypair, const char *cert_file)
+int tls_keypair_set_cert_file(struct tls_keypair *keypair, const char *cert_file)
 {
 	return set_string(&keypair->cert_file, cert_file);
 }
 
-static int
-tls_keypair_set_cert_mem(struct tls_keypair *keypair, const uint8_t *cert,
-    size_t len)
+static int tls_keypair_set_cert_mem(struct tls_keypair *keypair, const uint8_t *cert,
+				    size_t len)
 {
 	return set_mem(&keypair->cert_mem, &keypair->cert_len, cert, len);
 }
 
-static int
-tls_keypair_set_key_file(struct tls_keypair *keypair, const char *key_file)
+static int tls_keypair_set_key_file(struct tls_keypair *keypair, const char *key_file)
 {
 	return set_string(&keypair->key_file, key_file);
 }
 
-static int
-tls_keypair_set_key_mem(struct tls_keypair *keypair, const uint8_t *key,
-    size_t len)
+static int tls_keypair_set_key_mem(struct tls_keypair *keypair, const uint8_t *key,
+				   size_t len)
 {
 	if (keypair->key_mem != NULL)
 		explicit_bzero(keypair->key_mem, keypair->key_len);
 	return set_mem(&keypair->key_mem, &keypair->key_len, key, len);
 }
 
-static void
-tls_keypair_clear(struct tls_keypair *keypair)
+static void tls_keypair_clear(struct tls_keypair *keypair)
 {
 	tls_keypair_set_cert_mem(keypair, NULL, 0);
 	tls_keypair_set_key_mem(keypair, NULL, 0);
 }
 
-static void
-tls_keypair_free(struct tls_keypair *keypair)
+static void tls_keypair_free(struct tls_keypair *keypair)
 {
 	if (keypair == NULL)
 		return;
@@ -115,8 +107,7 @@ tls_keypair_free(struct tls_keypair *keypair)
 	free(keypair);
 }
 
-struct tls_config *
-tls_config_new(void)
+struct tls_config *tls_config_new(void)
 {
 	struct tls_config *config;
 
@@ -147,13 +138,12 @@ tls_config_new(void)
 
 	return (config);
 
- err:
+err:
 	tls_config_free(config);
 	return (NULL);
 }
 
-void
-tls_config_free(struct tls_config *config)
+void tls_config_free(struct tls_config *config)
 {
 	struct tls_keypair *kp, *nkp;
 
@@ -175,14 +165,12 @@ tls_config_free(struct tls_config *config)
 	free(config);
 }
 
-const char *
-tls_config_error(struct tls_config *config)
+const char *tls_config_error(struct tls_config *config)
 {
 	return config->error.msg;
 }
 
-void
-tls_config_clear_keys(struct tls_config *config)
+void tls_config_clear_keys(struct tls_config *config)
 {
 	struct tls_keypair *kp;
 
@@ -192,8 +180,7 @@ tls_config_clear_keys(struct tls_config *config)
 	tls_config_set_ca_mem(config, NULL, 0);
 }
 
-int
-tls_config_parse_protocols(uint32_t *protocols, const char *protostr)
+int tls_config_parse_protocols(uint32_t *protocols, const char *protostr)
 {
 	uint32_t proto, protos = 0;
 	char *s, *p, *q;
@@ -220,7 +207,7 @@ tls_config_parse_protocols(uint32_t *protocols, const char *protostr)
 		if (strcasecmp(p, "all") == 0)
 			proto = TLS_PROTOCOLS_ALL;
 		else if (strcasecmp(p, "default") == 0 ||
-		    strcasecmp(p, "secure") == 0)
+			 strcasecmp(p, "secure") == 0)
 			proto = TLS_PROTOCOLS_DEFAULT;
 		if (strcasecmp(p, "tlsv1") == 0)
 			proto = TLS_PROTOCOL_TLSv1;
@@ -251,39 +238,33 @@ tls_config_parse_protocols(uint32_t *protocols, const char *protostr)
 	return (0);
 }
 
-int
-tls_config_set_ca_file(struct tls_config *config, const char *ca_file)
+int tls_config_set_ca_file(struct tls_config *config, const char *ca_file)
 {
 	return set_string(&config->ca_file, ca_file);
 }
 
-int
-tls_config_set_ca_path(struct tls_config *config, const char *ca_path)
+int tls_config_set_ca_path(struct tls_config *config, const char *ca_path)
 {
 	return set_string(&config->ca_path, ca_path);
 }
 
-int
-tls_config_set_ca_mem(struct tls_config *config, const uint8_t *ca, size_t len)
+int tls_config_set_ca_mem(struct tls_config *config, const uint8_t *ca, size_t len)
 {
 	return set_mem(&config->ca_mem, &config->ca_len, ca, len);
 }
 
-int
-tls_config_set_cert_file(struct tls_config *config, const char *cert_file)
+int tls_config_set_cert_file(struct tls_config *config, const char *cert_file)
 {
 	return tls_keypair_set_cert_file(config->keypair, cert_file);
 }
 
-int
-tls_config_set_cert_mem(struct tls_config *config, const uint8_t *cert,
-    size_t len)
+int tls_config_set_cert_mem(struct tls_config *config, const uint8_t *cert,
+			    size_t len)
 {
 	return tls_keypair_set_cert_mem(config->keypair, cert, len);
 }
 
-int
-tls_config_set_ciphers(struct tls_config *config, const char *ciphers)
+int tls_config_set_ciphers(struct tls_config *config, const char *ciphers)
 {
 	SSL_CTX *ssl_ctx = NULL;
 
@@ -298,8 +279,7 @@ tls_config_set_ciphers(struct tls_config *config, const char *ciphers)
 	    strcasecmp(ciphers, "default") == 0 ||
 	    strcasecmp(ciphers, "secure") == 0 ||
 	    strcasecmp(ciphers, "normal") == 0 ||
-	    strcasecmp(ciphers, "fast") == 0)
-	{
+	    strcasecmp(ciphers, "fast") == 0) {
 		return set_string(&config->ciphers, ciphers);
 	}
 	/*
@@ -319,21 +299,20 @@ tls_config_set_ciphers(struct tls_config *config, const char *ciphers)
 	SSL_CTX_free(ssl_ctx);
 	return set_string(&config->ciphers, ciphers);
 
- fail:
+fail:
 	SSL_CTX_free(ssl_ctx);
 	return -1;
 }
 
-int
-tls_config_set_dheparams(struct tls_config *config, const char *params)
+int tls_config_set_dheparams(struct tls_config *config, const char *params)
 {
 	int keylen;
 
-	if (params == NULL || strcasecmp(params, "none") == 0)
+	if (params == NULL || strcasecmp(params, "none") == 0) {
 		keylen = 0;
-	else if (strcasecmp(params, "auto") == 0)
+	} else if (strcasecmp(params, "auto") == 0) {
 		keylen = -1;
-	else {
+	} else {
 		tls_config_set_errorx(config, "invalid dhe param '%s'", params);
 		return (-1);
 	}
@@ -343,16 +322,15 @@ tls_config_set_dheparams(struct tls_config *config, const char *params)
 	return (0);
 }
 
-int
-tls_config_set_ecdhecurve(struct tls_config *config, const char *name)
+int tls_config_set_ecdhecurve(struct tls_config *config, const char *name)
 {
 	int nid;
 
-	if (name == NULL || strcasecmp(name, "none") == 0)
+	if (name == NULL || strcasecmp(name, "none") == 0) {
 		nid = NID_undef;
-	else if (strcasecmp(name, "auto") == 0)
+	} else if (strcasecmp(name, "auto") == 0) {
 		nid = -1;
-	else if ((nid = OBJ_txt2nid(name)) == NID_undef) {
+	} else if ((nid = OBJ_txt2nid(name)) == NID_undef) {
 		tls_config_set_errorx(config, "invalid ecdhe curve '%s'", name);
 		return (-1);
 	}
@@ -362,22 +340,19 @@ tls_config_set_ecdhecurve(struct tls_config *config, const char *name)
 	return (0);
 }
 
-int
-tls_config_set_key_file(struct tls_config *config, const char *key_file)
+int tls_config_set_key_file(struct tls_config *config, const char *key_file)
 {
 	return tls_keypair_set_key_file(config->keypair, key_file);
 }
 
-int
-tls_config_set_key_mem(struct tls_config *config, const uint8_t *key,
-    size_t len)
+int tls_config_set_key_mem(struct tls_config *config, const uint8_t *key,
+			   size_t len)
 {
 	return tls_keypair_set_key_mem(config->keypair, key, len);
 }
 
-int
-tls_config_set_keypair_file(struct tls_config *config,
-    const char *cert_file, const char *key_file)
+int tls_config_set_keypair_file(struct tls_config *config,
+				const char *cert_file, const char *key_file)
 {
 	if (tls_config_set_cert_file(config, cert_file) != 0)
 		return (-1);
@@ -387,9 +362,8 @@ tls_config_set_keypair_file(struct tls_config *config,
 	return (0);
 }
 
-int
-tls_config_set_keypair_mem(struct tls_config *config, const uint8_t *cert,
-    size_t cert_len, const uint8_t *key, size_t key_len)
+int tls_config_set_keypair_mem(struct tls_config *config, const uint8_t *cert,
+			       size_t cert_len, const uint8_t *key, size_t key_len)
 {
 	if (tls_config_set_cert_mem(config, cert, cert_len) != 0)
 		return (-1);
@@ -399,8 +373,7 @@ tls_config_set_keypair_mem(struct tls_config *config, const uint8_t *cert,
 	return (0);
 }
 
-int
-tls_config_set_ocsp_stapling_file(struct tls_config *config, const char *blob_file)
+int tls_config_set_ocsp_stapling_file(struct tls_config *config, const char *blob_file)
 {
 	if (blob_file != NULL)
 		tls_config_set_ocsp_stapling_mem(config, NULL, 0);
@@ -408,8 +381,7 @@ tls_config_set_ocsp_stapling_file(struct tls_config *config, const char *blob_fi
 	return set_string(&config->ocsp_file, blob_file);
 }
 
-int
-tls_config_set_ocsp_stapling_mem(struct tls_config *config, const uint8_t *blob, size_t len)
+int tls_config_set_ocsp_stapling_mem(struct tls_config *config, const uint8_t *blob, size_t len)
 {
 	if (blob != NULL)
 		tls_config_set_ocsp_stapling_file(config, NULL);
@@ -417,64 +389,54 @@ tls_config_set_ocsp_stapling_mem(struct tls_config *config, const uint8_t *blob,
 	return set_mem(&config->ocsp_mem, &config->ocsp_len, blob, len);
 }
 
-void
-tls_config_set_protocols(struct tls_config *config, uint32_t protocols)
+void tls_config_set_protocols(struct tls_config *config, uint32_t protocols)
 {
 	config->protocols = protocols;
 }
 
-void
-tls_config_set_verify_depth(struct tls_config *config, int verify_depth)
+void tls_config_set_verify_depth(struct tls_config *config, int verify_depth)
 {
 	config->verify_depth = verify_depth;
 }
 
-void
-tls_config_prefer_ciphers_client(struct tls_config *config)
+void tls_config_prefer_ciphers_client(struct tls_config *config)
 {
 	config->ciphers_server = 0;
 }
 
-void
-tls_config_prefer_ciphers_server(struct tls_config *config)
+void tls_config_prefer_ciphers_server(struct tls_config *config)
 {
 	config->ciphers_server = 1;
 }
 
-void
-tls_config_insecure_noverifycert(struct tls_config *config)
+void tls_config_insecure_noverifycert(struct tls_config *config)
 {
 	config->verify_cert = 0;
 }
 
-void
-tls_config_insecure_noverifyname(struct tls_config *config)
+void tls_config_insecure_noverifyname(struct tls_config *config)
 {
 	config->verify_name = 0;
 }
 
-void
-tls_config_insecure_noverifytime(struct tls_config *config)
+void tls_config_insecure_noverifytime(struct tls_config *config)
 {
 	config->verify_time = 0;
 }
 
-void
-tls_config_verify(struct tls_config *config)
+void tls_config_verify(struct tls_config *config)
 {
 	config->verify_cert = 1;
 	config->verify_name = 1;
 	config->verify_time = 1;
 }
 
-void
-tls_config_verify_client(struct tls_config *config)
+void tls_config_verify_client(struct tls_config *config)
 {
 	config->verify_client = 1;
 }
 
-void
-tls_config_verify_client_optional(struct tls_config *config)
+void tls_config_verify_client_optional(struct tls_config *config)
 {
 	config->verify_client = 2;
 }

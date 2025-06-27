@@ -30,9 +30,9 @@ bool pg_quote_literal(char *_dst, const char *_src, int dstlen)
 retry:
 	*dst++ = '\'';
 	while (*src && dst < end) {
-		if (*src == '\'')
+		if (*src == '\'') {
 			*dst++ = '\'';
-		else if (*src == '\\') {
+		} else if (*src == '\\') {
 			if (stdquote)
 				goto retry_ext;
 			*dst++ = '\\';
@@ -181,8 +181,9 @@ static bool parse_value(struct StrList *arr, const char *val, const char *vend,
 			}
 		} else if (c == '\\') {
 			*p++ = *s++;
-		} else
+		} else {
 			*p++ = c;
+		}
 	}
 	*p++ = 0;
 	if (!strlist_append_ref(arr, str)) {
@@ -243,13 +244,14 @@ struct StrList *pg_parse_array(const char *pgarr, CxMem *cx)
 		if (c == '"') {
 			while (1) {
 				c = *s++;
-				if (c == '"')
+				if (c == '"') {
 					break;
-				else if (c == '\\') {
+				} else if (c == '\\') {
 					if (!*s) goto failed;
 					s++;
-				} else if (!*s)
+				} else if (!*s) {
 					goto failed;
+				}
 			}
 		} else if (c == '\\') {
 			if (!*s) goto failed;

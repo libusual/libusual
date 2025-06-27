@@ -24,9 +24,9 @@
 #include <usual/cxalloc.h>
 
 /** returns length of the key */
-typedef size_t		(*cbtree_getkey_func)(void *ctx, void *obj, const void **dst_p);
+typedef size_t (*cbtree_getkey_func)(void *ctx, void *obj, const void **dst_p);
 /** walk over tree */
-typedef bool		(*cbtree_walker_func)(void *ctx, void *obj);
+typedef bool (*cbtree_walker_func)(void *ctx, void *obj);
 
 /** Handle to tree */
 struct CBTree;

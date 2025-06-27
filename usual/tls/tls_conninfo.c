@@ -24,9 +24,8 @@
 
 #include "tls_internal.h"
 
-static int
-tls_hex_string(const unsigned char *in, size_t inlen, char **out,
-    size_t *outlen)
+static int tls_hex_string(const unsigned char *in, size_t inlen, char **out,
+			  size_t *outlen)
 {
 	static const char hex[] = "0123456789abcdef";
 	size_t i, len;
@@ -54,8 +53,7 @@ tls_hex_string(const unsigned char *in, size_t inlen, char **out,
 	return (0);
 }
 
-static int
-tls_get_peer_cert_hash(struct tls *ctx, char **hash)
+static int tls_get_peer_cert_hash(struct tls *ctx, char **hash)
 {
 	unsigned char d[EVP_MAX_MD_SIZE];
 	char *dhex = NULL;
@@ -90,8 +88,7 @@ err:
 	return (rv);
 }
 
-static int
-tls_get_peer_cert_issuer(struct tls *ctx,  char **issuer)
+static int tls_get_peer_cert_issuer(struct tls *ctx, char **issuer)
 {
 	X509_NAME *name = NULL;
 
@@ -106,8 +103,7 @@ tls_get_peer_cert_issuer(struct tls *ctx,  char **issuer)
 	return (0);
 }
 
-static int
-tls_get_peer_cert_subject(struct tls *ctx, char **subject)
+static int tls_get_peer_cert_subject(struct tls *ctx, char **subject)
 {
 	X509_NAME *name = NULL;
 
@@ -122,8 +118,7 @@ tls_get_peer_cert_subject(struct tls *ctx, char **subject)
 	return (0);
 }
 
-static int
-tls_get_peer_cert_times(struct tls *ctx, time_t *notbefore, time_t *notafter)
+static int tls_get_peer_cert_times(struct tls *ctx, time_t *notbefore, time_t *notafter)
 {
 	struct tm before_tm, after_tm;
 	ASN1_TIME *before, *after;
@@ -137,9 +132,9 @@ tls_get_peer_cert_times(struct tls *ctx, time_t *notbefore, time_t *notafter)
 			goto err;
 		if ((after = X509_get_notAfter(ctx->ssl_peer_cert)) == NULL)
 			goto err;
-		if (asn1_time_parse((char*)before->data, before->length, &before_tm, 0) == -1)
+		if (asn1_time_parse((char *)before->data, before->length, &before_tm, 0) == -1)
 			goto err;
-		if (asn1_time_parse((char*)after->data, after->length, &after_tm, 0) == -1)
+		if (asn1_time_parse((char *)after->data, after->length, &after_tm, 0) == -1)
 			goto err;
 		if ((*notbefore = timegm(&before_tm)) == -1)
 			goto err;
@@ -147,13 +142,13 @@ tls_get_peer_cert_times(struct tls *ctx, time_t *notbefore, time_t *notafter)
 			goto err;
 	}
 	rv = 0;
- err:
+err:
 	return (rv);
 }
 
-int
-tls_get_conninfo(struct tls *ctx) {
-	const char * tmp;
+int tls_get_conninfo(struct tls *ctx)
+{
+	const char *tmp;
 
 	tls_free_conninfo(ctx->conninfo);
 
@@ -166,7 +161,7 @@ tls_get_conninfo(struct tls *ctx) {
 		if (tls_get_peer_cert_issuer(ctx, &ctx->conninfo->issuer) == -1)
 			goto err;
 		if (tls_get_peer_cert_times(ctx, &ctx->conninfo->notbefore,
-		    &ctx->conninfo->notafter) == -1)
+					    &ctx->conninfo->notafter) == -1)
 			goto err;
 	}
 	if ((tmp = SSL_get_version(ctx->ssl_conn)) == NULL)
@@ -185,8 +180,8 @@ err:
 	return (-1);
 }
 
-void
-tls_free_conninfo(struct tls_conninfo *conninfo) {
+void tls_free_conninfo(struct tls_conninfo *conninfo)
+{
 	if (conninfo != NULL) {
 		free(conninfo->hash);
 		conninfo->hash = NULL;
@@ -201,16 +196,14 @@ tls_free_conninfo(struct tls_conninfo *conninfo) {
 	}
 }
 
-const char *
-tls_conn_cipher(struct tls *ctx)
+const char *tls_conn_cipher(struct tls *ctx)
 {
 	if (ctx->conninfo == NULL)
 		return (NULL);
 	return (ctx->conninfo->cipher);
 }
 
-const char *
-tls_conn_version(struct tls *ctx)
+const char *tls_conn_version(struct tls *ctx)
 {
 	if (ctx->conninfo == NULL)
 		return (NULL);
